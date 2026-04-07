@@ -3516,7 +3516,7 @@
     {
       "id": "knowledge_ma_001",
       "title": "M&A AD/Entra ID統合ツール選択指針",
-      "content": "M&A後のID統合は4フェーズで進める。①Pre-deal/DD（Netwrix Auditor・Quest Nova）→②Day1（Entra Cross-tenant Sync・Entra Cloud Sync）→③共存期間（Quest Migration Manager for AD or ADMT＋BitTitan MigrationWiz）→④統合完了（クリーンアップ・SID History除去）。日本市場では日本語サポートの弱さからMicrosoft純正ツールが基本、Quest製品はパートナー経由での提案が前提。NSSolが直接提案可能：ADMT・Entra Connect Sync・Entra Cloud Sync・Entra Cross-tenant Sync・BitTitan MigrationWiz（代理店）・Microsoft SPMT。",
+      "content": "M&A後のID統合は4フェーズで進める。①Pre-deal/DD（Netwrix Auditor・Quest Nova）→②Day1（Entra Cross-tenant Sync・Entra Cloud Sync）→③共存期間（Quest Migration Manager for AD or ADMT＋BitTitan MigrationWiz）→④統合完了（クリーンアップ・SID History除去）。日本市場では日本語サポートの弱さからMicrosoft純正ツールが基本、Quest製品はパートナー経由での提案が前提。NSSOLが直接提案可能：ADMT・Entra Connect Sync・Entra Cloud Sync・Entra Cross-tenant Sync・BitTitan MigrationWiz（代理店）・Microsoft SPMT。",
       "tags": [
         "M&A",
         "AD統合",
