@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>M&A後 ID統合 ディスカッションペーパー</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e} .card.red{border-left-color:#ef4444} .card.yellow{border-left-color:#f59e0b} .card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px} .list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6} .b-green{background:#22c55e} .b-red{background:#ef4444} .b-gray{background:#9ca3af} .b-orange{background:#f97316} .b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.timeline{list-style:none;padding:0;border-left:3px solid #3b82f6;margin-left:12px}
+.timeline li{padding:10px 0 10px 22px;position:relative;font-size:.88em}
+.timeline li::before{content:"";position:absolute;left:-7px;top:14px;width:11px;height:11px;border-radius:50%;background:#3b82f6}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#3b82f6;color:#fff;font-size:.75em;font-weight:700;margin-right:8px;flex-shrink:0}
+.step-row{display:flex;align-items:flex-start;gap:10px;margin:10px 0;font-size:.88em;line-height:1.6}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}table{box-shadow:none}}
+
+.scenario-card{background:#fff;border-radius:12px;padding:20px 24px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px}
+.sc-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;border-bottom:2px solid #f1f5f9;padding-bottom:12px}
+.sc-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:.9em;flex-shrink:0}
+.risk-chip{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.72em;font-weight:700}
+.risk-high{background:#fee2e2;color:#dc2626} .risk-med{background:#fef3c7;color:#d97706} .risk-low{background:#dcfce7;color:#15803d}
+</style></head>
+<body><div class="page">
+<h1>🤝 M&A後 ID統合 ディスカッションペーパー</h1>
+<p class="subtitle">合併・買収後のアイデンティティ統合戦略と実行計画 | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note">
+<strong>なぜM&AでID統合が最優先課題か：</strong>
+合併後に2系統のIDが並存すると、①重複アカウントによるコスト増、②退職者IDの放置リスク、③権限の引継ぎ漏れによるSOD違反が即発生します。
+M&A Day1から「誰がどのシステムにアクセスできるか」を管理できないと、ガバナンスと業務継続の両方が破綻します。
+</div>
+
+<h2>M&A IDリスクの4つのフェーズ</h2>
+<div class="grid2">
+<div class="card yellow"><h3>📋 Due Diligence（DD）フェーズ</h3>
+<ul class="list">
+<li>買収先のID管理成熟度評価（ADの健全性・IGA有無）</li>
+<li>アカウント数・特権ID数・孤立IDの規模感把握</li>
+<li>FISC/PCI DSS等のコンプライアンス状況確認</li>
+<li>移行コストの概算（DDレポートに含める）</li>
+</ul></div>
+<div class="card red"><h3>🚀 Day1（クロージング日）フェーズ</h3>
+<ul class="list">
+<li>買収先役員・IT管理者への緊急アクセス付与</li>
+<li>退職する前経営陣のIDの即時無効化</li>
+<li>Critical System（財務・人事）への最小権限アクセス設定</li>
+<li>インシデント対応用緊急連絡網の統合</li>
+</ul></div>
+<div class="card purple"><h3>🏗️ 統合フェーズ（Day1〜180日）</h3>
+<ul class="list">
+<li>IDのカノニカル化（重複・類似アカウントの名寄せ）</li>
+<li>AD信頼関係の設定（または直接移行）</li>
+<li>SSOの拡張（買収先社員が親会社SaaSを使えるように）</li>
+<li>権限レビュー：買収先の既存権限を全量棚卸し</li>
+</ul></div>
+<div class="card green"><h3>✅ 定常化フェーズ（180日〜）</h3>
+<ul class="list">
+<li>IGAによるプロビジョニング統一（JMLプロセス統合）</li>
+<li>ドメイン統合または統一SSOハブへの移行完了</li>
+<li>SOD（職務分離）ポリシーの統合適用</li>
+<li>棚卸しの定期実行（半年/年次）への組み込み</li>
+</ul></div>
+</div>
+
+<h2>統合アーキテクチャの選択肢</h2>
+<div class="scenario-card">
+<div class="sc-header">
+<div class="sc-num" style="background:#3b82f6">A</div>
+<div><strong>方式A：新共通ドメイン作成・双方から移行（最も安全・コスト最大）</strong>
+<span class="risk-chip risk-low">リスク: 低</span></div>
+</div>
+<p>新しいADドメイン（またはEntra IDテナント）を作り、買収元・買収先の双方からユーザーを移行します。SID Historyが積み重なった古いドメインを踏み台にしないため最も安全。工期18〜24ヶ月。</p>
+<p><strong>向いている場合：</strong>大型合併・ドメインが3つ以上混在・長期的統合戦略がある場合</p>
+</div>
+<div class="scenario-card">
+<div class="sc-header">
+<div class="sc-num" style="background:#8b5cf6">B</div>
+<div><strong>方式B：親会社ドメインへ買収先ユーザーを移行（コスト中・速度中）</strong>
+<span class="risk-chip risk-med">リスク: 中</span></div>
+</div>
+<p>親会社のADを正として、買収先ユーザーを親会社ドメインに移行します。最も多い選択肢。買収先ドメインは信頼関係経由で一定期間残存後、廃止します。工期12〜18ヶ月。</p>
+<p><strong>向いている場合：</strong>親会社が明確・買収先が小規模・システムの大半が親会社ベース</p>
+</div>
+<div class="scenario-card">
+<div class="sc-header">
+<div class="sc-num" style="background:#22c55e">C</div>
+<div><strong>方式C：Entra IDを共通SSOハブにしてAD並存（最速・AD温存）</strong>
+<span class="risk-chip risk-med">リスク: 中（セキュリティ設計次第）</span></div>
+</div>
+<p>両社のADをそのまま残し、Entra IDに両方を同期させます。ユーザーはEntra IDの同一テナントで統一SSOを使えます。M&A直後のDay1対応に最適。物理的なAD統合は後工程で実施。工期3〜6ヶ月（暫定統合）。</p>
+<p><strong>向いている場合：</strong>M&A後の短期間でSSO統合が必要・AD移行は中長期計画で別途実施</p>
+</div>
+
+<h2>よくある失敗と対策</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>失敗パターン</th><th>具体的リスク</th><th>対策</th></tr></thead>
+<tbody>
+<tr><td>双方向推移的フォレスト信頼の無制限設定</td><td>SID History攻撃で一方の侵害が即他方に波及</td><td>SID Filteringを必ず有効化。選択的認証のみ許可。</td></tr>
+<tr><td>買収先のOrphan IDを放置</td><td>退職済みアカウントが半年〜数年残存。元従業員のアクセス継続。</td><td>Day1で全IDの即時レビュー。60日以内に不要ID廃止。</td></tr>
+<tr><td>権限の単純コピー（Lift-and-Shift）</td><td>買収先のゆるい権限設定がそのまま親会社に持ち込まれる</td><td>権限の再設計（最小権限）。役割ベース（RBAC）での再付与。</td></tr>
+<tr><td>IT統合を先行しすぎてHRが追いつかない</td><td>人事データが不整合でIDの正しい帰属が不明</td><td>HRシステム統合をIDM統合と同期して進める。</td></tr>
+<tr><td>セキュリティ評価なしで信頼関係を設定</td><td>買収先にマルウェアが潜伏していた場合、信頼経由で親会社に侵入</td><td>クロージング前にIoC（侵害指標）スキャン実施。隔離環境で検疫。</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

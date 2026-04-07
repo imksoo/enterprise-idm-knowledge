@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "id": "sim_fin_s10",
+    "title": "地銀グループ：FISC第11版対応とSecureCube更改",
+    "scenario_date": "2026年4月",
+    "industry": "regional_bank"
+  },
+  "company_profile": "東北地方の地銀グループ。親銀行+証券子会社+リース子会社+クレジット子会社の4社構成。社員計2500名。SecureCubeが2027年サポート切れ予定。FISC第11版の棚卸要件に未対応。",
+  "personas": [
+    {
+      "id": "cio",
+      "name": "遠藤CIO",
+      "role": "グループCIO（銀行本体兼務）"
+    },
+    {
+      "id": "sec_manager",
+      "name": "佐野課長",
+      "role": "情報セキュリティ課長（SecureCube運用者）"
+    },
+    {
+      "id": "nssol",
+      "name": "阿部（NSSol）",
+      "role": "金融ID管理専門SE"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：SecureCube更改とFISC対応",
+      "setting": "地銀システム委員会。",
+      "dialogue": [
+        {
+          "speaker": "佐野課長",
+          "text": "SecureCubeが2027年EOLです。後継製品の選定と、FISC棚卸の自動化を同時に実現したいです。"
+        },
+        {
+          "speaker": "阿部（NSSol）",
+          "text": "SecureCubeから移行する場合の選択肢は3つです。①SecureCube後継製品（同ベンダー）、②BeyondTrust Password Safe（コスト優位）、③One Identity Manager（IGA機能含む）。地銀規模で国内サポート重視なら①か③が多いです。FISC棚卸自動化はどの製品でも対応しますが、FISC用レポートテンプレートは弊社から提供できます。"
+        },
+        {
+          "speaker": "遠藤CIO",
+          "text": "グループ4社のIDを統一管理したい。今は各社バラバラです。"
+        },
+        {
+          "speaker": "阿部（NSSol）",
+          "text": "グループ共通IGAを銀行本体に設置し、各子会社をコネクタ接続するモデルが最適です。グループポリシー（MFA必須・棚卸サイクル等）は統一、子会社固有の権限マトリクスは独自定義。One Identity Manager Enterpriseはグループ・マルチテナント構成に対応しています。"
+        },
+        {
+          "speaker": "佐野課長",
+          "text": "コスト感はどれくらいですか？"
+        },
+        {
+          "speaker": "阿部（NSSol）",
+          "text": "地銀グループ規模（2500名・4社）でOne Identity Managerを導入する場合、初期構築1500〜2500万円、年間ライセンス500〜800万円が目安です。FISC棚卸の工数削減（現状年30人日 → 1人日）で3〜4年でROIが出ます。"
+        }
+      ],
+      "issues_surfaced": [
+        "SecureCube 2027年EOL対応",
+        "グループ4社バラバラのID管理統合",
+        "FISC棚卸自動化と工数削減ROI"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "PAM更改",
+      "current": "SecureCube（2027年EOL予定）",
+      "target": "後継PAM選定・移行",
+      "priority": "critical"
+    },
+    {
+      "item": "グループID統合",
+      "current": "4社バラバラ",
+      "target": "グループIGA（One Identity等）",
+      "priority": "high"
+    }
+  ],
+  "html_needs_identified": [
+    "地銀・保険向けSecureCube後継製品比較",
+    "グループ企業向けIGA統合アーキテクチャ設計書"
+  ]
+}

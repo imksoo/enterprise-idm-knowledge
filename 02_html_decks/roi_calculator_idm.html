@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ID管理 ROI試算フレーム</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+
+.roi-section{background:#fff;border-radius:10px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px}
+.big-num{font-size:2.2em;font-weight:900;color:#1e293b;margin:8px 0}
+.unit{font-size:.65em;color:#64748b;font-weight:400}
+.calc-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:.87em}
+.calc-header{font-weight:700;color:#64748b;font-size:.78em;text-transform:uppercase;letter-spacing:.05em}
+.total-row{background:#f0fdf4;border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;font-weight:700;margin-top:8px}
+</style></head>
+<body><div class="page">
+<h1>💰 ID管理 ROI試算フレーム</h1>
+<p class="subtitle">投資対効果の説明資料 — IT経営層・CFO向け | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note">
+<strong>このフレームの使い方：</strong> 顧客のヒアリング結果（従業員数・インシデント履歴・棚卸し工数等）を入れることで
+投資対効果を概算します。数値は保守的に設定してください。ROIが出る根拠として提案書に添付します。
+</div>
+
+<h2>Cost Avoidance（リスク回避価値）試算</h2>
+<div class="roi-section">
+<h3>ランサムウェア侵害コストの回避</h3>
+<div class="calc-row calc-header"><div>項目</div><div>現在の確率/年</div><div>平均被害額</div><div>期待損失（年）</div></div>
+<div class="calc-row"><div>ランサムウェア侵害（業務停止5日）</div><div>5%</div><div>5億円</div><div>2,500万円</div></div>
+<div class="calc-row"><div>IDベースのデータ漏洩インシデント</div><div>10%</div><div>3億円（調査+通知+訴訟）</div><div>3,000万円</div></div>
+<div class="calc-row"><div>退職者ID悪用インシデント</div><div>8%</div><div>5,000万円</div><div>400万円</div></div>
+<div class="total-row"><div>リスク回避期待値（年）</div><div>-</div><div>-</div><div style="color:#15803d">5,900万円/年</div></div>
+<p style="font-size:.8em;color:#64748b;margin-top:8px">※確率・被害額は業種・規模によって変動します。JPCERT等の統計値をベースに顧客に合わせて調整してください。</p>
+</div>
+
+<div class="roi-section">
+<h3>運用工数削減価値</h3>
+<div class="calc-row calc-header"><div>業務</div><div>現在の工数/年</div><div>IGA後工数/年</div><div>削減価値</div></div>
+<div class="calc-row"><div>ID棚卸し（FISC/PCI対応）</div><div>60人日</div><div>5人日（自動化）</div><div>270万円（@50万円/人月）</div></div>
+<div class="calc-row"><div>プロビジョニング（入退社・異動）</div><div>0.5人日×月300件＝1,800件/年</div><div>自動化（0.05人日/件）</div><div>337万円</div></div>
+<div class="calc-row"><div>パスワードリセット対応</div><div>2,000件/年×0.5時間</div><td>SSPRで80%削減（400件）</td><div>160万円（ヘルプデスク）</div></div>
+<div class="calc-row"><div>特権ID申請・承認・記録</div><div>3人日×月12回</div><div>PAMで自動化（0.2人日）</div><div>190万円</div></div>
+<div class="total-row"><div>運用削減効果（年）</div><div>-</div><div>-</div><div style="color:#15803d">957万円/年</div></div>
+</div>
+
+<h2>投資コスト見積もり（参考）</h2>
+<div class="roi-section">
+<div class="calc-row calc-header"><div>構成要素</div><div>初期費用</div><div>年間費用（継続）</div><div>備考</div></div>
+<div class="calc-row"><div>IGA製品（1000ユーザー規模）</div><div>1,000万円</div><div>2,000万円/年</div><div>SaaS型（One Identity等）</div></div>
+<div class="calc-row"><div>PAM製品（200特権ID）</div><div>500万円</div><div>1,000万円/年</div><div>BeyondTrust等中規模向け</div></div>
+<div class="calc-row"><div>Entra P2（1000ユーザー）</div><div>0</div><div>1,032万円/年</div><div>860円×1000名×12ヶ月</div></div>
+<div class="calc-row"><div>導入SI工数（IGA）</div><div>1,500万円</div><div>200万円/年（保守）</div><div>要件定義〜展開</div></div>
+<div class="total-row"><div>合計投資額</div><div>3,000万円</div><div>4,232万円/年</div><div>-</div></div>
+</div>
+
+<h2>ROIサマリー</h2>
+<div class="grid3">
+<div style="background:#fff;border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+<div style="color:#64748b;font-size:.8em">年間効果（リスク回避+工数削減）</div>
+<div class="big-num">6,857<span class="unit">万円/年</span></div>
+<div style="color:#15803d;font-size:.82em">5,900万（リスク回避）+ 957万（工数削減）</div>
+</div>
+<div style="background:#fff;border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+<div style="color:#64748b;font-size:.8em">投資回収期間（初期費用3,000万）</div>
+<div class="big-num">5.2<span class="unit">ヶ月</span></div>
+<div style="color:#1d4ed8;font-size:.82em">3,000万 ÷ (6,857万/年) ≒ 0.44年</div>
+</div>
+<div style="background:#fff;border-radius:10px;padding:20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)">
+<div style="color:#64748b;font-size:.8em">3年間の純効果（投資額控除後）</div>
+<div class="big-num">+8,500<span class="unit">万円</span></div>
+<div style="color:#15803d;font-size:.82em">効果合計 - 総投資 = 黒字</div>
+</div>
+</div>
+
+<div class="card yellow" style="margin-top:20px">
+<h3>⚠️ ROI提案時の注意事項</h3>
+<ul class="list">
+<li>ランサムウェア被害額は保守的に計算。過剰な主張は信頼を失います。</li>
+<li>リスク回避価値は「期待値」です。「絶対に侵害が起きる」という表現は避けること。</li>
+<li>工数削減の数値は必ずヒアリングで実績値を確認してから入れること。</li>
+<li>数値の出典（JPCERT、IPAレポート等）を提案書に明記すること。</li>
+</ul>
+</div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

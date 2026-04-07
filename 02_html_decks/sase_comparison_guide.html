@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SASE製品比較ガイド</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+</style></head>
+<body><div class="page">
+<h1>🌐 SASE製品比較ガイド</h1>
+<p class="subtitle">Zscaler / Netskope / Palo Alto Prisma / Microsoft SASE | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note">
+<strong>SASEとは：</strong> SD-WAN + セキュリティ（CASB・SWG・ZTNA・FWaaS）をクラウドで統合したアーキテクチャです。
+VPNに依存した境界型セキュリティから、ID・デバイス・コンテキストに基づく動的アクセス制御への移行を実現します。
+</div>
+
+<h2>主要SASE製品概要</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>製品</th><th>強み</th><th>弱み</th><th>日本対応</th><th>価格帯</th></tr></thead>
+<tbody>
+<tr><td><strong>Zscaler ZIA + ZPA</strong><br>Zscaler</td><td>ZIA（Webフィルタリング）とZPA（ゼロトラストアクセス）の組み合わせが最強。大規模展開実績No.1。Clientlessアクセスあり。</td><td>SD-WAN機能は別途必要（Zscaler ZDX等）。初期設定の複雑さ。</td><td><span class="badge b-green">日本DCあり・日本法人あり</span></td><td>ユーザー1000名: 3,000〜6,000万/年</td></tr>
+<tr><td><strong>Netskope SSE</strong><br>Netskope</td><td>CASBが業界最強クラス。シャドーIT可視化に優れる。クラウドアプリのデータ制御が詳細。</td><td>ZTNA機能はZscalerより弱い部分あり。SD-WAN統合は限定的。</td><td><span class="badge b-blue">日本拠点あり</span></td><td>ユーザー1000名: 2,500〜5,000万/年</td></tr>
+<tr><td><strong>Palo Alto Prisma Access</strong><br>Palo Alto Networks</td><td>NGFWベースの深いパケット検査。SD-WAN統合（Prisma SD-WAN）。既存PAN-OS管理者には慣れ親しんだUI。</td><td>コスト高め。設定が複雑。</td><td><span class="badge b-green">日本法人・パートナー多数</span></td><td>ユーザー1000名: 4,000〜8,000万/年</td></tr>
+<tr><td><strong>Microsoft Entra Internet Access</strong><br>Microsoft</td><td>M365/Entra ID との深い統合。追加コストが小さい（Entra P2に含む機能あり）。管理コンソール統一。</td><td>機能成熟度はZscaler等に劣る（発展途上）。非Microsoft環境の制御は限定的。</td><td><span class="badge b-green">日本DCあり</span></td><td>M365 E5に含む場合あり</td></tr>
+</tbody>
+</table></div>
+
+<h2>機能別比較</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>機能</th><th>Zscaler</th><th>Netskope</th><th>Palo Alto</th><th>Microsoft</th></tr></thead>
+<tbody>
+<tr><td><strong>SWG（Webフィルタリング）</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cn">◎</td><td class="cn">○</td></tr>
+<tr><td><strong>CASB（クラウドアプリ制御）</strong></td><td class="cn">○</td><td class="cn">◎（業界最強）</td><td class="cn">○</td><td class="cn">○（Defender CASB）</td></tr>
+<tr><td><strong>ZTNA（ゼロトラストアクセス）</strong></td><td class="cn">◎（ZPA）</td><td class="cn">○</td><td class="cn">○</td><td class="cn">○（Entra Internet Access）</td></tr>
+<tr><td><strong>Clientlessアクセス（ブラウザ経由）</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cp">△</td><td class="cp">△</td></tr>
+<tr><td><strong>DLP（データ漏洩防止）</strong></td><td class="cn">○</td><td class="cn">◎</td><td class="cn">○</td><td class="cn">○（Purview連携）</td></tr>
+<tr><td><strong>SD-WAN統合</strong></td><td class="cp">△（ZIA SD-WAN）</td><td class="cp">△（提携ベンダー）</td><td class="cn">◎（Prisma SD-WAN）</td><td class="cm">-</td></tr>
+<tr><td><strong>Entra ID / SAML統合</strong></td><td class="cn">◎</td><td class="cn">◎</td><td class="cn">◎</td><td class="cn">◎（ネイティブ）</td></tr>
+</tbody>
+</table></div>
+
+<h2>顧客環境別推奨</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>顧客環境</th><th>推奨</th><th>理由</th></tr></thead>
+<tbody>
+<tr><td>Microsoft 365中心・コスト重視</td><td><strong>Microsoft Entra Internet Access + Entra PIM</strong></td><td>追加コスト最小。M365 E5ライセンスがあればほぼ込み。</td></tr>
+<tr><td>SaaS多数・シャドーIT問題</td><td><strong>Netskope SSE</strong></td><td>CASB最強。150以上のSaaSを詳細制御。</td></tr>
+<tr><td>客先常駐・外部委託多数</td><td><strong>Zscaler ZPA（Clientlessアクセス）</strong></td><td>管理外PCからブラウザのみでアクセス可能。</td></tr>
+<tr><td>大規模製造・工場拠点多数</td><td><strong>Palo Alto Prisma Access + SD-WAN</strong></td><td>拠点間WAN統合とセキュリティ統合。NGFW深い検査。</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

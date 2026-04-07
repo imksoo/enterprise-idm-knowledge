@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IGA製品選定ガイド</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.alert{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+
+.score-bar{height:8px;border-radius:4px;background:#f1f5f9;margin-top:4px;overflow:hidden}
+.score-fill{height:8px;border-radius:4px;background:#3b82f6;transition:width .3s}
+</style></head>
+<body><div class="page">
+<h1>📋 IGA製品選定ガイド</h1>
+<p class="subtitle">Identity Governance & Administration — SailPoint / Saviynt / One Identity / Omada / Entra ID Governance | 2026-04-07</p>
+
+<div class="note">
+<strong>IGAが必要な理由：</strong> 従業員が増減・異動するたびに手動でIDを管理する従来手法は、
+「退職者IDの放置（幽霊アカウント）」「過剰権限の蓄積」「棚卸しの工数爆発」という3大問題を引き起こします。
+IGAはID管理を自動化し、ガバナンス証跡を自動生成します。
+</div>
+
+<h2>主要IGA製品の概要</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>製品名</th><th>ベンダー</th><th>展開方式</th><th>ターゲット規模</th><th>日本実績</th><th>価格帯（年間）</th></tr></thead>
+<tbody>
+<tr><td><strong>SailPoint Identity Security Cloud</strong></td><td>SailPoint</td><td>SaaS主体 / オンプレ(IdentityIQ)</td><td>中〜大企業（5000〜数十万ID）</td><td><span class="badge b-blue">金融・製造での導入増加</span></td><td>1000ユーザー: 2,000〜5,000万/年</td></tr>
+<tr><td><strong>Saviynt Enterprise Identity Cloud</strong></td><td>Saviynt</td><td>SaaS</td><td>大企業（グローバル）</td><td><span class="badge b-gray">国内事例限定的</span></td><td>1000ユーザー: 1,500〜4,000万/年</td></tr>
+<tr><td><strong>One Identity Manager</strong></td><td>One Identity（Quest）</td><td>オンプレ / SaaS(Starling)</td><td>中堅〜大企業。コネクタ多数</td><td><span class="badge b-blue">国内SI経由実績多</span></td><td>1000ユーザー: 1,500〜4,000万/年</td></tr>
+<tr><td><strong>Omada Identity Cloud</strong></td><td>Omada</td><td>SaaS</td><td>中堅企業</td><td><span class="badge b-gray">国内認知低</span></td><td>500ユーザー: 500〜1,500万/年</td></tr>
+<tr><td><strong>Microsoft Entra ID Governance</strong></td><td>Microsoft</td><td>SaaS（Azure）</td><td>全規模（M365環境）</td><td><span class="badge b-green">M365導入企業で自然選択</span></td><td>P2ライセンスに含む（860円/ユーザー/月〜）</td></tr>
+<tr><td><strong>Okta Identity Governance</strong></td><td>Okta</td><td>SaaS</td><td>中〜大企業</td><td><span class="badge b-blue">Okta既存顧客向け</span></td><td>1000ユーザー: 2,000〜4,500万/年</td></tr>
+</tbody>
+</table></div>
+
+<h2>機能比較マトリクス</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>機能</th><th>SailPoint</th><th>One Identity</th><th>Entra Governance</th><th>Saviynt</th><th>Okta IGA</th></tr></thead>
+<tbody>
+<tr><td><strong>プロビジョニング自動化（SCIM/HR連携）</strong></td><td class="cn">◎</td><td class="cn">◎</td><td class="cn">○</td><td class="cn">◎</td><td class="cn">○</td></tr>
+<tr><td><strong>アクセス棚卸し（Certification）</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cn">○（Entra Access Review）</td><td class="cn">◎</td><td class="cn">○</td></tr>
+<tr><td><strong>SOD（職務分離）検知</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cp">△（限定的）</td><td class="cn">◎（SAP強み）</td><td class="cp">△</td></tr>
+<tr><td><strong>ロールマイニング（AI）</strong></td><td class="cn">◎（Atlas AI）</td><td class="cn">○</td><td class="cp">△</td><td class="cn">○</td><td class="cm">-</td></tr>
+<tr><td><strong>コネクタ数（対応システム）</strong></td><td class="cn">◎（200+）</td><td class="cn">◎（300+、日本製品含む）</td><td class="cn">○（Microsoft製品強み）</td><td class="cn">○（160+）</td><td class="cn">○（Okta連携）</td></tr>
+<tr><td><strong>SAP連携（SOD）</strong></td><td class="cn">○</td><td class="cn">◎（One Identity SAP Module）</td><td class="cm">-</td><td class="cn">◎（SAP特化）</td><td class="cm">-</td></tr>
+<tr><td><strong>代理店・外部ID管理</strong></td><td class="cn">◎（Entitlement Mgmt）</td><td class="cn">○</td><td class="cn">○（External ID）</td><td class="cn">○</td><td class="cp">△</td></tr>
+<tr><td><strong>FISC/PCI棚卸しレポート</strong></td><td class="cn">○（カスタム可）</td><td class="cn">◎（国内テンプレ実績）</td><td class="cp">△（カスタム要）</td><td class="cn">○</td><td class="cp">△</td></tr>
+<tr><td><strong>日本語UI・国内サポート</strong></td><td class="cp">△（英語UI・パートナー対応）</td><td class="cn">○（日本語UI一部）</td><td class="cn">◎（日本語完全対応）</td><td class="cm">-（英語中心）</td><td class="cn">○</td></tr>
+</tbody>
+</table></div>
+
+<h2>選定フローチャート</h2>
+<div class="card">
+<h3>質問1: SAP環境でSOD管理が最重要ですか？</h3>
+<p>→ <span class="badge b-blue">Yes</span> <strong>Saviynt または One Identity（SAP Module）</strong>を優先検討<br>→ <span class="badge b-gray">No</span> 次の質問へ</p>
+</div>
+<div class="card">
+<h3>質問2: Microsoft 365 / Azure が中心環境ですか？</h3>
+<p>→ <span class="badge b-blue">Yes</span> <strong>Microsoft Entra ID Governance</strong>（追加コスト最小）が最有力<br>→ <span class="badge b-gray">No</span> 次の質問へ</p>
+</div>
+<div class="card">
+<h3>質問3: FISC対応で国産サポートが必須ですか？（地銀・保険）</h3>
+<p>→ <span class="badge b-blue">Yes</span> <strong>One Identity Manager（国内SI対応）</strong>が現実解<br>→ <span class="badge b-gray">No</span> 次の質問へ</p>
+</div>
+<div class="card">
+<h3>質問4: グローバル対応・高度AIガバナンスが必要ですか？</h3>
+<p>→ <span class="badge b-blue">Yes</span> <strong>SailPoint Identity Security Cloud</strong>（グローバルシェア1位）<br>→ <span class="badge b-gray">中規模・コスト重視</span> <strong>Omada または Entra Governance</strong></p>
+</div>
+
+<h2>ROI算出の考え方</h2>
+<div class="grid2">
+<div class="card green"><h3>💰 削減できるコスト</h3><ul class="list">
+<li>ID棚卸し工数: 年30人日→3人日（▲90%）</li>
+<li>退職者ID無効化遅延リスク（インシデント費用換算: 数千万〜数億円）</li>
+<li>監査対応コスト（FISC・PCI：年20〜50人日→自動生成）</li>
+<li>ヘルプデスク（パスワードリセット: 全問合せの20〜30%→SSPR自動化）</li>
+</ul></div>
+<div class="card yellow"><h3>⚠️ 見落としがちなコスト</h3><ul class="list">
+<li>コネクタ開発費（自社独自システムとの連携）</li>
+<li>ロール定義・SODポリシー設計の初期工数（大規模: 600〜1500人日）</li>
+<li>ビジネス部門のレビュー教育・定着化コスト</li>
+<li>年次のロール棚卸し・見直し運用コスト</li>
+</ul></div>
+</div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

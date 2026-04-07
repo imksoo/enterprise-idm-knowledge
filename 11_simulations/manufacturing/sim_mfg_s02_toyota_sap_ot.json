@@ -1,0 +1,206 @@
+{
+  "metadata": {
+    "id": "sim_mfg_s02",
+    "title": "大手自動車メーカー：SAP S/4移行とOT/IT境界ID設計",
+    "company_profile": "トヨタ型大手自動車メーカー。社員8万名（グループ含む）、工場数40拠点（国内20・海外20）。SAP R/3からS/4HANA移行プロジェクト進行中。OTネットワーク（SCADA/MES）のセキュリティ強化も経産省指示で急務。",
+    "scenario_date": "2026年8月",
+    "industry": "manufacturing",
+    "difficulty": "advanced"
+  },
+  "personas": [
+    {
+      "id": "ciso",
+      "name": "佐々木CISO",
+      "role": "グループCISO",
+      "background": "元経産省技官。OTセキュリティに詳しい。",
+      "priorities": [
+        "IEC 62443準拠",
+        "OT/IT境界の見える化",
+        "グループ統制"
+      ],
+      "concerns": [
+        "工場の古いSCADAへのランサムウェア感染",
+        "Colonial Pipeline型攻撃",
+        "サプライヤー経由の侵害"
+      ]
+    },
+    {
+      "id": "sap_manager",
+      "name": "田中リーダー",
+      "role": "SAP移行PL",
+      "background": "SAP BASIS歴12年。S/4移行で多忙。",
+      "priorities": [
+        "移行スケジュール死守",
+        "業務継続性",
+        "SOD違反解消"
+      ],
+      "concerns": [
+        "J-SOX監査でSOD135件指摘された",
+        "移行後のロールマイニングが大変",
+        "業務部門の協力が得られるか"
+      ]
+    },
+    {
+      "id": "factory_it",
+      "name": "川口主任",
+      "role": "工場ITインフラ担当",
+      "background": "現場経験豊富。OT機器の実情を知る。",
+      "priorities": [
+        "工場ラインの安定稼働",
+        "OTシステムへの影響最小化"
+      ],
+      "concerns": [
+        "SCADAのWindowsXPが3台ある",
+        "ベンダーに変更拒否されている",
+        "工場を止めたら数億円損失"
+      ]
+    },
+    {
+      "id": "nssol",
+      "name": "高橋（NSSol）",
+      "role": "SAP GRC / OTセキュリティSE",
+      "background": "SAP GRC Access Control専門家。OTセキュリティ認定保有。",
+      "priorities": [
+        "現実的な解決策提示"
+      ],
+      "concerns": []
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：SAP SOD違反135件の緊急整理",
+      "setting": "本社情報システム部。J-SOX内部監査の結果が出た週。",
+      "dialogue": [
+        {
+          "speaker": "田中リーダー",
+          "text": "J-SOX監査でSAP SOD違反が135件と指摘されました。来月の監査委員会報告前に高橋さんに相談したくて。"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "135件はS/4移行前のR/3時代から引き継いだ権限の肥大化が主因です。まずSAP GRC Access Controlのロールマイニング機能で『使用実績ゼロの権限』を特定しましょう。通常60〜70%のSOD違反はこれで解消できます。"
+        },
+        {
+          "speaker": "田中リーダー",
+          "text": "ロールマイニングって何日かかりますか？"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "GRCのUsage Sync機能でSAPシステムログを3〜6ヶ月分取り込むと、1週間で使用実績マップが完成します。そこから未使用権限を自動削除候補にしてリストアップ。業務部門の承認を取りながら削除していきます。135件を2ヶ月で60件以下に削減できます。"
+        },
+        {
+          "speaker": "佐々木CISO",
+          "text": "根本対策として、S/4移行後は最小権限のロール設計を最初からやり直したい。"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "S/4HanaではFiori UIとロール概念が変わっています。Business Roleという新しい概念でビジネス機能を整理できます。移行時にロールをゼロリセットして最小権限で再設計する『White Slate』アプローチが、長期的に最も効果的です。移行工期は3〜6ヶ月延びますが、その後の棚卸コストが激減します。"
+        }
+      ],
+      "issues_surfaced": [
+        "R/3から引き継いだPrivilege Creepが135件SOD違反を産んでいる",
+        "S/4移行時のWhite Slateアプローチ検討",
+        "GRCのUsage Sync活用によるロールマイニング"
+      ]
+    },
+    {
+      "title": "場面2：工場OT環境のID課題",
+      "setting": "工場視察後の報告会。",
+      "dialogue": [
+        {
+          "speaker": "川口主任",
+          "text": "第4工場のSCADA端末を見てもらいましたよね。あれ、Windows XPです。ベンダーから『OS変更するとサポート外』と言われています。ログイン管理もローカルの固定パスワードしかありません。"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "これはOTセキュリティの典型的なジレンマです。ベンダーロックインで変更できないケースがある。この場合、まずネットワーク分離を徹底することが優先です。OTネットワークとITネットワークの間にFirewallとデータダイオードを設置して、OT側への侵入経路を絞ります。"
+        },
+        {
+          "speaker": "佐々木CISO",
+          "text": "ベンダーのリモートメンテナンスはどうしていますか？"
+        },
+        {
+          "speaker": "川口主任",
+          "text": "VPN接続で入ってもらっています。いつ入ってきたか、何をやったかは確認できていません。"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "これが最大のリスクです。ベンダーのリモートアクセスをPAMで制御してください。セッション録画で何をやったか記録し、作業前に担当者の承認を取るJIT（Just-in-Time）アクセスにする。Colonial Pipeline攻撃でもVPNのベンダーアカウントが侵入口でした。"
+        },
+        {
+          "speaker": "佐々木CISO",
+          "text": "IEC 62443ではどこまで要求されていますか？"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "IEC 62443-3-3のSR 1.1（識別と認証）とSR 2.1（認可の施行）が該当します。リモートアクセスは全て個人ID、MFA必須、作業ログ保存が求められます。XPのSCADAも、PAMのProxy経由でアクセスさせれば端末自体は変えずに認証強化できます。",
+          "subtext": "PAMのProxy PAM機能：XPなど古いOTシステムもPAM経由でセッション管理できる。"
+        }
+      ],
+      "issues_surfaced": [
+        "Windows XP SCADA 3台（変更不可）",
+        "ベンダーリモートアクセスの無管理状態",
+        "OT/ITネットワーク分離の不完全さ",
+        "IEC 62443準拠ギャップ"
+      ]
+    },
+    {
+      "title": "場面3：グローバルサプライヤーID管理",
+      "setting": "サプライチェーン担当とのMTG。",
+      "dialogue": [
+        {
+          "speaker": "田中リーダー",
+          "text": "一次〜三次サプライヤーが設計データ（CATIA）にアクセスします。現状はゲストアカウントを発行して管理していますが、退職したサプライヤー担当者のIDが残っているケースが多数あります。"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "B2B Federationの導入を検討してください。サプライヤー企業のAzure AD（またはEntra ID）と御社のEntraをFederationして、サプライヤーの担当者が自社の認証情報で御社システムにアクセスできるようにします。サプライヤー担当者が退職すると、サプライヤー側でアカウント削除→御社へのアクセスも自動遮断されます。"
+        },
+        {
+          "speaker": "佐々木CISO",
+          "text": "サプライヤーが全部Azure ADを持っているわけではないですよね？"
+        },
+        {
+          "speaker": "高橋（NSSol）",
+          "text": "おっしゃる通りです。EntraのExternal ID（B2B）機能では、Entraを持たない相手先でもMicrosoftアカウントやGoogleアカウントで認証できます。ただし機密設計データへのアクセスはMFAを必須にし、アクセス期限付きのEntitlement Managementで管理するのが安全です。"
+        }
+      ],
+      "issues_surfaced": [
+        "サプライヤーゲストIDの退職後残留",
+        "B2B Federation未整備",
+        "機密設計データアクセスのEntitlement Management不在"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "SAP SOD違反",
+      "current": "135件（J-SOX指摘）",
+      "target": "60件以下→0件（GRC White Slate）",
+      "priority": "critical"
+    },
+    {
+      "item": "OT環境ID管理",
+      "current": "固定ローカルID・ベンダーVPN無管理",
+      "target": "PAM Proxy + JITアクセス + セッション録画",
+      "priority": "critical"
+    },
+    {
+      "item": "サプライヤーID",
+      "current": "ゲストID手動管理・退職後残留",
+      "target": "Entra External ID B2B Federation",
+      "priority": "high"
+    },
+    {
+      "item": "IEC 62443準拠",
+      "current": "ギャップ多数",
+      "target": "SR 1.1/2.1対応完了",
+      "priority": "high"
+    }
+  ],
+  "html_needs_identified": [
+    "SAP GRC SOD違反解消ステップバイステップガイド",
+    "OT/IT境界ID管理アーキテクチャ設計書テンプレート",
+    "B2Bフェデレーション設計ガイド（サプライヤーID連携）",
+    "IEC 62443 × ID管理要件マッピング表"
+  ]
+}

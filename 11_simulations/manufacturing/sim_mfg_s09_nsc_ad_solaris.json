@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "id": "sim_mfg_s09",
+    "title": "鉄鋼・素材メーカー：合併後ADドメイン統合とSolaris移行",
+    "scenario_date": "2026年5月",
+    "industry": "steel"
+  },
+  "company_profile": "新日本製鐵×住友金属型大型合併から15年経過した大手鉄鋼メーカー。旧2社のADドメインが並存し、信頼関係で繋いでいる。製鉄所にSolaris 11サーバー20台が稼働中（高炉制御支援システム）。",
+  "personas": [
+    {
+      "id": "cio",
+      "name": "石橋CIO",
+      "role": "CIO"
+    },
+    {
+      "id": "infra",
+      "name": "大塚部長",
+      "role": "インフラ部門長"
+    },
+    {
+      "id": "nssol",
+      "name": "前田（NSSol）",
+      "role": "AD統合専門SE"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：15年物の2ドメイン並存の解消",
+      "setting": "インフラ統合会議。",
+      "dialogue": [
+        {
+          "speaker": "大塚部長",
+          "text": "合併から15年、旧新日鐵ドメインと旧住金ドメインが双方向信頼でつながったままです。マネジメント层から『そろそろ整理しろ』と言われています。"
+        },
+        {
+          "speaker": "前田（NSSol）",
+          "text": "15年物の双方向信頼は最もリスクが高い構成です。SID Historyが積み重なっている可能性が高く、Mimikatzで悪用されると一瞬でもう一方のドメインが陥落します。まずADの健全性診断（AD Health Check）を実施して、現在のリスクを定量化しましょう。"
+        },
+        {
+          "speaker": "石橋CIO",
+          "text": "統合方法は？"
+        },
+        {
+          "speaker": "前田（NSSol）",
+          "text": "3パターンです。①新ドメイン作成して双方から移行、②旧新日鐵ドメインを正式とし住金ドメインユーザーを移行、③Entra IDを共通基盤にして物理ドメイン並存継続。コスト最小は②、リスク最小は①か③です。15年分の権限を棚卸しながら移行するので12〜18ヶ月の工期です。"
+        },
+        {
+          "speaker": "大塚部長",
+          "text": "Solaris 11の20台もあります。LDAP認証していますが、移行するとどうなりますか？"
+        },
+        {
+          "speaker": "前田（NSSol）",
+          "text": "Solaris 11はAD連携にKerberos + LDAPを使います。新ドメインに移行してもSolaris側のKrb5.conf/ldap.confを更新するだけで対応できます。ただし高炉制御支援というCriticalシステムなので、変更管理のリスク評価と本番稼働前の十分なテストが必要です。"
+        }
+      ],
+      "issues_surfaced": [
+        "15年物双方向信頼のSID Historyリスク",
+        "3ドメイン統合パターンの選択",
+        "Solaris 11のAD移行対応"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "ADドメイン統合",
+      "current": "2ドメイン双方向信頼（15年）",
+      "target": "新ドメイン統合または③Entra共通化",
+      "priority": "high"
+    },
+    {
+      "item": "Solaris 11移行",
+      "current": "独自LDAP認証",
+      "target": "新ADドメインへのKerberos/LDAP移行",
+      "priority": "medium"
+    }
+  ],
+  "html_needs_identified": [
+    "ADドメイン統合移行計画テンプレート",
+    "Solarisサーバーの認証基盤移行技術ガイド"
+  ]
+}

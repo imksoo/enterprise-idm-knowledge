@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ID管理 現状診断テンプレート</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+
+.q-block{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.q-num{display:inline-block;width:24px;height:24px;border-radius:50%;background:#3b82f6;color:#fff;font-size:.75em;font-weight:700;text-align:center;line-height:24px;margin-right:8px}
+.options{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.opt{padding:6px 14px;border-radius:8px;font-size:.8em;border:1px solid #e2e8f0;cursor:pointer;background:#f8fafc}
+.opt.red{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
+.opt.yellow{border-color:#fde047;background:#fefce8;color:#d97706}
+.opt.green{border-color:#86efac;background:#f0fdf4;color:#15803d}
+.score-legend{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.sl{padding:6px 16px;border-radius:8px;font-size:.82em;font-weight:700}
+.cat-header{background:#1e293b;color:#f8fafc;padding:10px 16px;border-radius:8px;margin:20px 0 12px;font-weight:700;font-size:.9em}
+</style></head>
+<body><div class="page">
+<h1>🔎 ID管理 現状診断テンプレート</h1>
+<p class="subtitle">IT部門・CISO・監査部門向け ヒアリングチェックリスト | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note">
+<strong>使い方：</strong> 顧客訪問前にこのテンプレートを確認し、各質問に対する顧客の回答を記録します。
+回答パターンから成熟度スコアを算出し、優先課題を特定します。
+<strong>所要時間目安: 2〜3時間（情報システム部長・CISO・内部監査部門の同席が理想）</strong>
+</div>
+
+<div class="score-legend">
+<span class="sl" style="background:#fef2f2;color:#dc2626">リスク高（早急対応）</span>
+<span class="sl" style="background:#fefce8;color:#d97706">リスク中（12ヶ月以内）</span>
+<span class="sl" style="background:#f0fdf4;color:#15803d">対応済み / リスク低</span>
+</div>
+
+<div class="cat-header">A. アカウントガバナンス</div>
+<div class="q-block"><span class="q-num">1</span><strong>退職者のIDは何日以内に無効化されていますか？</strong>
+<div class="options"><span class="opt green">当日〜翌日（自動）</span><span class="opt yellow">3〜7日以内（手動）</span><span class="opt red">2週間以上/不明</span></div></div>
+<div class="q-block"><span class="q-num">2</span><strong>全アカウントの棚卸しは年に何回実施していますか？</strong>
+<div class="options"><span class="opt green">四半期（年4回以上）</span><span class="opt yellow">年1〜2回</span><span class="opt red">実施していない/不定期</span></div></div>
+<div class="q-block"><span class="q-num">3</span><strong>異動時（部署変更）の権限変更は適切に実施されていますか？</strong>
+<div class="options"><span class="opt green">HR連携で自動変更</span><span class="opt yellow">申請ベースで手動変更</span><span class="opt red">旧権限が残り続ける（権限累積）</span></div></div>
+
+<div class="cat-header">B. 認証セキュリティ</div>
+<div class="q-block"><span class="q-num">4</span><strong>MFA（多要素認証）はどの範囲で適用されていますか？</strong>
+<div class="options"><span class="opt green">全ユーザー・全サービス</span><span class="opt yellow">一部（SaaS・VPNのみ等）</span><span class="opt red">ほぼ未適用</span></div></div>
+<div class="q-block"><span class="q-num">5</span><strong>パスワードポリシーの現状は？</strong>
+<div class="options"><span class="opt green">12文字以上・MFAで補完・Have I Been Pwned確認</span><span class="opt yellow">8文字以上・複雑性あり</span><span class="opt red">8文字以下・複雑性なし・無期限</span></div></div>
+<div class="q-block"><span class="q-num">6</span><strong>フィッシング耐性のある認証方式（FIDO2/証明書）は使用していますか？</strong>
+<div class="options"><span class="opt green">FIDO2/WebAuthn/SmartCardを主要ユーザーに展開</span><span class="opt yellow">一部（管理者のみ等）</span><span class="opt red">未使用</span></div></div>
+
+<div class="cat-header">C. 特権アクセス管理</div>
+<div class="q-block"><span class="q-num">7</span><strong>Domain Admins グループに何名登録されていますか？</strong>
+<div class="options"><span class="opt green">5名以下・日常業務では不使用</span><span class="opt yellow">6〜20名</span><span class="opt red">21名以上/不明/日常業務用アカウントが含まれる</span></div></div>
+<div class="q-block"><span class="q-num">8</span><strong>サーバー保守時のサービスアカウントパスワードはどう管理していますか？</strong>
+<div class="options"><span class="opt green">PAM自動ローテーション（gMSA含む）</span><span class="opt yellow">半年〜年1回手動変更</span><span class="opt red">変更していない/共有している/不明</span></div></div>
+<div class="q-block"><span class="q-num">9</span><strong>特権アクセスのセッションログ（録画・コマンド履歴）は記録していますか？</strong>
+<div class="options"><span class="opt green">全セッション録画（PAM）</span><span class="opt yellow">ログオン記録のみ</span><span class="opt red">記録なし</span></div></div>
+
+<div class="cat-header">D. AD/ID基盤の健全性</div>
+<div class="q-block"><span class="q-num">10</span><strong>Active DirectoryのDCサーバーのOSバージョンは？</strong>
+<div class="options"><span class="opt green">Windows Server 2022</span><span class="opt yellow">Windows Server 2019（2029年EOL）</span><span class="opt red">2016以前/不明</span></div></div>
+<div class="q-block"><span class="q-num">11</span><strong>NTLM認証は使用していますか？（廃止すると壊れるアプリがありますか？）</strong>
+<div class="options"><span class="opt green">完全廃止済み/Kerberos only</span><span class="opt yellow">一部レガシーアプリで使用中</span><span class="opt red">多数のシステムがNTLM依存/調査未実施</span></div></div>
+<div class="q-block"><span class="q-num">12</span><strong>ADのバックアップ（System State/DCバックアップ）は最近いつ取得しましたか？</strong>
+<div class="options"><span class="opt green">毎日自動取得・定期復旧テスト実施</span><span class="opt yellow">週次バックアップ</span><span class="opt red">不定期/不明/復旧テスト未実施</span></div></div>
+
+<div class="cat-header">E. コンプライアンス・規制</div>
+<div class="q-block"><span class="q-num">13</span><strong>FISC安全対策基準への対応状況は？（金融機関向け）</strong>
+<div class="options"><span class="opt green">第11版全項目対応済み・エビデンス整備</span><span class="opt yellow">部分対応・一部未整備</span><span class="opt red">未対応・対応状況不明</span></div></div>
+<div class="q-block"><span class="q-num">14</span><strong>IGA（ID管理・棚卸しの自動化ツール）は導入していますか？</strong>
+<div class="options"><span class="opt green">IGA製品を本番稼働</span><span class="opt yellow">部分的に自動化（スクリプト等）</span><span class="opt red">手動Excel管理</span></div></div>
+
+<h2>診断結果サマリーテンプレート</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>カテゴリ</th><th>回答サマリー</th><th>優先度</th><th>推奨アクション</th></tr></thead>
+<tbody>
+<tr><td>アカウントガバナンス</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
+<tr><td>認証セキュリティ</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
+<tr><td>特権アクセス管理</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
+<tr><td>AD/ID基盤の健全性</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
+<tr><td>コンプライアンス</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

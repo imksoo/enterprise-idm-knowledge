@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "id": "sim_fin_s07",
+    "title": "大手損保：IGA導入と代理店30万ID管理の近代化",
+    "scenario_date": "2026年6月",
+    "industry": "insurance"
+  },
+  "company_profile": "東京海上型大手損保。社員1.5万名。代理店IDが約30万件（法人代理店3万社）。FISC第11版対応。既存IDM製品が老朽化し2028年にEOLを迎える予定。",
+  "personas": [
+    {
+      "id": "ciso",
+      "name": "服部CISO",
+      "role": "CISO"
+    },
+    {
+      "id": "idm_manager",
+      "name": "吉田課長",
+      "role": "IDM担当課長（現行IDMの運用者）"
+    },
+    {
+      "id": "agent_biz",
+      "name": "宮本部長",
+      "role": "代理店業務部長（ID管理の実利用者）"
+    },
+    {
+      "id": "nssol",
+      "name": "西川（NSSol）",
+      "role": "IGA専門SE"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：IGA製品選定と代理店IDの要件整理",
+      "setting": "IDM更改プロジェクト킥Off MTG。",
+      "dialogue": [
+        {
+          "speaker": "吉田課長",
+          "text": "現行IDMが2028年EOLです。IGA製品への移行を検討しています。代理店IDが30万件あるのでスケールが重要です。"
+        },
+        {
+          "speaker": "西川（NSSol）",
+          "text": "30万件は大規模です。SailPoint Identity Security Cloud（SaaS版）はマルチテナントで100万ユーザー超の実績があります。One Identity ManagerはオンプレとSaaSのハイブリッドが得意で大量コネクタが強みです。"
+        },
+        {
+          "speaker": "宮本部長",
+          "text": "代理店担当者の入れ替わりが激しい。離職者のIDが残ることが最大の問題です。代理店側で自分たちのIDを管理できるといい。"
+        },
+        {
+          "speaker": "西川（NSSol）",
+          "text": "SailPointのEntitlement Managementで代理店側にID管理を委譲できます。代理店管理者が自社スタッフのIDを追加・削除し、御社はポリシーと審査権限のみ持つ構造です。代理店セルフサービスと御社ガバナンスを両立できます。"
+        },
+        {
+          "speaker": "服部CISO",
+          "text": "FISC対応の棚卸レポートはIGA製品から自動生成できますか？"
+        },
+        {
+          "speaker": "西川（NSSol）",
+          "text": "SailPoint・One Identity共にFISC用のレポートテンプレートは標準では用意していませんが、レポートエンジンのカスタマイズでFISC第11版の要求項目に合わせたレポート出力が可能です。過去導入事例で作成したFISCテンプレートをご提供できます。"
+        }
+      ],
+      "issues_surfaced": [
+        "代理店30万IDのセルフサービス管理ニーズ",
+        "FISC自動棚卸レポート要件",
+        "IGA製品のスケール（30万件）"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "IGA更改",
+      "current": "老朽IDM（2028年EOL）",
+      "target": "SailPoint/One Identity等の新IGA",
+      "priority": "critical"
+    },
+    {
+      "item": "代理店ID管理",
+      "current": "手動・退職後残留多数",
+      "target": "代理店セルフサービス + FISC自動棚卸",
+      "priority": "high"
+    }
+  ],
+  "html_needs_identified": [
+    "IGA製品選定マトリクス（SailPoint/Saviynt/One Identity）",
+    "代理店等外部ID大量管理アーキテクチャ設計書"
+  ]
+}

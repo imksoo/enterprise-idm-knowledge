@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "id": "sim_x_s06",
+    "title": "大手IT企業：全社ゼロトラスト移行とSASE選定",
+    "scenario_date": "2026年8月",
+    "industry": "IT/SIer"
+  },
+  "company_profile": "NTTデータ型大手SIer。社員3万名。客先常駐が多数。テレワーク率80%。VPNのバンド幅問題が深刻。複数のSaaSをバラバラに使用（Slack・Zoom・GitHub等30種）。",
+  "personas": [
+    {
+      "id": "ciso",
+      "name": "今井CISO",
+      "role": "CISO"
+    },
+    {
+      "id": "network",
+      "name": "野村部長",
+      "role": "ネットワーク基盤部長"
+    },
+    {
+      "id": "nssol",
+      "name": "藤本（NSSol）",
+      "role": "ゼロトラスト専門SE"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：VPN廃止とSASE選定",
+      "setting": "インフラ委員会。VPNの限界が来ている。",
+      "dialogue": [
+        {
+          "speaker": "野村部長",
+          "text": "テレワーク率80%でVPNが限界です。バンド幅を増強し続けるのも限界で、SASEへの移行を検討しています。"
+        },
+        {
+          "speaker": "藤本（NSSol）",
+          "text": "SASEの主要選択肢はZscaler、Netskope、Palo Alto Prismaの3社です。SIer環境では客先常駐が多いため、エージェントレスでも動作するブラウザアイソレーション機能の有無が重要です。"
+        },
+        {
+          "speaker": "今井CISO",
+          "text": "客先のPCにエージェントをインストールできない場合があります。"
+        },
+        {
+          "speaker": "藤本（NSSol）",
+          "text": "Zscaler ZIA/ZPAはClientless Remote Access（ブラウザのみ）オプションがあります。客先PCからは社内Webアプリにブラウザ経由でアクセス可能です。ただしSSH/RDP等は制約があります。"
+        },
+        {
+          "speaker": "野村部長",
+          "text": "SASEとID管理の連携はどう設計しますか？"
+        },
+        {
+          "speaker": "藤本（NSSol）",
+          "text": "SASE製品とEntra IDをSAML/OAuth連携します。Entraの認証 → SASE側でConditionを評価（デバイスコンプライアンス・リスクスコア等）→ 接続許可という流れです。EntraのグループメンバーシップでSASEのアクセスポリシーが制御できます。"
+        }
+      ],
+      "issues_surfaced": [
+        "VPN限界・SASE移行の判断基準",
+        "客先PC（管理外デバイス）のアクセス方法",
+        "SASE + Entra ID 統合設計"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "VPN→SASE移行",
+      "current": "全トラフィックVPN（帯域限界）",
+      "target": "SASE（Zscaler等）段階展開",
+      "priority": "high"
+    },
+    {
+      "item": "デバイス管理",
+      "current": "管理外PC多数（客先常駐）",
+      "target": "ClientlessアクセスまたはMAM",
+      "priority": "medium"
+    }
+  ],
+  "html_needs_identified": [
+    "SASE製品比較（Zscaler/Netskope/Palo Alto）",
+    "SASE+Entra ID統合アーキテクチャ図",
+    "ゼロトラスト移行フェーズロードマップ"
+  ]
+}

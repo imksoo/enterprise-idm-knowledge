@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ADモダナイゼーション ロードマップ</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e} .card.red{border-left-color:#ef4444} .card.yellow{border-left-color:#f59e0b} .card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px} .list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6} .b-green{background:#22c55e} .b-red{background:#ef4444} .b-gray{background:#9ca3af} .b-orange{background:#f97316} .b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.timeline{list-style:none;padding:0;border-left:3px solid #3b82f6;margin-left:12px}
+.timeline li{padding:10px 0 10px 22px;position:relative;font-size:.88em}
+.timeline li::before{content:"";position:absolute;left:-7px;top:14px;width:11px;height:11px;border-radius:50%;background:#3b82f6}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:#3b82f6;color:#fff;font-size:.75em;font-weight:700;margin-right:8px;flex-shrink:0}
+.step-row{display:flex;align-items:flex-start;gap:10px;margin:10px 0;font-size:.88em;line-height:1.6}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}table{box-shadow:none}}
+
+.phase{background:#fff;border-radius:12px;padding:20px 24px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px;border-top:4px solid #3b82f6}
+.phase.p2{border-top-color:#8b5cf6} .phase.p3{border-top-color:#22c55e} .phase.p4{border-top-color:#f59e0b}
+.phase-header{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.phase-num{font-size:2em;font-weight:900;color:#3b82f6} .phase.p2 .phase-num{color:#8b5cf6} .phase.p3 .phase-num{color:#22c55e} .phase.p4 .phase-num{color:#f59e0b}
+.phase-title{font-size:1.05em;font-weight:700;color:#1e293b} .phase-period{font-size:.82em;color:#64748b}
+.work-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.wi{background:#f8fafc;border-radius:8px;padding:10px 12px;font-size:.83em}
+.wi strong{display:block;margin-bottom:3px;color:#1e293b}
+.risk-bar{height:8px;border-radius:4px;background:#f1f5f9;margin-top:8px}
+.risk-fill{height:8px;border-radius:4px}
+</style></head>
+<body><div class="page">
+<h1>📍 ADモダナイゼーション ロードマップ</h1>
+<p class="subtitle">Active Directory → Entra ID 移行の段階的実施計画 | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note">
+<strong>前提認識：</strong> ADは「一夜にして廃止」できません。多くの日本企業で3〜7年の移行期間が現実的です。
+本ロードマップは「段階的リスク低減」を基本方針とし、ビジネス継続性を最優先します。
+</div>
+
+<h2>全体工程概要</h2>
+<div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:24px">
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;text-align:center;font-size:.82em">
+<div style="background:#dbeafe;padding:12px;border-radius:8px"><strong style="display:block;color:#1d4ed8;font-size:1.1em">Phase 1</strong>0〜6ヶ月<br>診断・基盤整備</div>
+<div style="background:#ede9fe;padding:12px;border-radius:8px"><strong style="display:block;color:#7c3aed;font-size:1.1em">Phase 2</strong>6〜18ヶ月<br>ハイブリッド移行</div>
+<div style="background:#dcfce7;padding:12px;border-radius:8px"><strong style="display:block;color:#15803d;font-size:1.1em">Phase 3</strong>18〜36ヶ月<br>クラウドシフト</div>
+<div style="background:#fef3c7;padding:12px;border-radius:8px"><strong style="display:block;color:#b45309;font-size:1.1em">Phase 4</strong>36ヶ月〜<br>AD縮小・廃止</div>
+</div>
+</div>
+
+<div class="phase">
+<div class="phase-header">
+<div class="phase-num">1</div>
+<div><div class="phase-title">診断・現状可視化・リスク評価</div><div class="phase-period">📅 目安: 0〜6ヶ月</div></div>
+</div>
+<div class="work-items">
+<div class="wi"><strong>🔍 AD健全性診断</strong>BloodHound/Pingcastle等でAD構造分析。SID History・GPO・Trust関係を棚卸し。</div>
+<div class="wi"><strong>👥 アカウント棚卸し</strong>90日未使用・無期限PWD・ネストGrp等の特定。Tier 0/1/2の識別。</div>
+<div class="wi"><strong>📋 アプリ依存調査</strong>AD認証依存アプリケーションの全数調査。NTLM依存（廃止困難）の特定。</div>
+<div class="wi"><strong>⚠️ 2029年問題確認</strong>WS2019/MIM 2016のEOL（2029年）への対応計画策定。</div>
+<div class="wi"><strong>🎯 目標状態定義</strong>最終的にADを完全廃止するか残すかの経営判断。</div>
+</div>
+</div>
+
+<div class="phase p2">
+<div class="phase-header">
+<div class="phase-num">2</div>
+<div><div class="phase-title">ハイブリッド構成・Entra ID Syncの確立</div><div class="phase-period">📅 目安: 6〜18ヶ月</div></div>
+</div>
+<div class="work-items">
+<div class="wi"><strong>🔗 Entra Connect Sync設定</strong>AD→Entra ID 同期設定。UPN整合性確認。PasswordHash Sync or Federation選択。</div>
+<div class="wi"><strong>💻 Entra Hybrid Join展開</strong>Windows PCをHybrid Join化。条件付きアクセス(CA)の段階適用開始。</div>
+<div class="wi"><strong>🛡️ MFA全社展開</strong>SSPR+Microsoft Authenticator全社展開。ADFSがある場合は縮小検討。</div>
+<div class="wi"><strong>🔑 特権ID分離（Tier 0）</strong>Tier 0（DCアクセス可能）IDの特定と専用ワークステーション（PAW）整備。</div>
+<div class="wi"><strong>📦 非M365アプリのSSO化</strong>SaaSアプリのEntra ID SAML/OIDC連携。Azure AD App Proxyでオンプレアプリ公開。</div>
+</div>
+</div>
+
+<div class="phase p3">
+<div class="phase-header">
+<div class="phase-num">3</div>
+<div><div class="phase-title">クラウドシフト・AD依存の系統的削減</div><div class="phase-period">📅 目安: 18〜36ヶ月</div></div>
+</div>
+<div class="work-items">
+<div class="wi"><strong>🏢 新PCはEntra Join（AD参加なし）</strong>新規購入PCはEntra Joinのみ。Intune MDMで管理。GPO代替をIntuneポリシーで実施。</div>
+<div class="wi"><strong>🖥️ サーバーOS認証の移行</strong>LinuxはEntra ID SSHまたはLDAP over TLS。WindowsサーバーはEntra Hybrid Join検討。</div>
+<div class="wi"><strong>🔐 PAM本格展開</strong>特権アカウントをPAM（CyberArk等）管理下に。管理者共有アカウント廃止。</div>
+<div class="wi"><strong>📊 IGA導入</strong>プロビジョニング自動化。FISC/PCI等の棚卸自動化。SOD管理。</div>
+<div class="wi"><strong>🌐 SASE/ゼロトラスト移行</strong>VPN廃止。SASE（Zscaler等）＋Entra ID CAでゼロトラストアクセス。</div>
+</div>
+</div>
+
+<div class="phase p4">
+<div class="phase-header">
+<div class="phase-num">4</div>
+<div><div class="phase-title">AD縮小・廃止（レガシー完全刷新）</div><div class="phase-period">📅 目安: 36ヶ月〜（企業規模による）</div></div>
+</div>
+<div class="work-items">
+<div class="wi"><strong>🏚️ ADドメイン縮小</strong>残留するADドメインを集約（10→2→1）。フォレストTrustを段階廃止。</div>
+<div class="wi"><strong>🔧 NTLM完全廃止</strong>NTLM依存アプリの改修または廃止。Kerberos/OIDCへの切り替え完了。</div>
+<div class="wi"><strong>🗑️ MIM廃止または後継へ</strong>MIM 2016のEOL（2029年）前にIGA製品へ完全移行。</div>
+<div class="wi"><strong>✅ AD廃止またはManagedドメイン化</strong>最終的にAD廃止 or Azure AD DS（Managed Domain）に縮小。</div>
+</div>
+</div>
+
+<h2>移行判断マトリクス（よくある迷いポイント）</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>判断ポイント</th><th>AD継続が有利な条件</th><th>Entra ID移行が有利な条件</th></tr></thead>
+<tbody>
+<tr><td>サーバーOSの割合</td><td>Windows Server主体・Kerberos依存多数</td><td>Linux多数・SaaS多数</td></tr>
+<tr><td>グループポリシー</td><td>複雑なGPO（500オブジェクト超）が業務必須</td><td>MDM（Intune）で代替可能な設定が主体</td></tr>
+<tr><td>海外拠点</td><td>少ない（国内完結）</td><td>海外拠点多数（グローバル統一基盤が必要）</td></tr>
+<tr><td>コンプライアンス</td><td>金融FISC（オンプレを求める要件あり）</td><td>ISO27001・SOC2（クラウド可）</td></tr>
+<tr><td>IT人材</td><td>ADエンジニアが社内に豊富</td><td>クラウドネイティブ人材・SRE主体</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IDインシデント対応プレイブック</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.alert{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+
+.playbook-step{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:5px solid #ef4444}
+.pb-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.pb-time{background:#ef4444;color:#fff;padding:2px 10px;border-radius:10px;font-size:.75em;font-weight:700}
+.pb-title{font-weight:700;font-size:.95em;color:#1e293b}
+</style></head>
+<body><div class="page">
+<h1>🚨 IDインシデント対応プレイブック</h1>
+<p class="subtitle">アカウント侵害・ランサムウェア・特権ID乗っ取り時の初動対応手順 | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="alert">
+<strong>⚠️ 本書の使い方：</strong> インシデント発生時は感情的にならず本書の手順に従ってください。
+<strong>最初の30分の行動が被害を10分の1にする</strong>可能性があります。勝手な「復旧作業」は証拠を消し、被害を拡大させます。
+</div>
+
+<h2>シナリオ別対応手順</h2>
+<h3>シナリオA: 管理者アカウントの乗っ取り疑い</h3>
+<div class="playbook-step">
+<div class="pb-header"><span class="pb-time">T+0〜5分</span><span class="pb-title">状況確認（ログを見る、動かさない）</span></div>
+<ul class="list">
+<li>Entra ID サインインログ / AD セキュリティイベントログで不審な認証元IPを確認</li>
+<li>問題のアカウントの最近の操作（GPO変更・ユーザー追加・ファイル削除）をログで確認</li>
+<li>CISOと上長に即報（口頭+Slack/Teamsプライベートチャンネル）</li>
+</ul>
+</div>
+<div class="playbook-step">
+<div class="pb-header"><span class="pb-time">T+5〜15分</span><span class="pb-title">侵害アカウントの隔離（無効化）</span></div>
+<ul class="list">
+<li>Entra ID: 対象ユーザーをサインインブロック。全セッションを失効（Revoke sessions）</li>
+<li>AD: 対象ユーザーをDisable。AD属性でsmartcardLogonRequired=Trueに設定（追加保護）</li>
+<li>PAM: 対象ユーザーに紐づいた特権セッションを強制切断</li>
+<li>MFAデバイスの登録情報もクリア（乗っ取り者が登録したMFA削除）</li>
+</ul>
+</div>
+<div class="playbook-step">
+<div class="pb-header"><span class="pb-time">T+15〜60分</span><span class="pb-title">横移動の痕跡調査</span></div>
+<ul class="list">
+<li>侵害アカウントがアクセスした全リソースリスト（Entraサインインログ90日分）を取得</li>
+<li>ADで新規作成ユーザー・GPO変更・グループメンバー追加を確認（過去24〜72時間）</li>
+<li>SIEMでLateral Movement指標（Pass-the-Hash / Pass-the-Ticket）を検索</li>
+<li>影響を受けたサーバーはネットワーク隔離（VLANセグメント分離）検討</li>
+</ul>
+</div>
+<div class="playbook-step" style="border-left-color:#f59e0b">
+<div class="pb-header"><span class="pb-time" style="background:#f59e0b">T+1〜24時間</span><span class="pb-title">復旧計画と再発防止</span></div>
+<ul class="list">
+<li>侵害の根本原因特定（フィッシング / 弱パスワード / 未パッチ脆弱性 / インサイダー）</li>
+<li>侵害アカウントのパスワードリセット + MFA再登録（本人確認後）</li>
+<li>KRBTGT パスワード変更（Golden Ticketが作られた可能性がある場合、24時間間隔で2回）</li>
+<li>証拠保全：ログをSOC/SIEMに長期保存。法的対応の可能性があれば改ざん防止保存。</li>
+</ul>
+</div>
+
+<h3 style="margin-top:24px">シナリオB: ランサムウェア感染・ID基盤への波及確認</h3>
+<div class="playbook-step">
+<div class="pb-header"><span class="pb-time">T+0〜10分</span><span class="pb-title">ADの安全性確認（最優先）</span></div>
+<ul class="list">
+<li>DCへのネットワーク疎通確認（pingとポート確認）</li>
+<li>ADイベントログ4625（ログイン失敗）・4720（ユーザー作成）・4728（グループ追加）を確認</li>
+<li>DCのC:/Windows/NTDS/ntds.dit のタイムスタンプ確認（改ざんされていないか）</li>
+<li>AD DCをネットワーク的に最高優先度で保護（DCへのRDP・SMBを一時制限）</li>
+</ul>
+</div>
+<div class="playbook-step">
+<div class="pb-header"><span class="pb-time">T+10〜30分</span><span class="pb-title">特権IDの緊急保護</span></div>
+<ul class="list">
+<li>Domain Admins グループのメンバーを全員確認（不審なアカウントを即無効化）</li>
+<li>Enterprise Admins / Schema Admins グループも同様に確認</li>
+<li>PAMシステムでサービスアカウントのパスワードを全件緊急ローテーション</li>
+<li>Entra ID の緊急アクセスアカウント（Break-glass）の安全性確認</li>
+</ul>
+</div>
+<div class="playbook-step" style="border-left-color:#8b5cf6">
+<div class="pb-header"><span class="pb-time" style="background:#8b5cf6">T+30分〜4時間</span><span class="pb-title">復旧優先順位の決定</span></div>
+<ul class="list">
+<li>AD自体の健全性確認（ADバックアップからの復旧が必要かを判断）</li>
+<li>DCのスナップショット/バックアップの取得状況確認（過去いつのバックアップが使えるか）</li>
+<li>KRBTGT パスワードが漏洩した可能性がある場合は、ADフォレスト全体の復旧（Forest Recovery）を検討</li>
+<li>感染端末とADの間のネットワーク経路を遮断しながら段階的復旧</li>
+</ul>
+</div>
+
+<h2>KRBTGT パスワード変更手順（Golden Ticket対策）</h2>
+<div class="card yellow">
+<h3>⚠️ KRBTGTとは？なぜ変更が必要か</h3>
+<p>KRBTGTはKerberosチケット発行サービスアカウントです。このパスワードが漏洩すると、攻撃者は任意のユーザーに「なりすます」Kerberosチケット（Golden Ticket）を偽造できます。このGolden Ticketは<strong>最大10年間有効</strong>で、パスワードを変えても無効化されません（KRBTGTのパスワードを変えるまで）。</p>
+<p><strong>重要：KRBTGTパスワード変更は24時間間隔で2回実施が必須です。</strong> 1回目でGolden Ticketを無効化、2回目で前のKRBTGTパスワードのキャッシュを完全に削除します。</p>
+</div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

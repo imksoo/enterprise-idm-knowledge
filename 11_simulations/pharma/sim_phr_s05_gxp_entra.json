@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "id": "sim_phr_s05",
+    "title": "大手製薬：FDA GxP環境とEntra ID移行検討",
+    "scenario_date": "2026年7月",
+    "industry": "pharma"
+  },
+  "company_profile": "第一三共型大手製薬。R&D研究者2000名、製造・品質管理部門1500名。FDA査察を定期受検。GxP（Good Practice）環境（研究システム・製造管理システム）は電子記録・電子署名規制（21 CFR Part 11）対象。",
+  "personas": [
+    {
+      "id": "cio",
+      "name": "坂本CIO",
+      "role": "CIO"
+    },
+    {
+      "id": "validation",
+      "name": "藤井主任",
+      "role": "バリデーション担当（GxP規制専門）"
+    },
+    {
+      "id": "nssol",
+      "name": "斉藤（NSSol）",
+      "role": "製薬業界SE"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：GxP環境のEntra移行可否判断",
+      "setting": "情報システム部MTG。AzureへのID統合を議論。",
+      "dialogue": [
+        {
+          "speaker": "坂本CIO",
+          "text": "Entra IDへの統合を進めたいが、GxP環境のシステムも移行対象にできるか検討しています。"
+        },
+        {
+          "speaker": "藤井主任",
+          "text": "GxP環境のシステムは21 CFR Part 11対応の『バリデーション済みシステム』です。認証基盤の変更はCSV（Computer System Validation）の再実施が必要になります。FDA査察でID管理の変更記録を求められます。"
+        },
+        {
+          "speaker": "斉藤（NSSol）",
+          "text": "Entra IDはFDA 21 CFR Part 11に対応した監査ログ（Audit Trail）をサポートしています。MicrosoftはFDA向けのコンプライアンスドキュメント（Compliance Manager）を提供しており、CSVのIQフェーズをサポートする資料があります。ただしOQの実施は御社側の責任です。"
+        },
+        {
+          "speaker": "藤井主任",
+          "text": "電子署名機能はどうですか？Part 11では電子署名の一意性・非否認性が求められます。"
+        },
+        {
+          "speaker": "斉藤（NSSol）",
+          "text": "Entra ID + Microsoft Entra Verified IDを組み合わせると、デジタル証明書ベースの電子署名が実現できます。証明書の発行・失効・監査証跡をEntraで一元管理できます。"
+        }
+      ],
+      "issues_surfaced": [
+        "GxP環境のCSV再実施義務",
+        "21 CFR Part 11電子署名要件",
+        "Entra ID Governance監査ログのPart 11適合性評価"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "GxP環境ID管理",
+      "current": "個別アプリのローカルID（AD非連携）",
+      "target": "Entra ID統合（CSV実施）",
+      "priority": "high"
+    },
+    {
+      "item": "電子署名基盤",
+      "current": "紙署名または古い電子署名ツール",
+      "target": "Entra Verified IDベース電子署名",
+      "priority": "medium"
+    }
+  ],
+  "html_needs_identified": [
+    "FDA 21 CFR Part 11 × ID管理要件解説資料",
+    "GxP環境のCSV移行チェックリスト"
+  ]
+}

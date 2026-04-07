@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>外部ID管理ガイド</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.alert{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+</style></head>
+<body><div class="page">
+<h1>🌐 外部ID管理ガイド</h1>
+<p class="subtitle">代理店・協力会社・外部ベンダーのID管理設計 | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note">
+<strong>外部IDとは：</strong> 自社の正規従業員ではないが、社内システムへのアクセスが必要な人物のIDです。
+代理店（損保・銀行）、協力会社作業員（建設・製造）、外部委託ベンダー（ITシステム保守）、派遣社員、インターンが該当します。
+<strong>外部IDは正規IDの2〜10倍存在する企業も多く、ガバナンス上の最大リスクエリアです。</strong>
+</div>
+
+<h2>外部IDの主な種類と特性</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>種類</th><th>例</th><th>アクセス先</th><th>主なリスク</th><th>推奨管理方式</th></tr></thead>
+<tbody>
+<tr><td><strong>代理店・販売パートナー</strong></td><td>銀行代理店、保険代理店、SaaS再販パートナー</td><td>販売管理・CRM・申請ポータル</td><td>退職担当者のID残留。代理店休業後のID放置。</td><td>代理店セルフ管理ポータル。有効期限必須。</td></tr>
+<tr><td><strong>協力会社・下請け作業員</strong></td><td>建設現場作業員、製造ライン派遣、ITシステム保守</td><td>現場入退場、保守システム、PAM経由接続</td><td>入れ替わりが激しく退職者IDが残る。資格期限切れでの作業。</td><td>PAM Proxyでセッション管理。資格有効期限連動。</td></tr>
+<tr><td><strong>ITベンダー・委託先</strong></td><td>サーバー保守、開発委託、セキュリティMSS</td><td>管理コンソール、サーバーSSH/RDP、DevOps環境</td><td>共有アカウント使用。作業後のID放置。作業ログなし。</td><td>PAMで個人ID化+セッション録画。作業前後の自動有効期限。</td></tr>
+<tr><td><strong>派遣社員・契約社員</strong></td><td>業務派遣、プロジェクト契約</td><td>社内業務システム（正社員と同等）</td><td>契約終了後のID無効化遅延。派遣会社側でHRデータが管理。</td><td>契約終了日をHRISに必須入力。自動無効化。</td></tr>
+<tr><td><strong>監査法人・規制当局</strong></td><td>外部監査人、金融庁検査官</td><td>財務システム（読み取り専用）</td><td>監査期間外のアクセス継続。過剰権限。</td><td>期間限定ID（開始〜終了日時設定）。読み取り専用権限のみ。</td></tr>
+</tbody>
+</table></div>
+
+<h2>外部ID管理の推奨アーキテクチャ</h2>
+<div class="card purple">
+<h3>🏛️ 基本設計思想：「自社認証基盤を外部IDに広げない」</h3>
+<p>外部ユーザーに自社ADアカウントを発行することは避けます。理由：外部ID経由での侵害が自社AD全体に波及するリスクがあるためです。</p>
+<p><strong>推奨アーキテクチャ：</strong> 外部ユーザー専用の認証基盤（Entra External ID / B2B / ゲストアカウント）を設置し、外部IDからはアプリケーション層のみアクセス可能とします。内部ADへの直接経路は遮断します。</p>
+</div>
+<div class="grid2">
+<div class="card green">
+<h3>✅ Microsoft Entra External ID（推奨）</h3>
+<ul class="list">
+<li>外部ユーザーは自社のGoogleアカウント等を使ってEntraにB2Bゲストとして参加</li>
+<li>自社システムのSAML/OIDCアプリには条件付きアクセスでMFA強制</li>
+<li>有効期限・アクセス範囲の細かい制御</li>
+<li>Entra Access Reviewで定期棚卸し自動化</li>
+</ul>
+</div>
+<div class="card">
+<h3>🏗️ ITベンダー向けPAM Proxy</h3>
+<ul class="list">
+<li>外部ベンダーはPAMポータルにIDでログイン</li>
+<li>PAMからサーバーへのSSH/RDPをProxy接続（認証情報は非開示）</li>
+<li>全セッションを録画・キーログ記録</li>
+<li>作業前後でPAMが自動でID有効・無効切り替え</li>
+</ul>
+</div>
+</div>
+
+<h2>外部IDライフサイクル管理（推奨フロー）</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>フェーズ</th><th>アクション</th><th>担当</th><th>ツール</th></tr></thead>
+<tbody>
+<tr><td><strong>申請</strong></td><td>外部ユーザーのアクセス申請（目的・期間・必要権限を必須記載）</td><td>依頼部門のマネージャー</td><td>IGAセルフサービスポータル</td></tr>
+<tr><td><strong>承認</strong></td><td>情報セキュリティ部門 + システムオーナーの承認（2段階）</td><td>セキュリティ/システムオーナー</td><td>IGA承認ワークフロー</td></tr>
+<tr><td><strong>発行</strong></td><td>最小権限での自動ID発行。有効期限を必ず設定。</td><td>自動（IGA）</td><td>IGA + Entra External ID</td></tr>
+<tr><td><strong>棚卸し</strong></td><td>四半期ごとに外部IDの継続必要性を依頼部門が確認</td><td>依頼部門のマネージャー</td><td>IGA Access Review</td></tr>
+<tr><td><strong>失効・廃止</strong></td><td>契約終了日の自動無効化。90日後に完全削除。</td><td>自動（IGA） + HR通知連動</td><td>IGA + 自動スケジュール</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

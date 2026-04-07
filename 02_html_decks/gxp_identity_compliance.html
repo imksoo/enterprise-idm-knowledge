@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GxP・医療規制 ID管理要件</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+</style></head>
+<body><div class="page">
+<h1>💊 GxP・医療規制 ID管理要件</h1>
+<p class="subtitle">製薬・医療機器・医療機関向け コンプライアンス対応ガイド | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note">
+<strong>対象規制：</strong> FDA 21 CFR Part 11（米国）、EU Annex 11（欧州）、厚生労働省 ER/ES指針（日本）、
+医療情報安全ガイドライン（厚生労働省）、個人情報保護法（医療分野ガイダンス）
+</div>
+
+<h2>規制別ID管理要件</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>規制</th><th>対象</th><th>主なID管理要件</th><th>罰則・影響</th></tr></thead>
+<tbody>
+<tr><td><strong>FDA 21 CFR Part 11</strong></td><td>米国FDA査察対象システム（治験・製造・品質管理）</td><td>電子署名の一意性・非否認性。監査証跡（変更前後の記録）。アクセス制御の定期レビュー。</td><td>FDA警告書（Warning Letter）。最悪、製造停止命令。</td></tr>
+<tr><td><strong>EU Annex 11</strong></td><td>EU GMP対象コンピュータシステム</td><td>ユーザーアクセス管理の文書化。定期レビュー義務。CSVライフサイクル管理。</td><td>EU市場への販売禁止・製造認可取消。</td></tr>
+<tr><td><strong>厚生労働省 ER/ES指針</strong></td><td>国内の電子記録・電子署名を使用するシステム</td><td>Part 11と類似要件。電子署名の法的有効性確保。監査証跡の不変性。</td><td>薬事法違反・製造販売承認への影響。</td></tr>
+<tr><td><strong>医療情報安全管理ガイドライン（厚労省）</strong></td><td>電子カルテ・医療情報システム</td><td>ユーザー認証（ID+パスワード以上）。アクセス権の最小化。退職者即日無効化。緊急アクセス（Break-glass）の記録。</td><td>指導・監査。個人情報漏洩時の刑事・民事責任。</td></tr>
+</tbody>
+</table></div>
+
+<h2>GxP環境のID管理設計要点</h2>
+<div class="grid2">
+<div class="card">
+<h3>📋 CSV（コンピュータシステムバリデーション）とID管理</h3>
+<p>GxP環境では認証基盤の変更（例：AD → Entra ID移行）はCSVの対象になります。</p>
+<ul class="list">
+<li>IQ（インストール適格性確認）：新認証基盤の設定が仕様通りか確認</li>
+<li>OQ（運用適格性確認）：認証・認可・監査ログが正しく動作するか</li>
+<li>PQ（性能適格性確認）：実業務シナリオで正常動作するか</li>
+<li>バリデーション文書は査察時に提示できるよう管理</li>
+</ul>
+</div>
+<div class="card purple">
+<h3>🔏 電子署名（ES）の実装</h3>
+<ul class="list">
+<li>Part 11準拠の電子署名には「意味・日時・署名者ID」が必須</li>
+<li>Microsoft Entra Verified IDでPKI証明書ベース署名が可能</li>
+<li>Adobe Sign / DocuSignもPart 11対応オプションあり</li>
+<li>署名記録は改ざん防止ストレージに保存（Immutable Storage）</li>
+</ul>
+</div>
+</div>
+
+<h2>医療機関のID管理特殊要件</h2>
+<div class="card yellow">
+<h3>🏥 Break-glass（緊急権限）設計</h3>
+<p>医療現場では患者の生命を守るため、通常の承認フローを超えた緊急権限アクセスが必要になる場合があります。
+一方で、この機能がセキュリティホールになるリスクもあります。</p>
+<ul class="list">
+<li>緊急権限は特定の役割（夜勤師長・当直医等）に限定</li>
+<li>取得時に「緊急の理由」を必須入力</li>
+<li>権限は自動的に4〜8時間で失効（無制限付与しない）</li>
+<li>全ての緊急取得をSIEMアラートに連動し、翌日の管理者レビュー必須</li>
+<li>虚偽申告での使用は就業規則・医療倫理規程に明記</li>
+</ul>
+</div>
+
+<h2>製薬会社の移行計画チェックリスト</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>チェック項目</th><th>GxP環境</th><th>非GxP環境</th></tr></thead>
+<tbody>
+<tr><td>IDPの変更（AD→Entra ID）</td><td>CSV実施必須（IQ/OQ/PQ）</td><td>標準変更手順でOK</td></tr>
+<tr><td>監査ログの保存期間</td><td>製品の保管期間+数年（Part 11/GMP要件に従う）</td><td>1年以上（ISMS要件）</td></tr>
+<tr><td>電子署名の変更</td><td>再バリデーション必須</td><td>通常の変更管理</td></tr>
+<tr><td>アクセス権の棚卸し</td><td>年次以上（査察時エビデンス必要）</td><td>年次</td></tr>
+<tr><td>MFA導入</td><td>導入可能（CSV後）。生産ライン端末は例外検討</td><td>推奨・必須化へ</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

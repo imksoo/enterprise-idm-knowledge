@@ -1,0 +1,126 @@
+{
+  "metadata": {
+    "id": "sim_x_s04",
+    "title": "総合商社：M&A10社後のIDテナント乱立整理",
+    "company_profile": "三菱商事型総合商社。本体社員4000名。過去5年でアジア・欧米10社を買収。各社がAzure ADまたはGoogle Workspaceをバラバラに使用。Microsoft 365ライセンスも7テナントに分散。",
+    "scenario_date": "2026年9月",
+    "industry": "trading",
+    "difficulty": "advanced"
+  },
+  "personas": [
+    {
+      "id": "ciso",
+      "name": "守屋CISO",
+      "role": "グループCISO",
+      "background": "元AWSのセキュリティアーキテクト。クラウドネイティブ思考。"
+    },
+    {
+      "id": "it_strategy",
+      "name": "原田部長",
+      "role": "IT戦略部長",
+      "background": "M&A前後のIT統合を数多く経験。"
+    },
+    {
+      "id": "acquired_it",
+      "name": "Li（買収先企業IT担当）",
+      "role": "東南アジア買収先のIT責任者（現地採用）",
+      "background": "Google Workspaceで全社管理している。AzureもEntraも使ったことがない。"
+    },
+    {
+      "id": "nssol",
+      "name": "長谷川（NSSol）",
+      "role": "M&A統合専門コンサルタント",
+      "background": "M&A後ID統合プロジェクト8件。"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：テナント乱立の実態把握",
+      "setting": "グループIT戦略会議。M&A後の全体整理が遅れている実態確認MTG。",
+      "dialogue": [
+        {
+          "speaker": "原田部長",
+          "text": "今グループのM365テナントが7つあります。親会社・子会社A・B・買収先C・D…管理がバラバラで、グループ全体のIDが見えていません。長谷川さん、どこから手をつけますか？"
+        },
+        {
+          "speaker": "長谷川（NSSol）",
+          "text": "まず全テナントのID資産棚卸から始めます。Microsoft Entra ID Governanceの『Connected Organizations』機能を使って、7テナントのユーザーリスト、ゲストID、外部コラボレーション設定を一覧化します。テナント統合の前に現状把握が必須です。"
+        },
+        {
+          "speaker": "守屋CISO",
+          "text": "テナントを統合すべき会社と、独立させたままにすべき会社をどう判断しますか？"
+        },
+        {
+          "speaker": "長谷川（NSSol）",
+          "text": "判断軸は4つです。①法規制（現地のデータ主権・プライバシー法）、②セキュリティリスク（統合することで攻撃範囲が広がるか）、③コンプライアンス（SOX連結対象かどうか）、④将来の売却可能性。規制上分離必須な国（中国・インドネシア等）と、統合すべきグループコア会社を分けて整理します。"
+        },
+        {
+          "speaker": "Li（買収先企業IT担当）",
+          "text": "我々はGoogle Workspaceで動いています。Entraに統合されると、使い慣れたツールが使えなくなりますか？"
+        },
+        {
+          "speaker": "長谷川（NSSol）",
+          "text": "Google WorkspaceとEntraはフェデレーションできます。Google Workspaceを認証ソースとして残しつつ、Entraゲストとして招待することで、Google IDでMicrosoft TeamsやSharePointにアクセスできます。完全統合を強制せず、フェデレーションで段階的に親会社ポリシーを適用する方が現実的です。"
+        }
+      ],
+      "issues_surfaced": [
+        "M365テナント7本の乱立・ID全体把握不能",
+        "被買収企業のGoogle Workspace独自環境",
+        "現地法規制（データ主権）による強制分離必要国の存在",
+        "テナント統合可否の判断基準未整備"
+      ]
+    },
+    {
+      "title": "場面2：クロスボーダーアクセスとセキュリティポリシー統一",
+      "setting": "グループ情報セキュリティ委員会。",
+      "dialogue": [
+        {
+          "speaker": "守屋CISO",
+          "text": "グループ全体でMFAの適用率が59%です。本体は90%ですが、買収先は40%以下のところもあります。どう統一しますか？"
+        },
+        {
+          "speaker": "長谷川（NSSol）",
+          "text": "Entra Conditional Accessのグループポリシーを段階的に適用していきます。まず外部アクセス（親会社システムへのアクセス）にMFA必須を適用。次に管理者アカウント。最後に全ユーザー。強制は現地IT担当との調整が必要ですが、Conditional Accessのレポートモードで影響を事前シミュレーションしてから有効化する手順が標準です。"
+        },
+        {
+          "speaker": "原田部長",
+          "text": "Azureを使っていない子会社（Google Workspace）にも同じポリシーを適用できますか？"
+        },
+        {
+          "speaker": "長谷川（NSSol）",
+          "text": "Google WorkspaceのIdPとEntraをSAML連携することでEntraのConditionを適用できます。ただしGoogle独自のセキュリティ設定（Google Context-Aware Access）との二重管理になるため、ポリシーの設計を事前に統一しておく必要があります。長期的にはEntraをグループIdPに統一するロードマップを設定することをお勧めします。"
+        }
+      ],
+      "issues_surfaced": [
+        "グループ全体MFA適用率59%（買収先40%以下）",
+        "Conditional Access適用の段階計画が必要",
+        "Google Workspace IdPとEntraのSAML連携設計"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "テナント整理",
+      "current": "7テナント乱立・ID全体不可視",
+      "target": "テナント統合ロードマップ策定・Connected Organizationsで管理",
+      "priority": "high"
+    },
+    {
+      "item": "MFA適用率",
+      "current": "グループ平均59%",
+      "target": "100%（Conditional Access段階適用）",
+      "priority": "high"
+    },
+    {
+      "item": "Google Workspace統合",
+      "current": "独立運営",
+      "target": "SAMLフェデレーション → Entra IdP統一",
+      "priority": "medium"
+    }
+  ],
+  "html_needs_identified": [
+    "M&A後テナント統合判断フレームワーク（統合・分離・フェデレーションの3パターン）",
+    "Entra External ID B2Bフェデレーション設定ガイド",
+    "グループ全体MFA段階展開ロードマップテンプレート"
+  ]
+}

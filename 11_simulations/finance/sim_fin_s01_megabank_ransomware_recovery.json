@@ -1,0 +1,249 @@
+{
+  "metadata": {
+    "id": "sim_fin_s01",
+    "title": "メガバンク：ランサムウェア被害後のID管理全面刷新検討",
+    "company_profile": "三菱UFJ型メガバンク。グループ社員4万名、海外拠点50ヶ国、ADフォレスト12本。2025年12月に海外現地法人でランサムウェア被害、AD侵害を確認。",
+    "scenario_date": "2026年7月",
+    "industry": "finance",
+    "difficulty": "advanced"
+  },
+  "personas": [
+    {
+      "id": "ciso",
+      "name": "田村CISO",
+      "role": "グループCISO",
+      "background": "元外資系金融機関のCSO。2023年就任。取締役会へのレポートライン直結。",
+      "priorities": [
+        "セキュリティ体制の可視化",
+        "取締役会説明責任",
+        "規制当局対応"
+      ],
+      "concerns": [
+        "次の被害を防ぐ証明が求められる",
+        "金融庁への報告義務",
+        "PCI DSS失効リスク"
+      ]
+    },
+    {
+      "id": "cto",
+      "name": "橋本CTO",
+      "role": "グループCTO",
+      "background": "テクノロジー戦略担当。クラウド移行推進中。",
+      "priorities": [
+        "2029年AD/MIM EOL対応",
+        "Azure統合推進",
+        "コスト最適化"
+      ],
+      "concerns": [
+        "ADフォレスト12本の運用負荷",
+        "Entra移行のタイムライン"
+      ]
+    },
+    {
+      "id": "infra_lead",
+      "name": "村上部長",
+      "role": "グループIT基盤部長",
+      "background": "AD管理歴15年。現場のリアルを知る。",
+      "priorities": [
+        "現行運用の安定維持",
+        "段階的移行"
+      ],
+      "concerns": [
+        "一気にAD廃止は無理",
+        "現場への影響最小化",
+        "予算制約"
+      ]
+    },
+    {
+      "id": "audit",
+      "name": "渡辺監査役",
+      "role": "内部監査部門（IT監査専門）",
+      "background": "公認情報システム監査人（CISA）保有。",
+      "priorities": [
+        "FISC準拠証明",
+        "PCI DSS CDE管理",
+        "金融庁対応"
+      ],
+      "concerns": [
+        "退職者IDが今も残っているかもしれない",
+        "特権ID棚卸が不完全",
+        "監査証跡の保全"
+      ]
+    },
+    {
+      "id": "nssol",
+      "name": "松田（NSSol）",
+      "role": "シニアコンサルタント",
+      "background": "IDM・PAM専門。金融機関導入実績12社。",
+      "priorities": [
+        "顧客課題の正確な把握",
+        "実現可能な提案"
+      ],
+      "concerns": []
+    }
+  ],
+  "background_incident": {
+    "date": "2025年12月15日",
+    "description": "グループ傘下のアジア現地法人でBlackCat系ランサムウェアが発生。調査の結果、Domain Admin権限を持つサービスアカウント（svc_backup01）のパスワードがパスワードスプレー攻撃で突破され、Kerberoasting経由でDomain Admin取得、ラテラルムーブメントで5日間滞在後に暗号化実行と判明。",
+    "damage": "現地法人内サーバー200台暗号化、顧客DBアクセスログ消失（証跡保全失敗）",
+    "regulatory_response": "金融庁へ報告済み。SWIFT接続停止を3日間実施。PCI DSS審査機関への報告義務履行。"
+  },
+  "scenes": [
+    {
+      "title": "場面1：経営陣ブリーフィング後の緊急MTG（2026年7月）",
+      "setting": "グループ本社27階 役員会議室。インシデント発生から半年、ようやく全体対策を議論できるMTGが設定された。",
+      "dialogue": [
+        {
+          "speaker": "田村CISO",
+          "text": "金融庁から『ADのガバナンス改善計画を3ヶ月以内に提出せよ』と言われています。松田さん、今回の侵害の根本原因をどう整理しますか？"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "根本原因は3層あります。第一層：svc_backup01がDomain Adminグループに入っていた最小権限違反。第二層：ADの特権アカウント管理が人手で行われており、Tier分離が未実装。第三層：PAMがなかったため攻撃者の横移動を検知・遮断できなかった。",
+          "subtext": "AD Tier Model（Tier 0/1/2）の不在が致命的。これは一社だけの問題ではなく、日本のほぼ全金融機関に共通する。"
+        },
+        {
+          "speaker": "渡辺監査役",
+          "text": "今グループ全体でサービスアカウント何件あるか把握していますか？"
+        },
+        {
+          "speaker": "村上部長",
+          "text": "…正確な数字は把握できていません。ADには3,847件ありますが、その半分以上は誰が管理しているか不明です。"
+        },
+        {
+          "speaker": "田村CISO",
+          "text": "それが問題の本質ですね。松田さん、3ヶ月でできる対策と、1年でやるべきことを分けて整理してもらえますか？"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "はい。3ヶ月の緊急対策は5点です。①全Domain AdminとEnterprise Adminの棚卸・削減、②KRBTGTパスワード変更（二重変更）、③PAMの緊急導入（まず高リスク500アカウント）、④AD Connectの同期スコープ見直し（サービスアカウントのEntraへの誤同期排除）、⑤VPNにMFA追加。1年では、AD Tier Model導入とIGA統合、そして2029年のMIM/WS2019 EOLに向けたEntra移行ロードマップ策定です。"
+        },
+        {
+          "speaker": "橋本CTO",
+          "text": "PAMはCyberArkが業界標準ですよね？ただコストが心配です。"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "4万名規模でCyberArk PAMを全適用すると年間ライセンスで2〜3億円前後になります。ただし、PCI DSS非準拠の場合の制裁（カード取扱停止）と比較すると十分なROIが出ます。また段階導入として、まず特権IDのみ（500〜1000アカウント）から始める方法もあります。"
+        }
+      ],
+      "issues_surfaced": [
+        "サービスアカウントの棚卸未実施（3,847件中半数は管理者不明）",
+        "KRBTGTパスワード未変更（侵害後も放置）",
+        "PAMなし、Tier Model未導入",
+        "金融庁への3ヶ月以内の改善計画提出義務"
+      ]
+    },
+    {
+      "title": "場面2：PAM製品選定議論",
+      "setting": "翌週のIT部門MTG。PAM製品のRFPを作成する前段階。",
+      "dialogue": [
+        {
+          "speaker": "村上部長",
+          "text": "PAMの選定で悩んでいます。CyberArk、BeyondTrust、SecureCubeと、どれも営業から連絡が来ていて。"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "3製品の特徴を整理しましょう。CyberArkはグローバルでシェア1位ですが高価。BeyondTrustはコスト面で少し有利、機能は遜色ない。SecureCubeは日本製で地銀・保険の実績多数、UIが日本語で運用しやすい。御行の規模（4万名・12フォレスト・海外拠点）ではCyberArk一択に近いです。"
+        },
+        {
+          "speaker": "渡辺監査役",
+          "text": "PCI DSSのCDE環境の特権IDはどう扱いますか？"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "CDEへの特権アクセスはCyberArk PSMでセッション録画を取り、QRadarに証跡を転送する構成が標準です。これでPCI DSS Req 10.2（監査ログ）とReq 8.6（共有アカウント管理）を同時対応できます。"
+        },
+        {
+          "speaker": "橋本CTO",
+          "text": "Azureとの統合はどうですか？我々は今Azure推進中なので。"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "CyberArk Cloud Entitlements ManagerとAzure PIM（Privileged Identity Management）を組み合わせる構成が最新のアーキテクチャです。オンプレはCyberArk PAMで、Azureリソースの特権はEntra PIMで管理し、両者をCyberArk経由で統合ダッシュボード化できます。2029年以降の完全クラウド移行を見据えても整合性が取れます。"
+        }
+      ],
+      "issues_surfaced": [
+        "PAM製品選定基準の整理が必要",
+        "グローバル展開対応（50ヶ国）",
+        "Azure PIM + CyberArk PAMのハイブリッド設計",
+        "CDE特権アクセスのPCI DSS対応"
+      ]
+    },
+    {
+      "title": "場面3：2029年AD EOL対策と移行ロードマップ",
+      "setting": "CTO主導のIT戦略会議。",
+      "dialogue": [
+        {
+          "speaker": "橋本CTO",
+          "text": "2029年1月にMIM 2016とWS2019のサポートが切れます。今からロードマップを引かないと間に合いません。"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "2029年問題はID管理の重大課題です。対応ルートは3つあります。ルートA：MIM→Entra ID Governanceへの完全移行（理想形）。ルートB：AD Connect + Entra ID Governanceのハイブリッド継続。ルートC：SailPoint等のIGAでAD/Entra両方を管理する中立化。"
+        },
+        {
+          "speaker": "村上部長",
+          "text": "ルートAは夢物語ですよね。12フォレストをEntraだけにはできない。"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "おっしゃる通りです。現実解はルートBかCです。勘定系・コアバンキングシステムがオンプレに残る以上、ADは残ります。2029年に向けてWS2022への移行（5年延長）を今すぐ実施し、その間にEntra ID Governanceの適用範囲を段階拡大するのが現実的です。"
+        },
+        {
+          "speaker": "田村CISO",
+          "text": "CISRTへの報告も踏まえると、今回のインシデントを教訓に『ADのTier 0環境』を明確に定義して、そこへのアクセスをPAMで必ず通すようにしたい。"
+        },
+        {
+          "speaker": "松田（NSSol）",
+          "text": "それがAD Tiered Administration Modelです。ESAE（Enhanced Security Admin Environment）とも呼ばれます。Tier 0にはドメインコントローラー・Schema Masters等のAD基盤のみを置き、Tier 0管理者はTier 0専用の端末・アカウントのみを使います。今回の侵害はTier 1の一般サーバーからTier 0への到達を許したことが本質的な問題です。"
+        }
+      ],
+      "issues_surfaced": [
+        "2029年WS2019/MIM EOL対応ロードマップが未策定",
+        "ADフォレスト12本の整理・統合計画が必要",
+        "Tiered Administration Model（ESAE）の未導入",
+        "CTO・CISO・現場の3者間の合意形成"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "AD Tier Model（ESAE）",
+      "current": "未導入（全管理者が同一権限層）",
+      "target": "Tier 0/1/2分離 + PAMゲートウェイ化",
+      "priority": "critical"
+    },
+    {
+      "item": "PAM導入",
+      "current": "なし",
+      "target": "CyberArk PAM（高リスク500ID→全体3847ID）",
+      "priority": "critical"
+    },
+    {
+      "item": "サービスアカウント管理",
+      "current": "3847件中管理者不明多数",
+      "target": "全棚卸 + gMSA化 + Vaultシークレット管理",
+      "priority": "critical"
+    },
+    {
+      "item": "2029年EOL対応",
+      "current": "計画なし",
+      "target": "WS2022移行 + Entra移行ロードマップ策定",
+      "priority": "high"
+    },
+    {
+      "item": "IGA導入",
+      "current": "部分的手動管理",
+      "target": "SailPoint/One Identity導入で棚卸自動化",
+      "priority": "high"
+    }
+  ],
+  "html_needs_identified": [
+    "PAM製品比較（CyberArk vs BeyondTrust vs SecureCube）詳細比較表",
+    "AD Tier Model説明資料（ESAE概要・日本語）",
+    "2029年AD/MIM EOL対応ロードマップテンプレート",
+    "金融機関向けID管理現状診断チェックリスト",
+    "ランサムウェア侵害後ID復旧プレイブック（金融版）"
+  ]
+}

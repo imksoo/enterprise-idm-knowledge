@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PAM製品比較 — NSSol IDM参照資料</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.pname{font-weight:700;font-size:.95em;color:#1e293b}
+.pvendor{color:#64748b;font-size:.8em;display:block}
+.cn{color:#16a34a;font-weight:700;text-align:center}
+.cp{color:#d97706;text-align:center}
+.cm{color:#9ca3af;text-align:center}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card h3{font-size:1em;font-weight:700;color:#1e293b;margin-bottom:8px}
+.card p{color:#374151;line-height:1.65;font-size:.9em}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.pros{border-left-color:#22c55e}
+.cons{border-left-color:#ef4444}
+.list{padding:0 0 0 18px}
+.list li{margin:4px 0;line-height:1.5;font-size:.88em}
+.decision-matrix{background:#fff;border-radius:10px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.dm-row{display:grid;grid-template-columns:200px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.dm-label{font-weight:700;font-size:.88em;color:#1e293b}
+.dm-val{font-size:.88em;color:#374151}
+.tag-row{display:flex;flex-wrap:wrap;gap:4px}
+.note-box{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.summary-table{width:100%;border-collapse:collapse}
+.summary-table th{background:#f1f5f9;color:#1e293b;padding:8px 12px;text-align:left;font-size:.82em}
+.summary-table td{padding:8px 12px;border-bottom:1px solid #f1f5f9;font-size:.87em;vertical-align:top}
+.score{font-weight:700;font-size:1.1em}
+.s5{color:#16a34a}.s4{color:#2563eb}.s3{color:#d97706}.s2{color:#9ca3af}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}table{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<h1>🔑 PAM製品詳細比較</h1>
+<p class="subtitle">Privileged Access Management — CyberArk / BeyondTrust / SecureCube / Arcon / Delinea | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="note-box">
+⚠️ <strong>本資料の使い方：</strong> 顧客の規模・業種・予算・ハイブリッド環境度合いに応じて最適製品が異なります。
+本資料は一般的な特徴を示すものであり、実際の選定には顧客要件に基づくPoC評価を推奨します。
+</div>
+
+<h2>製品概要マトリクス</h2>
+<div class="tbl-wrap">
+<table>
+<thead>
+<tr>
+<th>製品名</th>
+<th>ベンダー</th>
+<th>ターゲット規模</th>
+<th>展開方式</th>
+<th>日本GA</th>
+<th>参考価格帯（年間）</th>
+<th>強み</th>
+<th>弱み</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="pname">CyberArk PAM<br><span style="background:#3b82f6;color:#fff;font-size:.72em;padding:2px 6px;border-radius:4px">グローバル標準</span></span><span class="pvendor">CyberArk Software</span></td>
+<td>CyberArk</td>
+<td>大企業〜メガ企業</td>
+<td>オンプレ / SaaS(CyberArk Privilege Cloud)</td>
+<td><span class="badge" style="background:#22c55e">✅ 日本法人あり</span></td>
+<td>1000ユーザー換算<br>5,000万〜1.5億円/年</td>
+<td>セッション録画・Vault・JIT・Cloud統合。世界シェア1位。PCI DSS/FISC認証実績多数。</td>
+<td>高価。導入複雑。日本語サポートは間接。</td>
+</tr>
+<tr>
+<td><span class="pname">BeyondTrust Password Safe</span><span class="pvendor">BeyondTrust</span></td>
+<td>BeyondTrust</td>
+<td>中〜大企業</td>
+<td>オンプレ / SaaS</td>
+<td><span class="badge" style="background:#22c55e">✅ 日本代理店複数</span></td>
+<td>500ユーザー換算<br>2,000万〜6,000万円/年</td>
+<td>CyberArk比でコスト優位。Remote Access（外部ベンダー管理）が強い。BeyondInsight統合。</td>
+<td>CyberArkより機能で劣る部分あり。国内認知度低い。</td>
+</tr>
+<tr>
+<td><span class="pname">SecureCube / Access Check</span><span class="pvendor">日本ユニシス（現Unisys Japan）</span></td>
+<td>SecureCube</td>
+<td>中堅〜大企業（国内特化）</td>
+<td>オンプレ主体</td>
+<td><span class="badge" style="background:#3b82f6">✅ 国産製品</span></td>
+<td>200〜500ユーザー<br>500万〜2,000万円/年</td>
+<td>日本語UIとサポート。地銀・保険での実績多数。FISC準拠実績。コスト優位。</td>
+<td>クラウド・グローバル対応が限定的。海外拠点はカバー困難。</td>
+</tr>
+<tr>
+<td><span class="pname">Delinea Secret Server</span><span class="pvendor">Delinea（旧Thycotic）</span></td>
+<td>Delinea</td>
+<td>中〜大企業</td>
+<td>オンプレ / SaaS (Delinea Cloud)</td>
+<td><span class="badge" style="background:#f97316">△ 代理店対応</span></td>
+<td>300ユーザー換算<br>1,500万〜4,000万円/年</td>
+<td>UIが直感的。DevOps連携（Vault Plugin）強い。SMB〜Enterpriseまで。</td>
+<td>CyberArk比でPCI/FISCのコンプライアンスレポートが弱い。</td>
+</tr>
+<tr>
+<td><span class="pname">Arcon PAM</span><span class="pvendor">Arcon Tech Solutions</span></td>
+<td>Arcon</td>
+<td>中堅企業（コスト重視）</td>
+<td>オンプレ / SaaS</td>
+<td><span class="badge" style="background:#f97316">△ 一部採用実績</span></td>
+<td>200ユーザー換算<br>300万〜1,000万円/年</td>
+<td>コスト最安クラス。インドで大シェア。日本金融での一部採用。</td>
+<td>グローバルブランド認知低い。サポート品質が要確認。日本語資料少ない。</td>
+</tr>
+<tr>
+<td><span class="pname">Microsoft Entra PIM</span><span class="pvendor">Microsoft</span></td>
+<td>Microsoft</td>
+<td>全規模（Azure環境）</td>
+<td>クラウドネイティブ（Azure）</td>
+<td><span class="badge" style="background:#22c55e">✅ 日本DC</span></td>
+<td>Entra P2ライセンスに含む<br>P2 = 860円/ユーザー/月〜</td>
+<td>Azure/Microsoft 365環境との深い統合。JIT・MFAと一体。コスト最優位（M365ユーザーは追加コスト小）。</td>
+<td>オンプレ・非Microsoft環境の特権管理は別途PAM必要。</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2>機能詳細比較</h2>
+<div class="tbl-wrap">
+<table>
+<thead>
+<tr><th>機能</th><th>CyberArk PAM</th><th>BeyondTrust</th><th>SecureCube</th><th>Delinea</th><th>Entra PIM</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>パスワードVault（自動ローテーション）</strong></td><td class="cn">◎</td><td class="cn">◎</td><td class="cn">◎</td><td class="cn">◎</td><td class="cp">△（Azure対象のみ）</td></tr>
+<tr><td><strong>セッション録画（RDP/SSH）</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cn">○</td><td class="cn">○</td><td class="cm">-</td></tr>
+<tr><td><strong>JIT（Just-In-Time）アクセス</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cp">△</td><td class="cn">○</td><td class="cn">◎（Azure）</td></tr>
+<tr><td><strong>ゼロスタンディング特権</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cm">-</td><td class="cp">△</td><td class="cn">◎（Azure）</td></tr>
+<tr><td><strong>クラウド特権管理（AWS/Azure/GCP）</strong></td><td class="cn">◎</td><td class="cp">△</td><td class="cm">-</td><td class="cp">△</td><td class="cn">◎（Azure）</td></tr>
+<tr><td><strong>gMSA自動管理</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cp">△</td><td class="cn">○</td><td class="cp">△</td></tr>
+<tr><td><strong>OT/SCADA向けProxy PAM</strong></td><td class="cn">◎（CyberArk OPM）</td><td class="cn">○</td><td class="cm">-</td><td class="cp">△</td><td class="cm">-</td></tr>
+<tr><td><strong>外部ベンダーアクセス管理</strong></td><td class="cn">◎</td><td class="cn">◎（強み）</td><td class="cn">○</td><td class="cn">○</td><td class="cp">△</td></tr>
+<tr><td><strong>SIEM連携（Splunk/QRadar）</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cn">○</td><td class="cn">○</td><td class="cn">○（Sentinel）</td></tr>
+<tr><td><strong>日本語UI・日本語サポート</strong></td><td class="cp">△（パートナー経由）</td><td class="cp">△（パートナー経由）</td><td class="cn">◎（国産）</td><td class="cp">△</td><td class="cn">◎</td></tr>
+<tr><td><strong>PCI DSS / FISC対応証跡</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cn">◎（国内実績）</td><td class="cn">○</td><td class="cp">△</td></tr>
+<tr><td><strong>HashiCorp Vault統合</strong></td><td class="cn">◎</td><td class="cn">○</td><td class="cm">-</td><td class="cn">◎（Delinea DevOps Secrets）</td><td class="cp">△</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>顧客タイプ別推奨製品</h2>
+<div class="decision-matrix">
+<div class="dm-row">
+<div class="dm-label">🏦 メガバンク・大手証券</div>
+<div class="dm-val"><strong>推奨: CyberArk PAM</strong> + <strong>Entra PIM（Azure部分）</strong><br>理由: PCI DSS対応実績・グローバル50拠点対応・規制機関への説明力。コストは高いが監査対応ROI大。</div>
+</div>
+<div class="dm-row">
+<div class="dm-label">🏛️ 地銀・信用金庫・地保険</div>
+<div class="dm-val"><strong>推奨: SecureCube または BeyondTrust</strong><br>理由: 国産サポート・コスト優位・FISC対応実績。規模が小さければSecureCube一択に近い。グローバル展開があればBeyondTrust。</div>
+</div>
+<div class="dm-row">
+<div class="dm-label">🏭 大手製造業（OT有り）</div>
+<div class="dm-val"><strong>推奨: CyberArk PAM（OPM付き）</strong><br>理由: OT/SCADA向けProxy PAMを持つのはCyberArkが最も実績豊富。IEC 62443対応事例あり。</div>
+</div>
+<div class="dm-row">
+<div class="dm-label">☁️ Azure/M365中心のIT企業</div>
+<div class="dm-val"><strong>推奨: Microsoft Entra PIM + CyberArk Privilege Cloud</strong><br>理由: AzureリソースはEntra PIMでコスト最適化。オンプレ・ハイブリッドはCyberArk。両者のAPIで統合ダッシュボード化可能。</div>
+</div>
+<div class="dm-row">
+<div class="dm-label">🏥 中規模医療・公共機関</div>
+<div class="dm-val"><strong>推奨: Delinea Secret Server または SecureCube</strong><br>理由: UIの使いやすさとコスト。医療系での実績増加中。</div>
+</div>
+<div class="dm-row">
+<div class="dm-label">💰 コスト重視（予算〜2000万）</div>
+<div class="dm-val"><strong>推奨: SecureCube → BeyondTrust → Delinea の順で検討</strong><br>理由: 国産サポートと低コスト。ただし海外拠点・クラウド主体なら別途検討要。</div>
+</div>
+</div>
+
+<h2>総合スコアリング（NSSol推奨度）</h2>
+<table class="summary-table">
+<thead><tr><th>製品</th><th>機能充実度</th><th>日本語対応</th><th>コスト優位性</th><th>クラウド対応</th><th>OT対応</th><th>NSSol推奨度</th></tr></thead>
+<tbody>
+<tr><td><strong>CyberArk PAM</strong></td><td><span class="score s5">5/5</span></td><td><span class="score s3">3/5</span></td><td><span class="score s2">2/5</span></td><td><span class="score s5">5/5</span></td><td><span class="score s5">5/5</span></td><td><span class="score s5">★★★★★</span>（大企業・金融・製造OT）</td></tr>
+<tr><td><strong>BeyondTrust Password Safe</strong></td><td><span class="score s4">4/5</span></td><td><span class="score s3">3/5</span></td><td><span class="score s4">4/5</span></td><td><span class="score s4">4/5</span></td><td><span class="score s4">4/5</span></td><td><span class="score s4">★★★★☆</span>（大手〜中規模・外部ベンダー多い環境）</td></tr>
+<tr><td><strong>SecureCube</strong></td><td><span class="score s3">3/5</span></td><td><span class="score s5">5/5</span></td><td><span class="score s5">5/5</span></td><td><span class="score s2">2/5</span></td><td><span class="score s2">2/5</span></td><td><span class="score s4">★★★★☆</span>（国内中堅・地銀・保険・FISC重視）</td></tr>
+<tr><td><strong>Delinea Secret Server</strong></td><td><span class="score s3">4/5</span></td><td><span class="score s3">3/5</span></td><td><span class="score s4">4/5</span></td><td><span class="score s4">4/5</span></td><td><span class="score s3">3/5</span></td><td><span class="score s3">★★★☆☆</span>（中規模・DevOps重視・コスト優先）</td></tr>
+<tr><td><strong>Entra PIM</strong></td><td><span class="score s4">4/5</span>（Azure限定）</td><td><span class="score s5">5/5</span></td><td><span class="score s5">5/5</span></td><td><span class="score s5">5/5</span>（Azure）</td><td><span class="score s2">1/5</span></td><td><span class="score s4">★★★★☆</span>（Azure中心・M365企業の追加コスト小）</td></tr>
+</tbody>
+</table>
+
+<h2>導入時の典型的な課題と対策</h2>
+<div class="two-col">
+<div class="card pros">
+<h3>✅ 成功パターン</h3>
+<ul class="list">
+<li>高リスク特権ID（500件）から段階導入してROIを先に実証</li>
+<li>PAMをVPNの代替にして「セキュリティ強化＋コスト削減」の二重効果</li>
+<li>経営層向けにランサムウェア侵害事例（Colonial Pipeline等）でリスクを可視化</li>
+<li>FISC/PCI DSS監査対応の工数削減（年30人日→1人日）でROI計算</li>
+<li>IT部門だけでなく内部監査・CFOを巻き込んだ予算取り</li>
+</ul>
+</div>
+<div class="card cons">
+<h3>❌ 失敗パターン</h3>
+<ul class="list">
+<li>全ID対象で一気に導入しようとして予算・スコープ膨張</li>
+<li>業務部門の反発（「作業に申請が必要になった」）で展開停止</li>
+<li>エージェント配布の許可が得られずOT端末に適用できない</li>
+<li>運用ルールが定まらないままPAM導入し、全員DomainAdminのまま</li>
+<li>PAMの管理者パスワードを共有・管理不能になる（本末転倒）</li>
+</ul>
+</div>
+</div>
+
+<footer>本資料はNSSol社内参照用です。顧客提供の際は最新の製品情報確認・個別PoC評価を行うこと。2026-04-07</footer>
+</div>
+</body>
+</html>
