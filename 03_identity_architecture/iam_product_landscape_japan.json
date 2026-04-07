@@ -19,7 +19,13 @@
       "cyberark",
       "okta",
       "sailpoint",
-      "japan-market"
+      "japan-market",
+      "ma-integration",
+      "ad-migration",
+      "admt",
+      "quest-migration-manager",
+      "bittitan",
+      "tenant-migration"
     ],
     "related_files": [
       "../01_entry/knowledge_graph.json",
@@ -2984,6 +2990,164 @@
       "properties": {
         "category": "mdm_uem"
       }
+    },
+    {
+      "id": "node_ma_001",
+      "label": "ADMT 3.2",
+      "object_type": "product",
+      "description": "Active Directory Migration Tool。Microsoftの無償AD移行ツール。ユーザー/グループ/コンピューターオブジェクトの移行、SID History付与、パスワードエクスポートサービス(PES)。小〜中規模M&A案件のADドメイン統合で使用。",
+      "properties": {
+        "vendor": "Microsoft",
+        "price": "無償",
+        "japanese_support": "○",
+        "target_scale": "小〜中",
+        "nssol_can_propose": true,
+        "ma_phase": [
+          "共存期間",
+          "統合完了"
+        ],
+        "category": "ma_ad_migration"
+      }
+    },
+    {
+      "id": "node_ma_002",
+      "label": "Quest Migration Manager for AD",
+      "object_type": "product",
+      "description": "Quest Softwareの大規模ADフォレスト統合ツール。業界標準の段階移行・並列移行・SID History管理・パスワード同期・共存期間管理。ユーザー5,000以上の大規模M&A合併案件向け。",
+      "properties": {
+        "vendor": "Quest Software",
+        "price": "数百万〜数千万円",
+        "japanese_support": "△",
+        "target_scale": "大〜超大",
+        "nssol_can_propose": "パートナー経由要確認",
+        "ma_phase": [
+          "共存期間"
+        ],
+        "category": "ma_ad_migration"
+      }
+    },
+    {
+      "id": "node_ma_003",
+      "label": "Quest On Demand Migration",
+      "object_type": "product",
+      "description": "Quest SoftwareのクラウドSaaSベースAD/Microsoft 365/Entra ID移行ツール。クラウドポータルで操作、AD＋M365＋Entraを一括移行、進捗ダッシュボード付き。",
+      "properties": {
+        "vendor": "Quest Software",
+        "price": "要見積もり（SaaS従量）",
+        "japanese_support": "△",
+        "target_scale": "中〜大",
+        "nssol_can_propose": "パートナー経由要確認",
+        "ma_phase": [
+          "共存期間"
+        ],
+        "category": "ma_ad_migration"
+      }
+    },
+    {
+      "id": "node_ma_004",
+      "label": "Entra Cross-tenant Synchronization",
+      "object_type": "product",
+      "description": "Microsoft Entra IDのクロステナント同期機能。B2Bゲストとしてユーザーを自動招待・同期。M&A Day1対応の暫定SSO統合に最速で対応可能。Entra P1以上で利用可能。",
+      "properties": {
+        "vendor": "Microsoft",
+        "price": "Entra P1以上（追加コストなし）",
+        "japanese_support": "○",
+        "target_scale": "全規模",
+        "nssol_can_propose": true,
+        "ma_phase": [
+          "Day1対応",
+          "共存期間"
+        ],
+        "category": "ma_entra_migration"
+      }
+    },
+    {
+      "id": "node_ma_005",
+      "label": "BitTitan MigrationWiz",
+      "object_type": "product",
+      "description": "BitTitanのMicrosoft 365テナント間移行SaaS。メールボックス(Exchange Online/Gmail/Exchange)・OneDrive・SharePoint移行対応。中小〜中堅M&A案件の定番ツール。UIが平易でSIerが扱いやすい。",
+      "properties": {
+        "vendor": "BitTitan",
+        "price": "数十万〜数百万円",
+        "japanese_support": "△",
+        "target_scale": "中小〜中堅",
+        "nssol_can_propose": "○（代理店経由）",
+        "ma_phase": [
+          "共存期間"
+        ],
+        "category": "ma_m365_migration"
+      }
+    },
+    {
+      "id": "node_ma_006",
+      "label": "AvePoint Fly",
+      "object_type": "product",
+      "description": "AvePointのSharePoint/Teams/OneDrive移行ツール。チャンネル・タブ・設定レベルの粒度移行が可能。SharePoint移行に特化しており、メール移行はBitTitan等と組み合わせが必要。",
+      "properties": {
+        "vendor": "AvePoint",
+        "price": "要見積もり",
+        "japanese_support": "△",
+        "target_scale": "中〜大",
+        "nssol_can_propose": "△要確認",
+        "ma_phase": [
+          "共存期間"
+        ],
+        "category": "ma_m365_migration"
+      }
+    },
+    {
+      "id": "node_ma_007",
+      "label": "Recovery Manager for AD",
+      "object_type": "product",
+      "description": "Quest SoftwareのADバックアップ・ロールバックツール。オブジェクトレベルのバックアップ・リストア、移行前スナップショット取得。大規模AD移行時の保険として使用。",
+      "properties": {
+        "vendor": "Quest Software",
+        "price": "数十万〜数百万円",
+        "japanese_support": "△",
+        "target_scale": "全規模",
+        "nssol_can_propose": "△パートナー経由",
+        "ma_phase": [
+          "共存期間"
+        ],
+        "category": "ma_ad_migration"
+      }
+    },
+    {
+      "id": "node_ma_008",
+      "label": "Netwrix Auditor",
+      "object_type": "product",
+      "description": "Netwrixの変更監査・コンプライアンス記録ツール。AD変更監査・ファイルサーバー監査・変更レポート・アラート機能。M&A DDフェーズの棚卸しと移行前後の監査証跡確保に使用。",
+      "properties": {
+        "vendor": "Netwrix",
+        "price": "数十万円〜",
+        "japanese_support": "△",
+        "target_scale": "小〜大",
+        "nssol_can_propose": "△要確認",
+        "ma_phase": [
+          "Pre-deal/DD",
+          "共存期間",
+          "統合完了"
+        ],
+        "category": "ma_audit"
+      }
+    },
+    {
+      "id": "node_ma_009",
+      "label": "Semperis Directory Services Protector",
+      "object_type": "product",
+      "description": "SemperisのADセキュリティ監視ツール。ADの変更をリアルタイム検知、悪意ある変更の自動ロールバック、IoC（侵害指標）検出。M&A統合期間中の不正変更防止・ランサムウェア対策に兼用可能。国内サポートなし。",
+      "properties": {
+        "vendor": "Semperis",
+        "price": "数百万円〜",
+        "japanese_support": "×",
+        "target_scale": "大",
+        "nssol_can_propose": false,
+        "ma_phase": [
+          "Pre-deal/DD",
+          "共存期間"
+        ],
+        "category": "ma_security"
+      }
     }
   ],
   "edges": [
@@ -3058,6 +3222,42 @@
       "to": "node_iam_002",
       "relationship": "implements",
       "description": "IntuneはEntra ID中心のデバイスコンプライアンスを実装する。"
+    },
+    {
+      "from": "node_ma_001",
+      "to": "node_ma_002",
+      "relationship": "replaces",
+      "description": "大規模M&A案件ではADMTの機能限界をQuest Migration Manager for ADが補完・代替する。"
+    },
+    {
+      "from": "node_ma_004",
+      "to": "node_ma_005",
+      "relationship": "complements",
+      "description": "Entra Cross-tenant SyncはEntra IDユーザー同期を担い、BitTitan MigrationWizがメールボックス・OneDriveのコンテンツ移行を補完する。"
+    },
+    {
+      "from": "node_ma_002",
+      "to": "node_ma_007",
+      "relationship": "requires",
+      "description": "Quest Migration Manager for ADを使った大規模移行では、ロールバック保険としてRecovery Manager for ADをセット導入することを推奨。"
+    },
+    {
+      "from": "node_ma_008",
+      "to": "node_ma_001",
+      "relationship": "complements",
+      "description": "Netwrix AuditorでDDフェーズの現状把握と監査証跡を確保した上で、ADMTによる移行を実施する。"
+    },
+    {
+      "from": "node_ma_009",
+      "to": "node_ma_002",
+      "relationship": "complements",
+      "description": "Semperis DSPでAD変更をリアルタイム監視しながら、Quest Migration Manager for ADで段階移行を進めることでセキュリティと移行を両立。"
+    },
+    {
+      "from": "node_iam_002",
+      "to": "node_ma_004",
+      "relationship": "implements",
+      "description": "Entra IDがCross-tenant Synchronization機能を実装し、M&A Day1対応の暫定B2B統合を提供する。"
     }
   ],
   "knowledge": [
@@ -3312,6 +3512,20 @@
       "content": "境界防御時代のアーキテクチャが残る企業では、ZTNA、App Proxy、PAM、SASEへの分解置換が必要になる。",
       "evidence_level": "medium",
       "japan_specific": true
+    },
+    {
+      "id": "knowledge_ma_001",
+      "title": "M&A AD/Entra ID統合ツール選択指針",
+      "content": "M&A後のID統合は4フェーズで進める。①Pre-deal/DD（Netwrix Auditor・Quest Nova）→②Day1（Entra Cross-tenant Sync・Entra Cloud Sync）→③共存期間（Quest Migration Manager for AD or ADMT＋BitTitan MigrationWiz）→④統合完了（クリーンアップ・SID History除去）。日本市場では日本語サポートの弱さからMicrosoft純正ツールが基本、Quest製品はパートナー経由での提案が前提。NSSolが直接提案可能：ADMT・Entra Connect Sync・Entra Cloud Sync・Entra Cross-tenant Sync・BitTitan MigrationWiz（代理店）・Microsoft SPMT。",
+      "tags": [
+        "M&A",
+        "AD統合",
+        "Entra統合",
+        "Quest Migration Manager",
+        "ADMT",
+        "BitTitan",
+        "テナント移行"
+      ]
     }
   ]
 }

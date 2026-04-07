@@ -126,6 +126,10 @@ ul.feature-list li{margin-bottom:3px}
   <a class="toc-sub" href="#stack-midmarket">中堅企業</a>
   <a class="toc-sub" href="#stack-smb">中小・スタートアップ</a>
   <a href="#decision">&#129517; 製品選定フロー</a>
+  <a href="#ma-tools">&#129309; M&A統合ツール</a>
+  <a class="toc-sub" href="#ma-ad">ADフォレスト統合</a>
+  <a class="toc-sub" href="#ma-m365">M365テナント統合</a>
+  <a class="toc-sub" href="#ma-phase">段階別選択フロー</a>
 </nav>
 
 <main>
@@ -1557,6 +1561,258 @@ J-SOX改正対応・サプライチェーンリスク管理強化を機に中〜
       </div>
     </div>
   </section>
+
+<!-- ===== M&A統合ツール ===== -->
+<section id="ma-tools">
+<div class="phase-header">
+  <h2>&#129309; M&A AD/Entra ID統合ツール</h2>
+  <div class="phase-meta">合併・買収後のADフォレスト統合・Microsoft 365テナント統合に使えるツール比較（2026年版）</div>
+</div>
+
+<div class="lead">M&Aによる企業統合では、AD（Active Directory）フォレスト統合とMicrosoft 365/Entra IDテナント統合が最大の技術課題となる。フェーズ（DD→Day1→共存→統合完了）に応じてツールを選択し、Microsoft純正とサードパーティを組み合わせるのが実務の定石。</div>
+
+<h3 id="ma-ad">ADフォレスト統合ツール一覧</h3>
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th>ツール名</th>
+      <th>ベンダー</th>
+      <th>用途</th>
+      <th>対象規模</th>
+      <th>価格帯</th>
+      <th>日本語サポート</th>
+      <th>M&A適合</th>
+      <th>NSSol扱い</th>
+      <th>推奨シーン / 注意点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ADMT 3.2</strong></td>
+      <td><span class="vendor-badge">Microsoft</span></td>
+      <td>ユーザー/グループ/PC移行、SID History付与</td>
+      <td>小〜中</td>
+      <td><span class="price-free">無償</span></td>
+      <td>○</td>
+      <td><span class="tag tag-med">中</span></td>
+      <td><span class="tag tag-green">○自社構築</span></td>
+      <td>小規模・シンプルな親会社ドメイン吸収に最適。大規模並列移行は不向き</td>
+    </tr>
+    <tr>
+      <td><strong>MIM 2016</strong></td>
+      <td><span class="vendor-badge">Microsoft</span></td>
+      <td>複雑なAD統合・HR連携・プロビジョニング</td>
+      <td>大</td>
+      <td><span class="price-high">数百万円〜</span></td>
+      <td>○</td>
+      <td><span class="tag tag-med">中</span></td>
+      <td><span class="tag tag-gray">△メインストリーム2026年終了</span></td>
+      <td>既にMIM導入済みの場合のみ検討。新規はEntra Connect推奨</td>
+    </tr>
+    <tr>
+      <td><strong>Entra Connect Sync</strong></td>
+      <td><span class="vendor-badge">Microsoft</span></td>
+      <td>複数ADフォレスト→Entra ID同期</td>
+      <td>小〜大</td>
+      <td><span class="price-free">無償</span></td>
+      <td>○</td>
+      <td><span class="tag tag-green">高</span></td>
+      <td><span class="tag tag-green">○</span></td>
+      <td>M&A暫定統合のファーストチョイス。複数フォレストを同一Entraテナントに同期</td>
+    </tr>
+    <tr>
+      <td><strong>Entra Cloud Sync</strong></td>
+      <td><span class="vendor-badge">Microsoft</span></td>
+      <td>軽量エージェントによるAD→Entra同期</td>
+      <td>小〜中</td>
+      <td><span class="price-free">無償</span></td>
+      <td>○</td>
+      <td><span class="tag tag-green">高</span></td>
+      <td><span class="tag tag-green">○</span></td>
+      <td>買収先ADが小規模でConnect Syncの設定を簡略化したい場合に有効</td>
+    </tr>
+    <tr>
+      <td><strong>Quest Migration Manager for AD</strong></td>
+      <td><span class="vendor-badge" style="background:#c23b22">Quest</span></td>
+      <td>大規模ADフォレスト統合・段階移行・SID History管理</td>
+      <td>大〜超大</td>
+      <td><span class="price-vhigh">数百万〜数千万円</span></td>
+      <td>△（英語製品）</td>
+      <td><span class="tag tag-purple">最高</span></td>
+      <td><span class="tag tag-gray">△パートナー経由</span></td>
+      <td>ユーザー5,000以上の大規模合併での業界標準。共存期間が長い案件向け</td>
+    </tr>
+    <tr>
+      <td><strong>Quest On Demand Migration</strong></td>
+      <td><span class="vendor-badge" style="background:#c23b22">Quest</span></td>
+      <td>AD/M365/Entra一括移行（クラウドSaaS）</td>
+      <td>中〜大</td>
+      <td><span class="price-high">要見積もり（SaaS従量）</span></td>
+      <td>△</td>
+      <td><span class="tag tag-green">高</span></td>
+      <td><span class="tag tag-gray">△パートナー経由</span></td>
+      <td>M365テナント統合と同時にAD移行が必要なケース。クラウドファーストな組織向け</td>
+    </tr>
+    <tr>
+      <td><strong>Recovery Manager for AD</strong></td>
+      <td><span class="vendor-badge" style="background:#c23b22">Quest</span></td>
+      <td>AD移行失敗時のロールバック・スナップショット</td>
+      <td>全規模</td>
+      <td><span class="price-med">数十万〜数百万円</span></td>
+      <td>△</td>
+      <td><span class="tag tag-med">高（保険）</span></td>
+      <td><span class="tag tag-gray">△</span></td>
+      <td>大規模移行の保険として。Migration Manager for ADとセット導入を推奨</td>
+    </tr>
+    <tr>
+      <td><strong>Semperis DSP</strong></td>
+      <td><span class="vendor-badge" style="background:#6366f1">Semperis</span></td>
+      <td>AD移行中の不正変更リアルタイム検知・自動ロールバック</td>
+      <td>大</td>
+      <td><span class="price-vhigh">数百万円〜</span></td>
+      <td>×（英語のみ）</td>
+      <td><span class="tag tag-green">高（セキュリティ重視）</span></td>
+      <td><span class="tag tag-red">×国内サポートなし</span></td>
+      <td>統合期間中の不正変更・ランサムウェア対策を兼ねたい場合。NSSol提案は困難</td>
+    </tr>
+    <tr>
+      <td><strong>Netwrix Auditor</strong></td>
+      <td><span class="vendor-badge" style="background:#0891b2">Netwrix</span></td>
+      <td>AD変更監査・コンプライアンス記録</td>
+      <td>小〜大</td>
+      <td><span class="price-med">数十万円〜</span></td>
+      <td>△</td>
+      <td><span class="tag tag-med">中</span></td>
+      <td><span class="tag tag-gray">△</span></td>
+      <td>移行前の棚卸し・監査証跡確保に有用。DDフェーズから使用可</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="ma-m365">Entra ID / Microsoft 365テナント統合ツール一覧</h3>
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th>ツール名</th>
+      <th>ベンダー</th>
+      <th>メール移行</th>
+      <th>SharePoint/Teams</th>
+      <th>Entra ID移行</th>
+      <th>価格帯</th>
+      <th>NSSol扱い</th>
+      <th>推奨シーン / 注意点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Entra Cross-tenant Sync</strong></td>
+      <td><span class="vendor-badge">Microsoft</span></td>
+      <td>×</td>
+      <td>×</td>
+      <td>○（B2B自動同期）</td>
+      <td><span class="price-free">Entra P1以上</span></td>
+      <td><span class="tag tag-green">○</span></td>
+      <td>Day1暫定対応の最速手段。B2Bゲストとして自動招待。メール統合は別途必要</td>
+    </tr>
+    <tr>
+      <td><strong>BitTitan MigrationWiz</strong></td>
+      <td><span class="vendor-badge" style="background:#0891b2">BitTitan</span></td>
+      <td>○（M365/Exchange/Gmail）</td>
+      <td>○（OneDrive/SPO）</td>
+      <td>×（別途ADMT等）</td>
+      <td><span class="price-med">数十万〜数百万円</span></td>
+      <td><span class="tag tag-green">○代理店経由</span></td>
+      <td>中小M&Aのメール＋OneDrive移行の定番。UIが平易でSIerが扱いやすい</td>
+    </tr>
+    <tr>
+      <td><strong>AvePoint Fly</strong></td>
+      <td><span class="vendor-badge" style="background:#16a34a">AvePoint</span></td>
+      <td>△</td>
+      <td>○（SharePoint/Teams/OneDrive粒度移行）</td>
+      <td>×</td>
+      <td><span class="price-high">要見積もり</span></td>
+      <td><span class="tag tag-gray">△</span></td>
+      <td>SharePoint/Teamsの粒度移行が必要な場合に特化。メールはBitTitan等と組み合わせ</td>
+    </tr>
+    <tr>
+      <td><strong>Quest On Demand Migration for Email</strong></td>
+      <td><span class="vendor-badge" style="background:#c23b22">Quest</span></td>
+      <td>○（Exchange/M365大規模）</td>
+      <td>△（別モジュール）</td>
+      <td>○</td>
+      <td><span class="price-high">要見積もり</span></td>
+      <td><span class="tag tag-gray">△パートナー経由</span></td>
+      <td>大規模M365テナント統合。共存・デュアルデリバリー対応。モジュール別ライセンスに注意</td>
+    </tr>
+    <tr>
+      <td><strong>Microsoft SPMT（無償）</strong></td>
+      <td><span class="vendor-badge">Microsoft</span></td>
+      <td>×</td>
+      <td>○（SharePoint移行）</td>
+      <td>○（Entra標準機能）</td>
+      <td><span class="price-free">無償（M365内）</span></td>
+      <td><span class="tag tag-green">○</span></td>
+      <td>小規模・予算限定の場合のSharePoint移行手段。大量移行では速度・管理機能が不足</td>
+    </tr>
+    <tr>
+      <td><strong>Quest Nova（分析）</strong></td>
+      <td><span class="vendor-badge" style="background:#c23b22">Quest</span></td>
+      <td>△（分析のみ）</td>
+      <td>△（分析のみ）</td>
+      <td>○（Entra分析）</td>
+      <td><span class="price-high">要見積もり</span></td>
+      <td><span class="tag tag-gray">△</span></td>
+      <td>DDフェーズでM365テナント現状分析・移行リスク評価に使用。移行実行ツールではない</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="ma-phase">M&A段階別ツール選択フロー</h3>
+<p class="tbl-note">フェーズごとに使うべきツールと目的を整理。右に進むにつれて統合が深まる。</p>
+<div style="display:flex;gap:0;margin:16px 0;font-size:.8rem;overflow-x:auto">
+  <div style="flex:1;min-width:180px;background:#1e3a5f;color:#fff;border-radius:8px 0 0 8px;padding:14px 12px">
+    <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">&#9312; Pre-deal / DD</div>
+    <div style="font-size:.72rem;opacity:.8;margin-bottom:10px">クロージング前</div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">Netwrix Auditor<br><span style="font-size:.68rem;opacity:.75">AD棚卸し・変更履歴</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">Quest Nova<br><span style="font-size:.68rem;opacity:.75">M365テナント分析</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px">Semperis DSP<br><span style="font-size:.68rem;opacity:.75">IoC（侵害指標）検査</span></div>
+  </div>
+  <div style="width:28px;display:flex;align-items:center;justify-content:center;background:#334155;color:#60a5fa;font-size:1.4rem;font-weight:700">&#8250;</div>
+  <div style="flex:1;min-width:180px;background:#1e40af;color:#fff;padding:14px 12px">
+    <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">&#9313; Day1対応</div>
+    <div style="font-size:.72rem;opacity:.8;margin-bottom:10px">クロージング〜1週間</div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">Entra Cross-tenant Sync<br><span style="font-size:.68rem;opacity:.75">B2B招待・暫定SSO</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">Entra Cloud Sync<br><span style="font-size:.68rem;opacity:.75">買収先AD→Entra同期</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px">フォレスト信頼（手動）<br><span style="font-size:.68rem;opacity:.75">SID Filtering必須</span></div>
+  </div>
+  <div style="width:28px;display:flex;align-items:center;justify-content:center;background:#334155;color:#60a5fa;font-size:1.4rem;font-weight:700">&#8250;</div>
+  <div style="flex:1;min-width:180px;background:#7c3aed;color:#fff;padding:14px 12px">
+    <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">&#9314; 共存期間（6〜18ヶ月）</div>
+    <div style="font-size:.72rem;opacity:.8;margin-bottom:10px">段階移行・並列運用</div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">Quest Migration Manager for AD<br><span style="font-size:.68rem;opacity:.75">大規模段階移行</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">ADMT（小規模）<br><span style="font-size:.68rem;opacity:.75">無償・シンプル移行</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">BitTitan MigrationWiz<br><span style="font-size:.68rem;opacity:.75">メール/OneDrive移行</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px">Recovery Manager for AD<br><span style="font-size:.68rem;opacity:.75">ロールバック保険</span></div>
+  </div>
+  <div style="width:28px;display:flex;align-items:center;justify-content:center;background:#334155;color:#60a5fa;font-size:1.4rem;font-weight:700">&#8250;</div>
+  <div style="flex:1;min-width:180px;background:#166534;color:#fff;border-radius:0 8px 8px 0;padding:14px 12px">
+    <div style="font-weight:700;font-size:.85rem;margin-bottom:8px">&#9315; 統合完了</div>
+    <div style="font-size:.72rem;opacity:.8;margin-bottom:10px">クリーンアップ・廃止</div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">ADMT（最終クリーンアップ）<br><span style="font-size:.68rem;opacity:.75">SID History除去確認</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px;margin-bottom:4px">旧テナント/ドメイン廃止<br><span style="font-size:.68rem;opacity:.75">ライセンス整理</span></div>
+    <div style="background:rgba(255,255,255,.1);border-radius:4px;padding:6px 8px">最終監査レポート<br><span style="font-size:.68rem;opacity:.75">Netwrix Auditor</span></div>
+  </div>
+</div>
+
+<div class="warn">
+  <strong>&#9888; NSSolとして提案できるツールの整理：</strong>
+  ○提案可（自社構築・代理店経由）：ADMT、Entra Connect Sync、Entra Cloud Sync、Entra Cross-tenant Sync、BitTitan MigrationWiz（代理店）、Microsoft SPMT。
+  △要確認（Quest Softwareパートナー体制）：Quest Migration Manager、Quest On Demand Migration、Recovery Manager for AD。
+  ×現状困難：Semperis（国内サポートなし）。
+  Quest製品が必要な大規模案件では、Quest認定パートナーとの協業体制を先に確認することが提案の前提条件となる。
+</div>
+
+</section>
 
   </main>
 <script>
