@@ -2,1509 +2,755 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SAML / OIDC / OAuth 2.0 / SCIM プロトコル比較ガイド</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAML/OIDC/SCIM プロトコル詳解比較 | Enterprise IDM Knowledge Base</title>
 <style>
-  :root {
-    --saml: #e67e22;
-    --saml-light: #fef3e2;
-    --saml-dark: #b85c00;
-    --oidc: #2980b9;
-    --oidc-light: #eaf4fb;
-    --oidc-dark: #1a5c8a;
-    --scim: #27ae60;
-    --scim-light: #e8f8ef;
-    --scim-dark: #1a7d44;
-    --bg: #f8fafc;
-    --surface: #ffffff;
-    --border: #e2e8f0;
-    --text: #1e293b;
-    --text-muted: #64748b;
-    --sidebar-w: 240px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meirio", "Yu Gothic", sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.7;
-    font-size: 15px;
-  }
-  /* ─── Sidebar ─── */
-  #sidebar {
-    position: fixed;
-    top: 0; left: 0;
-    width: var(--sidebar-w);
-    height: 100vh;
-    background: #1e293b;
-    color: #cbd5e1;
-    overflow-y: auto;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-  }
-  #sidebar .logo {
-    padding: 20px 16px 12px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #f1f5f9;
-    border-bottom: 1px solid #334155;
-    letter-spacing: 0.05em;
-    line-height: 1.4;
-  }
-  #sidebar nav { flex: 1; padding: 12px 0; }
-  #sidebar nav a {
-    display: block;
-    padding: 8px 16px;
-    color: #94a3b8;
-    text-decoration: none;
-    font-size: 13px;
-    border-left: 3px solid transparent;
-    transition: all 0.2s;
-  }
-  #sidebar nav a:hover {
-    color: #f1f5f9;
-    background: #334155;
-    border-left-color: #60a5fa;
-  }
-  #sidebar nav a.saml { border-left-color: transparent; }
-  #sidebar nav a.saml:hover { border-left-color: var(--saml); }
-  #sidebar nav a.oidc:hover { border-left-color: var(--oidc); }
-  #sidebar nav a.scim:hover { border-left-color: var(--scim); }
-  #sidebar .section-label {
-    padding: 16px 16px 4px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #475569;
-  }
-  /* ─── Main ─── */
-  #main {
-    margin-left: var(--sidebar-w);
-    min-height: 100vh;
-  }
-  .page-header {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    color: #f1f5f9;
-    padding: 48px 48px 40px;
-    border-bottom: 4px solid #3b82f6;
-  }
-  .page-header h1 {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 8px;
-    line-height: 1.3;
-  }
-  .page-header .subtitle {
-    font-size: 14px;
-    color: #94a3b8;
-    max-width: 680px;
-  }
-  .badge-row {
-    display: flex;
-    gap: 8px;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  .badge {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-  .badge.saml { background: var(--saml); color: #fff; }
-  .badge.oidc { background: var(--oidc); color: #fff; }
-  .badge.scim { background: var(--scim); color: #fff; }
-  .badge.outline { background: transparent; border: 1px solid #475569; color: #94a3b8; }
-  /* ─── Content sections ─── */
-  .content { padding: 0 48px 64px; }
-  section { padding-top: 56px; }
-  section h2 {
-    font-size: 22px;
-    font-weight: 700;
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  section h2 .sec-num {
-    background: #1e293b;
-    color: #fff;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    font-weight: 800;
-    flex-shrink: 0;
-  }
-  h3 {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 28px 0 12px;
-    color: #1e293b;
-  }
-  p { margin-bottom: 12px; color: #334155; }
-  /* ─── Protocol cards (Section 1 grid) ─── */
-  .plane-grid {
-    display: grid;
-    grid-template-columns: 160px 1fr 1fr 1fr 1fr;
-    gap: 2px;
-    border: 2px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-    margin: 20px 0 32px;
-    font-size: 13px;
-  }
-  .plane-grid .cell {
-    padding: 14px 16px;
-    background: var(--surface);
-    line-height: 1.5;
-  }
-  .plane-grid .header-row {
-    display: contents;
-  }
-  .plane-grid .header-row .cell {
-    background: #1e293b;
-    color: #f1f5f9;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-  .plane-label {
-    background: #f1f5f9 !important;
-    font-weight: 700;
-    color: #475569 !important;
-    font-size: 12px !important;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .check { color: #16a34a; font-size: 16px; font-weight: 700; }
-  .partial { color: #d97706; font-size: 14px; }
-  .no { color: #dc2626; font-size: 16px; }
-  /* ─── Protocol detail cards ─── */
-  .proto-card {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 32px;
-    background: var(--surface);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  }
-  .proto-card .card-header {
-    padding: 16px 24px;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .proto-card.saml .card-header { background: var(--saml); }
-  .proto-card.oidc .card-header { background: var(--oidc); }
-  .proto-card.scim .card-header { background: var(--scim); }
-  .proto-card .card-body { padding: 20px 24px; }
-  /* ─── Strength/weakness lists ─── */
-  .sw-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 16px 0;
-  }
-  .sw-box {
-    border-radius: 8px;
-    padding: 14px 16px;
-  }
-  .sw-box.strength { background: #f0fdf4; border: 1px solid #86efac; }
-  .sw-box.weakness { background: #fff7ed; border: 1px solid #fed7aa; }
-  .sw-box h4 {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 8px;
-  }
-  .sw-box.strength h4 { color: #16a34a; }
-  .sw-box.weakness h4 { color: #d97706; }
-  .sw-box ul { list-style: none; padding: 0; }
-  .sw-box ul li {
-    font-size: 13px;
-    padding: 3px 0;
-    padding-left: 18px;
-    position: relative;
-    color: #374151;
-  }
-  .sw-box.strength ul li::before { content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: 700; }
-  .sw-box.weakness ul li::before { content: "△"; position: absolute; left: 0; color: #d97706; }
-  /* ─── Flow diagrams ─── */
-  .flow-box {
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 24px;
-    margin: 16px 0;
-  }
-  .flow-title {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #64748b;
-    margin-bottom: 16px;
-  }
-  .flow-row {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    flex-wrap: wrap;
-    margin: 8px 0;
-  }
-  .flow-node {
-    padding: 9px 14px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #fff;
-    text-align: center;
-    line-height: 1.3;
-    min-width: 80px;
-  }
-  .flow-node.user { background: #6366f1; }
-  .flow-node.sp { background: #0891b2; }
-  .flow-node.idp { background: #dc2626; }
-  .flow-node.authz { background: var(--oidc); }
-  .flow-node.resource { background: #0f766e; }
-  .flow-node.client { background: #7c3aed; }
-  .flow-node.scim-client { background: #059669; }
-  .flow-node.scim-server { background: #0f766e; }
-  .flow-node.hr { background: #6b7280; }
-  .flow-arrow {
-    font-size: 16px;
-    color: #94a3b8;
-    padding: 0 6px;
-    font-weight: 400;
-  }
-  .flow-step {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin: 6px 0;
-  }
-  .step-num {
-    background: #1e293b;
-    color: #fff;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-  .step-desc { font-size: 13px; color: #374151; }
-  .step-desc strong { color: #1e293b; }
-  /* ─── XML/Code block ─── */
-  .code-block {
-    background: #1e293b;
-    border-radius: 8px;
-    padding: 16px 20px;
-    font-family: "Consolas", "Monaco", monospace;
-    font-size: 12px;
-    line-height: 1.6;
-    overflow-x: auto;
-    margin: 16px 0;
-    color: #e2e8f0;
-  }
-  .code-block .tag { color: #7dd3fc; }
-  .code-block .attr { color: #86efac; }
-  .code-block .val { color: #fbbf24; }
-  .code-block .comment { color: #94a3b8; font-style: italic; }
-  /* ─── Comparison table ─── */
-  .cmp-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 13px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .cmp-table thead tr {
-    background: #1e293b;
-    color: #f1f5f9;
-  }
-  .cmp-table th {
-    padding: 14px 16px;
-    text-align: left;
-    font-weight: 700;
-    font-size: 13px;
-  }
-  .cmp-table th.saml { background: var(--saml); }
-  .cmp-table th.oidc { background: var(--oidc); }
-  .cmp-table th.scim { background: var(--scim); }
-  .cmp-table tbody tr { border-bottom: 1px solid var(--border); }
-  .cmp-table tbody tr:last-child { border-bottom: none; }
-  .cmp-table tbody tr:hover { background: #f8fafc; }
-  .cmp-table td { padding: 12px 16px; vertical-align: top; }
-  .cmp-table td.row-label {
-    font-weight: 700;
-    color: #475569;
-    background: #f8fafc;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    white-space: nowrap;
-    width: 140px;
-  }
-  /* ─── Scenario cards ─── */
-  .scenario-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin: 20px 0;
-  }
-  .scenario-card {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 20px;
-    background: var(--surface);
-  }
-  .scenario-card .scenario-q {
-    font-size: 13px;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  .scenario-card .scenario-q .q-icon {
-    background: #f1f5f9;
-    color: #475569;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: 700;
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-  .scenario-card .answer {
-    font-size: 13px;
-    color: #374151;
-    margin-top: 8px;
-    line-height: 1.6;
-  }
-  .answer .proto-tag {
-    display: inline-block;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 700;
-    margin-right: 4px;
-    color: #fff;
-  }
-  .proto-tag.saml { background: var(--saml); }
-  .proto-tag.oidc { background: var(--oidc); }
-  .proto-tag.scim { background: var(--scim); }
-  .proto-tag.combo { background: #7c3aed; }
-  /* ─── Info/warning callout ─── */
-  .callout {
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 16px 0;
-    font-size: 13px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    line-height: 1.6;
-  }
-  .callout.info { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
-  .callout.warn { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
-  .callout.success { background: #f0fdf4; border-left: 4px solid #22c55e; color: #166534; }
-  .callout .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-  /* ─── Token anatomy ─── */
-  .token-card {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 8px 0;
-  }
-  .token-card .t-header {
-    padding: 8px 14px;
-    font-size: 12px;
-    font-weight: 700;
-    color: #fff;
-    background: var(--oidc);
-  }
-  .token-card .t-body {
-    padding: 10px 14px;
-    font-size: 12px;
-    background: var(--surface);
-    color: #374151;
-  }
-  .token-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin: 16px 0;
-  }
-  /* ─── SCIM resource ─── */
-  .scim-resource {
-    background: var(--scim-light);
-    border: 1px solid #86efac;
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 8px 0;
-    font-size: 13px;
-  }
-  .scim-resource h4 { color: var(--scim-dark); margin-bottom: 8px; font-size: 13px; }
-  /* ─── Responsive ─── */
-  @media (max-width: 900px) {
-    :root { --sidebar-w: 200px; }
-    .content { padding: 0 24px 48px; }
-    .page-header { padding: 32px 24px; }
-    .sw-grid { grid-template-columns: 1fr; }
-    .scenario-grid { grid-template-columns: 1fr; }
-    .plane-grid { grid-template-columns: 120px 1fr 1fr 1fr 1fr; font-size: 11px; }
-    .token-row { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 768px) {
-    #sidebar { display: none; }
-    #main { margin-left: 0; }
-    .page-header h1 { font-size: 22px; }
-    .content { padding: 0 16px 32px; }
-    .cmp-table { font-size: 12px; }
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:.82rem;font-family:'Courier New',monospace;color:#dc2626}
+pre{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0;font-size:.8rem;line-height:1.6}
+pre .cm{color:#64748b}
+pre .kw{color:#7dd3fc}
+pre .str{color:#86efac}
+pre .fn{color:#fde68a}
+pre .num{color:#fb923c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-authn{background:#dbeafe;color:#1e40af}
+.tag-authz{background:#fef3c7;color:#92400e}
+.tag-prov{background:#dcfce7;color:#166534}
+.tag-legacy{background:#fee2e2;color:#991b1b}
+.tag-modern{background:#f0fdf4;color:#14532d}
+.protocol-card{background:#fff;border-radius:10px;border-top:4px solid #3b82f6;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.protocol-card.saml{border-top-color:#dc2626}
+.protocol-card.oidc{border-top-color:#7c3aed}
+.protocol-card.oauth{border-top-color:#ea580c}
+.protocol-card.scim{border-top-color:#16a34a}
+.protocol-card h3{margin-top:0;font-size:.95rem}
+.flow-diagram{overflow-x:auto;margin:14px 0}
+.flow-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:nowrap}
+.flow-box{padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:600;text-align:center;min-width:100px;white-space:nowrap}
+.flow-box.blue{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.flow-box.green{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.flow-box.orange{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.flow-box.purple{background:#f3e8ff;color:#6b21a8;border:1px solid #d8b4fe}
+.flow-box.red{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.flow-box.gray{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.flow-arrow{font-size:.78rem;color:#475569;white-space:nowrap;flex-shrink:0}
+.flow-label{font-size:.72rem;color:#64748b;text-align:center;margin-top:-4px;margin-bottom:8px}
+.layer-block{background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:16px 20px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.layer-title{font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.layer-title.authn{color:#1e40af}
+.layer-title.authz{color:#92400e}
+.layer-title.prov{color:#166534}
+@media(max-width:900px){#toc{display:none}main{margin-left:0}}
 </style>
 </head>
 <body>
-
-<!-- ===================== SIDEBAR ===================== -->
-<nav id="sidebar">
-  <div class="logo">IDM知識ベース<br>プロトコル比較ガイド</div>
-  <nav>
-    <span class="section-label">はじめに</span>
-    <a href="#overview">プロトコル全体マップ</a>
-    <span class="section-label">プロトコル詳解</span>
-    <a href="#saml" class="saml">SAML 2.0</a>
-    <a href="#oidc" class="oidc">OIDC / OAuth 2.0</a>
-    <a href="#scim" class="scim">SCIM 2.0</a>
-    <span class="section-label">選択支援</span>
-    <a href="#comparison">比較表</a>
-    <a href="#guide">選択ガイド</a>
-    <a href="#japan">日本企業の実態</a>
-  </nav>
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#protocol-map">プロトコル全体マップ</a>
+  <a href="#saml" class="toc-sub">SAML 2.0 詳解</a>
+  <a href="#oidc" class="toc-sub">OIDC / OAuth 2.0 詳解</a>
+  <a href="#scim" class="toc-sub">SCIM 2.0 詳解</a>
+  <a href="#comparison">プロトコル比較表</a>
+  <a href="#scenario">シーン別選択ガイド</a>
+  <h2>関連資料</h2>
+  <a href="idm_overview.html" class="toc-sub">IDM 全体概要</a>
+  <a href="entra_hybrid_join_guide.html" class="toc-sub">Entra Hybrid Join</a>
+  <a href="privileged_access_management.html" class="toc-sub">PAM 特権管理</a>
 </nav>
 
-<!-- ===================== MAIN ===================== -->
-<div id="main">
+<main>
+  <h1>SAML / OIDC / SCIM プロトコル詳解比較</h1>
+  <p class="subtitle">SE・アーキテクト・技術担当者向け | エンタープライズ ID 管理プロトコル技術解説</p>
 
-<!-- ─── Page Header ─── -->
-<div class="page-header">
-  <h1>SAML / OIDC / OAuth 2.0 / SCIM<br>プロトコル比較・選択ガイド</h1>
-  <p class="subtitle">
-    エンタープライズ ID 管理を支える4大プロトコルの仕組み・強み・弱み・
-    適用シーンを整理し、日本企業の IT アーキテクトが正しく選択・説明できるよう設計したリファレンス。
-  </p>
-  <div class="badge-row">
-    <span class="badge saml">SAML 2.0</span>
-    <span class="badge oidc">OIDC / OAuth 2.0</span>
-    <span class="badge scim">SCIM 2.0</span>
-    <span class="badge outline">対象：IT アーキテクト・SE</span>
-    <span class="badge outline">更新：2026年4月</span>
-  </div>
-</div>
-
-<!-- ─── Content ─── -->
-<div class="content">
-
-<!-- ================================================================
-     Section 1: プロトコル全体マップ
-     ================================================================ -->
-<section id="overview">
-  <h2><span class="sec-num">1</span>プロトコル全体マップ</h2>
-
-  <p>
-    ID 管理プロトコルは役割別に3つの<strong>プレーン（層）</strong>に分類される。
-    「誰が誰であるか」を確認する<strong>認証（AuthN）</strong>、
-    「何ができるか」を制御する<strong>認可（AuthZ）</strong>、
-    そしてアカウントを自動で作成・変更・削除する<strong>プロビジョニング</strong>だ。
-    プロトコルを選ぶ前に、自分たちが解決しようとしている課題がどのプレーンに属するかを明確にする。
-  </p>
-
-  <div class="plane-grid">
-    <!-- header -->
-    <div class="cell header-row" style="display:contents;">
-      <div class="cell" style="background:#1e293b;color:#f1f5f9;font-weight:700;font-size:12px;">プレーン / 役割</div>
-      <div class="cell" style="background:var(--saml);color:#fff;font-weight:700;font-size:12px;text-align:center;">SAML 2.0</div>
-      <div class="cell" style="background:var(--oidc);color:#fff;font-weight:700;font-size:12px;text-align:center;">OAuth 2.0</div>
-      <div class="cell" style="background:#1761a0;color:#fff;font-weight:700;font-size:12px;text-align:center;">OpenID Connect</div>
-      <div class="cell" style="background:var(--scim);color:#fff;font-weight:700;font-size:12px;text-align:center;">SCIM 2.0</div>
+  <section id="protocol-map">
+    <h2>1. プロトコル全体マップ</h2>
+    <div class="lead">
+      エンタープライズ ID 管理では、複数のプロトコルが異なる役割を担う。<strong>認証（AuthN）・認可（AuthZ）・プロビジョニング</strong>の3層を正しく理解し、シーンに応じて適切なプロトコルを選択することが設計品質の要である。本資料では SAML 2.0、OpenID Connect (OIDC)、OAuth 2.0、SCIM 2.0 を横断的に比較・解説する。
     </div>
-    <!-- AuthN -->
-    <div class="cell plane-label">認証 (AuthN)<br>誰であるか</div>
-    <div class="cell" style="text-align:center;"><span class="check">✓</span><br><small>主用途</small></div>
-    <div class="cell" style="text-align:center;"><span class="no">✗</span><br><small>対象外</small></div>
-    <div class="cell" style="text-align:center;"><span class="check">✓</span><br><small>主用途</small></div>
-    <div class="cell" style="text-align:center;"><span class="no">✗</span><br><small>対象外</small></div>
-    <!-- AuthZ -->
-    <div class="cell plane-label">認可 (AuthZ)<br>何ができるか</div>
-    <div class="cell" style="text-align:center;"><span class="partial">△</span><br><small>属性経由</small></div>
-    <div class="cell" style="text-align:center;"><span class="check">✓</span><br><small>主用途</small></div>
-    <div class="cell" style="text-align:center;"><span class="check">✓</span><br><small>継承</small></div>
-    <div class="cell" style="text-align:center;"><span class="no">✗</span><br><small>対象外</small></div>
-    <!-- Provisioning -->
-    <div class="cell plane-label">プロビジョニング<br>アカウント管理</div>
-    <div class="cell" style="text-align:center;"><span class="no">✗</span><br><small>対象外</small></div>
-    <div class="cell" style="text-align:center;"><span class="no">✗</span><br><small>対象外</small></div>
-    <div class="cell" style="text-align:center;"><span class="no">✗</span><br><small>対象外</small></div>
-    <div class="cell" style="text-align:center;"><span class="check">✓</span><br><small>主用途</small></div>
-    <!-- Format -->
-    <div class="cell plane-label">メッセージ形式</div>
-    <div class="cell"><small>XML / SOAP<br>HTTP-POST</small></div>
-    <div class="cell"><small>HTTP リダイレクト<br>JSON / JWT</small></div>
-    <div class="cell"><small>HTTP リダイレクト<br>JSON / JWT</small></div>
-    <div class="cell"><small>REST API<br>JSON</small></div>
-    <!-- Year -->
-    <div class="cell plane-label">標準化年</div>
-    <div class="cell"><small>2005年<br>OASIS</small></div>
-    <div class="cell"><small>2012年<br>IETF RFC 6749</small></div>
-    <div class="cell"><small>2014年<br>OpenID Foundation</small></div>
-    <div class="cell"><small>2015年<br>IETF RFC 7644</small></div>
-    <!-- Typical IdP -->
-    <div class="cell plane-label">主な IdP/製品</div>
-    <div class="cell"><small>Entra ID, Okta, ADFS, PingFederate</small></div>
-    <div class="cell"><small>Entra ID, Okta, Google, Auth0</small></div>
-    <div class="cell"><small>Entra ID, Okta, Keycloak</small></div>
-    <div class="cell"><small>Entra ID, Okta, SailPoint, Saviynt</small></div>
-  </div>
-
-  <div class="callout info">
-    <span class="icon">💡</span>
-    <div>
-      <strong>重要な原則：</strong> 1つのシステムで複数プロトコルを組み合わせるのが現代の正解。
-      典型例は「OIDC で SSO → OAuth 2.0 で API 保護 → SCIM でアカウント自動同期」。
-      SAML は既存レガシー連携の維持目的に限定し、新規構築は OIDC/OAuth 2.0 を優先する。
-    </div>
-  </div>
-</section>
-
-<!-- ================================================================
-     Section 2: SAML 2.0 詳解
-     ================================================================ -->
-<section id="saml">
-  <h2><span class="sec-num">2</span>SAML 2.0 詳解</h2>
-
-  <div class="proto-card saml">
-    <div class="card-header">
-      <span style="font-size:20px;">🏛</span>
-      SAML 2.0（Security Assertion Markup Language）— 2005年 OASIS 標準
-    </div>
-    <div class="card-body">
-      <p>
-        SAML は、<strong>異なる組織間で認証情報（アサーション）を XML で交換する</strong>フェデレーション標準。
-        「ユーザーが既にログイン済みであること」を信頼できる形で伝搬し、
-        複数システムへの SSO（シングルサインオン）を実現する。
-        2005年の設計当初からエンタープライズ用途を前提としており、
-        日本の大手企業・官公庁が採用したレガシー SaaS（Salesforce, SAP, ServiceNow 旧版等）の多くが SAML のみに対応している。
-      </p>
-
-      <h3>登場人物と用語</h3>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0;">
-        <div style="background:var(--saml-light);border:1px solid #fed7aa;border-radius:8px;padding:12px 14px;">
-          <div style="font-weight:700;color:var(--saml-dark);font-size:13px;margin-bottom:4px;">Principal（主体）</div>
-          <div style="font-size:12px;color:#374151;">認証を受けるエンドユーザー。ブラウザを通じてリソースにアクセスする。</div>
+    <h3>プロトコル3層モデル</h3>
+    <div class="layer-block">
+      <div class="layer-title authn">&#128274; 認証（AuthN）層 — 「あなたは誰か？」を確認する</div>
+      <div class="two-col">
+        <div class="protocol-card saml">
+          <h3>SAML 2.0 <span class="tag tag-authn">AuthN</span> <span class="tag tag-legacy">XML</span></h3>
+          <p>Security Assertion Markup Language。2002年策定のエンタープライズSSO業界標準。XMLベースのアサーションでIdP（認証基盤）からSP（サービス提供者）へユーザー属性を安全に伝達する。</p>
+          <p><strong>登場年:</strong> 2002年（SAML 2.0は2005年）</p>
+          <p><strong>主な採用シーン:</strong> 社内・SaaS SSO、官公庁・金融機関のオンプレミス連携</p>
+          <p><strong>主要製品:</strong> Active Directory Federation Services (ADFS)、Shibboleth、Entra ID、Okta</p>
         </div>
-        <div style="background:var(--saml-light);border:1px solid #fed7aa;border-radius:8px;padding:12px 14px;">
-          <div style="font-weight:700;color:var(--saml-dark);font-size:13px;margin-bottom:4px;">IdP（Identity Provider）</div>
-          <div style="font-size:12px;color:#374151;">ユーザーを認証し SAML アサーションを発行する。Entra ID / Okta / ADFS が代表例。</div>
-        </div>
-        <div style="background:var(--saml-light);border:1px solid #fed7aa;border-radius:8px;padding:12px 14px;">
-          <div style="font-weight:700;color:var(--saml-dark);font-size:13px;margin-bottom:4px;">SP（Service Provider）</div>
-          <div style="font-size:12px;color:#374151;">リソースを提供する側。IdP からのアサーションを検証してアクセスを許可する。</div>
-        </div>
-      </div>
-      <div style="margin:12px 0;padding:10px 14px;background:var(--saml-light);border-radius:8px;font-size:13px;color:#374151;">
-        <strong>アサーション（Assertion）</strong>とは：「Aさんは 2026-04-07T09:00Z に IdP で認証された。
-        メールアドレスは a@corp.jp。グループは admin」という形式で発行される署名付き XML 文書。
-        SP はこの署名を検証して信頼性を確認する。
-      </div>
-
-      <h3>① SP-initiated SSO フロー（最も一般的）</h3>
-      <div class="flow-box">
-        <div class="flow-title">SP 起点の SSO — ユーザーが SP に直接アクセスした場合</div>
-        <div class="flow-row">
-          <div class="flow-node user">ユーザー<br><small style="font-size:10px;">ブラウザ</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node sp">SP<br><small style="font-size:10px;">例: Salesforce</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node idp">IdP<br><small style="font-size:10px;">例: Entra ID</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node sp">SP<br><small style="font-size:10px;">アサーション検証</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node resource">リソース<br><small style="font-size:10px;">アクセス許可</small></div>
-        </div>
-        <div style="margin-top:16px;">
-          <div class="flow-step">
-            <div class="step-num">1</div>
-            <div class="step-desc"><strong>リクエスト：</strong> ユーザーが SP の URL にアクセス。SP はユーザーが未認証であることを検出し、<strong>AuthnRequest（XML）</strong>を生成して IdP へリダイレクト。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">2</div>
-            <div class="step-desc"><strong>認証：</strong> IdP がユーザーを認証（パスワード・MFA 等）。認証成功後、<strong>SAML Response（XML アサーション）</strong>を生成し、署名を付与。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">3</div>
-            <div class="step-desc"><strong>ポスト：</strong> ブラウザが HTTP POST で SAML Response を SP のエンドポイント（ACS URL）に送信。アサーションは Base64 エンコード済み。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">4</div>
-            <div class="step-desc"><strong>検証：</strong> SP が IdP の公開鍵でアサーションの署名を検証。Subject（ユーザー識別子）・Audience・有効期限を確認。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">5</div>
-            <div class="step-desc"><strong>アクセス許可：</strong> 検証成功後、SP はセッションを確立。アサーション内の属性（roles, department 等）を元にアクセス制御を適用。</div>
-          </div>
-        </div>
-      </div>
-
-      <h3>② IdP-initiated SSO フロー</h3>
-      <div class="flow-box">
-        <div class="flow-title">IdP 起点の SSO — ポータルからアプリを起動する場合</div>
-        <div class="flow-row">
-          <div class="flow-node user">ユーザー<br><small style="font-size:10px;">ブラウザ</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node idp">IdP ポータル<br><small style="font-size:10px;">Entra ID / Okta</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node sp">SP<br><small style="font-size:10px;">アサーション受信</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node resource">リソース<br><small style="font-size:10px;">アクセス許可</small></div>
-        </div>
-        <div style="margin-top:12px;font-size:13px;color:#374151;">
-          IdP ポータル（Entra ID My Apps 等）でアプリアイコンをクリックすると、
-          IdP がアサーションを発行して SP に直接 POST する。
-          AuthnRequest なしに開始するため、<strong>SP 側で InResponseTo の検証をスキップできる</strong>が、
-          セキュリティ上 SP-initiated を推奨する設計者も多い。
-        </div>
-      </div>
-
-      <h3>SAML アサーションの構造（簡略）</h3>
-      <div class="code-block">
-<span class="tag">&lt;samlp:Response</span> <span class="attr">xmlns:samlp</span>=<span class="val">"urn:oasis:names:tc:SAML:2.0:protocol"</span><span class="tag">&gt;</span>
-  <span class="comment">&lt;!-- IdP の発行者情報 --&gt;</span>
-  <span class="tag">&lt;saml:Issuer&gt;</span>https://idp.corp.jp/saml<span class="tag">&lt;/saml:Issuer&gt;</span>
-
-  <span class="tag">&lt;saml:Assertion&gt;</span>
-    <span class="comment">&lt;!-- 誰についての情報か --&gt;</span>
-    <span class="tag">&lt;saml:Subject&gt;</span>
-      <span class="tag">&lt;saml:NameID</span> <span class="attr">Format</span>=<span class="val">"emailAddress"</span><span class="tag">&gt;</span>user@corp.jp<span class="tag">&lt;/saml:NameID&gt;</span>
-    <span class="tag">&lt;/saml:Subject&gt;</span>
-
-    <span class="comment">&lt;!-- 有効期間 --&gt;</span>
-    <span class="tag">&lt;saml:Conditions</span>
-      <span class="attr">NotBefore</span>=<span class="val">"2026-04-07T09:00:00Z"</span>
-      <span class="attr">NotOnOrAfter</span>=<span class="val">"2026-04-07T09:10:00Z"</span><span class="tag">&gt;</span>
-      <span class="tag">&lt;saml:AudienceRestriction&gt;</span>
-        <span class="tag">&lt;saml:Audience&gt;</span>https://sp.saas-app.com<span class="tag">&lt;/saml:Audience&gt;</span>
-      <span class="tag">&lt;/saml:AudienceRestriction&gt;</span>
-    <span class="tag">&lt;/saml:Conditions&gt;</span>
-
-    <span class="comment">&lt;!-- 属性（グループ・部門等）--&gt;</span>
-    <span class="tag">&lt;saml:AttributeStatement&gt;</span>
-      <span class="tag">&lt;saml:Attribute</span> <span class="attr">Name</span>=<span class="val">"groups"</span><span class="tag">&gt;</span>
-        <span class="tag">&lt;saml:AttributeValue&gt;</span>admin<span class="tag">&lt;/saml:AttributeValue&gt;</span>
-      <span class="tag">&lt;/saml:Attribute&gt;</span>
-    <span class="tag">&lt;/saml:AttributeStatement&gt;</span>
-  <span class="tag">&lt;/saml:Assertion&gt;</span>
-  <span class="comment">&lt;!-- ds:Signature — IdP の秘密鍵による署名 --&gt;</span>
-<span class="tag">&lt;/samlp:Response&gt;</span>
-      </div>
-
-      <div class="sw-grid">
-        <div class="sw-box strength">
-          <h4>強み（Strengths）</h4>
-          <ul>
-            <li>エンタープライズ実績 20年以上</li>
-            <li>豊富な属性（グループ・役職等）を伝搬可能</li>
-            <li>フェデレーション（B2B 連携）に対応</li>
-            <li>日本の大手 SaaS との接続実績が豊富</li>
-            <li>Entra ID / Okta / ADFS で安定サポート</li>
-            <li>ベンダーメタデータ交換による設定標準化</li>
-          </ul>
-        </div>
-        <div class="sw-box weakness">
-          <h4>弱み（Weaknesses）</h4>
-          <ul>
-            <li>XML／SOAP の実装複雑性が高い</li>
-            <li>ブラウザ依存（モバイル・API 非対応）</li>
-            <li>API アクセストークン発行機能なし</li>
-            <li>デバッグに専門知識が必要</li>
-            <li>標準化が 2005年のため新機能拡張が遅い</li>
-            <li>セッション管理は SP に委ねられ統一困難</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="callout warn">
-        <span class="icon">⚠️</span>
-        <div>
-          <strong>日本企業での採用状況：</strong>
-          2015年前後に SaaS 導入した企業の多くが SAML SSO を採用。
-          現在も Salesforce・SAP S/4HANA・ServiceNow・Workday との連携では SAML が主流。
-          新規システムでは OIDC への移行が進んでいるが、<strong>既存 SAML 連携は最低 5〜10年は維持が必要</strong>なケースが多い。
+        <div class="protocol-card oidc">
+          <h3>OpenID Connect (OIDC) <span class="tag tag-authn">AuthN</span> <span class="tag tag-modern">JWT</span></h3>
+          <p>OAuth 2.0 を基盤とした認証レイヤー。2014年策定。JWT（JSON Web Token）形式のIDトークンでユーザー情報を伝達。モバイルアプリ・SPA・マイクロサービスに最適。</p>
+          <p><strong>登場年:</strong> 2014年（OpenID Foundation策定）</p>
+          <p><strong>主な採用シーン:</strong> モバイルアプリ認証、B2C サービス、クラウドネイティブ環境</p>
+          <p><strong>主要製品:</strong> Entra ID (Azure AD)、Auth0、Keycloak、Google Identity</p>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ================================================================
-     Section 3: OIDC / OAuth 2.0 詳解
-     ================================================================ -->
-<section id="oidc">
-  <h2><span class="sec-num">3</span>OpenID Connect / OAuth 2.0 詳解</h2>
-
-  <div class="proto-card oidc">
-    <div class="card-header">
-      <span style="font-size:20px;">🔐</span>
-      OAuth 2.0（RFC 6749）＋ OpenID Connect 1.0 — 2012〜2014年 IETF/OpenID Foundation 標準
-    </div>
-    <div class="card-body">
-
-      <div class="callout info">
-        <span class="icon">📌</span>
-        <div>
-          <strong>よくある誤解：</strong>
-          「OAuth 2.0 は認証プロトコルだ」—— これは<strong>誤り</strong>。
-          OAuth 2.0 は<strong>認可フレームワーク</strong>であり、「Aアプリが Bサービスのデータに、ユーザーの許可を得てアクセスする」ことを標準化する。
-          認証（誰であるか）を扱うのは、OAuth 2.0 の上に構築された <strong>OpenID Connect（OIDC）</strong> だ。
+    <div class="layer-block">
+      <div class="layer-title authz">&#128275; 認可（AuthZ）層 — 「何をしてよいか？」を制御する</div>
+      <div class="two-col">
+        <div class="protocol-card oauth">
+          <h3>OAuth 2.0 <span class="tag tag-authz">AuthZ</span> <span class="tag tag-modern">REST</span></h3>
+          <p>認可の委譲フレームワーク。2012年RFC策定。アクセストークンを用いて、リソースオーナーの代理でクライアントにAPIアクセス権限を委譲する。OIDC の基盤プロトコル。</p>
+          <p><strong>登場年:</strong> 2012年（RFC 6749）</p>
+          <p><strong>主な採用シーン:</strong> Web API認可、サードパーティアプリ連携、マイクロサービス間認証</p>
+          <p><strong>主要製品:</strong> Azure AD B2C、Auth0、Okta、Kong</p>
         </div>
-      </div>
-
-      <h3>OAuth 2.0 の役割と登場人物</h3>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0;">
-        <div style="background:var(--oidc-light);border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;">
-          <div style="font-weight:700;color:var(--oidc-dark);font-size:12px;margin-bottom:4px;">Resource Owner</div>
-          <div style="font-size:12px;color:#374151;">データの所有者（通常エンドユーザー）。アクセスを許可する主体。</div>
-        </div>
-        <div style="background:var(--oidc-light);border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;">
-          <div style="font-weight:700;color:var(--oidc-dark);font-size:12px;margin-bottom:4px;">Client</div>
-          <div style="font-size:12px;color:#374151;">リソースにアクセスしたいアプリ（Web アプリ・SPA・モバイル等）。</div>
-        </div>
-        <div style="background:var(--oidc-light);border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;">
-          <div style="font-weight:700;color:var(--oidc-dark);font-size:12px;margin-bottom:4px;">Authorization Server</div>
-          <div style="font-size:12px;color:#374151;">トークンを発行する認可サーバー。Entra ID / Okta / Keycloak 等。</div>
-        </div>
-        <div style="background:var(--oidc-light);border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;">
-          <div style="font-weight:700;color:var(--oidc-dark);font-size:12px;margin-bottom:4px;">Resource Server</div>
-          <div style="font-size:12px;color:#374151;">保護された API（Microsoft Graph, Salesforce API 等）。</div>
-        </div>
-      </div>
-
-      <h3>Authorization Code Flow with PKCE（推奨フロー）</h3>
-      <div class="flow-box">
-        <div class="flow-title">Authorization Code + PKCE — Web アプリ・SPA・モバイルアプリ共通の推奨フロー</div>
-        <div class="flow-row">
-          <div class="flow-node client">クライアント<br><small style="font-size:10px;">Web / SPA</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node authz">認可サーバー<br><small style="font-size:10px;">Entra ID</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node client">クライアント<br><small style="font-size:10px;">コード受信</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node authz">トークンエンドポイント<br><small style="font-size:10px;">Token 発行</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node resource">API<br><small style="font-size:10px;">保護されたリソース</small></div>
-        </div>
-        <div style="margin-top:16px;">
-          <div class="flow-step">
-            <div class="step-num">1</div>
-            <div class="step-desc"><strong>PKCE 準備：</strong> クライアントが <code style="background:#f1f5f9;padding:1px 4px;border-radius:3px;">code_verifier</code>（ランダム値）を生成し、その SHA-256 ハッシュ <code style="background:#f1f5f9;padding:1px 4px;border-radius:3px;">code_challenge</code> を計算。認可リクエストに <code>code_challenge</code> を添付して認可サーバーへリダイレクト。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">2</div>
-            <div class="step-desc"><strong>ユーザー認証・同意：</strong> 認可サーバーがユーザーを認証（ID/PW + MFA）し、要求スコープへの同意を確認。認証成功後、<strong>認可コード（Authorization Code）</strong>を生成してクライアントの redirect_uri にリダイレクト。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">3</div>
-            <div class="step-desc"><strong>トークン交換：</strong> クライアントが認可コードと <code>code_verifier</code> をトークンエンドポイントに POST。認可サーバーが <code>code_verifier</code> を検証（PKCE）し、<strong>Access Token・Refresh Token・ID Token</strong> を返却。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">4</div>
-            <div class="step-desc"><strong>API 呼び出し：</strong> クライアントが <code>Authorization: Bearer &lt;access_token&gt;</code> ヘッダーを付与して Resource Server（API）を呼び出す。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">5</div>
-            <div class="step-desc"><strong>トークン検証：</strong> Resource Server が Access Token の署名・有効期限・スコープを検証しレスポンスを返す。Access Token 期限切れ後は Refresh Token で再取得。</div>
-          </div>
-        </div>
-      </div>
-
-      <h3>3種類のトークン</h3>
-      <div class="token-row">
-        <div class="token-card">
-          <div class="t-header" style="background:#2563eb;">Access Token</div>
-          <div class="t-body">
-            <strong>用途：</strong>API への認可証明<br>
-            <strong>形式：</strong>JWT または Opaque<br>
-            <strong>有効期間：</strong>短め（1時間程度）<br>
-            <strong>含む情報：</strong>sub, scope, exp, iss<br>
-            <strong>注意：</strong>リボーク不可（JWTの場合）
-          </div>
-        </div>
-        <div class="token-card">
-          <div class="t-header" style="background:#7c3aed;">ID Token（OIDC）</div>
-          <div class="t-body">
-            <strong>用途：</strong>ユーザー認証の証明<br>
-            <strong>形式：</strong>JWT（署名必須）<br>
-            <strong>有効期間：</strong>短め（1時間程度）<br>
-            <strong>含む情報：</strong>sub, email, name, iss, aud<br>
-            <strong>注意：</strong>API 呼び出しには使用しない
-          </div>
-        </div>
-        <div class="token-card">
-          <div class="t-header" style="background:#059669;">Refresh Token</div>
-          <div class="t-body">
-            <strong>用途：</strong>Access Token の再取得<br>
-            <strong>形式：</strong>Opaque（秘密値）<br>
-            <strong>有効期間：</strong>長め（日〜月単位）<br>
-            <strong>含む情報：</strong>不透明（サーバー管理）<br>
-            <strong>注意：</strong>安全なストレージに保管必須
-          </div>
-        </div>
-      </div>
-
-      <h3>JWT（JSON Web Token）の構造</h3>
-      <div class="code-block">
-<span class="comment">// ヘッダー (Base64URL デコード後)</span>
-{ <span class="attr">"alg"</span>: <span class="val">"RS256"</span>, <span class="attr">"typ"</span>: <span class="val">"JWT"</span>, <span class="attr">"kid"</span>: <span class="val">"ABC123"</span> }
-
-<span class="comment">// ペイロード (Base64URL デコード後)</span>
-{
-  <span class="attr">"iss"</span>: <span class="val">"https://login.microsoftonline.com/{tenant}/v2.0"</span>,
-  <span class="attr">"sub"</span>: <span class="val">"abc123def456"</span>,         <span class="comment">// ユーザー固有 ID</span>
-  <span class="attr">"aud"</span>: <span class="val">"api://myapp.corp.jp"</span>,  <span class="comment">// 受信者（Resource Server）</span>
-  <span class="attr">"exp"</span>: <span class="val">1744000000</span>,              <span class="comment">// Unix タイムスタンプ</span>
-  <span class="attr">"iat"</span>: <span class="val">1743996400</span>,              <span class="comment">// 発行時刻</span>
-  <span class="attr">"scp"</span>: <span class="val">"User.Read Mail.Read"</span>, <span class="comment">// 付与スコープ</span>
-  <span class="attr">"roles"</span>: [<span class="val">"Admin"</span>, <span class="val">"Reader"</span>]  <span class="comment">// アプリロール</span>
-}
-
-<span class="comment">// 署名: Header + Payload を IdP の秘密鍵（RSA/EC）で署名</span>
-      </div>
-
-      <div class="sw-grid">
-        <div class="sw-box strength">
-          <h4>強み（Strengths）</h4>
-          <ul>
-            <li>モバイル・SPA・API 保護すべてに対応</li>
-            <li>JSON / HTTP ベースで実装が容易</li>
-            <li>スコープ・クレームで細粒度の認可が可能</li>
-            <li>標準ライブラリが全言語で整備済み</li>
-            <li>SaaS の新規対応はほぼ OIDC に移行済み</li>
-            <li>PKCE により認可コード横取り攻撃を防止</li>
-          </ul>
-        </div>
-        <div class="sw-box weakness">
-          <h4>弱み（Weaknesses）</h4>
-          <ul>
-            <li>OAuth 2.0 単体では認証ではなく認可のみ</li>
-            <li>JWT リボーク（失効）が難しい</li>
-            <li>フロー選択の誤りがセキュリティリスクに</li>
-            <li>レガシーアプリ（IE 依存等）では対応困難</li>
-            <li>SAML に比べて大手 SaaS の古いインスタンスでは未対応</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="callout success">
-        <span class="icon">✅</span>
-        <div>
-          <strong>設計推奨：</strong>
-          新規 SaaS 選定では「OIDC 対応」を必須要件として RFP に明記する。
-          API ゲートウェイは OAuth 2.0 Bearer Token による保護を標準化し、
-          Entra ID または Okta を Authorization Server として一元化する。
-          社内 API も含め「すべての API コールにアクセストークン検証」を原則とする。
+        <div class="card">
+          <h4>XACML <span class="tag tag-authz">AuthZ</span></h4>
+          <p>eXtensible Access Control Markup Language。OASIS策定の細粒度アクセス制御ポリシー記述言語。Policy Decision Point (PDP) / Policy Enforcement Point (PEP) モデルで動的認可を実現。</p>
+          <p>大規模な医療・金融システムでの採用実績あり。SailPoint、Axiomatics などが対応。日本での採用は限定的。</p>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ================================================================
-     Section 4: SCIM 2.0 詳解
-     ================================================================ -->
-<section id="scim">
-  <h2><span class="sec-num">4</span>SCIM 2.0 詳解</h2>
-
-  <div class="proto-card scim">
-    <div class="card-header">
-      <span style="font-size:20px;">🔄</span>
-      SCIM 2.0（System for Cross-domain Identity Management）— 2015年 IETF RFC 7643/7644
-    </div>
-    <div class="card-body">
-      <p>
-        SCIM は<strong>ユーザー・グループのプロビジョニング（作成・更新・削除）を自動化するための REST API 標準</strong>。
-        認証や認可は対象外。人事システム（HR）から IdP へのアカウント同期、
-        IdP から SaaS へのアカウント伝搬、退職者の一括無効化など、
-        「JML（Joiner-Mover-Leaver）プロセス」の自動化に特化する。
-      </p>
-
-      <h3>SCIM が解決する課題</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 20px;">
-        <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:14px 16px;">
-          <div style="font-weight:700;color:#c2410c;font-size:13px;margin-bottom:8px;">❌ SCIM なしの世界</div>
-          <div style="font-size:12px;color:#374151;line-height:1.7;">
-            ・退職者が翌日も SaaS にログインできる<br>
-            ・ID/PW をメールで配布する手動オンボード<br>
-            ・部署異動後も旧部署のデータにアクセス可能<br>
-            ・監査時に「誰が何にアクセスできるか」不明<br>
-            ・アカウント削除漏れによる不正アクセスリスク
-          </div>
+    <div class="layer-block">
+      <div class="layer-title prov">&#128101; プロビジョニング層 — 「アカウントを自動管理する」</div>
+      <div class="two-col">
+        <div class="protocol-card scim">
+          <h3>SCIM 2.0 <span class="tag tag-prov">プロビジョニング</span> <span class="tag tag-modern">JSON/REST</span></h3>
+          <p>System for Cross-domain Identity Management。2015年RFC策定。JSON/RESTベースの標準プロビジョニングAPI。HR系システム→IDM→SaaSの自動連携を実現する。</p>
+          <p><strong>登場年:</strong> 2015年（RFC 7643/7644）</p>
+          <p><strong>主な採用シーン:</strong> 入退社時の自動アカウント作成・削除、SaaS一括プロビジョニング</p>
+          <p><strong>主要製品:</strong> Entra ID (Provisioning)、Okta、SailPoint、Saviynt</p>
         </div>
-        <div style="background:var(--scim-light);border:1px solid #86efac;border-radius:8px;padding:14px 16px;">
-          <div style="font-weight:700;color:var(--scim-dark);font-size:13px;margin-bottom:8px;">✅ SCIM ありの世界</div>
-          <div style="font-size:12px;color:#374151;line-height:1.7;">
-            ・HR での退職処理 → 30分以内に全 SaaS 無効化<br>
-            ・入社当日から必要なアプリにアクセス可能<br>
-            ・役職変更 → 権限が自動更新される<br>
-            ・全 SaaS のアカウント状態を IdP で一元管理<br>
-            ・IGA（ガバナンス）ツールがリアルタイム把握
-          </div>
-        </div>
-      </div>
-
-      <h3>SCIM 2.0 のアーキテクチャ</h3>
-      <div class="flow-box">
-        <div class="flow-title">SCIM プロビジョニング フロー — HR → IdP → SaaS</div>
-        <div class="flow-row">
-          <div class="flow-node hr">HRシステム<br><small style="font-size:10px;">SAP/Workday</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node idp">IdP<br><small style="font-size:10px;">Entra ID / Okta</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node scim-client">SCIMクライアント<br><small style="font-size:10px;">プロビジョニング</small></div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-node scim-server">SCIMサーバー<br><small style="font-size:10px;">SaaS / アプリ</small></div>
-        </div>
-        <div style="margin-top:16px;">
-          <div class="flow-step">
-            <div class="step-num">1</div>
-            <div class="step-desc"><strong>HR イベント：</strong> 人事システムで「入社」「部署異動」「退職」のイベントが発生。IdP（Entra ID 等）がユーザーレコードを更新。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">2</div>
-            <div class="step-desc"><strong>プロビジョニングエンジン起動：</strong> IdP 内の SCIM クライアントが変更を検出し、対象 SaaS の SCIM エンドポイントへ HTTP リクエストを送信。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">3</div>
-            <div class="step-desc"><strong>CRUD 操作：</strong> 入社 → POST /Users、情報更新 → PUT/PATCH /Users/{id}、退職 → DELETE または active=false で PATCH。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">4</div>
-            <div class="step-desc"><strong>グループ同期：</strong> SCIM /Groups エンドポイントでグループメンバーシップも同期。SaaS 側のロール割当に反映。</div>
-          </div>
-          <div class="flow-step">
-            <div class="step-num">5</div>
-            <div class="step-desc"><strong>確認・監査：</strong> IGA ツール（SailPoint, Saviynt 等）が SCIM GET でアカウント状態を定期確認し、棚卸・認定プロセスに使用。</div>
-          </div>
-        </div>
-      </div>
-
-      <h3>SCIM リソース（RFC 7643 定義）</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;">
-        <div class="scim-resource">
-          <h4>User リソース（/scim/v2/Users）</h4>
-          <div class="code-block" style="margin:0;padding:10px 12px;font-size:11px;">
-{
-  <span class="attr">"schemas"</span>: [<span class="val">"urn:ietf:params:scim:schemas:core:2.0:User"</span>],
-  <span class="attr">"id"</span>: <span class="val">"abc-123"</span>,
-  <span class="attr">"userName"</span>: <span class="val">"user@corp.jp"</span>,
-  <span class="attr">"displayName"</span>: <span class="val">"山田 太郎"</span>,
-  <span class="attr">"active"</span>: <span class="val">true</span>,
-  <span class="attr">"emails"</span>: [{<span class="attr">"value"</span>: <span class="val">"user@corp.jp"</span>, <span class="attr">"primary"</span>: <span class="val">true</span>}],
-  <span class="attr">"title"</span>: <span class="val">"シニアエンジニア"</span>,
-  <span class="attr">"department"</span>: <span class="val">"情報システム部"</span>
-}
-          </div>
-        </div>
-        <div class="scim-resource">
-          <h4>Group リソース（/scim/v2/Groups）</h4>
-          <div class="code-block" style="margin:0;padding:10px 12px;font-size:11px;">
-{
-  <span class="attr">"schemas"</span>: [<span class="val">"urn:ietf:params:scim:schemas:core:2.0:Group"</span>],
-  <span class="attr">"id"</span>: <span class="val">"grp-456"</span>,
-  <span class="attr">"displayName"</span>: <span class="val">"情報システム部"</span>,
-  <span class="attr">"members"</span>: [
-    {<span class="attr">"value"</span>: <span class="val">"abc-123"</span>, <span class="attr">"display"</span>: <span class="val">"山田 太郎"</span>},
-    {<span class="attr">"value"</span>: <span class="val">"xyz-789"</span>, <span class="attr">"display"</span>: <span class="val">"鈴木 花子"</span>}
-  ]
-}
-          </div>
-        </div>
-      </div>
-
-      <h3>SCIM HTTP メソッドと操作</h3>
-      <table class="cmp-table" style="margin:12px 0;">
-        <thead>
-          <tr>
-            <th style="background:#1e293b;">操作</th>
-            <th style="background:#1e293b;">HTTP メソッド</th>
-            <th style="background:#1e293b;">エンドポイント例</th>
-            <th style="background:#1e293b;">ユースケース</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>ユーザー作成</td>
-            <td><code>POST</code></td>
-            <td><code>/scim/v2/Users</code></td>
-            <td>入社・新規アカウント</td>
-          </tr>
-          <tr>
-            <td>ユーザー取得</td>
-            <td><code>GET</code></td>
-            <td><code>/scim/v2/Users/{id}</code></td>
-            <td>棚卸・監査</td>
-          </tr>
-          <tr>
-            <td>完全更新</td>
-            <td><code>PUT</code></td>
-            <td><code>/scim/v2/Users/{id}</code></td>
-            <td>属性全置換</td>
-          </tr>
-          <tr>
-            <td>部分更新</td>
-            <td><code>PATCH</code></td>
-            <td><code>/scim/v2/Users/{id}</code></td>
-            <td>部署異動・無効化</td>
-          </tr>
-          <tr>
-            <td>ユーザー削除</td>
-            <td><code>DELETE</code></td>
-            <td><code>/scim/v2/Users/{id}</code></td>
-            <td>退職（完全削除）</td>
-          </tr>
-          <tr>
-            <td>一覧・検索</td>
-            <td><code>GET</code></td>
-            <td><code>/scim/v2/Users?filter=...</code></td>
-            <td>棚卸・差分確認</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="sw-grid">
-        <div class="sw-box strength">
-          <h4>強み（Strengths）</h4>
-          <ul>
-            <li>JML プロセスを完全自動化できる</li>
-            <li>REST + JSON で実装・デバッグが容易</li>
-            <li>Entra ID / Okta が標準サポート</li>
-            <li>SailPoint / Saviynt の IGA とネイティブ統合</li>
-            <li>人的ミスによるアカウント削除漏れを排除</li>
-            <li>コンプライアンス・監査対応コストを削減</li>
-          </ul>
-        </div>
-        <div class="sw-box weakness">
-          <h4>弱み（Weaknesses）</h4>
-          <ul>
-            <li>認証・認可は対象外（SSO とは別途設定）</li>
-            <li>SaaS 側の SCIM 実装品質にばらつきがある</li>
-            <li>大量ユーザーの初期同期には時間を要する</li>
-            <li>エラー処理・リトライ設計が重要</li>
-            <li>オンプレミスアプリへの適用には追加実装が必要</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="callout info">
-        <span class="icon">🏭</span>
-        <div>
-          <strong>日本企業の JML 自動化：</strong>
-          退職者アカウントの無効化遅延（翌営業日〜数日）は日本企業に多い課題。
-          SCIM を Workday/SAP SuccessFactors と Entra ID/Okta の間に導入することで、
-          HR での退職処理後 30 分以内に全連携 SaaS を無効化できる。
-          この「退職即時無効化」はランサムウェア対策・内部不正防止の基本施策でもある。
+        <div class="card">
+          <h4>LDAP / AD <span class="tag tag-prov">ディレクトリ</span></h4>
+          <p>Lightweight Directory Access Protocol。1993年策定のディレクトリサービスアクセス標準。Active Directory の根幹プロトコル。オンプレミス環境では現在も主要なID管理手段。</p>
+          <p>LDAPv3（RFC 4511）。389ポート（非暗号化）、636ポート（LDAPS）。日本のオンプレ環境での残存率が高く、移行時の互換性考慮が必要。</p>
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ================================================================
-     Section 5: 比較表
-     ================================================================ -->
-<section id="comparison">
-  <h2><span class="sec-num">5</span>プロトコル比較表</h2>
-
-  <table class="cmp-table">
-    <thead>
-      <tr>
-        <th style="background:#1e293b;width:140px;">項目</th>
-        <th class="saml">SAML 2.0</th>
-        <th class="oidc">OIDC / OAuth 2.0</th>
-        <th class="scim">SCIM 2.0</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="row-label">主な用途</td>
-        <td>エンタープライズ SSO（ブラウザ経由）、フェデレーション</td>
-        <td>現代的 SSO・API 保護・モバイル認証</td>
-        <td>ユーザー/グループのプロビジョニング自動化</td>
-      </tr>
-      <tr>
-        <td class="row-label">対象プレーン</td>
-        <td>認証（AuthN）、一部認可（属性経由）</td>
-        <td>認証（OIDC）＋ 認可（OAuth 2.0）</td>
-        <td>プロビジョニング（JML）</td>
-      </tr>
-      <tr>
-        <td class="row-label">メッセージ形式</td>
-        <td>XML / Base64 / HTTP-POST or Redirect</td>
-        <td>JSON / JWT / HTTP(S) リダイレクト</td>
-        <td>JSON / REST API（HTTP CRUD）</td>
-      </tr>
-      <tr>
-        <td class="row-label">標準化年</td>
-        <td>2005年（OASIS）</td>
-        <td>OAuth 2.0: 2012年（IETF）<br>OIDC: 2014年（OpenID Foundation）</td>
-        <td>2015年（IETF RFC 7643/7644）</td>
-      </tr>
-      <tr>
-        <td class="row-label">主要実装</td>
-        <td>Entra ID, Okta, ADFS, PingFederate, Shibboleth</td>
-        <td>Entra ID, Okta, Keycloak, Auth0, Google</td>
-        <td>Entra ID, Okta, SailPoint, Saviynt, Ping</td>
-      </tr>
-      <tr>
-        <td class="row-label">モバイル対応</td>
-        <td>❌ 非対応（ブラウザ前提）</td>
-        <td>✅ ネイティブ対応（PKCE 必須）</td>
-        <td>✅ REST のため環境非依存</td>
-      </tr>
-      <tr>
-        <td class="row-label">API 保護</td>
-        <td>❌ 非対応</td>
-        <td>✅ OAuth 2.0 Bearer Token</td>
-        <td>✅（SCIM 自体が API）</td>
-      </tr>
-      <tr>
-        <td class="row-label">実装の複雑さ</td>
-        <td>高（XML 署名・メタデータ交換）</td>
-        <td>中（フロー選択が重要）</td>
-        <td>低〜中（REST だが SaaS 実装差異あり）</td>
-      </tr>
-      <tr>
-        <td class="row-label">セキュリティ強み</td>
-        <td>XML 署名・暗号化・フェデレーション信頼</td>
-        <td>PKCE・短命 Token・スコープ制限</td>
-        <td>IdP 管理下でアクセストークン認証</td>
-      </tr>
-      <tr>
-        <td class="row-label">日本市場採用</td>
-        <td>既存 SaaS・大企業で広く採用<br>（2010〜2020年代前半）</td>
-        <td>新規 SaaS 導入で急速に普及<br>（2020年代〜）</td>
-        <td>IGA 導入企業・大規模組織で普及中</td>
-      </tr>
-      <tr>
-        <td class="row-label">レガシー対応</td>
-        <td>✅ 強み（多くのレガシー SaaS が対応）</td>
-        <td>△ 新しいシステムのみ対応</td>
-        <td>△ オンプレミスは追加実装が必要</td>
-      </tr>
-      <tr>
-        <td class="row-label">推奨シーン</td>
-        <td>既存 SAML SaaS との継続連携、B2B フェデレーション</td>
-        <td>新規 SaaS・API ゲートウェイ・スマートフォンアプリ</td>
-        <td>HR 連携・ライフサイクル自動化・IGA 統合</td>
-      </tr>
-    </tbody>
-  </table>
-</section>
-
-<!-- ================================================================
-     Section 6: 選択ガイド
-     ================================================================ -->
-<section id="guide">
-  <h2><span class="sec-num">6</span>シナリオ別 選択ガイド</h2>
-
-  <p>プロトコル選択は「現在の課題」と「接続先システムの対応状況」で決まる。以下のシナリオ別ガイドを参照し、適切なプロトコル（またはその組み合わせ）を選択する。</p>
-
-  <div class="scenario-grid">
-
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q1</div>
-        <div>新しい SaaS（Salesforce / ServiceNow / Slack 等）の SSO を導入したい</div>
+    <h3>プロトコル連携関係図（概念）</h3>
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:130px">HR システム</div>
+        <div class="flow-arrow">── SCIM 2.0 ──&gt;</div>
+        <div class="flow-box green" style="min-width:150px">IDM / IGA 基盤<br><small>SailPoint / Saviynt</small></div>
+        <div class="flow-arrow">── SCIM 2.0 ──&gt;</div>
+        <div class="flow-box orange" style="min-width:130px">IdP<br><small>Entra ID / Okta</small></div>
       </div>
-      <div class="answer">
-        <span class="proto-tag oidc">OIDC 優先</span> <span class="proto-tag saml">SAML（レガシー必要時）</span><br>
-        まず SaaS が OIDC/OAuth 2.0 に対応しているか確認。
-        現代的な SaaS はほぼ OIDC に対応しているため OIDC を選択。
-        OIDC 未対応の場合のみ SAML を使用する。
-        Entra ID または Okta をハブとして統一し、
-        プロトコル混在を IdP 側で吸収する設計が推奨。
+      <div class="flow-row" style="margin-top:4px">
+        <div class="flow-box gray" style="min-width:130px">ブラウザ / アプリ</div>
+        <div class="flow-arrow">── SAML 2.0 / OIDC ──&gt;</div>
+        <div class="flow-box orange" style="min-width:150px">IdP<br><small>Entra ID / Okta</small></div>
+        <div class="flow-arrow">── Assert / JWT ──&gt;</div>
+        <div class="flow-box purple" style="min-width:130px">SaaS / SP<br><small>M365 / Salesforce</small></div>
+      </div>
+      <div class="flow-row" style="margin-top:4px">
+        <div class="flow-box gray" style="min-width:130px">API クライアント</div>
+        <div class="flow-arrow">── OAuth 2.0 Bearer ──&gt;</div>
+        <div class="flow-box purple" style="min-width:150px">リソースサーバー<br><small>Microsoft Graph 等</small></div>
       </div>
     </div>
+  </section>
 
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q2</div>
-        <div>10年前に導入したレガシー SaaS との連携を維持したい</div>
+  <section id="saml">
+    <div class="phase-header">
+      <h2>&#128272; SAML 2.0 詳解</h2>
+      <div class="phase-meta">Security Assertion Markup Language 2.0 | OASIS 標準 | 2005年策定</div>
+    </div>
+    <p>SAML 2.0 は、XMLベースのデータフォーマットとプロトコルを用いて、異なるセキュリティドメイン間（IdP から SP）でユーザーの認証・属性情報を安全に交換するための業界標準である。エンタープライズ SSO の礎として、金融・公官庁・製造業を中心に広く採用されている。</p>
+    <h3>SP-initiated SSO フロー</h3>
+    <p>最も一般的な SAML SSO フロー。ユーザーが SP のリソースにアクセスすることを起点とする。</p>
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&#9312; リソースアクセス ──&gt;</div>
+        <div class="flow-box orange" style="min-width:160px">SP（サービス提供者）<br><small>Salesforce / M365 等</small></div>
       </div>
-      <div class="answer">
-        <span class="proto-tag saml">SAML 継続</span><br>
-        レガシーシステムが SAML のみ対応の場合、無理に OIDC へ移行しない。
-        IdP 側で SAML フェデレーションを維持しつつ、
-        次期リプレース時に OIDC 対応を選定条件に加える。
-        SAML 設定は IdP のテンプレート（Entra ID Gallery 等）を活用し、
-        手動 XML 設定を最小化する。
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&lt;── &#9313; SAMLリクエスト + リダイレクト</div>
+        <div class="flow-box orange" style="min-width:160px">SP</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&#9314; SAMLリクエスト ──&gt;</div>
+        <div class="flow-box red" style="min-width:160px">IdP（認証基盤）<br><small>Entra ID / ADFS 等</small></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&lt;── &#9315; 認証画面</div>
+        <div class="flow-box red" style="min-width:160px">IdP</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&#9316; 認証情報（ID/PW 等） ──&gt;</div>
+        <div class="flow-box red" style="min-width:160px">IdP</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&lt;── &#9317; SAMLレスポンス（署名済み）</div>
+        <div class="flow-box red" style="min-width:160px">IdP</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&#9318; SAMLアサーション（HTTP POST） ──&gt;</div>
+        <div class="flow-box orange" style="min-width:160px">SP</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:110px">ブラウザ</div>
+        <div class="flow-arrow">&lt;── &#9319; リソース応答（ログイン完了）</div>
+        <div class="flow-box orange" style="min-width:160px">SP</div>
       </div>
     </div>
-
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q3</div>
-        <div>社内・社外向け API を保護し、マイクロサービス間の認可を制御したい</div>
-      </div>
-      <div class="answer">
-        <span class="proto-tag oidc">OAuth 2.0</span><br>
-        API ゲートウェイ（APIM / Kong / AWS API Gateway 等）に
-        OAuth 2.0 Bearer Token 検証を組み込む。
-        サービス間通信には Client Credentials フローを使用。
-        スコープ・ロールでリソース単位の細粒度アクセス制御を実装。
-        全 API に「認可なき呼び出しは 401 返却」を標準とする。
-      </div>
+    <div class="warn">
+      <strong>注意:</strong> HTTP POST バインディング（&#9318;）ではブラウザ経由でアサーションが SP に送られる。アサーションの改ざん防止のため、IdP による XML デジタル署名が必須。署名検証は SP 側で行う。XML Signature Wrapping (XSW) 攻撃への対策として、アサーション ID の一意性検証も必要。
     </div>
-
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q4</div>
-        <div>入退社・部署異動のたびに手動でアカウントを作成・削除しているのを自動化したい</div>
-      </div>
-      <div class="answer">
-        <span class="proto-tag scim">SCIM</span><br>
-        HR システム（Workday / SAP SuccessFactors / COMPANY HR 等）と
-        IdP（Entra ID / Okta）を接続し、
-        JML イベントを SCIM で伝搬する。
-        さらに IdP から各 SaaS へ SCIM プロビジョニングを構成。
-        退職者の全 SaaS 無効化を 30 分以内に自動化できる。
-      </div>
-    </div>
-
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q5</div>
-        <div>IGA（アクセスガバナンス）ツールを導入し、アクセス認定・棚卸を自動化したい</div>
-      </div>
-      <div class="answer">
-        <span class="proto-tag combo">SCIM + OIDC 組み合わせ</span><br>
-        IGA ツール（SailPoint Identity Security Cloud, Saviynt 等）が
-        SCIM GET で全 SaaS のアカウント状態を収集し、
-        認定（Access Review）プロセスを実施。
-        IGA ツール自体の認証には OIDC SSO を使用。
-        Entra ID を Authoritative Source として IdP + SCIM の統合ポイントとする。
-      </div>
-    </div>
-
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q6</div>
-        <div>取引先・パートナー企業のユーザーに自社システムへのアクセスを安全に提供したい</div>
-      </div>
-      <div class="answer">
-        <span class="proto-tag saml">SAML フェデレーション</span> または <span class="proto-tag oidc">OIDC</span><br>
-        B2B フェデレーションでは SAML または OIDC どちらも使用可能。
-        相手組織が Entra ID / Okta の場合は OIDC 連携（Entra B2B / Okta Org2Org）が容易。
-        相手が ADFS や古い IdP の場合は SAML フェデレーション。
-        ゲストアカウントのライフサイクル管理には SCIM も組み合わせる。
-      </div>
-    </div>
-
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q7</div>
-        <div>スマートフォンアプリに社内システムへのセキュアなログインを実装したい</div>
-      </div>
-      <div class="answer">
-        <span class="proto-tag oidc">OIDC + PKCE</span><br>
-        モバイルアプリでは必ず PKCE 付き Authorization Code Flow を使用。
-        Implicit Flow は使用禁止（RFC 6749 で非推奨）。
-        Refresh Token はデバイスのセキュアストレージ（iOS Keychain / Android Keystore）に保管。
-        Entra ID や Okta の Mobile SDK（MSAL, okta-auth-js）の活用が最短経路。
-      </div>
-    </div>
-
-    <div class="scenario-card">
-      <div class="scenario-q">
-        <div class="q-icon">Q8</div>
-        <div>ゼロトラスト推進として、すべてのアクセスに「継続的な認証・認可」を適用したい</div>
-      </div>
-      <div class="answer">
-        <span class="proto-tag oidc">OIDC + CAE</span> <span class="proto-tag scim">SCIM</span><br>
-        Entra ID の CAE（Continuous Access Evaluation）と
-        OIDC を組み合わせることで、
-        パスワード変更・MFA 再要求・デバイスコンプライアンス違反を
-        リアルタイムでセッションに反映可能。
-        SCIM で退職者の即時無効化と組み合わせ、
-        「アクセスの継続的検証」を実現する。
-      </div>
-    </div>
-
-  </div>
-
-  <div class="callout success">
-    <span class="icon">📋</span>
-    <div>
-      <strong>アーキテクチャ設計の原則：</strong><br>
-      ① <strong>新規 SaaS 導入では OIDC 対応を選定必須条件</strong>にする（RFP に明記）。<br>
-      ② <strong>SAML は既存レガシー連携の維持目的のみ</strong>。新規設計では使わない。<br>
-      ③ <strong>すべての API を OAuth 2.0 で保護</strong>し、SAML アサーションを API 認可に転用しない。<br>
-      ④ <strong>SCIM を「認証の前提」</strong>として位置付ける——ユーザーが存在しなければ SSO も機能しない。<br>
-      ⑤ Entra ID または Okta を <strong>すべてのプロトコルのハブ</strong>として統一し、分散管理を防ぐ。
-    </div>
-  </div>
-</section>
-
-<!-- ================================================================
-     Section 7: 日本企業の実態
-     ================================================================ -->
-<section id="japan">
-  <h2><span class="sec-num">7</span>日本企業における実態と移行の考え方</h2>
-
-  <h3>現状の典型的な構成（2025〜2026年）</h3>
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin:16px 0;">
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:13px;">
-      <div>
-        <div style="font-weight:700;color:var(--saml-dark);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;">SAML 連携中のシステム</div>
-        <ul style="list-style:none;padding:0;color:#374151;line-height:2;">
-          <li>• Salesforce（Sales Cloud / Service Cloud）</li>
-          <li>• SAP S/4HANA / SuccessFactors</li>
-          <li>• ServiceNow（旧バージョン）</li>
-          <li>• Workday</li>
-          <li>• Box / Dropbox Business</li>
-          <li>• 社内 SharePoint / Confluence</li>
+    <h3>XMLアサーション構造サンプル</h3>
+<pre><span class="cm">&lt;!-- SAML 2.0 Response（簡略版） --&gt;</span>
+<span class="str">&lt;samlp:Response</span> <span class="fn">xmlns:samlp</span>=<span class="str">"urn:oasis:names:tc:SAML:2.0:protocol"</span>
+                 <span class="fn">xmlns:saml</span>=<span class="str">"urn:oasis:names:tc:SAML:2.0:assertion"</span>
+                 <span class="fn">ID</span>=<span class="str">"_abc123"</span> <span class="fn">Version</span>=<span class="str">"2.0"</span>
+                 <span class="fn">IssueInstant</span>=<span class="str">"2026-04-07T09:00:00Z"</span>
+                 <span class="fn">Destination</span>=<span class="str">"https://sp.example.com/acs"</span><span class="str">&gt;</span>
+  <span class="str">&lt;saml:Issuer&gt;</span>https://idp.example.com<span class="str">&lt;/saml:Issuer&gt;</span>
+  <span class="str">&lt;samlp:Status&gt;</span>
+    <span class="str">&lt;samlp:StatusCode</span> <span class="fn">Value</span>=<span class="str">"urn:oasis:names:tc:SAML:2.0:status:Success"</span><span class="str">/&gt;</span>
+  <span class="str">&lt;/samlp:Status&gt;</span>
+  <span class="str">&lt;saml:Assertion</span> <span class="fn">Version</span>=<span class="str">"2.0"</span> <span class="fn">ID</span>=<span class="str">"_assertion001"</span><span class="str">&gt;</span>
+    <span class="str">&lt;saml:Issuer&gt;</span>https://idp.example.com<span class="str">&lt;/saml:Issuer&gt;</span>
+    <span class="str">&lt;saml:Subject&gt;</span>
+      <span class="str">&lt;saml:NameID</span> <span class="fn">Format</span>=<span class="str">"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"</span><span class="str">&gt;</span>
+        user@example.com
+      <span class="str">&lt;/saml:NameID&gt;</span>
+      <span class="str">&lt;saml:SubjectConfirmation</span> <span class="fn">Method</span>=<span class="str">"urn:oasis:names:tc:SAML:2.0:cm:bearer"</span><span class="str">&gt;</span>
+        <span class="str">&lt;saml:SubjectConfirmationData</span>
+          <span class="fn">NotOnOrAfter</span>=<span class="str">"2026-04-07T09:05:00Z"</span>
+          <span class="fn">Recipient</span>=<span class="str">"https://sp.example.com/acs"</span><span class="str">/&gt;</span>
+      <span class="str">&lt;/saml:SubjectConfirmation&gt;</span>
+    <span class="str">&lt;/saml:Subject&gt;</span>
+    <span class="str">&lt;saml:Conditions</span>
+      <span class="fn">NotBefore</span>=<span class="str">"2026-04-07T08:55:00Z"</span>
+      <span class="fn">NotOnOrAfter</span>=<span class="str">"2026-04-07T09:05:00Z"</span><span class="str">&gt;</span>
+      <span class="str">&lt;saml:AudienceRestriction&gt;</span>
+        <span class="str">&lt;saml:Audience&gt;</span>https://sp.example.com<span class="str">&lt;/saml:Audience&gt;</span>
+      <span class="str">&lt;/saml:AudienceRestriction&gt;</span>
+    <span class="str">&lt;/saml:Conditions&gt;</span>
+    <span class="str">&lt;saml:AttributeStatement&gt;</span>
+      <span class="str">&lt;saml:Attribute</span> <span class="fn">Name</span>=<span class="str">"mail"</span><span class="str">&gt;</span>
+        <span class="str">&lt;saml:AttributeValue&gt;</span>user@example.com<span class="str">&lt;/saml:AttributeValue&gt;</span>
+      <span class="str">&lt;/saml:Attribute&gt;</span>
+      <span class="str">&lt;saml:Attribute</span> <span class="fn">Name</span>=<span class="str">"displayName"</span><span class="str">&gt;</span>
+        <span class="str">&lt;saml:AttributeValue&gt;</span>山田 太郎<span class="str">&lt;/saml:AttributeValue&gt;</span>
+      <span class="str">&lt;/saml:Attribute&gt;</span>
+      <span class="str">&lt;saml:Attribute</span> <span class="fn">Name</span>=<span class="str">"memberOf"</span><span class="str">&gt;</span>
+        <span class="str">&lt;saml:AttributeValue&gt;</span>CN=情報システム部,OU=Groups,DC=example,DC=com<span class="str">&lt;/saml:AttributeValue&gt;</span>
+      <span class="str">&lt;/saml:Attribute&gt;</span>
+    <span class="str">&lt;/saml:AttributeStatement&gt;</span>
+  <span class="str">&lt;/saml:Assertion&gt;</span>
+<span class="str">&lt;/samlp:Response&gt;</span></pre>
+    <h3>SAML 2.0 の強み・弱み</h3>
+    <table class="wbs-table">
+      <thead><tr><th style="width:50%">&#9989; 強み</th><th style="width:50%">&#10060; 弱み・課題</th></tr></thead>
+      <tbody>
+        <tr><td>エンタープライズ環境での採用実績が豊富。ほぼ全ての商用 IdP/SP が対応</td><td>XML の冗長性により、トークンサイズが大きくなりやすい（数 KB 〜 数十 KB）</td></tr>
+        <tr><td>XML 署名・XML 暗号化による強固なセキュリティモデル</td><td>モバイルアプリ・SPA との相性が悪い（ブラウザリダイレクト前提）</td></tr>
+        <tr><td>属性マッピングによる詳細なユーザー情報伝達（グループ・役職・部署等）</td><td>XML パーサーの実装複雑性。XML Signature Wrapping (XSW) 攻撃に注意が必要</td></tr>
+        <tr><td>Single Logout (SLO) の標準化。SP 側からのログアウト伝播が可能</td><td>SP メタデータ（XML）の管理・更新が煩雑。証明書更新時のダウンタイムリスク</td></tr>
+        <tr><td>IdP-initiated SSO により、ポータルからのアプリ起動が容易</td><td>IdP-initiated SSO は CSRF 攻撃への対策が別途必要</td></tr>
+        <tr><td>日本国内の SIer・ベンダーの知識・サポート体制が充実</td><td>最新のゼロトラストアーキテクチャとの統合が複雑になる場合がある</td></tr>
+      </tbody>
+    </table>
+    <h3>SAML メタデータの主要要素</h3>
+    <div class="two-col">
+      <div class="card">
+        <h4>IdP メタデータ（提供側）</h4>
+        <ul style="font-size:.83rem;padding-left:16px">
+          <li><code>EntityID</code>: IdP の一意識別子（URL形式推奨）</li>
+          <li><code>SSO Service URL</code>: 認証リクエスト受付 URL</li>
+          <li><code>SLO Service URL</code>: ログアウトリクエスト受付 URL</li>
+          <li><code>X.509 Certificate</code>: 署名検証用証明書</li>
+          <li><code>NameID Format</code>: 対応する識別子形式一覧</li>
         </ul>
       </div>
-      <div>
-        <div style="font-weight:700;color:var(--oidc-dark);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;">OIDC/OAuth 対応済み</div>
-        <ul style="list-style:none;padding:0;color:#374151;line-height:2;">
-          <li>• Microsoft 365 / Teams</li>
-          <li>• Google Workspace</li>
-          <li>• Slack（Enterprise Grid）</li>
-          <li>• GitHub Enterprise</li>
-          <li>• Zoom</li>
-          <li>• 新規開発の社内 API</li>
-        </ul>
-      </div>
-      <div>
-        <div style="font-weight:700;color:var(--scim-dark);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:0.06em;">SCIM 対応状況</div>
-        <ul style="list-style:none;padding:0;color:#374151;line-height:2;">
-          <li>• Entra ID ↔ Salesforce: 対応済</li>
-          <li>• Entra ID ↔ ServiceNow: 対応済</li>
-          <li>• Okta ↔ Slack: 対応済</li>
-          <li>• 国産パッケージへの対応: △</li>
-          <li>• オンプレミス業務系: 未対応多数</li>
-          <li>• IGA 製品との連携: 普及中</li>
+      <div class="card">
+        <h4>SP メタデータ（消費側）</h4>
+        <ul style="font-size:.83rem;padding-left:16px">
+          <li><code>EntityID</code>: SP の一意識別子</li>
+          <li><code>ACS URL</code>: Assertion Consumer Service URL（SAMLレスポンス受付）</li>
+          <li><code>SLO Service URL</code>: ログアウト応答受付 URL</li>
+          <li><code>X.509 Certificate</code>: 暗号化アサーション受信用証明書</li>
+          <li><code>Required Attributes</code>: SP が必要とする属性一覧</li>
         </ul>
       </div>
     </div>
-  </div>
+  </section>
 
-  <h3>移行優先度マトリクス</h3>
-  <table class="cmp-table" style="margin:16px 0;">
-    <thead>
-      <tr>
-        <th style="background:#1e293b;">状況</th>
-        <th style="background:#1e293b;">推奨アクション</th>
-        <th style="background:#1e293b;">プロトコル</th>
-        <th style="background:#1e293b;">優先度</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>退職者の SaaS 無効化が翌営業日以降</td>
-        <td>SCIM プロビジョニング導入（Entra ID / Okta 経由）</td>
-        <td><span class="proto-tag scim" style="display:inline-block;padding:2px 8px;background:var(--scim);color:#fff;border-radius:10px;font-size:11px;font-weight:700;">SCIM</span></td>
-        <td style="color:#dc2626;font-weight:700;">🔴 最優先</td>
-      </tr>
-      <tr>
-        <td>新規 SaaS 導入で SSO を検討中</td>
-        <td>OIDC 対応 SaaS を選定条件に。IdP はエンタープライズ版を使用</td>
-        <td><span class="proto-tag oidc" style="display:inline-block;padding:2px 8px;background:var(--oidc);color:#fff;border-radius:10px;font-size:11px;font-weight:700;">OIDC</span></td>
-        <td style="color:#d97706;font-weight:700;">🟠 高優先</td>
-      </tr>
-      <tr>
-        <td>社内 API が認証なしで呼び出し可能</td>
-        <td>API ゲートウェイに OAuth 2.0 Bearer Token 検証を実装</td>
-        <td><span class="proto-tag oidc" style="display:inline-block;padding:2px 8px;background:var(--oidc);color:#fff;border-radius:10px;font-size:11px;font-weight:700;">OAuth 2.0</span></td>
-        <td style="color:#d97706;font-weight:700;">🟠 高優先</td>
-      </tr>
-      <tr>
-        <td>既存 SAML SaaS が安定稼働中</td>
-        <td>現状維持。次期更改時に OIDC 対応バージョンへ移行</td>
-        <td><span class="proto-tag saml" style="display:inline-block;padding:2px 8px;background:var(--saml);color:#fff;border-radius:10px;font-size:11px;font-weight:700;">SAML</span></td>
-        <td style="color:#16a34a;font-weight:700;">🟢 低優先</td>
-      </tr>
-      <tr>
-        <td>IGA 未導入でアクセス棚卸が手動</td>
-        <td>SailPoint / Saviynt / Entra ID Governance を評価し SCIM 連携</td>
-        <td><span class="proto-tag scim" style="display:inline-block;padding:2px 8px;background:var(--scim);color:#fff;border-radius:10px;font-size:11px;font-weight:700;">SCIM</span></td>
-        <td style="color:#d97706;font-weight:700;">🟠 高優先</td>
-      </tr>
-      <tr>
-        <td>ADFS を社内で運用中（オンプレミス）</td>
-        <td>Entra ID Connect Cloud Sync への移行を検討。ADFS は廃止方向で計画</td>
-        <td><span class="proto-tag oidc" style="display:inline-block;padding:2px 8px;background:var(--oidc);color:#fff;border-radius:10px;font-size:11px;font-weight:700;">OIDC</span></td>
-        <td style="color:#d97706;font-weight:700;">🟠 中優先</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="callout warn">
-    <span class="icon">⚠️</span>
-    <div>
-      <strong>よくある失敗パターン：</strong>
-      「SAML で SSO を入れたから ID 管理は完了」——SSO（認証）とプロビジョニング（アカウント管理）は別課題。
-      SSO だけ導入して SCIM を入れないと、
-      退職者アカウントが SaaS に残り続けるリスクが残る。
-      「認証（SAML/OIDC）× プロビジョニング（SCIM）× 認可（OAuth 2.0）」の3層を
-      セットで設計することが ID 管理基盤の本質だ。
+  <section id="oidc">
+    <div class="phase-header">
+      <h2>&#128273; OpenID Connect / OAuth 2.0 詳解</h2>
+      <div class="phase-meta">OpenID Connect 1.0 (2014) | OAuth 2.0 RFC 6749 (2012) | JWT / JSON ベース</div>
     </div>
-  </div>
-
-  <h3>ステークホルダーへの説明テンプレート</h3>
-  <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin:16px 0;">
-    <div style="font-size:13px;font-weight:700;color:#475569;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.06em;">経営層・ビジネス部門向け 1分説明</div>
-    <div style="font-size:14px;color:#1e293b;line-height:1.8;">
-      「ID 管理プロトコルには3つの役割があります。<br>
-      <strong>SAML/OIDC</strong>は『社員証』にあたり、一度認証すれば複数システムにログインできます（SSO）。<br>
-      <strong>OAuth 2.0</strong>は『アクセス許可証』で、アプリが必要なデータだけにアクセスできる権限を渡します。<br>
-      <strong>SCIM</strong>は『社員証の自動発行・回収システム』で、入社・退社に合わせてアカウントを自動管理します。<br>
-      3つがそろって初めて、セキュアで効率的な ID 管理基盤が完成します。」
+    <p>OAuth 2.0 は認可の委譲フレームワークであり、OpenID Connect (OIDC) はその上に認証レイヤーを追加したプロトコルである。SAML に比べて軽量（JSON/JWT）で、モバイルアプリ・SPA・マイクロサービスへの適合性が高い。現在、多くのクラウドサービスの主要認証プロトコルとして採用されている。</p>
+    <h3>認可コードフロー（Authorization Code Flow）</h3>
+    <p>OIDC/OAuth 2.0 で最もセキュアかつ推奨されるフロー。サーバーサイドアプリおよびモバイルアプリ（PKCE併用）で使用する。</p>
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:140px">クライアント<br><small>（App / SPA）</small></div>
+        <div class="flow-arrow">&#9312; 認可リクエスト ──&gt; ?response_type=code</div>
+        <div class="flow-box red" style="min-width:140px">認可サーバー<br><small>（IdP / Entra ID）</small></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:140px">クライアント</div>
+        <div class="flow-arrow">&lt;── &#9313; 認可コード（短命）</div>
+        <div class="flow-box red" style="min-width:140px">認可サーバー</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:140px">クライアント</div>
+        <div class="flow-arrow">&#9314; トークンリクエスト ──&gt; code + client_secret</div>
+        <div class="flow-box red" style="min-width:140px">認可サーバー</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:140px">クライアント</div>
+        <div class="flow-arrow">&lt;── &#9315; アクセストークン + IDトークン</div>
+        <div class="flow-box red" style="min-width:140px">認可サーバー</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:140px">クライアント</div>
+        <div class="flow-arrow">&#9316; APIアクセス ──&gt; Authorization: Bearer</div>
+        <div class="flow-box green" style="min-width:140px">リソースサーバー<br><small>（Microsoft Graph）</small></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:140px">クライアント</div>
+        <div class="flow-arrow">&lt;── &#9317; 保護されたリソース</div>
+        <div class="flow-box green" style="min-width:140px">リソースサーバー</div>
+      </div>
     </div>
-  </div>
+    <div class="good">
+      <strong>PKCE（Proof Key for Code Exchange）の重要性:</strong> モバイルアプリや SPA では <code>client_secret</code> を安全に保持できないため、PKCE（RFC 7636）を使用する。認可コード横取り攻撃を防ぐ。現在はすべての認可コードフローで PKCE 使用を推奨（RFC 9700）。
+    </div>
+    <h3>トークン種別と用途</h3>
+    <table class="wbs-table">
+      <thead><tr><th>トークン種別</th><th>形式</th><th>用途</th><th>有効期限</th><th>主要クレーム</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ID Token</strong></td><td>JWT（署名付き）</td><td>ユーザーの認証情報。「誰が認証したか」を証明。クライアントアプリが消費する</td><td>短命（数分〜1時間程度）</td><td><code>sub</code>, <code>iss</code>, <code>aud</code>, <code>exp</code>, <code>iat</code></td></tr>
+        <tr><td><strong>Access Token</strong></td><td>JWT または Opaque</td><td>APIアクセスの権限証明。Bearer トークンとして Authorization ヘッダーに付与</td><td>短命（1時間程度）</td><td><code>scp</code>, <code>roles</code>, <code>oid</code>, <code>exp</code></td></tr>
+        <tr><td><strong>Refresh Token</strong></td><td>Opaque（通常）</td><td>アクセストークンの更新。ユーザー再認証なしでトークンを取得する</td><td>長命（数日〜数ヶ月）。回転式が推奨</td><td>不透明（クライアントは内容を読まない）</td></tr>
+      </tbody>
+    </table>
+    <h3>ID Token (JWT) 構造サンプル</h3>
+<pre><span class="cm">// ペイロード（Base64URL デコード済み）</span>
+{
+  <span class="fn">"iss"</span>: <span class="str">"https://login.microsoftonline.com/tenant-id/v2.0"</span>,
+  <span class="fn">"sub"</span>: <span class="str">"AAAAAAAAAAAAAAAAAAAAAIkzqFVrSaSaFHy782bbtaQ"</span>,
+  <span class="fn">"aud"</span>: <span class="str">"00000003-0000-0000-c000-000000000000"</span>,
+  <span class="fn">"exp"</span>: <span class="num">1735689600</span>,
+  <span class="fn">"iat"</span>: <span class="num">1735686000</span>,
+  <span class="fn">"name"</span>: <span class="str">"山田 太郎"</span>,
+  <span class="fn">"preferred_username"</span>: <span class="str">"yamada@example.com"</span>,
+  <span class="fn">"oid"</span>: <span class="str">"12345678-1234-1234-1234-123456789abc"</span>,
+  <span class="fn">"tid"</span>: <span class="str">"tenant-id-guid"</span>,
+  <span class="fn">"email"</span>: <span class="str">"yamada@example.com"</span>,
+  <span class="fn">"roles"</span>: [<span class="str">"User"</span>, <span class="str">"Developer"</span>],
+  <span class="fn">"amr"</span>: [<span class="str">"mfa"</span>, <span class="str">"pwd"</span>]
+}
+<span class="cm">// 署名 = Base64URL(RS256(header.payload, 秘密鍵))
+// 検証は JWKS エンドポイントの公開鍵で実施</span></pre>
+    <h3>SAML 2.0 vs OpenID Connect 使い分けガイド</h3>
+    <table class="wbs-table">
+      <thead><tr><th>シーン</th><th>推奨プロトコル</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td>レガシーな社内 Web アプリ SSO</td><td><span class="tag tag-legacy">SAML 2.0</span></td><td>既存システムの対応実績が豊富。SP メタデータ交換による設定が確立されている</td></tr>
+        <tr><td>新規 SaaS 連携（Salesforce・ServiceNow 等）</td><td><span class="tag tag-authn">OIDC</span> または <span class="tag tag-legacy">SAML 2.0</span></td><td>両方対応していることが多い。新規なら OIDC を優先</td></tr>
+        <tr><td>モバイルアプリ（iOS / Android）認証</td><td><span class="tag tag-modern">OIDC + PKCE</span></td><td>SAML はブラウザリダイレクト前提で Native App に不向き</td></tr>
+        <tr><td>SPA（React / Vue）認証</td><td><span class="tag tag-modern">OIDC (Auth Code + PKCE)</span></td><td>Implicit Flow は非推奨（RFC 9700）。PKCE付き認可コードフローが推奨</td></tr>
+        <tr><td>Web API の認可制御</td><td><span class="tag tag-authz">OAuth 2.0</span></td><td>スコープ（scope）による細粒度制御。Bearer トークンによる stateless な API 保護</td></tr>
+        <tr><td>マイクロサービス間認証</td><td><span class="tag tag-authz">OAuth 2.0 Client Credentials</span></td><td>ユーザー不在のサービス間認証。client_id + 証明書で M2M を実現</td></tr>
+        <tr><td>政府・金融の厳格なシステム</td><td><span class="tag tag-legacy">SAML 2.0</span> + <span class="tag tag-modern">FIDO2</span></td><td>SAML の成熟した監査・コンプライアンス対応。FIDO2でフィッシング耐性を追加</td></tr>
+      </tbody>
+    </table>
+    <h3>OAuth 2.0 グラントタイプ一覧</h3>
+    <div class="two-col">
+      <div class="card">
+        <h4>認可コードフロー（推奨）</h4>
+        <p>サーバーサイドアプリ・モバイルアプリ（PKCE併用）向け。最もセキュアで汎用的なフロー。認可コードをバックチャネルでトークンと交換する。</p>
+        <code>response_type=code</code>
+      </div>
+      <div class="card">
+        <h4>クライアント・クレデンシャルフロー</h4>
+        <p>ユーザー不在のサービス間（M2M）通信向け。バックグラウンドジョブ・デーモン・マイクロサービス間API呼び出しに使用。</p>
+        <code>grant_type=client_credentials</code>
+      </div>
+      <div class="card">
+        <h4>デバイスコードフロー</h4>
+        <p>ブラウザを持たないデバイス（IoT・CLI ツール等）向け。デバイスコードを別端末で入力して認証する。</p>
+        <code>grant_type=device_code</code>
+      </div>
+      <div class="card">
+        <h4>リフレッシュトークンフロー</h4>
+        <p>期限切れのアクセストークンをユーザー再認証なしで更新するフロー。セッション継続に使用。リフレッシュトークンのローテーションを推奨。</p>
+        <code>grant_type=refresh_token</code>
+      </div>
+    </div>
+  </section>
 
-</section>
+  <section id="scim">
+    <div class="phase-header">
+      <h2>&#128101; SCIM 2.0 詳解</h2>
+      <div class="phase-meta">System for Cross-domain Identity Management 2.0 | RFC 7643 / RFC 7644 | 2015年策定</div>
+    </div>
+    <p>SCIM 2.0 は、異なるシステム間でのユーザー・グループ情報の自動同期を標準化した REST API 仕様である。入社・異動・退社のライフサイクルイベントに連動して、複数の SaaS やディレクトリサービスへのアカウント管理を自動化することで、人的ミスの削減と即時性の向上を実現する。</p>
+    <h3>プロビジョニングフロー（入社時の自動アカウント作成）</h3>
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:140px">HR 系システム<br><small>（SAP / 人事システム）</small></div>
+        <div class="flow-arrow">&#9312; 新入社員データ ──&gt;</div>
+        <div class="flow-box orange" style="min-width:170px">IGA / IDM 基盤<br><small>（SailPoint / Saviynt）</small></div>
+      </div>
+      <div class="flow-row" style="margin-top:12px">
+        <div class="flow-box gray" style="min-width:140px;visibility:hidden">空</div>
+        <div class="flow-arrow" style="visibility:hidden">x</div>
+        <div class="flow-box orange" style="min-width:170px">IGA 基盤</div>
+        <div class="flow-arrow">&#9313; SCIM POST /Users ──&gt;</div>
+        <div class="flow-box red" style="min-width:120px">Entra ID / Okta</div>
+      </div>
+      <div class="flow-row" style="margin-top:8px">
+        <div class="flow-box gray" style="min-width:140px;visibility:hidden">空</div>
+        <div class="flow-arrow" style="visibility:hidden">x</div>
+        <div class="flow-box orange" style="min-width:170px">IGA 基盤</div>
+        <div class="flow-arrow">&#9314; SCIM POST /Users ──&gt;</div>
+        <div class="flow-box purple" style="min-width:120px">Salesforce</div>
+      </div>
+      <div class="flow-row" style="margin-top:8px">
+        <div class="flow-box gray" style="min-width:140px;visibility:hidden">空</div>
+        <div class="flow-arrow" style="visibility:hidden">x</div>
+        <div class="flow-box orange" style="min-width:170px">IGA 基盤</div>
+        <div class="flow-arrow">&#9315; SCIM POST /Users ──&gt;</div>
+        <div class="flow-box green" style="min-width:120px">その他 SaaS<br><small>（M365 / ServiceNow）</small></div>
+      </div>
+    </div>
+    <div class="good">
+      <strong>自動化による主要効果:</strong> SCIM 対応 SaaS への一括プロビジョニングにより、入社翌日（または当日）からすべてのシステムを使用可能な状態にできる。退職処理でも即時の全システムアカウント無効化が実現し、内部不正リスクを大幅に低減する。
+    </div>
+    <h3>SCIM 2.0 API エンドポイント仕様</h3>
+<pre><span class="cm"># ユーザー操作</span>
+<span class="kw">GET</span>    /scim/v2/Users              <span class="cm"># 全ユーザー一覧（フィルタリング対応）</span>
+<span class="kw">POST</span>   /scim/v2/Users              <span class="cm"># ユーザー作成（新規プロビジョニング）</span>
+<span class="kw">GET</span>    /scim/v2/Users/{id}         <span class="cm"># 特定ユーザー取得</span>
+<span class="kw">PUT</span>    /scim/v2/Users/{id}         <span class="cm"># ユーザー更新（全量置換）</span>
+<span class="kw">PATCH</span>  /scim/v2/Users/{id}         <span class="cm"># ユーザー部分更新（差分更新）</span>
+<span class="kw">DELETE</span> /scim/v2/Users/{id}         <span class="cm"># ユーザー削除（デプロビジョニング）</span>
+<span class="cm"># グループ操作</span>
+<span class="kw">GET</span>    /scim/v2/Groups             <span class="cm"># グループ一覧</span>
+<span class="kw">POST</span>   /scim/v2/Groups             <span class="cm"># グループ作成</span>
+<span class="kw">GET</span>    /scim/v2/Groups/{id}        <span class="cm"># 特定グループ取得</span>
+<span class="kw">PUT</span>    /scim/v2/Groups/{id}        <span class="cm"># グループ更新</span>
+<span class="kw">PATCH</span>  /scim/v2/Groups/{id}        <span class="cm"># グループメンバー追加・削除</span>
+<span class="kw">DELETE</span> /scim/v2/Groups/{id}        <span class="cm"># グループ削除</span>
+<span class="cm"># ディスカバリー</span>
+<span class="kw">GET</span>    /scim/v2/ServiceProviderConfig  <span class="cm"># SCIM サーバー機能一覧</span>
+<span class="kw">GET</span>    /scim/v2/Schemas               <span class="cm"># 対応スキーマ一覧</span>
+<span class="cm"># フィルタリング例</span>
+<span class="kw">GET</span>    /scim/v2/Users?filter=userName+eq+<span class="str">"yamada@example.com"</span>
+<span class="kw">GET</span>    /scim/v2/Users?filter=active+eq+<span class="str">false</span>&amp;count=100</pre>
+    <h3>SCIM User リソース JSON サンプル</h3>
+<pre>{
+  <span class="fn">"schemas"</span>: [
+    <span class="str">"urn:ietf:params:scim:schemas:core:2.0:User"</span>,
+    <span class="str">"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"</span>
+  ],
+  <span class="fn">"id"</span>: <span class="str">"2819c223-7f76-453a-919d-413861904646"</span>,
+  <span class="fn">"userName"</span>: <span class="str">"yamada.taro@example.com"</span>,
+  <span class="fn">"name"</span>: {
+    <span class="fn">"formatted"</span>: <span class="str">"山田 太郎"</span>,
+    <span class="fn">"familyName"</span>: <span class="str">"山田"</span>,
+    <span class="fn">"givenName"</span>: <span class="str">"太郎"</span>
+  },
+  <span class="fn">"emails"</span>: [{ <span class="fn">"value"</span>: <span class="str">"yamada.taro@example.com"</span>, <span class="fn">"primary"</span>: <span class="kw">true</span> }],
+  <span class="fn">"active"</span>: <span class="kw">true</span>,
+  <span class="fn">"title"</span>: <span class="str">"主任エンジニア"</span>,
+  <span class="fn">"locale"</span>: <span class="str">"ja-JP"</span>,
+  <span class="fn">"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User"</span>: {
+    <span class="fn">"employeeNumber"</span>: <span class="str">"12345"</span>,
+    <span class="fn">"department"</span>: <span class="str">"情報システム部"</span>,
+    <span class="fn">"organization"</span>: <span class="str">"株式会社サンプル"</span>,
+    <span class="fn">"manager"</span>: { <span class="fn">"displayName"</span>: <span class="str">"鈴木 一郎"</span> }
+  }
+}</pre>
+    <div class="good">
+      <strong>&#9989; 採用メリット:</strong>
+      <ul style="padding-left:18px;margin-top:6px">
+        <li><strong>自動化による人的ミス削減:</strong> 手作業によるアカウント作成・削除ミスをゼロに近づける</li>
+        <li><strong>即日プロビジョニング:</strong> 入社日にすべてのシステムアカウントが準備済みの状態を実現</li>
+        <li><strong>退職者アカウント即時無効化:</strong> HR システムの退職処理と連動し、全システムを一括無効化。内部不正リスクを低減</li>
+        <li><strong>標準化による相互運用性:</strong> SCIM 2.0 対応 SaaS であれば同一の連携ロジックで管理可能</li>
+      </ul>
+    </div>
+    <h3>SCIM 対応主要製品・サービス</h3>
+    <div class="four-col">
+      <div class="card">
+        <h4>IdP / クラウド基盤</h4>
+        <ul style="font-size:.8rem;padding-left:14px">
+          <li>Microsoft Entra ID</li>
+          <li>Okta</li>
+          <li>Google Cloud Identity</li>
+          <li>Ping Identity</li>
+          <li>OneLogin</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>IGA / IDM 製品</h4>
+        <ul style="font-size:.8rem;padding-left:14px">
+          <li>SailPoint IdentityNow</li>
+          <li>Saviynt</li>
+          <li>IBM Security Verify</li>
+          <li>Entra Identity Governance</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>SCIM 対応 SaaS</h4>
+        <ul style="font-size:.8rem;padding-left:14px">
+          <li>Salesforce</li>
+          <li>ServiceNow</li>
+          <li>Slack / Zoom</li>
+          <li>GitHub Enterprise</li>
+          <li>Atlassian (Jira/Confluence)</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>HR 系連携</h4>
+        <ul style="font-size:.8rem;padding-left:14px">
+          <li>SAP SuccessFactors</li>
+          <li>Workday（SCIM 送信元）</li>
+          <li>Oracle HCM</li>
+          <li>SmartHR（日本）</li>
+          <li>カオナビ（日本）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-</div><!-- /.content -->
-</div><!-- /#main -->
+  <section id="comparison">
+    <h2>5. プロトコル比較表</h2>
+    <div class="lead">
+      SAML 2.0・OpenID Connect・OAuth 2.0・SCIM 2.0 の主要特性を横断比較する。選定時は「目的（認証/認可/プロビジョニング）」「既存システムの対応状況」「運用チームのスキルセット」の3軸で判断することを推奨する。
+    </div>
+    <table class="wbs-table">
+      <thead>
+        <tr>
+          <th style="width:16%">項目</th>
+          <th style="width:21%">SAML 2.0</th>
+          <th style="width:21%">OpenID Connect (OIDC)</th>
+          <th style="width:21%">OAuth 2.0</th>
+          <th style="width:21%">SCIM 2.0</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>主な用途</strong></td><td>エンタープライズ SSO・フェデレーション認証</td><td>モダンアプリ認証（Web/Mobile/SPA）</td><td>API 認可・権限委譲フレームワーク</td><td>ユーザー・グループの自動プロビジョニング</td></tr>
+        <tr><td><strong>カテゴリ</strong></td><td><span class="tag tag-authn">認証 (AuthN)</span></td><td><span class="tag tag-authn">認証 (AuthN)</span></td><td><span class="tag tag-authz">認可 (AuthZ)</span></td><td><span class="tag tag-prov">プロビジョニング</span></td></tr>
+        <tr><td><strong>データ形式</strong></td><td>XML（署名・暗号化あり）</td><td>JSON / JWT</td><td>JSON（トークン形式は任意）</td><td>JSON / REST</td></tr>
+        <tr><td><strong>トランスポート</strong></td><td>HTTP リダイレクト / POST（ブラウザ経由）</td><td>HTTP（バックチャネルを多用）</td><td>HTTP / HTTPS（Bearer Token）</td><td>HTTPS（REST API）</td></tr>
+        <tr><td><strong>トークンサイズ</strong></td><td>大（数 KB 〜 数十 KB）</td><td>小〜中（数百バイト〜数 KB）</td><td>小〜中（数百バイト〜数 KB）</td><td>（REST リソース）</td></tr>
+        <tr><td><strong>モバイル対応</strong></td><td>&#10060; 不向き（ブラウザ前提）</td><td>&#9989; 最適（PKCE 対応）</td><td>&#9989; 最適（PKCE 対応）</td><td>&#9989; API として使用可</td></tr>
+        <tr><td><strong>SPA 対応</strong></td><td>&#9888; 対応可能だが複雑</td><td>&#9989; 最適（PKCE + Auth Code）</td><td>&#9989; 最適</td><td>（関係なし）</td></tr>
+        <tr><td><strong>実装難易度</strong></td><td>&#9888; 中〜高（XML処理・メタデータ管理）</td><td>&#9989; 低〜中（ライブラリ充実）</td><td>&#9989; 低〜中（ライブラリ充実）</td><td>&#9989; 低〜中（REST API）</td></tr>
+        <tr><td><strong>セキュリティモデル</strong></td><td>XML 署名・XML 暗号化・アサーション検証</td><td>JWT 署名（RS256/ES256）・nonce・PKCE</td><td>アクセストークン・スコープ・PKCE</td><td>OAuth 2.0 Bearer Token による API 保護</td></tr>
+        <tr><td><strong>強み</strong></td><td>実績豊富・広範な製品対応・属性伝達の柔軟性</td><td>軽量・モバイル最適・開発者フレンドリー</td><td>汎用性高い・マイクロサービス対応・RFC 標準化</td><td>自動化・標準化・多 SaaS 一括管理</td></tr>
+        <tr><td><strong>弱み</strong></td><td>XML の複雑さ・モバイル不向き・証明書管理</td><td>エンタープライズ環境での SLO 標準化が不十分</td><td>認証機能なし（OIDC と組み合わせ必要）</td><td>アクセス権限の細粒度管理には非対応（IGA が担う）</td></tr>
+        <tr><td><strong>日本での採用状況</strong></td><td>非常に高い。オンプレミス主体の企業・公官庁・金融機関で主流</td><td>増加傾向。クラウドネイティブ企業・新規開発で採用拡大</td><td>高い。Microsoft Graph API・各種 SaaS API 連携で必須</td><td>増加傾向。IGA 導入企業を中心に標準化が進む</td></tr>
+        <tr><td><strong>主要対応製品</strong></td><td>Entra ID, ADFS, Okta, Shibboleth, Keycloak</td><td>Entra ID, Okta, Auth0, Google Identity, Keycloak</td><td>Entra ID, Auth0, Okta, Azure AD B2C, Kong</td><td>Entra ID, Okta, SailPoint, Saviynt, IBM Security Verify</td></tr>
+        <tr><td><strong>策定標準</strong></td><td>OASIS 標準（SAML 2.0 / 2005年）</td><td>OpenID Foundation（OIDC 1.0 / 2014年）</td><td>IETF RFC 6749（2012年）/ RFC 9700（2025年）</td><td>IETF RFC 7643 / 7644（2015年）</td></tr>
+      </tbody>
+    </table>
+  </section>
 
+  <section id="scenario">
+    <h2>6. シーン別選択ガイド</h2>
+    <div class="lead">
+      プロトコル選択は「技術要件」だけでなく、「既存システムの対応状況」「運用チームのスキル」「コンプライアンス要件」を総合的に考慮する。本ガイドでは代表的なシーンごとの推奨を示す。
+    </div>
+    <table class="wbs-table">
+      <thead>
+        <tr>
+          <th style="width:22%">シーン</th>
+          <th style="width:20%">推奨プロトコル</th>
+          <th style="width:32%">理由・ポイント</th>
+          <th style="width:26%">実装例・製品</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SaaS SSO</strong><br><small>M365・Salesforce・ServiceNow 等</small></td>
+          <td><span class="tag tag-legacy">SAML 2.0</span> または <span class="tag tag-authn">OIDC</span></td>
+          <td>主要 SaaS は両プロトコルに対応。新規導入なら OIDC を優先。既存 ADFS 環境があれば SAML が容易</td>
+          <td>Entra ID, Okta, ADFS → 各 SaaS</td>
+        </tr>
+        <tr>
+          <td><strong>レガシーアプリ SSO</strong><br><small>社内 Web システム・基幹系ポータル</small></td>
+          <td><span class="tag tag-legacy">SAML 2.0</span></td>
+          <td>既存社内システムの SAML 対応率が高い。ADFS 経由で AD 認証と連携</td>
+          <td>ADFS, Shibboleth, Keycloak, Entra ID</td>
+        </tr>
+        <tr>
+          <td><strong>モバイルアプリ認証</strong><br><small>iOS / Android 業務アプリ</small></td>
+          <td><span class="tag tag-modern">OIDC + PKCE</span></td>
+          <td>SAML はブラウザリダイレクト前提で Native App に不向き。PKCE 付き認可コードフローで安全なモバイル認証を実現</td>
+          <td>MSAL (Microsoft), AppAuth (OSS), Okta OIDC SDK</td>
+        </tr>
+        <tr>
+          <td><strong>Web API の認可制御</strong><br><small>REST API・マイクロサービス</small></td>
+          <td><span class="tag tag-authz">OAuth 2.0</span></td>
+          <td>スコープ（scope）による細粒度の API アクセス制御。Bearer Token で stateless な保護</td>
+          <td>Entra ID (App Registration), Azure APIM, Kong, Auth0</td>
+        </tr>
+        <tr>
+          <td><strong>自動ユーザープロビジョニング</strong><br><small>入退社・異動時の自動アカウント管理</small></td>
+          <td><span class="tag tag-prov">SCIM 2.0</span></td>
+          <td>HR システムとの連携により、入社時の即日プロビジョニングと退社時の即時無効化を実現</td>
+          <td>Workday → Entra ID, SAP → Okta, SmartHR → SailPoint</td>
+        </tr>
+        <tr>
+          <td><strong>ハイブリッド環境</strong><br><small>AD + Entra ID 共存環境</small></td>
+          <td>Kerberos + <span class="tag tag-legacy">SAML 2.0</span> / <span class="tag tag-authn">OIDC</span></td>
+          <td>オンプレミス AD の Kerberos 認証を SAML/OIDC に変換して SaaS に連携。Entra Connect Sync によるハイブリッド ID 基盤が日本企業の現実解</td>
+          <td>Entra Connect, ADFS, Entra Connect Cloud Sync</td>
+        </tr>
+        <tr>
+          <td><strong>SPA（シングルページアプリ）</strong><br><small>React / Vue / Angular</small></td>
+          <td><span class="tag tag-authn">OIDC</span> (Auth Code + PKCE)</td>
+          <td>Implicit Flow は RFC 9700 で非推奨。PKCE 付き認可コードフロー + BFF パターンが推奨</td>
+          <td>MSAL.js, Auth0 SPA SDK, oidc-client-ts</td>
+        </tr>
+        <tr>
+          <td><strong>金融・公官庁の厳格なシステム</strong><br><small>高セキュリティ要件環境</small></td>
+          <td><span class="tag tag-legacy">SAML 2.0</span> + FIDO2</td>
+          <td>SAML の成熟した監査・コンプライアンス対応。フィッシング耐性のある FIDO2（YubiKey 等）と組み合わせる</td>
+          <td>Entra ID + FIDO2, ADFS + AD CS スマートカード</td>
+        </tr>
+        <tr>
+          <td><strong>B2C（エンドユーザー向けサービス）</strong><br><small>一般消費者向けアプリ・ポータル</small></td>
+          <td><span class="tag tag-modern">OIDC + OAuth 2.0</span></td>
+          <td>OIDC による Social Login（Google・LINE 等）連携が容易。Azure AD B2C / Auth0 で実装</td>
+          <td>Azure AD B2C, Auth0, Amazon Cognito</td>
+        </tr>
+        <tr>
+          <td><strong>IGA / アクセスレビュー基盤</strong><br><small>アクセス権の棚卸・認定</small></td>
+          <td><span class="tag tag-prov">SCIM 2.0</span> + <span class="tag tag-authz">OAuth 2.0</span></td>
+          <td>SCIM でアカウント・グループを IGA に集約。OAuth 2.0 で IGA の API を保護</td>
+          <td>SailPoint, Saviynt, Entra Identity Governance</td>
+        </tr>
+      </tbody>
+    </table>
+    <h3>日本特有の考慮事項</h3>
+    <div class="two-col">
+      <div class="card">
+        <h4>&#127981; 日本企業のプロトコル採用傾向</h4>
+        <p><strong>オンプレミス残存企業（製造・金融・公官庁）:</strong> SAML 2.0 が主流。ADFS を IdP として活用し、社内ポータル・SaaS 連携の基盤とするケースが多い。</p>
+        <p><strong>クラウドネイティブ企業・スタートアップ:</strong> OIDC + OAuth 2.0 を採用。Entra ID（Azure AD）または Auth0 を IdP とした構成が増加。</p>
+        <p><strong>移行期にある中堅・大企業:</strong> SAML/OIDC の併用。Entra ID が両プロトコルに対応することで段階的な移行を実現。</p>
+      </div>
+      <div class="card">
+        <h4>&#127979; 業界別の傾向</h4>
+        <p><strong>金融・銀行:</strong> SAML 2.0 + スマートカード（ICカード）認証の組み合わせが多い。FIDO2 への移行も進みつつある。</p>
+        <p><strong>公官庁・自治体:</strong> LGWAN 環境との分離に注意。マイナンバーカードを使ったフェデレーション認証（SAML ベース）が普及しつつある。</p>
+        <p><strong>製造業:</strong> SAP 連携（SAML/OIDC）と工場系システム（LDAP/Kerberos）の混在が一般的。Entra Connect による段階的移行が主流。</p>
+      </div>
+    </div>
+    <h3>IGA 連携と SCIM の標準化動向（2026年時点）</h3>
+    <p>日本国内でも IGA（Identity Governance and Administration）製品の導入が加速しており、HR システム → IGA → SaaS の自動プロビジョニング基盤として SCIM 2.0 の採用が標準化しつつある。</p>
+    <div class="three-col">
+      <div class="card">
+        <h4>&#128290; HR システムの SCIM 対応</h4>
+        <p>SmartHR・カオナビ等の国産 HR SaaS が SCIM 送信元として機能するようになり、Entra ID / Okta への直接連携が可能になった。</p>
+      </div>
+      <div class="card">
+        <h4>&#9989; セキュリティ規制の強化</h4>
+        <p>退職者アカウントの即時無効化義務（情報漏洩対策）が企業に求められるようになり、手動管理から SCIM 自動化への移行が加速している。</p>
+      </div>
+      <div class="card">
+        <h4>&#128200; ゼロトラスト移行との連動</h4>
+        <p>ゼロトラストアーキテクチャでは「最小権限の原則」が重要。SCIM + IGA による属性ベースのアクセス制御（ABAC）が実装基盤となっている。</p>
+      </div>
+    </div>
+    <div class="warn">
+      <strong>移行プロジェクトの典型的な落とし穴:</strong> SAML から OIDC への切り替え時に、Single Logout (SLO) の挙動が変わることを見落とすケースが多い。OIDC は SLO が標準化されておらず、Front-Channel Logout / Back-Channel Logout の仕様を個別に実装する必要がある。事前の動作検証が必須。
+    </div>
+    <h3>プロトコル選択フロー（簡易判断ガイド）</h3>
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-box gray" style="min-width:200px">&#10067; 何を実現したいか？</div>
+      </div>
+      <div class="flow-row" style="margin-top:12px">
+        <div class="flow-box blue" style="min-width:150px">&#128274; ユーザー認証（SSO）</div>
+        <div class="flow-arrow">──&gt; モバイル/SPA？ Yes ──&gt;</div>
+        <div class="flow-box purple" style="min-width:130px">OIDC + PKCE</div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-box blue" style="min-width:150px">&#128274; ユーザー認証（SSO）</div>
+        <div class="flow-arrow">──&gt; Enterprise/No ──&gt;</div>
+        <div class="flow-box red" style="min-width:130px">SAML 2.0</div>
+      </div>
+      <div class="flow-row" style="margin-top:8px">
+        <div class="flow-box orange" style="min-width:150px">&#128275; API アクセス制御</div>
+        <div class="flow-arrow">── すべてのシーン ──&gt;</div>
+        <div class="flow-box orange" style="min-width:130px">OAuth 2.0</div>
+      </div>
+      <div class="flow-row" style="margin-top:8px">
+        <div class="flow-box green" style="min-width:150px">&#128101; アカウント自動管理</div>
+        <div class="flow-arrow">── すべてのシーン ──&gt;</div>
+        <div class="flow-box green" style="min-width:130px">SCIM 2.0</div>
+      </div>
+    </div>
+    <p style="margin-top:20px">本資料に関連する詳細は、<a href="entra_hybrid_join_guide.html" style="color:#2563eb">Entra Hybrid Join ガイド</a>・<a href="privileged_access_management.html" style="color:#2563eb">PAM 特権管理ガイド</a>・<a href="idm_overview.html" style="color:#2563eb">IDM 全体概要</a>を参照されたい。</p>
+  </section>
+</main>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('#toc a');
+  var sections = [];
+  links.forEach(function(a){
+    var href = a.getAttribute('href');
+    if(href && href.startsWith('#')){
+      var el = document.getElementById(href.slice(1));
+      if(el) sections.push({el:el, a:a});
+    }
+  });
+  function onScroll(){
+    var scrollY = window.scrollY + 80;
+    var active = null;
+    sections.forEach(function(s){
+      if(s.el.offsetTop <= scrollY) active = s;
+    });
+    links.forEach(function(a){ a.classList.remove('active'); });
+    if(active) active.a.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
 </body>
 </html>

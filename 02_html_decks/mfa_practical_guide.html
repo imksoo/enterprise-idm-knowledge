@@ -10,7 +10,7 @@ body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-seri
 #toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
 #toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
 #toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
-#toc a:hover{background:#1e3a5f;color:#fff}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
 #toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
 main{margin-left:230px;padding:32px 40px;max-width:1100px}
 h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
@@ -25,34 +25,33 @@ p{margin-bottom:12px}
 .good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
 .phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
 .phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
-.phase-header p{opacity:.85;font-size:.85rem;margin:0}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
 .wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
 .wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
 .wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
 .wbs-table tr:nth-child(even) td{background:#f8fafc}
 .wbs-table tr:hover td{background:#eff6ff}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:.82rem;font-family:'Courier New',monospace;color:#dc2626}
+pre{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0;font-size:.8rem;line-height:1.6;font-family:'Courier New',monospace}
+pre .cm{color:#64748b}
+pre .kw{color:#7dd3fc}
+pre .str{color:#86efac}
+pre .fn{color:#fde68a}
+pre .num{color:#fb923c}
+pre .var{color:#f0abfc}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
 .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
 .card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
 .phase-block{background:#fff;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:16px;overflow:hidden}
-.phase-block-header{padding:12px 16px;font-weight:700;font-size:.92rem;display:flex;align-items:center;gap:10px}
-.phase-block-body{padding:14px 16px;font-size:.85rem}
-.phase1-h{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff}
-.phase2-h{background:linear-gradient(135deg,#d97706,#b45309);color:#fff}
-.phase3-h{background:linear-gradient(135deg,#16a34a,#15803d);color:#fff}
-ul{padding-left:20px;margin-bottom:10px}
-ul li{margin-bottom:4px;font-size:.85rem}
-.mfa-method-card{background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:14px;margin-bottom:10px}
-.mfa-method-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.mfa-method-name{font-weight:700;font-size:.92rem;color:#1e3a5f}
-.security-bar{height:8px;border-radius:4px;background:#e2e8f0;overflow:hidden;margin-bottom:6px}
-.security-fill{height:100%;border-radius:4px}
-.security-s1{background:#16a34a;width:100%}
-.security-s2{background:#16a34a;width:85%}
-.security-s3{background:#eab308;width:65%}
-.security-s4{background:#eab308;width:50%}
-.security-s5{background:#dc2626;width:30%}
+.phase-block-header{background:#f8fafc;border-bottom:1px solid #e2e8f0;padding:10px 16px;display:flex;align-items:center;gap:10px}
+.phase-block-header .phase-num{background:#2563eb;color:#fff;border-radius:6px;padding:2px 10px;font-size:.8rem;font-weight:700}
+.phase-block-body{padding:14px 16px}
 .product-section{background:#fff;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:20px;overflow:hidden}
 .product-header{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;padding:12px 16px}
 .product-header h3{color:#fff;margin:0;font-size:.95rem}
@@ -61,330 +60,367 @@ ul li{margin-bottom:4px;font-size:.85rem}
 .setting-item{padding:8px 0;border-bottom:1px solid #f1f5f9;font-size:.83rem}
 .setting-item:last-child{border-bottom:none}
 .setting-label{font-weight:700;color:#1e3a5f;display:block;margin-bottom:4px}
-code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:.82rem;font-family:monospace;color:#dc2626}
+.flow-diagram{overflow-x:auto;margin:14px 0}
+.flow-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:nowrap}
+.flow-box{padding:10px 14px;border-radius:8px;font-size:.82rem;font-weight:600;text-align:center;min-width:100px;white-space:nowrap}
+.flow-box.blue{background:#dbeafe;color:#1e40af;border:1px solid #93c5fd}
+.flow-box.green{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.flow-box.orange{background:#fef3c7;color:#92400e;border:1px solid #fcd34d}
+.flow-box.red{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.flow-box.gray{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1}
+.flow-arrow{font-size:.78rem;color:#475569;white-space:nowrap;flex-shrink:0}
+.star{color:#f59e0b}
+.star-empty{color:#cbd5e1}
 @media(max-width:900px){#toc{display:none}main{margin-left:0;padding:16px}}
 </style>
 </head>
 <body>
+
 <nav id="toc">
   <h2>目次</h2>
   <a href="#why">📊 MFAが必須な理由</a>
-  <a href="#methods">🔐 MFA方式比較</a>
+  <a class="toc-sub" href="#why">漏洩統計・事例</a>
+  <a class="toc-sub" href="#risk-compare">リスク比較表</a>
+  <a href="#methods">🔐 MFA方式詳細比較</a>
   <a href="#phases">📅 段階的導入計画</a>
-  <a class="toc-sub" href="#phase1">Phase 1: 管理者</a>
-  <a class="toc-sub" href="#phase2">Phase 2: 全社員</a>
-  <a class="toc-sub" href="#phase3">Phase 3: 外部委託</a>
+  <a class="toc-sub" href="#phase1">Phase 1（〜3ヶ月）</a>
+  <a class="toc-sub" href="#phase2">Phase 2（〜6ヶ月）</a>
+  <a class="toc-sub" href="#phase3">Phase 3（〜12ヶ月）</a>
   <a href="#mfa-fatigue">⚠️ MFA疲労攻撃対策</a>
   <a href="#products">🔧 製品別実装ガイド</a>
   <a class="toc-sub" href="#entra-mfa">Entra MFA</a>
-  <a class="toc-sub" href="#okta-mfa">Okta MFA</a>
-  <a class="toc-sub" href="#duo">Cisco Duo</a>
-  <a href="#cost">💰 コスト試算</a>
+  <a class="toc-sub" href="#okta-mfa">Okta Adaptive MFA</a>
+  <a class="toc-sub" href="#duo">Cisco Duo Security</a>
+  <a href="#cost">💰 コスト試算・ROI</a>
 </nav>
 
 <main>
-<h1>MFA実装ガイド — 段階的導入から製品別設定まで</h1>
-<p class="subtitle">管理者→全社員→外部委託先への3フェーズ展開計画とMFA疲労攻撃対策 — NSSol情報システム部門向けガイド</p>
+<h1>MFA実装ガイド</h1>
+<p class="subtitle">段階的導入から製品別設定まで — 情報システム部長・セキュリティ担当者・SE向け</p>
 
+<!-- ===== WHY MFA ===== -->
 <section id="why">
-<div class="phase-header"><h2>📊 MFAが必須な理由 — データと事例で説得する</h2><p>「パスワードだけでは守れない」を数字で示す</p></div>
+<div class="phase-header">
+  <h2>📊 MFAが必須な理由 — データと事例で説得する</h2>
+  <div class="phase-meta">「パスワードだけでは守れない」を数字で示す</div>
+</div>
 
 <div class="lead">
-Microsoftのセキュリティレポートによると、<strong>MFAを有効にするだけでアカウント侵害リスクを99.9%低減できる</strong>。パスワードは漏洩前提で設計するのが現代のセキュリティ基本原則だ。
+  <strong>Microsoft社の調査:</strong> MFAを有効にするだけで、アカウント乗っ取り攻撃の <strong>99.9%</strong> を防げる（2019年調査）。パスワード漏洩が起きても、MFAがあれば被害を防止できる。
 </div>
 
-<div class="three-col">
-<div class="card">
-  <h4>📈 パスワード漏洩の現実</h4>
-  <ul>
-    <li>Have I Been Pwned（haveibeenpwned.com）登録データ: <strong>130億件超</strong>のパスワード漏洩記録</li>
-    <li>日本でも毎年数百万件のビジネスメールとパスワードがダークウェブで流通</li>
-    <li>パスワードを知っている攻撃者がアカウントに到達するのに平均<strong>72分</strong></li>
-  </ul>
+<div class="two-col">
+<div>
+<h3>パスワード漏洩統計</h3>
+<ul style="padding-left:16px;font-size:.85rem;color:#475569;margin-bottom:12px">
+  <li><strong>Have I Been Pwned (HIBP):</strong> 2024年時点で <strong>120億件超</strong>のアカウント情報がダークウェブで流通</li>
+  <li><strong>Verizon DBIR 2023:</strong> データ侵害の原因の <strong>74%</strong> が認証情報の窃取・人的要因</li>
+  <li><strong>IBM Cost of Data Breach 2023:</strong> 日本企業のデータ侵害平均損失 <strong>4.45億円</strong></li>
+  <li><strong>Ponemon Institute:</strong> パスワードの再利用率は <strong>65%</strong>（1つ漏れると複数サービスが危険）</li>
+</ul>
 </div>
-<div class="card">
-  <h4>🎣 フィッシング被害の拡大</h4>
-  <ul>
-    <li>Verizon DBIR 2024: 侵害の<strong>68%がヒューマンエラー（フィッシング含む）</strong></li>
-    <li>日本国内でも2023年に金融機関・EC事業者へのフィッシング急増</li>
-    <li>AIを使ったスピアフィッシング（標的型）の精度が急速に向上</li>
-  </ul>
+<div>
+<h3>日本企業での被害事例</h3>
+<div class="danger">
+  <strong>2022年 トヨタ自動車系サプライヤー:</strong> VPNアカウントへの不正アクセスから工場停止。生産ライン1日停止で約1,500億円相当の損失影響。
 </div>
-<div class="card">
-  <h4>✅ MFA導入の効果</h4>
-  <ul>
-    <li>Microsoft報告: MFA有効で<strong>アカウント侵害99.9%低減</strong></li>
-    <li>Google報告: SMSベースMFAで<strong>フィッシング76%ブロック</strong></li>
-    <li>FIDO2/パスキー: フィッシング耐性<strong>100%（フィッシングサイトでは機能しない）</strong></li>
-  </ul>
+<div class="danger">
+  <strong>2023年 大手金融機関:</strong> 業務委託先従業員のパスワードが漏洩。顧客情報数万件が流出。インシデント対応・通知コストだけで数億円。
+</div>
 </div>
 </div>
 
+<h3 id="risk-compare">MFAなし vs MFAあり リスク比較</h3>
 <table class="wbs-table">
-  <thead>
-    <tr><th>比較項目</th><th>MFAなし</th><th>SMS MFA</th><th>アプリMFA（TOTP/Push）</th><th>FIDO2/パスキー</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>パスワード漏洩への耐性</td><td style="color:#dc2626;font-weight:700">なし</td><td>あり</td><td>あり</td><td>あり</td></tr>
-    <tr><td>フィッシング耐性</td><td style="color:#dc2626;font-weight:700">なし</td><td style="color:#dc2626">脆弱</td><td style="color:#eab308">中程度</td><td style="color:#16a34a;font-weight:700">完全耐性</td></tr>
-    <tr><td>MFA疲労攻撃耐性</td><td style="color:#dc2626;font-weight:700">なし</td><td style="color:#dc2626">脆弱</td><td style="color:#eab308">番号照合で対応可</td><td style="color:#16a34a;font-weight:700">耐性あり</td></tr>
-    <tr><td>SIMスワッピング耐性</td><td>—</td><td style="color:#dc2626;font-weight:700">脆弱</td><td style="color:#16a34a">耐性あり</td><td style="color:#16a34a;font-weight:700">耐性あり</td></tr>
-  </tbody>
+<thead>
+  <tr><th>評価項目</th><th>MFA なし</th><th>MFA あり（TOTP/プッシュ）</th><th>MFA あり（FIDO2）</th></tr>
+</thead>
+<tbody>
+  <tr><td><strong>フィッシング耐性</strong></td><td style="color:#dc2626">❌ なし — フィッシングで即座に乗っ取り</td><td style="color:#eab308">△ 低い — パスワード+OTP両方を騙される</td><td style="color:#16a34a">✅ 最強 — フィッシング物理的に不可能</td></tr>
+  <tr><td><strong>パスワード漏洩時の対応</strong></td><td style="color:#dc2626">❌ 即座に不正ログイン可能</td><td style="color:#16a34a">✅ MFAがあれば直接の不正ログイン防止</td><td style="color:#16a34a">✅ デバイス認証のため漏洩のみでは不可</td></tr>
+  <tr><td><strong>クレデンシャルスタッフィング</strong></td><td style="color:#dc2626">❌ 自動攻撃で大量乗っ取り</td><td style="color:#16a34a">✅ 自動化攻撃をほぼ完全に防止</td><td style="color:#16a34a">✅ 完全防止</td></tr>
+  <tr><td><strong>内部不正</strong></td><td style="color:#dc2626">❌ パスワード共有で追跡不可</td><td style="color:#eab308">△ 個人デバイスに紐付けで追跡可能</td><td style="color:#16a34a">✅ デバイス単位で完全追跡可能</td></tr>
+  <tr><td><strong>規制・コンプライアンス</strong></td><td style="color:#dc2626">❌ FISC・PCI DSS・ISO27001に非対応</td><td style="color:#16a34a">✅ 主要規制の認証要件を満たす</td><td style="color:#16a34a">✅ 最高水準の認証要件充足</td></tr>
+  <tr><td><strong>Microsoft社による侵害防止率</strong></td><td style="color:#dc2626">0%</td><td style="color:#16a34a"><strong>99.9%</strong></td><td style="color:#16a34a"><strong>99.99%+</strong></td></tr>
+</tbody>
 </table>
 </section>
 
+<!-- ===== MFA METHODS ===== -->
 <section id="methods">
-<h2>🔐 MFA方式比較（詳細）</h2>
+<h2>🔐 MFA方式詳細比較</h2>
+<div class="lead">各MFA方式のセキュリティ強度・ユーザー負担・コスト・フィッシング耐性を整理し、自組織に最適な方式を選択する。</div>
 
-<div class="mfa-method-card">
-  <div class="mfa-method-header">
-    <span class="mfa-method-name">🥇 FIDO2 / パスキー（最推奨）</span>
-    <span style="background:#dcfce7;color:#166534;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700">フィッシング耐性: 完全</span>
-  </div>
-  <div class="security-bar"><div class="security-fill security-s1"></div></div>
-  <p style="font-size:.8rem;color:#64748b;margin-bottom:8px">セキュリティ強度: ★★★★★</p>
-  <div class="two-col" style="font-size:.83rem">
-    <div>
-      <strong>強み:</strong>
-      <ul style="margin-top:6px">
-        <li>デバイスに紐付いた秘密鍵でフィッシングサイトでは機能しない</li>
-        <li>パスワードレス認証が可能（YubiKey・Windows Hello）</li>
-        <li>最高のセキュリティ強度と優れたUX</li>
-      </ul>
-    </div>
-    <div>
-      <strong>注意点:</strong>
-      <ul style="margin-top:6px">
-        <li>デバイス紛失時の復旧フロー設計が必要</li>
-        <li>全社展開には時間とデバイス調達コストがかかる</li>
-        <li>推奨製品: YubiKey、Windows Hello for Business、Google Passkey</li>
-      </ul>
-    </div>
-  </div>
-</div>
+<table class="wbs-table">
+<thead>
+  <tr>
+    <th>方式</th>
+    <th>セキュリティ強度</th>
+    <th>ユーザー負担</th>
+    <th>導入コスト</th>
+    <th>フィッシング耐性</th>
+    <th>主な脆弱性</th>
+    <th>推奨用途</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td><strong>SMS OTP</strong></td>
+    <td>★★☆☆☆</td>
+    <td>低</td>
+    <td>低〜中</td>
+    <td style="color:#dc2626">❌ なし</td>
+    <td>SIMスワッピング・SS7攻撃・中間者攻撃</td>
+    <td>非推奨（移行期の暫定措置のみ）</td>
+  </tr>
+  <tr>
+    <td><strong>TOTP</strong><br><small>Google/Microsoft Authenticator</small></td>
+    <td>★★★☆☆</td>
+    <td>中</td>
+    <td>低（無料アプリ）</td>
+    <td style="color:#eab308">△ なし</td>
+    <td>フィッシングでコード窃取可能・デバイス紛失</td>
+    <td>標準的な全社員向け（移行期）</td>
+  </tr>
+  <tr>
+    <td><strong>プッシュ通知</strong><br><small>Microsoft Authenticator / Duo</small></td>
+    <td>★★★☆☆</td>
+    <td>低</td>
+    <td>低（月額に含む）</td>
+    <td style="color:#eab308">△ なし（MFA疲労攻撃の対象）</td>
+    <td>MFA疲労攻撃 — 番号照合なしでは危険</td>
+    <td>一般社員（<strong>番号照合必須</strong>）</td>
+  </tr>
+  <tr>
+    <td><strong>FIDO2 / パスキー</strong></td>
+    <td>★★★★★</td>
+    <td>極低</td>
+    <td>中（デバイス対応確認要）</td>
+    <td style="color:#16a34a"><strong>✅ あり</strong></td>
+    <td>デバイス紛失（バックアップキー必要）</td>
+    <td><strong>全員推奨（最終目標）</strong></td>
+  </tr>
+  <tr>
+    <td><strong>Windows Hello for Business</strong></td>
+    <td>★★★★★</td>
+    <td>極低（生体認証）</td>
+    <td>中（TPM付きPC必要）</td>
+    <td style="color:#16a34a"><strong>✅ あり</strong></td>
+    <td>デバイス紛失（PIN+デバイス保護）</td>
+    <td>Windows端末企業全般</td>
+  </tr>
+  <tr>
+    <td><strong>スマートカード / 証明書</strong></td>
+    <td>★★★★☆</td>
+    <td>中（カード携帯）</td>
+    <td>高（PKI基盤・カード発行）</td>
+    <td style="color:#16a34a"><strong>✅ あり</strong></td>
+    <td>カード紛失・PKI管理コスト</td>
+    <td>公官庁・金融・高セキュリティ組織</td>
+  </tr>
+</tbody>
+</table>
 
-<div class="mfa-method-card">
-  <div class="mfa-method-header">
-    <span class="mfa-method-name">🥈 アプリ プッシュ通知（Microsoft Authenticator等）</span>
-    <span style="background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700">番号照合必須</span>
-  </div>
-  <div class="security-bar"><div class="security-fill security-s2"></div></div>
-  <p style="font-size:.8rem;color:#64748b;margin-bottom:8px">セキュリティ強度: ★★★★☆（番号照合あり）</p>
-  <div class="two-col" style="font-size:.83rem">
-    <div>
-      <strong>強み:</strong>
-      <ul style="margin-top:6px">
-        <li>スマートフォンのみで実装可能（追加コスト最小）</li>
-        <li>UXが良い（承認ボタン1タップ）</li>
-        <li>Microsoft Entra ID・Okta・Duoと深く統合</li>
-      </ul>
-    </div>
-    <div>
-      <strong>注意点:</strong>
-      <ul style="margin-top:6px">
-        <li><strong>番号照合（Number Matching）を必ず有効化</strong>（MFA疲労攻撃対策）</li>
-        <li>スマートフォン紛失時の対応フロー必要</li>
-        <li>プッシュ通知なしの地域・環境への対応検討</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="mfa-method-card">
-  <div class="mfa-method-header">
-    <span class="mfa-method-name">🥉 TOTP（Google Authenticator / Microsoft Authenticator）</span>
-    <span style="background:#dbeafe;color:#1e40af;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700">標準的な選択</span>
-  </div>
-  <div class="security-bar"><div class="security-fill security-s3"></div></div>
-  <p style="font-size:.8rem;color:#64748b;margin-bottom:8px">セキュリティ強度: ★★★☆☆</p>
-  <div class="two-col" style="font-size:.83rem">
-    <div>
-      <strong>強み:</strong>
-      <ul style="margin-top:6px">
-        <li>オフラインでも機能（ネットワーク不要）</li>
-        <li>対応アプリが豊富（認証器選択の自由度が高い）</li>
-        <li>リアルタイム通信不要で安定性が高い</li>
-      </ul>
-    </div>
-    <div>
-      <strong>注意点:</strong>
-      <ul style="margin-top:6px">
-        <li>フィッシングサイトでOTPを入力させる攻撃（AiTM）に対して脆弱</li>
-        <li>6桁数字入力のUXがプッシュより劣る</li>
-        <li>旧式だが既存システムとの互換性が高い</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div class="mfa-method-card">
-  <div class="mfa-method-header">
-    <span class="mfa-method-name">⚠️ SMS OTP（非推奨）</span>
-    <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:700">段階的廃止推奨</span>
-  </div>
-  <div class="security-bar"><div class="security-fill security-s5"></div></div>
-  <p style="font-size:.8rem;color:#64748b;margin-bottom:8px">セキュリティ強度: ★☆☆☆☆</p>
-  <div class="two-col" style="font-size:.83rem">
-    <div>
-      <strong>強み:</strong>
-      <ul style="margin-top:6px">
-        <li>スマートフォン不要（ガラケー/フィーチャーフォンでも可）</li>
-        <li>追加アプリ不要で導入障壁が低い</li>
-      </ul>
-    </div>
-    <div>
-      <strong>注意点:</strong>
-      <ul style="margin-top:6px">
-        <li>SIMスワッピング攻撃（電話番号乗っ取り）に脆弱</li>
-        <li>フィッシングでSMSコードを入力させる攻撃が横行</li>
-        <li>NISTはSMS OTPを非推奨に。既存ユーザーはアプリMFAへ移行を</li>
-      </ul>
-    </div>
-  </div>
+<div class="warn">
+  <strong>SMS OTPの廃止を推奨:</strong> NIST SP 800-63-3ではSMSによる認証は「制限付き認証器」として分類。SIMスワッピング攻撃（携帯キャリアへの社会工学）により、電話番号乗っ取りが可能。可能な限りTOTPまたはプッシュ通知へ移行すること。
 </div>
 </section>
 
+<!-- ===== PHASES ===== -->
 <section id="phases">
-<div class="phase-header"><h2>📅 段階的導入計画（3フェーズ）</h2><p>「管理者から始めて全社員・外部委託先へ」の展開ロードマップ</p></div>
+<div class="phase-header">
+  <h2>📅 段階的導入計画（3フェーズ）</h2>
+  <div class="phase-meta">管理者から始め、全社員、外部委託先へと段階的に展開する現実的なロードマップ</div>
+</div>
 
 <div class="phase-block" id="phase1">
-  <div class="phase-block-header phase1-h">🚨 Phase 1（〜1ヶ月）: IT管理者・特権アカウント全員にMFA必須</div>
+  <div class="phase-block-header">
+    <span class="phase-num">Phase 1</span>
+    <strong>〜3ヶ月: IT管理者・特権アカウント全員にMFA必須</strong>
+    <span class="tag tag-must" style="margin-left:auto">最優先</span>
+  </div>
   <div class="phase-block-body">
     <div class="two-col">
-      <div>
-        <h4>対象アカウント</h4>
-        <ul>
-          <li>Active Directoryのドメイン管理者・Enterprise Admins</li>
-          <li>Azure/M365のグローバル管理者・Exchange管理者</li>
-          <li>IT担当者・システム管理者全員</li>
-          <li>PAMシステム管理アカウント</li>
-          <li>クラウドインフラ（AWS/Azure/GCP）の管理者</li>
-        </ul>
-        <h4 style="margin-top:12px">推奨MFA方式</h4>
-        <ul>
-          <li>第一選択: FIDO2（YubiKey等）またはWindows Hello for Business</li>
-          <li>代替: Microsoft Authenticator（番号照合必須）</li>
-        </ul>
+    <div>
+      <h4>実施内容</h4>
+      <ul style="font-size:.85rem;padding-left:16px;color:#475569">
+        <li>ドメイン管理者・グローバル管理者・セキュリティ管理者にMFA強制適用</li>
+        <li>条件付きアクセスポリシーの基本設定（管理者ロール全員MFA必須）</li>
+        <li>ブレークグラス緊急アカウント（2件）の設定とMFA除外</li>
+        <li>Microsoft Authenticatorの番号照合（Number Matching）有効化</li>
+        <li>MFAヘルプデスク体制の準備（登録支援・リセット対応）</li>
+      </ul>
+    </div>
+    <div>
+      <h4>成功指標</h4>
+      <div class="good">
+        <strong>目標:</strong> 管理者アカウント MFA適用率 100%<br>
+        <strong>測定方法:</strong> Entra ID サインインログ / MFA登録状況レポート<br>
+        <strong>リスク:</strong> 管理者が登録できない場合の業務停止対策を事前に準備
       </div>
-      <div>
-        <h4>実装タスク</h4>
-        <ul>
-          <li>Entra ID条件付きアクセスポリシー作成（管理者グループ→MFA必須）</li>
-          <li>Microsoft Authenticatorの番号照合（Number Matching）有効化</li>
-          <li>管理者向け展開説明会・ヘルプデスク体制整備</li>
-          <li>緊急連絡用のバックアップ認証手段の登録（物理キー等）</li>
-        </ul>
-        <div class="good" style="margin-top:12px">
-          <strong>期待効果:</strong> 最もリスクの高い特権アカウントを即座に保護。AD侵害・クラウド管理者乗っ取りリスクを大幅低減。
-        </div>
-      </div>
+      <h4 style="margin-top:12px">除外グループの設計</h4>
+      <ul style="font-size:.85rem;padding-left:16px;color:#475569">
+        <li>ブレークグラスアカウント（場所条件でのみアクセス許可）</li>
+        <li>サービスアカウント（CA除外グループに追加）</li>
+        <li>MFA非対応レガシーシステム（専用除外ポリシー）</li>
+      </ul>
+    </div>
     </div>
   </div>
 </div>
 
 <div class="phase-block" id="phase2">
-  <div class="phase-block-header phase2-h">⚡ Phase 2（〜6ヶ月）: 全社員へのMFA展開</div>
+  <div class="phase-block-header">
+    <span class="phase-num" style="background:#7c3aed">Phase 2</span>
+    <strong>〜6ヶ月: 全社員にMFA展開</strong>
+    <span class="tag tag-high" style="margin-left:auto">高優先</span>
+  </div>
   <div class="phase-block-body">
     <div class="two-col">
-      <div>
-        <h4>対象アカウント</h4>
-        <ul>
-          <li>全社員（正社員・嘱託・パートタイム）</li>
-          <li>Microsoft 365・Entra IDアカウント保有者</li>
-          <li>SaaS（Salesforce・Slack・Zoom等）利用者</li>
-        </ul>
-        <h4 style="margin-top:12px">展開方針</h4>
-        <ul>
-          <li>本社→支社→工場・店舗の順で段階展開</li>
-          <li>Microsoft Authenticatorアプリ配布・登録ガイド作成</li>
-          <li>ヘルプデスクへのMFA関連問い合わせ対応訓練</li>
-          <li>例外処理フロー（海外出張・スマートフォン紛失時）の整備</li>
-        </ul>
-      </div>
-      <div>
-        <h4>実装タスク</h4>
-        <ul>
-          <li>Entra IDのセキュリティデフォルト or 条件付きアクセスでMFA必須化</li>
-          <li>MFA登録キャンペーン（ユーザー向け案内メール・ポスター）</li>
-          <li>認証アプリのセルフサービス登録ポータル設定</li>
-          <li>SMS MFAからアプリMFAへの移行通知（3ヶ月猶予）</li>
-        </ul>
-        <div class="warn" style="margin-top:12px">
-          <strong>注意:</strong> 全社一斉展開はヘルプデスクに過大な負荷をかける。部門別・拠点別の段階展開と十分な事前周知が必須。
-        </div>
-      </div>
+    <div>
+      <h4>実施内容</h4>
+      <ul style="font-size:.85rem;padding-left:16px;color:#475569">
+        <li>全社員へMFA登録を段階的に展開（部門別ロールアウト）</li>
+        <li>Microsoft Authenticatorプッシュ通知＋番号照合を標準に設定</li>
+        <li>事前周知（メール・イントラ通知）とヘルプデスク強化</li>
+        <li>除外グループの段階的縮小（登録率90%達成後に縮小）</li>
+        <li>MFA登録レポートを週次で経営報告</li>
+      </ul>
+    </div>
+    <div>
+      <h4>展開スケジュール例（1,000名規模）</h4>
+      <table class="wbs-table">
+        <thead><tr><th>週</th><th>対象</th><th>人数</th></tr></thead>
+        <tbody>
+          <tr><td>1〜2週</td><td>情報システム部門・パイロット</td><td>50名</td></tr>
+          <tr><td>3〜4週</td><td>管理部門・経営層</td><td>100名</td></tr>
+          <tr><td>5〜8週</td><td>営業・マーケティング</td><td>300名</td></tr>
+          <tr><td>9〜12週</td><td>製造・現場・残余部門</td><td>550名</td></tr>
+        </tbody>
+      </table>
+      <div class="good"><strong>目標:</strong> 全社員MFA登録率 90%以上</div>
+    </div>
     </div>
   </div>
 </div>
 
 <div class="phase-block" id="phase3">
-  <div class="phase-block-header phase3-h">✅ Phase 3（〜12ヶ月）: 外部委託先・FIDO2移行・条件付きアクセス強化</div>
+  <div class="phase-block-header">
+    <span class="phase-num" style="background:#16a34a">Phase 3</span>
+    <strong>〜12ヶ月: FIDO2移行・条件付きアクセス強化・外部委託先対応</strong>
+    <span class="tag tag-med" style="margin-left:auto">中優先</span>
+  </div>
   <div class="phase-block-body">
-    <div class="two-col">
-      <div>
-        <h4>対象アカウント</h4>
-        <ul>
-          <li>協力会社・外部委託先SE</li>
-          <li>SIer・ベンダー（VPN・リモートアクセス利用者）</li>
-          <li>Phase 2のSMS MFA利用者（アプリMFAへ移行）</li>
-        </ul>
-        <h4 style="margin-top:12px">FIDO2移行対象</h4>
-        <ul>
-          <li>特権アカウント（Phase 1の継続強化）</li>
-          <li>経営層・役員アカウント</li>
-          <li>財務・人事等の機密データ取扱者</li>
-        </ul>
-      </div>
-      <div>
-        <h4>実装タスク</h4>
-        <ul>
-          <li>外部委託先向けMFA登録フロー（Entra B2B Guest / External ID）</li>
-          <li>特権ユーザー向けYubiKey配布・Windows Hello for Business展開</li>
-          <li>条件付きアクセス強化: 登録済みデバイス+MFA+リスク評価</li>
-          <li>継続的アクセス評価（CAE）の有効化</li>
-          <li>UEBA（異常認証検知）の本格運用開始</li>
-        </ul>
-        <div class="good" style="margin-top:12px">
-          <strong>最終形:</strong> 全社員・全委託先がMFA適用済み。特権ユーザーはFIDO2対応。条件付きアクセスでリスクベース認証が稼働。
-        </div>
-      </div>
+    <div class="three-col">
+    <div class="card">
+      <h4>🔑 FIDO2/パスキー移行</h4>
+      <ul style="font-size:.83rem;padding-left:14px;color:#475569">
+        <li>Windows Hello for Business全社展開</li>
+        <li>FIDO2対応セキュリティキー（YubiKey等）の一部導入</li>
+        <li>パスキー登録キャンペーン実施</li>
+        <li>目標: FIDO2移行率30%以上</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🏢 条件付きアクセス強化</h4>
+      <ul style="font-size:.83rem;padding-left:14px;color:#475569">
+        <li>デバイスコンプライアンス必須ポリシー</li>
+        <li>高リスクサインイン自動ブロック（Entra P2）</li>
+        <li>継続的アクセス評価（CAE）有効化</li>
+        <li>地理的制限ポリシーの検討</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4>🤝 外部委託先・取引先対応</h4>
+      <ul style="font-size:.83rem;padding-left:14px;color:#475569">
+        <li>Entra External IDでゲストアカウントにMFA強制</li>
+        <li>取引先のMFA要件を契約に盛り込む</li>
+        <li>Cisco Duo等でVPN接続にもMFA適用</li>
+        <li>外部アクセス棚卸し・定期レビュー</li>
+      </ul>
+    </div>
     </div>
   </div>
 </div>
 </section>
 
+<!-- ===== MFA FATIGUE ===== -->
 <section id="mfa-fatigue">
 <h2>⚠️ MFA疲労攻撃（MFA Fatigue / Prompt Bombing）への対応</h2>
 
 <div class="danger">
-  <strong>事例:</strong> 2022年Uber・Okta・Cisco侵害事件では「MFA疲労攻撃」が悪用された。攻撃者は盗んだパスワードでログイン試行を繰り返し、深夜や休日に大量のMFAプッシュ通知を送り続け、ユーザーが誤って「承認」するのを待った。
+  <strong>🚨 実際の侵害事例:</strong> 2022年Uber侵害 — 18歳のハッカーが盗んだパスワードで深夜に大量のMFAプッシュを送信。ドライバーになりすましてWhatsAppで連絡「ITです、承認してください」と社会工学を組み合わせ、従業員が誤承認。内部ネットワーク全体に侵入。同年、Okta・Cisco等でも同様の手口が使われた。
 </div>
 
+<h3>攻撃フロー vs 番号照合による防御</h3>
 <div class="two-col">
 <div>
-<h3>対策1: 番号照合（Number Matching）の必須化</h3>
-<p style="font-size:.85rem">承認画面に2〜3桁の数字が表示され、ユーザーがその数字をスマートフォンに入力して初めて承認できる仕組み。攻撃者がプッシュを送っても画面を見ていないユーザーは承認できない。</p>
-<p style="font-size:.85rem"><strong>設定方法（Entra ID）:</strong><br>
-Entra管理センター → 認証方法 → Microsoft Authenticator → 番号照合: 有効</p>
-<div class="good">
-  <strong>効果:</strong> MFA疲労攻撃の成功率を大幅に低減。2023年以降、Microsoftはデフォルト有効化を推奨。
+<h4>❌ 番号照合なし（攻撃が成立）</h4>
+<div class="flow-diagram">
+  <div class="flow-row">
+    <div class="flow-box red">攻撃者</div>
+    <div class="flow-arrow">①漏洩パスワードで</br>ログイン試行→</div>
+    <div class="flow-box gray">認証サーバー</div>
+  </div>
+  <div class="flow-row">
+    <div class="flow-box gray">認証サーバー</div>
+    <div class="flow-arrow">②プッシュ通知を</br>大量送信→</div>
+    <div class="flow-box blue">被害者スマホ</div>
+  </div>
+  <div class="flow-row">
+    <div class="flow-box blue">被害者</div>
+    <div class="flow-arrow">③深夜・疲弊で</br>誤って「承認」→</div>
+    <div class="flow-box red">攻撃者侵入成功</div>
+  </div>
 </div>
 </div>
 <div>
-<h3>対策2: FIDO2/パスキーへの移行</h3>
-<p style="font-size:.85rem">FIDO2認証は物理デバイスまたはデバイス内蔵の認証器を使い、フィッシングサイトや偽のMFAプッシュでは機能しない設計。MFA疲労攻撃そのものが成立しない。</p>
-<h3 style="margin-top:16px">対策3: 条件付きアクセス強化</h3>
-<ul style="font-size:.85rem">
-  <li>未登録デバイスからのアクセスを自動ブロック</li>
-  <li>リスクの高いサインイン（異常な場所・速度）を即時ブロック</li>
-  <li>継続的アクセス評価（CAE）: セッション中もリスク監視</li>
-</ul>
+<h4>✅ 番号照合あり（攻撃がブロックされる）</h4>
+<div class="flow-diagram">
+  <div class="flow-row">
+    <div class="flow-box red">攻撃者</div>
+    <div class="flow-arrow">①漏洩パスワードで</br>ログイン試行→</div>
+    <div class="flow-box gray">認証サーバー</div>
+  </div>
+  <div class="flow-row">
+    <div class="flow-box gray">認証サーバー</div>
+    <div class="flow-arrow">②画面に「47」表示<br>+プッシュ送信→</div>
+    <div class="flow-box blue">被害者スマホ</div>
+  </div>
+  <div class="flow-row">
+    <div class="flow-box blue">被害者</div>
+    <div class="flow-arrow">③数字が一致しない<br>→承認できない</div>
+    <div class="flow-box green">攻撃自動ブロック</div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="three-col" style="margin-top:20px">
+<div class="card">
+  <h4>対策1: 番号照合（Number Matching）</h4>
+  <p style="font-size:.83rem;color:#475569">承認画面の2〜3桁の数字をスマートフォンに入力しないと承認できない。攻撃者が画面を見ていなければ攻撃不可。<strong>Entra ID・Okta・Duoで設定可能。</strong></p>
+  <div class="good" style="font-size:.8rem">2023年以降、Microsoftはデフォルト有効化を推奨</div>
+</div>
+<div class="card">
+  <h4>対策2: FIDO2/パスキー移行</h4>
+  <p style="font-size:.83rem;color:#475569">MFA疲労攻撃の根本的な解決策。物理デバイスが必要なため、プッシュ通知攻撃自体が成立しない。フィッシング耐性も同時に獲得できる。</p>
+  <div class="good" style="font-size:.8rem">Windows Hello for Business + YubiKey の組み合わせが有効</div>
+</div>
+<div class="card">
+  <h4>対策3: UEBA・異常検知</h4>
+  <p style="font-size:.83rem;color:#475569">短時間に多数のMFAリクエストが発生した際にアラート。Entra ID Protection（P2）のリスクポリシーや SIEM のカスタムルールで検知。</p>
+  <div class="warn" style="font-size:.8rem">検知だけでは不十分。必ず番号照合またはFIDO2と組み合わせる</div>
 </div>
 </div>
 </section>
 
+<!-- ===== PRODUCTS ===== -->
 <section id="products">
-<div class="phase-header"><h2>🔧 製品別実装ガイド — Entra MFA / Okta / Cisco Duo</h2><p>各製品の設定ポイントとベストプラクティス</p></div>
+<div class="phase-header">
+  <h2>🔧 製品別実装ガイド — Entra MFA / Okta / Cisco Duo</h2>
+  <div class="phase-meta">各製品の設定ポイント・PowerShell自動化・ベストプラクティス</div>
+</div>
 
 <div class="product-section" id="entra-mfa">
   <div class="product-header">
@@ -393,74 +429,136 @@ Entra管理センター → 認証方法 → Microsoft Authenticator → 番号�
   </div>
   <div class="product-body">
     <div class="two-col">
-      <div>
-        <h4>必須設定項目</h4>
-        <div class="setting-item">
-          <span class="setting-label">1. 番号照合の有効化</span>
-          Entra管理センター → 保護 → 認証方法 → Microsoft Authenticator → 番号照合: 有効化
-        </div>
-        <div class="setting-item">
-          <span class="setting-label">2. 条件付きアクセスポリシー</span>
-          特権ロール: MFA必須 / 全ユーザー: 登録済みデバイス+MFA / リスク高: ブロック
-        </div>
-        <div class="setting-item">
-          <span class="setting-label">3. Identity Protection（P2）</span>
-          サインインリスクポリシー: リスク「高」→ MFA要求 / ユーザーリスク: リスク「高」→ パスワード変更要求
-        </div>
-        <div class="setting-item">
-          <span class="setting-label">4. 登録キャンペーン</span>
-          Entra管理センター → セキュリティ → 認証方法 → 登録キャンペーン: 有効化（14日間の猶予付き）
-        </div>
+    <div>
+      <h4>必須設定3項目</h4>
+      <div class="setting-item">
+        <span class="setting-label">① 番号照合（Number Matching）の有効化</span>
+        Entra管理センター → 保護 → 認証方法 → Microsoft Authenticator → 番号照合: <strong>有効化</strong>
       </div>
-      <div>
-        <h4>Entra P1/P2の違い</h4>
-        <table class="wbs-table">
-          <thead><tr><th>機能</th><th>Free</th><th>P1</th><th>P2</th></tr></thead>
-          <tbody>
-            <tr><td>MFA（セキュリティデフォルト）</td><td>✓</td><td>✓</td><td>✓</td></tr>
-            <tr><td>条件付きアクセス</td><td>—</td><td>✓</td><td>✓</td></tr>
-            <tr><td>リスクベース認証</td><td>—</td><td>—</td><td>✓</td></tr>
-            <tr><td>アクセスレビュー</td><td>—</td><td>—</td><td>✓</td></tr>
-            <tr><td>PIM（特権ID管理）</td><td>—</td><td>—</td><td>✓</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:.78rem;color:#64748b;margin-top:6px">P1: 約960円/人/月 | P2: 約1,440円/人/月（CSP価格は変動あり）</p>
+      <div class="setting-item">
+        <span class="setting-label">② 条件付きアクセスポリシー（基本3ポリシー）</span>
+        <ul style="font-size:.82rem;padding-left:14px">
+          <li>特権ロール（GA/SA/CA等）→ MFA必須 + 準拠デバイス必須</li>
+          <li>全ユーザー → MFA必須（ブレークグラス除く）</li>
+          <li>レガシー認証プロトコル → ブロック</li>
+        </ul>
+      </div>
+      <div class="setting-item">
+        <span class="setting-label">③ MFA登録キャンペーン</span>
+        認証方法 → 登録キャンペーン → 有効化（14日間猶予 → 強制）
       </div>
     </div>
+    <div>
+      <h4>Entra P1 / P2 機能比較</h4>
+      <table class="wbs-table">
+        <thead><tr><th>機能</th><th>Free</th><th>P1</th><th>P2</th></tr></thead>
+        <tbody>
+          <tr><td>セキュリティデフォルト（MFA）</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><td>条件付きアクセス</td><td>—</td><td>✓</td><td>✓</td></tr>
+          <tr><td>番号照合・追加コンテキスト</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Identity Protection（リスク検知）</td><td>—</td><td>—</td><td>✓</td></tr>
+          <tr><td>リスクベース条件付きアクセス</td><td>—</td><td>—</td><td>✓</td></tr>
+          <tr><td>PIM（特権ID管理）</td><td>—</td><td>—</td><td>✓</td></tr>
+          <tr><td>アクセスレビュー</td><td>—</td><td>—</td><td>✓</td></tr>
+          <tr><td>月額費用（CSP概算）</td><td>無料</td><td>約960円/人</td><td>約1,440円/人</td></tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+
+    <h4>PowerShell: 番号照合の有効化</h4>
+<pre><span class="cm"># Microsoft Authenticator 番号照合の有効化（Microsoft Graph PowerShell）</span>
+<span class="kw">Install-Module</span> <span class="var">-Name</span> Microsoft.Graph.Identity.SignIns <span class="var">-Force</span>
+<span class="kw">Connect-MgGraph</span> <span class="var">-Scopes</span> <span class="str">"Policy.ReadWrite.AuthenticationMethod"</span>
+
+<span class="cm"># 番号照合の設定を有効化</span>
+<span class="var">$body</span> = @{
+    <span class="str">"@odata.type"</span> = <span class="str">"#microsoft.graph.microsoftAuthenticatorAuthenticationMethodConfiguration"</span>
+    state = <span class="str">"enabled"</span>
+    featureSettings = @{
+        numberMatchingRequiredState = @{
+            state = <span class="str">"enabled"</span>
+        }
+        displayAppInformationRequiredState = @{
+            state = <span class="str">"enabled"</span>  <span class="cm"># 追加コンテキスト（アプリ名表示）</span>
+        }
+    }
+}
+
+<span class="kw">Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration</span> <span class="var">`
+    -AuthenticationMethodConfigurationId</span> <span class="str">"MicrosoftAuthenticator"</span> <span class="var">`
+    -BodyParameter</span> <span class="var">$body</span>
+
+<span class="fn">Write-Host</span> <span class="str">"番号照合を有効化しました"</span> <span class="var">-ForegroundColor</span> Green</pre>
+
+    <h4>PowerShell: MFA未登録ユーザーの一覧取得</h4>
+<pre><span class="cm"># MFA未登録ユーザーをCSVにエクスポート</span>
+<span class="kw">Connect-MgGraph</span> <span class="var">-Scopes</span> <span class="str">"UserAuthenticationMethod.Read.All","User.Read.All"</span>
+
+<span class="var">$users</span> = <span class="kw">Get-MgUser</span> <span class="var">-All -Filter</span> <span class="str">"accountEnabled eq true"</span> <span class="var">`
+    -Property</span> <span class="str">"Id,DisplayName,UserPrincipalName,Department"</span>
+
+<span class="var">$results</span> = <span class="kw">foreach</span> (<span class="var">$user</span> <span class="kw">in</span> <span class="var">$users</span>) {
+    <span class="var">$methods</span> = <span class="kw">Get-MgUserAuthenticationMethod</span> <span class="var">-UserId</span> <span class="var">$user</span>.Id
+    <span class="var">$hasMFA</span> = <span class="var">$methods</span> | <span class="kw">Where-Object</span> {
+        <span class="var">$_</span>.AdditionalProperties[<span class="str">"@odata.type"</span>] <span class="var">-ne</span>
+        <span class="str">"#microsoft.graph.passwordAuthenticationMethod"</span>
+    }
+    [PSCustomObject]@{
+        DisplayName       = <span class="var">$user</span>.DisplayName
+        UPN               = <span class="var">$user</span>.UserPrincipalName
+        Department        = <span class="var">$user</span>.Department
+        MFARegistered     = <span class="kw">if</span> (<span class="var">$hasMFA</span>) { <span class="str">"登録済"</span> } <span class="kw">else</span> { <span class="str">"未登録"</span> }
+        MethodCount       = <span class="var">$methods</span>.Count <span class="var">-</span> <span class="num">1</span>  <span class="cm"># パスワード除く</span>
+    }
+}
+
+<span class="var">$results</span> | <span class="kw">Where-Object</span> { <span class="var">$_</span>.MFARegistered <span class="var">-eq</span> <span class="str">"未登録"</span> } |
+    <span class="kw">Export-Csv</span> <span class="var">-Path</span> <span class="str">".\mfa_not_registered_$(</span><span class="fn">Get-Date</span> <span class="var">-Format</span> <span class="str">yyyyMMdd).csv"</span> <span class="var">`
+    -Encoding</span> UTF8 <span class="var">-NoTypeInformation</span>
+<span class="fn">Write-Host</span> <span class="str">"MFA未登録: $(($results | Where-Object {$_.MFARegistered -eq '未登録'}).Count) 名"</span></pre>
   </div>
 </div>
 
 <div class="product-section" id="okta-mfa">
   <div class="product-header">
-    <h3>Okta Adaptive MFA</h3>
-    <p>特徴: リスクベース認証・多様な認証器・AD/LDAPとの深い統合</p>
+    <h3>Okta Workforce Identity Cloud — Adaptive MFA</h3>
+    <p>ライセンス: Okta Workforce Identity Cloud（MFA Adaptive含む）</p>
   </div>
   <div class="product-body">
     <div class="two-col">
-      <div>
-        <h4>推奨設定ポイント</h4>
-        <div class="setting-item">
-          <span class="setting-label">1. サインオンポリシー</span>
-          アプリごとに「条件」（ネットワーク・デバイス状態・グループ）と「アクション」（MFA要求レベル）を設定
-        </div>
-        <div class="setting-item">
-          <span class="setting-label">2. Okta ThreatInsight</span>
-          ブルートフォース攻撃・パスワードスプレーを自動検知してブロック。無償で利用可能。
-        </div>
-        <div class="setting-item">
-          <span class="setting-label">3. Device Trust</span>
-          Okta管理登録デバイスのみに認証を許可。MDM（Jamf/Intune）との統合でデバイス証明書確認。
-        </div>
+    <div>
+      <h4>ポリシー設定ベストプラクティス</h4>
+      <div class="setting-item">
+        <span class="setting-label">① 認証ポリシー（Authentication Policy）</span>
+        アプリケーション単位でMFA要件を設定。高セキュリティアプリ（財務・HR等）にはFIDO2を必須化
       </div>
-      <div>
-        <h4>AD統合のポイント</h4>
-        <ul>
-          <li>Okta AD Agentをオンプレミスに展開してADと双方向同期</li>
-          <li>ADユーザー属性（部署・役職）をOktaポリシーで活用可能</li>
-          <li>OktaがIdP、ADがユーザーディレクトリとして共存するパターンが日本市場で一般的</li>
-          <li>Universal Directory でAD・HR系・クラウドの属性を統合</li>
-        </ul>
+      <div class="setting-item">
+        <span class="setting-label">② グローバルセッションポリシー</span>
+        セッション最大時間（8〜12時間推奨）・MFAのセッション固定設定・アイドルタイムアウト
       </div>
+      <div class="setting-item">
+        <span class="setting-label">③ 登録ポリシー</span>
+        新規ユーザーのMFA登録を初回ログイン時に強制。猶予期間を0日に設定（セキュリティ重視の場合）
+      </div>
+    </div>
+    <div>
+      <h4>リスクベース認証（Adaptive MFA）の活用</h4>
+      <table class="wbs-table">
+        <thead><tr><th>リスク要因</th><th>動作</th></tr></thead>
+        <tbody>
+          <tr><td>既知のIPアドレスから</td><td>MFAスキップ（信頼ゾーン）</td></tr>
+          <tr><td>新しいデバイス・ブラウザ</td><td>MFA必須</td></tr>
+          <tr><td>通常と異なる国・地域</td><td>MFA必須 + 管理者通知</td></tr>
+          <tr><td>TorネットワークのIP</td><td>アクセスブロック</td></tr>
+          <tr><td>Okta ThreatInsight（脅威IP）</td><td>自動ブロック or 追加認証</td></tr>
+          <tr><td>MFAプッシュ連続拒否（3回以上）</td><td>セッション強制終了</td></tr>
+        </tbody>
+      </table>
+    </div>
+    </div>
+    <div class="good">
+      <strong>Okta FastPass:</strong> デバイス証明書ベースのパスワードレス認証。FIDO2に相当するフィッシング耐性をOkta環境で実現。Windows・Mac・iOS・Androidに対応。
     </div>
   </div>
 </div>
@@ -468,113 +566,138 @@ Entra管理センター → 認証方法 → Microsoft Authenticator → 番号�
 <div class="product-section" id="duo">
   <div class="product-header">
     <h3>Cisco Duo Security</h3>
-    <p>特徴: エージェントレス展開・既存VPN/RDPへの素早い統合・中堅企業向け</p>
+    <p>ライセンス: Duo Free / Duo Essentials / Duo Advantage / Duo Premier</p>
   </div>
   <div class="product-body">
     <div class="two-col">
-      <div>
-        <h4>Duoの強み</h4>
-        <ul>
-          <li><strong>既存インフラへの素早い統合:</strong> VPN（Cisco ASA/Palo Alto/Fortinet）・RDP・SSH・OWAへのMFA追加がエージェント方式で短期間導入可能</li>
-          <li><strong>ダッシュボードの見やすさ:</strong> デバイス健全性・不審なログインを一目で確認</li>
-          <li><strong>Duo Verified Push:</strong> 番号照合機能（MFA疲労攻撃対策）</li>
-        </ul>
+    <div>
+      <h4>既存AD環境への統合（RADIUS Proxy経由）</h4>
+      <div class="flow-diagram">
+        <div class="flow-row">
+          <div class="flow-box blue">ユーザー</div>
+          <div class="flow-arrow">①VPN接続要求→</div>
+          <div class="flow-box orange">VPNゲートウェイ</div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-box orange">VPNゲートウェイ</div>
+          <div class="flow-arrow">②RADIUS認証→</div>
+          <div class="flow-box green">Duo Auth Proxy</div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-box green">Duo Auth Proxy</div>
+          <div class="flow-arrow">③AD認証→</div>
+          <div class="flow-box gray">Active Directory</div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-box green">Duo Auth Proxy</div>
+          <div class="flow-arrow">④プッシュ通知→</div>
+          <div class="flow-box blue">Duoモバイルアプリ</div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-box blue">ユーザー承認</div>
+          <div class="flow-arrow">⑤VPN接続許可→</div>
+          <div class="flow-box orange">VPN接続確立</div>
+        </div>
       </div>
-      <div>
-        <h4>典型的な導入パターン</h4>
-        <ul>
-          <li>既存SSL-VPN（Cisco ASA/Juniper）へのMFA追加（1〜2週間で導入可能）</li>
-          <li>RDP/Windowsログインへのセカンダリ認証として追加</li>
-          <li>Entra ID/Oktaと並行運用（Duoをセカンドファクタ専用に使う）</li>
-          <li>将来的にEntra ID P2に統合移行する際の中間策としても有効</li>
-        </ul>
-      </div>
+    </div>
+    <div>
+      <h4>エージェントレス展開オプション</h4>
+      <ul style="font-size:.85rem;padding-left:16px;color:#475569">
+        <li><strong>Duo SSO（SAML IdP）:</strong> ADFS不要でSAML SSOを提供。IDaaSとして機能</li>
+        <li><strong>Duo Network Gateway:</strong> リバースプロキシ経由でアプリ単位のMFA</li>
+        <li><strong>Duo DAG（Device Access Gateway）:</strong> 証明書ベースのデバイス認証</li>
+      </ul>
+      <h4>主要連携製品</h4>
+      <ul style="font-size:.85rem;padding-left:16px;color:#475569">
+        <li>Cisco AnyConnect / Secure Client（VPN）</li>
+        <li>Citrix NetScaler / Gateway</li>
+        <li>Palo Alto GlobalProtect</li>
+        <li>Microsoft RDP / Windows ログオン</li>
+        <li>SSH（Linux/Unix サーバー）</li>
+      </ul>
+    </div>
     </div>
   </div>
 </div>
 </section>
 
+<!-- ===== COST ===== -->
 <section id="cost">
-<h2>💰 コスト試算と投資対効果</h2>
+<h2>�� コスト試算と投資対効果（ROI）</h2>
 
+<h3>製品別・規模別コスト試算（年間）</h3>
 <table class="wbs-table">
-  <thead>
-    <tr>
-      <th>製品・方式</th>
-      <th>500名規模</th>
-      <th>1,000名規模</th>
-      <th>3,000名規模</th>
-      <th>備考</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Entra ID P1</strong>（MFA+条件付きアクセス）</td>
-      <td>年600万円</td>
-      <td>年1,200万円</td>
-      <td>年3,600万円</td>
-      <td>1,000円/人/月目安</td>
-    </tr>
-    <tr>
-      <td><strong>Entra ID P2</strong>（+Identity Protection）</td>
-      <td>年900万円</td>
-      <td>年1,800万円</td>
-      <td>年5,400万円</td>
-      <td>1,500円/人/月目安</td>
-    </tr>
-    <tr>
-      <td><strong>Okta Adaptive MFA</strong></td>
-      <td>年700万円〜</td>
-      <td>年1,400万円〜</td>
-      <td>要見積</td>
-      <td>契約内容により変動</td>
-    </tr>
-    <tr>
-      <td><strong>Cisco Duo Essentials</strong></td>
-      <td>年300万円〜</td>
-      <td>年600万円〜</td>
-      <td>年1,800万円〜</td>
-      <td>USD 3/ユーザー/月目安</td>
-    </tr>
-    <tr>
-      <td><strong>YubiKey</strong>（FIDO2キー）</td>
-      <td>購入費750万円</td>
-      <td>購入費1,500万円</td>
-      <td>購入費4,500万円</td>
-      <td>1,500円/本目安（管理者のみなら大幅削減）</td>
-    </tr>
-    <tr style="background:#fee2e2;font-weight:700">
-      <td>フィッシング被害平均損失（参考）</td>
-      <td>数千万〜1億円</td>
-      <td>1億〜5億円</td>
-      <td>5億〜数十億円</td>
-      <td>MFA導入で大幅低減可能</td>
-    </tr>
-  </tbody>
+<thead>
+  <tr><th>製品・ライセンス</th><th>500名規模</th><th>1,000名規模</th><th>5,000名規模</th><th>特記事項</th></tr>
+</thead>
+<tbody>
+  <tr>
+    <td><strong>Microsoft Entra P1</strong><br><small>条件付きアクセス</small></td>
+    <td>約576万円/年</td>
+    <td>約1,152万円/年</td>
+    <td>約5,760万円/年</td>
+    <td>M365 E3/Business Premiumに含む場合あり</td>
+  </tr>
+  <tr>
+    <td><strong>Microsoft Entra P2</strong><br><small>Identity Protection+PIM</small></td>
+    <td>約864万円/年</td>
+    <td>約1,728万円/年</td>
+    <td>約8,640万円/年</td>
+    <td>M365 E5に含む。PIM・アクセスレビュー利用可</td>
+  </tr>
+  <tr>
+    <td><strong>Okta Workforce Identity</strong><br><small>Adaptive MFA含む</small></td>
+    <td>約600〜900万円/年</td>
+    <td>約1,200〜1,800万円/年</td>
+    <td>約6,000〜9,000万円/年</td>
+    <td>機能・構成により変動。日本法人への見積り推奨</td>
+  </tr>
+  <tr>
+    <td><strong>Cisco Duo Business</strong><br><small>Duo Advantage相当</small></td>
+    <td>約480〜720万円/年</td>
+    <td>約960〜1,440万円/年</td>
+    <td>約4,800〜7,200万円/年</td>
+    <td>既存Cisco環境とのバンドル割引あり</td>
+  </tr>
+  <tr>
+    <td style="background:#f0fdf4"><strong>Microsoft Authenticator</strong><br><small>（Entra Freeのみ）</small></td>
+    <td style="background:#f0fdf4;color:#16a34a"><strong>無料</strong></td>
+    <td style="background:#f0fdf4;color:#16a34a"><strong>無料</strong></td>
+    <td style="background:#f0fdf4;color:#16a34a"><strong>無料</strong></td>
+    <td style="background:#f0fdf4">条件付きアクセスなし。セキュリティデフォルトのみ</td>
+  </tr>
+</tbody>
 </table>
 
-<div class="good">
-  <strong>💡 ROI試算の考え方:</strong> 1,000名規模で年間Entra P1コスト1,200万円に対し、フィッシング起因インシデント1件の平均損失は1〜5億円。MFA未適用アカウント1つの侵害で全コストを超える損失が発生しうる。「MFAにかけるコスト」ではなく「MFAをかけないリスク」で判断すべき。
+<div class="two-col">
+<div>
+  <h3>ROI試算（1,000名規模）</h3>
+  <table class="wbs-table">
+    <thead><tr><th>項目</th><th>金額</th></tr></thead>
+    <tbody>
+      <tr><td><strong>インシデント1件の平均損失</strong><br><small>IBM Cost of Data Breach 2023（日本）</small></td><td style="color:#dc2626;font-weight:700">約4.45億円</td></tr>
+      <tr><td><strong>MFA導入によるインシデント防止率</strong></td><td>約99.9%</td></tr>
+      <tr><td><strong>MFA年間費用（Entra P1、1,000名）</strong></td><td>約1,152万円/年</td></tr>
+      <tr><td><strong>期待される損失回避額（年間）</strong><br><small>侵害確率1%として計算</small></td><td style="color:#16a34a;font-weight:700">約445万円/年</td></tr>
+      <tr><td><strong>費用対効果（ROI）</strong></td><td style="color:#2563eb;font-weight:700">導入費用の10〜100倍</td></tr>
+    </tbody>
+  </table>
 </div>
-
-<div class="two-col" style="margin-top:20px">
-<div class="card">
-  <h4>🏆 NSSol推奨スタック（1,000名規模）</h4>
-  <ul>
-    <li><strong>IT管理者（50名）:</strong> Entra P2 + YubiKey FIDO2</li>
-    <li><strong>全社員（950名）:</strong> Entra P1 + Microsoft Authenticator（番号照合）</li>
-    <li><strong>外部委託先（変動）:</strong> Entra External ID + Duo（VPN統合）</li>
-    <li><strong>年間コスト目安:</strong> 1,300〜1,800万円</li>
-  </ul>
-</div>
-<div class="card">
-  <h4>📋 導入スケジュール目安</h4>
-  <ul>
-    <li>Phase 1（管理者）: <strong>2〜4週間</strong></li>
-    <li>Phase 2（全社展開）: <strong>2〜4ヶ月</strong></li>
-    <li>Phase 3（FIDO2移行）: <strong>6〜12ヶ月</strong></li>
-    <li>コンサル・構築費: 500〜1,500万円（規模・複雑性による）</li>
-  </ul>
+<div>
+  <div class="card">
+    <h4>📋 導入費用の内訳（1,000名規模）</h4>
+    <ul style="font-size:.83rem;padding-left:14px;color:#475569">
+      <li><strong>ライセンス費:</strong> 1,152〜1,728万円/年（Entra P1/P2）</li>
+      <li><strong>構築・設定費:</strong> 200〜500万円（初年度のみ）</li>
+      <li><strong>ユーザー教育:</strong> 100〜300万円（初年度）</li>
+      <li><strong>ヘルプデスク強化:</strong> 50〜150万円/年（MFA登録支援）</li>
+      <li><strong>合計初年度:</strong> 約1,500〜2,600万円</li>
+      <li><strong>2年目以降:</strong> 約1,200〜1,900万円/年</li>
+    </ul>
+  </div>
+  <div class="good" style="margin-top:12px">
+    <strong>最小コストアプローチ:</strong> Microsoft 365 Business Premium（約2,850円/人/月）にはEntra P1 + Defender for Business + Intuneが含まれており、MFA基盤としてコスト効率が高い。
+  </div>
 </div>
 </div>
 </section>
