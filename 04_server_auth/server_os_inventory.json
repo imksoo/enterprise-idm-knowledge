@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "id": "server_os_inventory",
+    "title": "サーバーOS認証インベントリと移行計画",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "サーバー",
+      "インベントリ",
+      "OS認証",
+      "移行計画",
+      "2029年問題"
+    ]
+  },
+  "knowledge": [
+    {
+      "category": "日本企業の典型的サーバー構成",
+      "content": "大手製造・金融では以下が混在することが多い: Windows Server 2019/2016（AD連携）、RHEL 7/8/9（SSSD + AD連携）、Solaris 11（LDAP + Kerberos）、AIX 7.1/7.2（LDAP認証）、Oracle Linux（RHEL互換）、古いCentOS 6/7（CentOS EOL済み - 最大リスク）。CentOS 6/7は2020/2024年にEOLを迎えており、パッチ未適用のまま稼働しているシステムが多数存在する。"
+    },
+    {
+      "category": "OS別認証統合難易度",
+      "content": "Windows Server: AD統合が最も容易。Hybrid JoinでEntra IDも可能。難易度: 低。RHEL 8/9: SSSDによるAD統合が標準化。難易度: 低〜中。Solaris 11: LDAP+Kerberosで可能だが設定複雑。難易度: 高。AIX 7.x: IBM Security Directory Integratorが必要。難易度: 高。Solaris 10以前/AIX 5/6: 実質モダン認証不可能。PAM Proxy経由が現実解。"
+    },
+    {
+      "category": "2029年問題のサーバー影響",
+      "content": "2029年1月9日: Windows Server 2019 EOL（Extended Support）。同日: MIM 2016 SP2 EOL。この日程は多くの日本企業で既に認識されているが、移行計画が未策定の企業が多い。特にMIM（Microsoft Identity Manager）をプロビジョニングに使っている場合、IGA製品への移行が必要になる。今から動かないと2028年には手遅れになる。"
+    },
+    {
+      "category": "サーバー認証のクラウドシフト",
+      "content": "Azure VM: Entra ID for Azure VMsでSSH/RDPのEntra認証が可能。VM作成時にExtensionをインストールするだけで既存ADなしに認証が完結。AWS EC2: AWS IAM Identity CenterでSSO経由のEC2アクセスが可能。AWS Systems Manager Session Managerを使うとSSHポートを開けずにアクセス可能（ゼロポートアクセス）。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "Windows Server認証",
+      "object_type": "concept",
+      "description": "ADドメイン参加・Entra Hybrid Join・ローカル管理者"
+    },
+    {
+      "id": "n002",
+      "label": "Linux認証（SSSD）",
+      "object_type": "concept",
+      "description": "RHELのSSSD/realmを使ったAD統合"
+    },
+    {
+      "id": "n003",
+      "label": "Solaris認証",
+      "object_type": "concept",
+      "description": "Solaris 11のLDAP+Kerberos認証"
+    },
+    {
+      "id": "n004",
+      "label": "AIX認証",
+      "object_type": "concept",
+      "description": "IBM AIXのLDAP認証"
+    },
+    {
+      "id": "n005",
+      "label": "CentOS EOF問題",
+      "object_type": "risk",
+      "description": "CentOS 6/7のEOLによるパッチ未適用リスク。RHEL/AlmaLinux/RockyLinuxへの移行が急務。"
+    },
+    {
+      "id": "n006",
+      "label": "クラウドVM認証",
+      "object_type": "concept",
+      "description": "Azure VM/AWS EC2のモダン認証（Entra for VMs/AWS SSM）"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "complements",
+      "description": "Windows/Linuxを同一AD基盤で管理"
+    },
+    {
+      "from": "n005",
+      "to": "n002",
+      "relationship": "mitigated_by",
+      "description": "CentOS→RHEL移行でSSSD AD統合を適用"
+    },
+    {
+      "from": "n003",
+      "to": "n006",
+      "relationship": "replaced_by",
+      "description": "SolarisをクラウドVMに移行してモダン認証へ"
+    }
+  ]
+}

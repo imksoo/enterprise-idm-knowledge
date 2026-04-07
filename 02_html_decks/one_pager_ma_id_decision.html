@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>合併・M&A時のID統合 - 経営層向け意思決定ガイド</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
+  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
+  .tag-red{background:#ffe0e0;color:#c0392b}
+  .tag-green{background:#e0ffe0;color:#27ae60}
+  .tag-blue{background:#e0f0ff;color:#2980b9}
+  .tag-yellow{background:#fff9e0;color:#b8860b}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+
+.decision-box{background:#0f3460;color:#fff;border-radius:12px;padding:24px;text-align:center;margin:16px 0}
+.decision-box h3{font-size:1.3em;margin:0 0 8px}
+.timeline{display:flex;gap:0;margin:20px 0}
+.tl-item{flex:1;text-align:center;position:relative}
+.tl-item:not(:last-child)::after{content:"→";position:absolute;right:-10px;top:22px;font-size:1.5em;color:#0f3460}
+.tl-box{background:#f0f4ff;border-radius:10px;padding:14px;margin:0 8px}
+.tl-phase{font-size:.8em;color:#666;font-weight:600}
+.tl-title{font-weight:700;color:#0f3460;margin:4px 0}
+.tl-detail{font-size:.8em;color:#444}
+.decision-tree{background:#f8f9fa;border-radius:10px;padding:20px;margin:16px 0}
+.risk-badge{display:inline-block;padding:4px 12px;border-radius:12px;font-weight:700;font-size:.85em}
+.risk-critical{background:#e63946;color:#fff}
+.risk-high{background:#f39c12;color:#fff}
+.risk-medium{background:#27ae60;color:#fff}
+@media print{body{background:#fff}.hero{padding:30px}.card{box-shadow:none;border:1px solid #ddd}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>📋 合併・M&AにおけるID統合</h1>
+  <p>経営層向け意思決定ガイド ― 何を・いつまでに決める必要があるか</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>合併ID統合：3つのフェーズと意思決定ポイント</h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-box">
+        <div class="tl-phase">▶ PHASE 1（合併当日）</div>
+        <div class="tl-title">最低限の連携</div>
+        <div class="tl-detail">メール・ビデオ会議だけ相互利用可能に<br><br><span class="risk-badge risk-critical">合併当日必須</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-box">
+        <div class="tl-phase">▶ PHASE 2（3〜6ヶ月後）</div>
+        <div class="tl-title">テナント統合</div>
+        <div class="tl-detail">Microsoft 365テナントを1つに統合<br><br><span class="risk-badge risk-high">早期対応推奨</span></div>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-box">
+        <div class="tl-phase">▶ PHASE 3（12〜24ヶ月後）</div>
+        <div class="tl-title">完全ID統合</div>
+        <div class="tl-detail">AD・業務システム認証を一元化<br><br><span class="risk-badge risk-medium">計画的に実施</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>経営層が決めるべき2つの最重要事項</h2>
+  <div class="grid2">
+    <div class="decision-box">
+      <h3>決定事項①</h3>
+      <p style="font-size:1.1em;margin:8px 0"><strong>どちらの会社のシステムを「存続」させるか</strong></p>
+      <hr style="border-color:#ffffff50;margin:12px 0">
+      <p style="font-size:.9em;opacity:.9">A社のM365テナントにB社を取り込むか、<br>逆にするか、または新テナントを作るか<br><br>これが決まらないと全ての技術作業が止まる</p>
+      <p style="background:#ffffff30;border-radius:6px;padding:8px;font-size:.85em">⏰ 合併の<strong>6ヶ月前</strong>までに決定が必要</p>
+    </div>
+    <div class="decision-box">
+      <h3>決定事項②</h3>
+      <p style="font-size:1.1em;margin:8px 0"><strong>ID統合プロジェクトの予算承認</strong></p>
+      <hr style="border-color:#ffffff50;margin:12px 0">
+      <p style="font-size:.9em;opacity:.9">規模によって異なるが目安：<br><br>
+      中規模（社員計2000名以下）：2000〜4000万円<br>
+      大規模（社員計5000名以上）：5000万〜1.5億円</p>
+      <p style="background:#ffffff30;border-radius:6px;padding:8px;font-size:.85em">⏰ 合併の<strong>5ヶ月前</strong>までに承認が必要</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>「決めない」場合に起きるリスク</h2>
+  <table>
+    <tr><th>リスク</th><th>具体的な影響</th><th>深刻度</th></tr>
+    <tr>
+      <td>合併当日に社員がシステムにログインできない</td>
+      <td>業務停止・顧客への影響・メディア報道</td>
+      <td><span class="risk-badge risk-critical">致命的</span></td>
+    </tr>
+    <tr>
+      <td>権限設計が不適切で不正アクセスが発生</td>
+      <td>金融庁指摘・監査法人の重大指摘・信用毀損</td>
+      <td><span class="risk-badge risk-critical">致命的</span></td>
+    </tr>
+    <tr>
+      <td>二重管理が続き業務効率が低下</td>
+      <td>人件費増・ミス増加・DXが進まない</td>
+      <td><span class="risk-badge risk-high">重大</span></td>
+    </tr>
+    <tr>
+      <td>セキュリティポリシーがバラバラのまま</td>
+      <td>弱い方に合わせた攻撃で侵害リスク上昇</td>
+      <td><span class="risk-badge risk-high">重大</span></td>
+    </tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Day 1（合併当日）に最低限必要なこと</h2>
+  <div class="grid2">
+    <div>
+      <h3>✅ 必須対応（合併当日）</h3>
+      <ul>
+        <li>相手先社員がメール・Teams/Zoomで連絡できる</li>
+        <li>グループウェアへのアクセス（カレンダー共有）</li>
+        <li>VPNで相手先ネットワークに接続できる（最低限）</li>
+        <li>セキュリティポリシーの統一（MFAの義務化）</li>
+      </ul>
+    </div>
+    <div>
+      <h3>💡 Day 1の現実的解：M365ゲスト招待</h3>
+      <p>相手先社員を自社のM365テナントに「ゲスト」として招待する方法が最も早い（数日で実現可能）</p>
+      <p>完全なテナント統合は後で行い、まず業務継続を優先する</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>参考：過去の合併ID統合の失敗事例と教訓</h2>
+  <table>
+    <tr><th>失敗パターン</th><th>何が起きたか</th><th>教訓</th></tr>
+    <tr><td>システム存続先の決定が遅れた</td><td>合併3ヶ月前に発覚→突貫工事で品質低下→合併後も1年間トラブル続き</td><td>存続テナントは合併6ヶ月前に決定必須</td></tr>
+    <tr><td>権限設計を「後でやる」と後回し</td><td>合併後に両社の顧客データが相互に見える状態になりコンプライアンス違反</td><td>権限設計は合併前に完了が必須</td></tr>
+    <tr><td>片方の会社社員への説明なし</td><td>突然IDが変わって混乱・ヘルプデスクがパンク</td><td>ユーザーへの事前周知と問合せ窓口の整備が必須</td></tr>
+  </table>
+</div>
+
+</div>
+<footer>合併・M&A ID統合 経営層向け意思決定ガイド | 合併計画立案時の参照資料</footer>
+</body>
+</html>

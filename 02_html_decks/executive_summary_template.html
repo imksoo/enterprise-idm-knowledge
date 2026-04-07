@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ID管理近代化 - 役員向けエグゼクティブサマリーテンプレート</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
+  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  @media print{body{background:#fff}.hero{padding:30px}.card{box-shadow:none;border:1px solid #ddd}}
+
+.exec-box{background:#0f3460;color:#fff;border-radius:12px;padding:24px;margin:16px 0}
+.exec-box h3{margin:0 0 12px;font-size:1.1em;opacity:.8}
+.exec-key{font-size:1.5em;font-weight:700;line-height:1.4}
+.three-points{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
+.point-card{border-radius:10px;padding:20px;text-align:center}
+.point-1{background:#fff0f0;border-top:4px solid #e63946}
+.point-2{background:#f0f4ff;border-top:4px solid #0f3460}
+.point-3{background:#f0fff4;border-top:4px solid #27ae60}
+.point-num{font-size:2em;font-weight:700;margin-bottom:8px}
+.point-1 .point-num{color:#e63946}
+.point-2 .point-num{color:#0f3460}
+.point-3 .point-num{color:#27ae60}
+.fill-in{background:#fffde0;border:2px dashed #f39c12;border-radius:8px;padding:14px;margin:10px 0;font-style:italic;color:#7a6000}
+.template-note{font-size:.8em;color:#888;font-style:italic}
+@media(max-width:768px){.three-points{grid-template-columns:1fr}}
+@media print{body{background:#fff}.hero{padding:20px}.card{box-shadow:none;border:1px solid #ddd}.fill-in{background:#fff}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>📋 役員向け エグゼクティブサマリー</h1>
+  <p>ID管理近代化プロジェクト ― 意思決定者への3分説明テンプレート</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>このテンプレートの使い方</h2>
+  <p>このテンプレートは、IT担当者が役員・経営層にID管理近代化の必要性を説明するための資料です。<br>
+  黄色の枠内<span class="fill-in" style="display:inline;padding:2px 8px">（← 空欄部分）</span>に自社の情報を記入して使ってください。</p>
+  <div class="highlight">
+    <strong>💡 役員への説明で守るべき3原則</strong><br>
+    ① 技術用語を使わない（ADもEntraもIGAも使わない）<br>
+    ② 数字で語る（「リスクがある」ではなく「被害想定額○円」）<br>
+    ③ 決断してほしいことを1つだけ明示する
+  </div>
+</div>
+
+<!-- ===== エグゼクティブサマリー本文（テンプレート） ===== -->
+<div class="card" style="border:3px solid #0f3460">
+  <h2 style="text-align:center;font-size:1.6em">
+    <span class="fill-in" style="display:inline;font-style:normal">【会社名】</span>
+    ID管理近代化プロジェクト 経営判断依頼
+  </h2>
+  <p style="text-align:center;color:#666">
+    <span class="fill-in" style="display:inline;font-style:normal">20XX年XX月XX日</span>　|　
+    <span class="fill-in" style="display:inline;font-style:normal">情報システム部長 ○○</span>
+  </p>
+
+  <div class="three-points">
+    <div class="point-card point-1">
+      <div class="point-num">1</div>
+      <h3 style="color:#e63946;margin:0 0 8px">現在のリスク</h3>
+      <div class="fill-in">
+        例：退職した社員のIDが平均X日間残存している。その間、元社員が社内システムにアクセス可能な状態。<br>
+        または：外部業者が共有のVPNアカウントを使っており、どの業者の作業か特定できない。
+      </div>
+    </div>
+    <div class="point-card point-2">
+      <div class="point-num">2</div>
+      <h3 style="color:#0f3460;margin:0 0 8px">提案する対策</h3>
+      <div class="fill-in">
+        例：人事システムと連動して退職当日にIDを自動停止する仕組みを導入する。<br>
+        または：外部業者向けの個人IDと作業記録システムを導入する。
+      </div>
+    </div>
+    <div class="point-card point-3">
+      <div class="point-num">3</div>
+      <h3 style="color:#27ae60;margin:0 0 8px">費用とスケジュール</h3>
+      <div class="fill-in">
+        例：初期費用 XXX万円、年間保守 XX万円。導入期間 X〜Xヶ月。<br>
+        対策せずに侵害が起きた場合の想定被害：X,XXX万円〜X億円。
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#f8f9fa;border-radius:10px;padding:20px;margin:20px 0;text-align:center">
+    <h3 style="color:#e63946;margin-top:0">▼ 経営層にお願いする意思決定</h3>
+    <div class="fill-in" style="font-size:1.1em;text-align:left">
+      例：上記プロジェクトの予算（初期費用 XXX万円、年間保守 XX万円）の承認をお願いします。<br>
+      承認後、20XX年X月の導入開始を目標とします。
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>シチュエーション別：使えるリスク説明文例</h2>
+  <table>
+    <tr><th>状況</th><th>役員向け説明文（コピー可）</th></tr>
+    <tr>
+      <td>退職者IDが残存</td>
+      <td>「現在、退職した社員のシステムアクセス権が平均X日間残存しています。この期間中、元社員が意図的・無意識に顧客データにアクセスできる状態です。情報漏洩が発覚した場合、個人情報保護法に基づく行政指導、顧客への通知義務、信用毀損による機会損失が発生します」</td>
+    </tr>
+    <tr>
+      <td>外部ベンダー共有ID</td>
+      <td>「外部の保守業者X社が同一のID・パスワードを共有しています。このIDが漏洩した場合、どの業者から侵入されたかを特定できず、ランサムウェア等の感染拡大を止める手段がありません。昨年、同様の経路から侵害を受けた企業X社が業務停止に追い込まれています」</td>
+    </tr>
+    <tr>
+      <td>2029年EOL</td>
+      <td>「現在使用しているID管理システムが2029年1月9日にサポート終了します。サポート終了後は新たなセキュリティ脆弱性が発見されても修正プログラムが提供されず、法令上の対応義務が果たせない状態になります。移行には最低18ヶ月かかるため、今期中に計画開始が必須です」</td>
+    </tr>
+    <tr>
+      <td>M&A後テナント乱立</td>
+      <td>「M&Aにより子会社が増えた結果、X社がそれぞれ独自のID管理システムを持っています。グループのどの社員がどのシステムにアクセスできるかを一元的に管理できておらず、退職・異動時の対応漏れが発生しています。金融庁・監査法人からの指摘リスクがあります」</td>
+    </tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>よくある役員の反応と切り返し方</h2>
+  <table>
+    <tr><th>役員の言葉</th><th>切り返し方のポイント</th></tr>
+    <tr>
+      <td>「今まで問題なかったじゃないか」</td>
+      <td>「問題が表面化していないのは、まだ攻撃者に気づかれていないか、すでに侵害されているのに検知できていないかのどちらかです。○○業界では昨年X件の重大インシデントが発生しており、被害に遭ってからでは対応コストが10倍以上になります」</td>
+    </tr>
+    <tr>
+      <td>「もう少し待って様子を見よう」</td>
+      <td>「2029年のシステムEOLは動かせない期限です。今から着手しないと、2028年に手遅れになった時点で突貫工事を強いられ、品質リスクと費用増大を招きます」</td>
+    </tr>
+    <tr>
+      <td>「予算がない」</td>
+      <td>「今回の対策費用○○○万円は、侵害が起きた場合の想定被害額（復旧費用・顧客補償・信用毀損）の10分の1以下です。事業継続保険として考えてください」</td>
+    </tr>
+    <tr>
+      <td>「他の会社はどうしてるの？」</td>
+      <td>「同業他社では○○様・○○様がすでに対応を完了しています。規制当局の検査でID管理の整備状況を確認されるようになっており、未対応の場合は指摘リスクがあります」</td>
+    </tr>
+  </table>
+</div>
+
+</div>
+<footer>役員向けエグゼクティブサマリーテンプレート | IT担当者の上申支援ツール</footer>
+</body>
+</html>

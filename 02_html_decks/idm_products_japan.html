@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>日本市場 ID管理製品マップ 2026</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
+
+.category-nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.cat-btn{padding:8px 18px;border-radius:20px;border:none;cursor:pointer;font-size:.9em;font-weight:600}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin:20px 0}
+.product-card{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:20px;transition:box-shadow .2s}
+.product-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.product-card h3{margin:0 0 6px;font-size:1em;color:#1a1a2e}
+.product-vendor{font-size:.8em;color:#666;margin-bottom:8px}
+.product-tags{margin:8px 0}
+.tag-jp{background:#ffe0e0;color:#c0392b}
+.tag-global{background:#e0f0ff;color:#2980b9}
+.tag-cloud{background:#e0ffe0;color:#27ae60}
+.tag-onprem{background:#f0e0ff;color:#8e44ad}
+.tag-oss{background:#fff9e0;color:#b8860b}
+.strengths{font-size:.85em;color:#444;margin-top:8px}
+.price{font-size:.8em;background:#f0f4ff;border-radius:6px;padding:4px 8px;margin-top:8px;display:inline-block}
+.section-title{font-size:1.3em;font-weight:700;color:#0f3460;padding:16px 0 8px;border-bottom:2px solid #0f3460;margin:30px 0 16px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🗾 日本市場 ID管理製品マップ 2026</h1>
+  <p>カテゴリ別・用途別の製品一覧 ― 選定の第一歩はここから</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>カテゴリ別製品マップの見方</h2>
+  <div class="grid2">
+    <div>
+      <p>ID管理製品は大きく5つのカテゴリに分かれます。一つの製品ですべてを賄うことは難しく、<strong>複数製品の組み合わせ</strong>が現実解です。</p>
+      <ul>
+        <li><strong>IdP（認証基盤）</strong>：ログイン認証・SSO・MFAを担う中核</li>
+        <li><strong>IGA（IDガバナンス）</strong>：アクセス権管理・承認・棚卸し</li>
+        <li><strong>PAM（特権アクセス管理）</strong>：管理者・特権IDの踏み台・録画</li>
+        <li><strong>ディレクトリ</strong>：社員情報・ID情報の格納場所</li>
+        <li><strong>補完ツール</strong>：監査ログ・SIEM・CASB等</li>
+      </ul>
+    </div>
+    <div>
+      <table>
+        <tr><th>凡例</th><th>意味</th></tr>
+        <tr><td><span class="tag tag-jp">日本語対応</span></td><td>日本語UIと日本語サポートあり</td></tr>
+        <tr><td><span class="tag tag-global">グローバル製品</span></td><td>英語中心・英語サポートメイン</td></tr>
+        <tr><td><span class="tag tag-cloud">クラウド</span></td><td>SaaS型・クラウドネイティブ</td></tr>
+        <tr><td><span class="tag tag-onprem">オンプレ</span></td><td>自社サーバーへのインストール型</td></tr>
+        <tr><td><span class="tag tag-oss">OSS</span></td><td>オープンソース（ライセンス費用なし）</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="section-title">🏛️ カテゴリ1：IdP（認証基盤・SSO）</div>
+<div class="product-grid">
+  <div class="product-card">
+    <h3>Microsoft Entra ID（旧Azure AD）</h3>
+    <div class="product-vendor">Microsoft</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">M365/Azure環境と完全統合。日本企業の8割以上がM365利用のため事実上のデファクトスタンダード。Hybrid JoinでオンプレADと共存可能。</div>
+    <div class="price">P1：約650円/ユーザー/月、P2：約1,200円/ユーザー/月</div>
+  </div>
+  <div class="product-card">
+    <h3>Okta Workforce Identity</h3>
+    <div class="product-vendor">Okta</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">7,000以上のSaaS連携。IdP非依存でMicrosoft・Google・SAP等と中立的に統合。大手外資・IT企業に強い。日本法人あり。</div>
+    <div class="price">約2,000〜3,500円/ユーザー/月</div>
+  </div>
+  <div class="product-card">
+    <h3>Google Workspace（Cloud Identity）</h3>
+    <div class="product-vendor">Google</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">スタートアップ・IT企業に広く普及。ChromeOS・Android環境と親和性高い。SaaS連携はEntraに次ぐ豊富さ。</div>
+    <div class="price">Business Starter：約680円/ユーザー/月〜</div>
+  </div>
+  <div class="product-card">
+    <h3>Active Directory（AD DS）</h3>
+    <div class="product-vendor">Microsoft（オンプレ）</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-onprem">オンプレ</span></div>
+    <div class="strengths">Windows Server付属。既存日本企業の大多数が利用。Kerberosによるオンプレシステム認証に不可欠。2029年WS2019 EOL注意。</div>
+    <div class="price">Windows Server SAL（既存ライセンスに含む）</div>
+  </div>
+  <div class="product-card">
+    <h3>Ping Identity（PingOne）</h3>
+    <div class="product-vendor">Ping Identity</div>
+    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">金融・大手製造でのSAML/OAuth高度連携実績。B2C・B2B外部ID管理にも対応。</div>
+    <div class="price">要問合せ（年間1000万円〜）</div>
+  </div>
+  <div class="product-card">
+    <h3>Keycloak</h3>
+    <div class="product-vendor">Red Hat（OSS）</div>
+    <div class="product-tags"><span class="tag tag-oss">OSS</span><span class="tag tag-onprem">オンプレ/クラウド</span></div>
+    <div class="strengths">ライセンス費用なし。SAML/OIDC対応。社内開発チームがある企業・SIerが自社環境に構築する場合に有効。</div>
+    <div class="price">OSS（構築・保守コストのみ）</div>
+  </div>
+</div>
+
+<div class="section-title">🔐 カテゴリ2：PAM（特権アクセス管理・踏み台）</div>
+<div class="product-grid">
+  <div class="product-card">
+    <h3>SecureCube Access Check</h3>
+    <div class="product-vendor">NTTデータ先端技術</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-onprem">オンプレ</span></div>
+    <div class="strengths">国産PAMの代名詞。日本の金融・公共機関での導入実績多数。FISC・ISMS対応。UNIX/Windows/DB操作の録画・ログ取得。日本語での詳細なサポート。</div>
+    <div class="price">初期300〜800万円程度</div>
+  </div>
+  <div class="product-card">
+    <h3>CyberArk Privilege Cloud</h3>
+    <div class="product-vendor">CyberArk</div>
+    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">グローバルPAMのトップ製品。Gartnerリーダー。大規模環境・グローバル展開に強い。API・クラウドサービスの特権管理も対応。</div>
+    <div class="price">年間500〜2000万円（規模による）</div>
+  </div>
+  <div class="product-card">
+    <h3>BeyondTrust Remote Support</h3>
+    <div class="product-vendor">BeyondTrust</div>
+    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
+    <div class="strengths">外部ベンダーリモートサポートの管理に特化。エージェントレス接続が可能。SMB向けPRTG+BeyondTrustの組み合わせで中堅企業にも対応。</div>
+    <div class="price">年間300〜800万円</div>
+  </div>
+  <div class="product-card">
+    <h3>Delinea Secret Server</h3>
+    <div class="product-vendor">Delinea（旧Thycotic）</div>
+    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
+    <div class="strengths">パスワード保管庫としての機能が強力。サービスアカウント・共有ID管理に特化した機能あり。CyberArkより導入が容易。</div>
+    <div class="price">年間300〜1000万円</div>
+  </div>
+  <div class="product-card">
+    <h3>Azure Bastion + Entra PIM</h3>
+    <div class="product-vendor">Microsoft</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">Azure VM環境のPAMとして完結。Entra P2ライセンスで利用可能。JIT（Just-in-Time）アクセスで管理者権限を必要時だけ付与。</div>
+    <div class="price">Entra P2：約1200円/ユーザー/月（BastionはVM代別途）</div>
+  </div>
+  <div class="product-card">
+    <h3>Teleport</h3>
+    <div class="product-vendor">Gravitational（OSS）</div>
+    <div class="product-tags"><span class="tag tag-oss">OSS</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
+    <div class="strengths">SSH/Kubernetes/DBへのゼロトラストアクセス。DevOps・SRE向け。OSSコミュニティ版は無料。エンジニアリング文化の強い企業に適。</div>
+    <div class="price">Community版：OSS無料、Enterprise版：要問合せ</div>
+  </div>
+</div>
+
+<div class="section-title">📋 カテゴリ3：IGA（IDガバナンス・ライフサイクル管理）</div>
+<div class="product-grid">
+  <div class="product-card">
+    <h3>SailPoint Identity Security Cloud</h3>
+    <div class="product-vendor">SailPoint</div>
+    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">Gartner IGAリーダー。大規模・金融・製造での導入実績最多。MIMの後継として評価高い。AI搭載のアクセス推奨機能。</div>
+    <div class="price">年間2000〜8000万円</div>
+  </div>
+  <div class="product-card">
+    <h3>Saviynt Enterprise Identity Cloud</h3>
+    <div class="product-vendor">Saviynt</div>
+    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">クラウドネイティブ設計でSaaS連携に強い。IGA+PAM統合機能あり。製薬・金融でのGxP・SOX対応実績。</div>
+    <div class="price">年間1500〜5000万円</div>
+  </div>
+  <div class="product-card">
+    <h3>Entra ID Governance</h3>
+    <div class="product-vendor">Microsoft</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
+    <div class="strengths">M365環境と完全統合。アクセスレビュー・エンタイトルメント管理・JMLワークフロー機能。Entra P2またはガバナンスライセンスで利用可能。MIM後継候補筆頭。</div>
+    <div class="price">Entra ID Governance：約750円/ユーザー/月</div>
+  </div>
+  <div class="product-card">
+    <h3>Omada Identity</h3>
+    <div class="product-vendor">Omada（デンマーク）</div>
+    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
+    <div class="strengths">欧州金融・公共機関での豊富な実績。GDPRコンプライアンス対応に強い。日本市場では比較的新参だが機能は成熟。</div>
+    <div class="price">年間1000〜3000万円</div>
+  </div>
+  <div class="product-card">
+    <h3>IDHub（日立システムズ）</h3>
+    <div class="product-vendor">日立システムズ</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
+    <div class="strengths">国産IGA。日本語サポート・日本企業向け業務フロー対応。日立グループの運用実績。中堅〜大手日本企業に適。</div>
+    <div class="price">要問合せ（年間500〜2000万円程度）</div>
+  </div>
+  <div class="product-card">
+    <h3>ALog（エーログ）</h3>
+    <div class="product-vendor">AMIYA（旧Sky株式会社）</div>
+    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-onprem">オンプレ</span></div>
+    <div class="strengths">ファイルサーバー・AD操作ログの可視化に特化。内部不正・情報漏洩の検出に強い。日本語の管理画面・レポートで担当者が使いやすい。</div>
+    <div class="price">初期100〜500万円（規模による）</div>
+  </div>
+</div>
+
+<div class="section-title">📊 製品選定マトリクス（企業規模×課題別）</div>
+<div class="card">
+  <h2>どの製品の組み合わせが自社に合うか</h2>
+  <table>
+    <tr><th>企業規模・環境</th><th>IdP</th><th>PAM</th><th>IGA</th><th>特記事項</th></tr>
+    <tr>
+      <td><strong>中小（〜300名）・M365利用</strong></td>
+      <td>Entra ID（P1）</td>
+      <td>Azure Bastion（Azure利用時）</td>
+      <td>Entra Governance（簡易）</td>
+      <td>M365一本化が最安。追加費用を最小化</td>
+    </tr>
+    <tr>
+      <td><strong>中堅（300〜3000名）・製造業・オンプレ多数</strong></td>
+      <td>Entra Hybrid Join + AD存続</td>
+      <td>SecureCube（国産）またはDelinea</td>
+      <td>Entra ID Governance</td>
+      <td>2029年問題対応として現実的な選択肢</td>
+    </tr>
+    <tr>
+      <td><strong>大企業（3000名〜）・金融・製造</strong></td>
+      <td>Entra ID または Okta</td>
+      <td>CyberArk または SecureCube</td>
+      <td>SailPoint または Saviynt</td>
+      <td>SOX・FISC・金融庁対応を要求される場合の標準構成</td>
+    </tr>
+    <tr>
+      <td><strong>グループ企業・多テナント</strong></td>
+      <td>Entra External ID（フェデレーション）</td>
+      <td>BeyondTrust（外部ベンダー対応）</td>
+      <td>SailPoint または Omada</td>
+      <td>グループ共通ポリシーと各社自律のバランス</td>
+    </tr>
+    <tr>
+      <td><strong>クラウドネイティブ・IT企業</strong></td>
+      <td>Okta または Google Workspace</td>
+      <td>Teleport（Kubernetes/SSH）</td>
+      <td>Okta Lifecycle Management</td>
+      <td>SaaS・API・DevOps環境に最適化</td>
+    </tr>
+    <tr>
+      <td><strong>医療機関</strong></td>
+      <td>Entra ID + ICカード認証</td>
+      <td>SecureCube または Azure Bastion</td>
+      <td>Entra ID Governance</td>
+      <td>医師証・看護師資格との連動。HIS（医事システム）連携が鍵</td>
+    </tr>
+  </table>
+</div>
+
+</div>
+<footer>日本市場 ID管理製品マップ 2026 | 製品選定の第一歩として</footer>
+</body>
+</html>

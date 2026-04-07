@@ -1,0 +1,73 @@
+{
+  "metadata": {
+    "id": "sim_x_s15",
+    "title": "大手HR連携：入退社プロビジョニング自動化",
+    "scenario_date": "2026年11月",
+    "industry": "hr_integration"
+  },
+  "company_profile": "大手通信会社。従業員3万名。年間入退社・異動が各2000件超。HRISはWorks Human Intelligence「COMPANY」。IDMはMIM 2016（2029年EOL）。",
+  "personas": [
+    {
+      "id": "hr_mgr",
+      "name": "上田マネージャー",
+      "role": "人事システム担当"
+    },
+    {
+      "id": "it_mgr",
+      "name": "浜田マネージャー",
+      "role": "ITインフラ担当（MIM運用者）"
+    },
+    {
+      "id": "nssol",
+      "name": "吉岡（NSSol）",
+      "role": "IGA/HR連携専門SE"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：MIM EOLとHR連携IGA移行",
+      "setting": "情報システム部会議室。",
+      "dialogue": [
+        {
+          "speaker": "浜田マネージャー",
+          "text": "MIM 2016が2029年EOLです。後継として何が良いか検討しています。COMPANY（HRIS）との連携が必須です。"
+        },
+        {
+          "speaker": "吉岡（NSSol）",
+          "text": "Works HI COMPANY向けのコネクタはOne Identity Manager、SailPoint、Entra ID Governance（カスタム）で実績があります。One Identity ManagerはCOMPANY APIのカスタムコネクタ開発実績があり、国内SIer経由での実装事例が複数あります。"
+        },
+        {
+          "speaker": "上田マネージャー",
+          "text": "異動時の旧権限削除が現在できておらず、権限累積が問題になっています。"
+        },
+        {
+          "speaker": "吉岡（NSSol）",
+          "text": "One Identity ManagerのMover処理では、異動前のロールセットを全削除してから新ロールセットを付与する「クリーン移行」が設定できます。現在のMIMではこれが難しかったと思いますが、IGAでは標準機能です。権限累積を防ぐためのSoD（職務分離）ポリシーも同時に設定できます。"
+        }
+      ],
+      "issues_surfaced": [
+        "MIM 2016 EOL対応",
+        "COMPANY（HRIS）コネクタ選定",
+        "Mover処理での権限累積防止"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "MIM後継選定",
+      "current": "MIM 2016（2029年EOL予定）",
+      "target": "IGA製品（One Identity/SailPoint等）",
+      "priority": "critical"
+    },
+    {
+      "item": "権限累積防止",
+      "current": "Moverで旧権限が残る",
+      "target": "クリーン移行＋SoDポリシー",
+      "priority": "high"
+    }
+  ],
+  "html_needs_identified": [
+    "MIM後継製品比較・移行ガイド",
+    "HR連携プロビジョニング設計書"
+  ]
+}

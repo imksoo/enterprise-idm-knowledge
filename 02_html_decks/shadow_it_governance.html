@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>シャドーIT対策・SaaS統制ガイド</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
+
+.approach{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
+.ap-card{border-radius:10px;padding:20px;text-align:center}
+.ap-bad{background:#fff0f0;border-top:4px solid #e63946}
+.ap-ok{background:#fff9e0;border-top:4px solid #f39c12}
+.ap-good{background:#f0fff4;border-top:4px solid #27ae60}
+.ap-card h3{margin:0 0 8px}
+.flow-box{background:#f0f4ff;border-radius:10px;padding:20px;margin:16px 0}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🕵️ シャドーIT対策・SaaS統制ガイド</h1>
+  <p>DX部門の「勝手SaaS」を禁止ではなく管理へ ― IT部門とDX部門の共存策</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>シャドーITとは何か、なぜ問題か</h2>
+  <p><strong>シャドーIT</strong>とは、IT部門の承認・管理を受けずに現場部門が独自に導入したシステム・SaaSのことです。</p>
+  <div class="danger">
+    <strong>シャドーITの危険</strong>：IT部門が知らないシステムにはセキュリティ設定が適切でない場合が多く、退職者のIDが止まらない・パスワードが共有されるといった問題が発生します。情報漏洩が起きても検知できない。
+  </div>
+  <div class="highlight">
+    <strong>日本企業の現実</strong>：コロナ禍でTeams・ZoomなどSaaSの採用が爆発的に増加。多くの企業でIT部門が追いつかず、現場が勝手に導入したSaaSが何十個もある状態です。
+  </div>
+</div>
+
+<div class="card">
+  <h2>3つのアプローチの比較</h2>
+  <div class="approach">
+    <div class="ap-card ap-bad">
+      <h3 style="color:#e63946">❌ 禁止・遮断</h3>
+      <p>承認されていないSaaSへのアクセスをネットワークでブロック</p>
+      <p><strong>結果</strong>：DX部門が反発。VPNで迂回。信頼を失う。DXが止まる。</p>
+    </div>
+    <div class="ap-card ap-ok">
+      <h3 style="color:#f39c12">⚠️ 黙認・事後対応</h3>
+      <p>現場のSaaS導入を黙認して問題が起きたら対応</p>
+      <p><strong>結果</strong>：問題が大きくなってから発覚。インシデント対応コストが高くなる。</p>
+    </div>
+    <div class="ap-card ap-good">
+      <h3 style="color:#27ae60">✅ ファストトラック承認</h3>
+      <p>低リスクSaaSを2週間以内に承認。SSO設定を条件にする。</p>
+      <p><strong>結果</strong>：現場のスピードを維持しつつIT部門が統制。Win-Winの解決策。</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>ファストトラック承認制度の設計</h2>
+  <div class="flow-box">
+    <h3 style="margin-top:0">承認フロー（目標：申請から2週間以内に決定）</h3>
+    <ol>
+      <li><strong>現場部門が申請</strong>：SaaS名・用途・利用人数・費用をフォームで提出</li>
+      <li><strong>IT部門がリスク評価</strong>：セキュリティ評価（SOC2認証有無・SAML/SSO対応・データ保存場所）</li>
+      <li><strong>承認 or 条件付き承認 or 却下</strong>：2週間以内に回答</li>
+      <li><strong>承認条件</strong>：<ul>
+        <li>会社のIdP（Entra ID / Google Workspace）のSSOを設定すること</li>
+        <li>管理者アカウントはIT部門も持つこと</li>
+        <li>退職者ID停止手順を確立すること</li>
+      </ul></li>
+    </ol>
+  </div>
+  <h3>リスク分類（迅速判断のための基準）</h3>
+  <table>
+    <tr><th>分類</th><th>条件</th><th>承認方針</th></tr>
+    <tr><td><strong>低リスク</strong>（ファストトラック）</td><td>SOC2 Type II認証あり・SSO対応・データ保存が国内または同意済みリージョン</td><td>2週間以内に原則承認</td></tr>
+    <tr><td><strong>中リスク</strong>（要検討）</td><td>上記の一部が不明または未対応</td><td>追加確認後、1ヶ月以内に承認可否</td></tr>
+    <tr><td><strong>高リスク</strong>（原則不可）</td><td>個人情報・機密情報を扱う・海外不明事業者・セキュリティ認証なし</td><td>代替SaaSを提案して却下</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>既存シャドーITの棚卸し方法</h2>
+  <p>すでに社内に入り込んでいるシャドーITを把握するには：</p>
+  <ol>
+    <li><strong>社内アンケート</strong>：各部門に「使っているクラウドサービスを全部教えてください」のアンケートを実施（匿名可）</li>
+    <li><strong>プロキシ・ファイアウォールログ解析</strong>：社内ネットワークからアクセスされているドメインを一覧化</li>
+    <li><strong>CASB（クラウドアクセスセキュリティブローカー）の活用</strong>：Microsoft Defender for Cloud Apps等でSaaS利用状況を自動可視化</li>
+  </ol>
+  <div class="success">
+    <strong>推奨アクション</strong>：まずアンケートで現状を把握し、重大リスクのあるSaaS（個人情報・機密情報を扱うもの）を優先的に対処します。全件を一度に解決しようとせず、重大なもの3〜5件から始めてください。
+  </div>
+</div>
+
+</div>
+<footer>シャドーIT対策・SaaS統制ガイド | DX時代のIT部門の役割変革</footer>
+</body>
+</html>

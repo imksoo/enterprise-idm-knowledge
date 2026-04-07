@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>業種別 ID管理クイックリファレンス</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.alert{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+
+.ind-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px;border-top:4px solid #3b82f6}
+.ind-card.finance{border-top-color:#1d4ed8} .ind-card.mfg{border-top-color:#15803d} .ind-card.energy{border-top-color:#d97706} .ind-card.pharma{border-top-color:#7c3aed} .ind-card.retail{border-top-color:#dc2626} .ind-card.healthcare{border-top-color:#0891b2}
+.ind-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.ind-icon{font-size:1.8em} .ind-title{font-size:1.05em;font-weight:700;color:#1e293b}
+.reqs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.req-item{background:#f8fafc;border-radius:8px;padding:10px 12px;font-size:.83em}
+.req-label{font-weight:700;color:#1e293b;display:block;margin-bottom:3px}
+</style></head>
+<body><div class="page">
+<h1>🏭 業種別 ID管理クイックリファレンス</h1>
+<p class="subtitle">金融・製造・エネルギー・製薬・小売・医療の要件と推奨アーキテクチャ | 2026-04-07</p>
+
+<div class="note">営業・SE向けの事前準備シート。顧客との最初のヒアリング前に参照し、業種固有の課題・規制・用語を把握してください。</div>
+
+<div class="ind-card finance">
+<div class="ind-header"><div class="ind-icon">🏦</div><div><div class="ind-title">金融業（銀行・証券・保険）</div></div></div>
+<div class="reqs">
+<div class="req-item"><span class="req-label">主要規制</span>FISC安全対策基準第11版、PCI DSS v4、金融庁検査、個人情報保護法（金融分野ガイドライン）</div>
+<div class="req-item"><span class="req-label">特有課題</span>FISC棚卸し工数（年30〜60人日）、代理店ID（損保: 数十万件）、SWIFT認証、証券会員ID</div>
+<div class="req-item"><span class="req-label">推奨製品</span>PAM: CyberArk（大手銀行）/ SecureCube（地銀）。IGA: One Identity Manager（FISC実績）。IdP: Entra ID + ADFS（段階移行）</div>
+<div class="req-item"><span class="req-label">NSSol商機</span>FISC棚卸し自動化、PAM更改（SecureCube EOL）、Entra移行支援、代理店IGA構築</div>
+</div></div>
+
+<div class="ind-card mfg">
+<div class="ind-header"><div class="ind-icon">🏭</div><div><div class="ind-title">製造業（自動車・電機・化学・鉄鋼）</div></div></div>
+<div class="reqs">
+<div class="req-item"><span class="req-label">主要規制</span>IEC 62443（OTセキュリティ）、ISMS ISO27001、CMMC（防衛関連）、TISAX（自動車）</div>
+<div class="req-item"><span class="req-label">特有課題</span>IT/OT分離（工場ネットワーク）、SAP SOD管理、Solaris/AIX残存、サプライヤーID（数百〜千社）</div>
+<div class="req-item"><span class="req-label">推奨製品</span>PAM: CyberArk（OT PAM対応）。IGA: One Identity/Saviynt（SAP SOD）。SASE: Zscaler（多拠点工場）</div>
+<div class="req-item"><span class="req-label">NSSol商機</span>OT-IT統合PAM、SAP S/4移行時のSOD設計、AD統合（Solaris/AIX含む）、マルチフォレスト統合</div>
+</div></div>
+
+<div class="ind-card energy">
+<div class="ind-header"><div class="ind-icon">⚡</div><div><div class="ind-title">エネルギー（電力・ガス・石油）</div></div></div>
+<div class="reqs">
+<div class="req-item"><span class="req-label">主要規制</span>電気事業法、経済産業省 電力・ガスサイバーセキュリティ指針、NERC CIP（北米）、サイバーセキュリティ基本法</div>
+<div class="req-item"><span class="req-label">特有課題</span>発送電分離後の複数会社ID管理、変電所・制御システムの認証（古いOT）、重要インフラ規制</div>
+<div class="req-item"><span class="req-label">推奨製品</span>PAM: CyberArk（ICS/SCADA対応）。OT監視: Claroty/Dragos。ID統合: Entra（発送電会社間フェデレーション）</div>
+<div class="req-item"><span class="req-label">NSSol商機</span>発送電分離後ID統合設計、OTセキュリティ診断、重要インフラ向けゼロトラスト移行</div>
+</div></div>
+
+<div class="ind-card pharma">
+<div class="ind-header"><div class="ind-icon">💊</div><div><div class="ind-title">製薬・医療機器</div></div></div>
+<div class="reqs">
+<div class="req-item"><span class="req-label">主要規制</span>FDA 21 CFR Part 11、EU Annex 11、厚生労働省ER/ES指針、PIC/S GMP、ICH Q10</div>
+<div class="req-item"><span class="req-label">特有課題</span>GxP環境のCSV（システムバリデーション）、電子署名の規制対応、研究者の特殊アクセス要件</div>
+<div class="req-item"><span class="req-label">推奨製品</span>IGA: Saviynt（製薬実績）/ One Identity。電子署名: Entra Verified ID / Adobe Sign（Part 11対応）</div>
+<div class="req-item"><span class="req-label">NSSol商機</span>GxP環境Entra移行支援（CSV実施含む）、電子署名基盤構築、監査ログImmutable Storage設計</div>
+</div></div>
+
+<div class="ind-card retail">
+<div class="ind-header"><div class="ind-icon">🛒</div><div><div class="ind-title">小売・流通（スーパー・コンビニ・EC）</div></div></div>
+<div class="reqs">
+<div class="req-item"><span class="req-label">主要規制</span>PCI DSS v4（カード決済）、個人情報保護法（大量顧客データ）、割賦販売法</div>
+<div class="req-item"><span class="req-label">特有課題</span>パート・アルバイトの大量ID（年間数十万件入退社）、店舗POSシステム、取引先EDI（数百〜千社）</div>
+<div class="req-item"><span class="req-label">推奨製品</span>IGA: One Identity（大量HR連携実績）。MFA: FIDO2キー（店舗向け）/ Entra SSPR。EDI: AS2証明書ベース</div>
+<div class="req-item"><span class="req-label">NSSol商機</span>HRIS連携ID自動化、PCI DSS対応PAM、店舗従業員MFA現実解、ECサイト顧客ID（B2C CIAM）</div>
+</div></div>
+
+<div class="ind-card healthcare">
+<div class="ind-header"><div class="ind-icon">🏥</div><div><div class="ind-title">医療（病院・クリニック・介護）</div></div></div>
+<div class="reqs">
+<div class="req-item"><span class="req-label">主要規制</span>厚生労働省「医療情報安全管理ガイドライン」第6版、個人情報保護法（要配慮個人情報）、電子カルテ3原則</div>
+<div class="req-item"><span class="req-label">特有課題</span>電子カルテとのID連携、資格連動アクセス権（専門看護師等）、研修医ローテーション、Break-glass権限</div>
+<div class="req-item"><span class="req-label">推奨製品</span>IGA: One Identity（医療機関実績）。電子カルテ連携: SCIM/カスタムコネクタ。PAM: BeyondTrust（コスト重視）</div>
+<div class="req-item"><span class="req-label">NSSol商機</span>電子カルテID統合、資格連動プロビジョニング、Break-glass設計、医療情報ガイドライン対応診断</div>
+</div></div>
+
+<h2>NSSol 営業トーク Tips by 業種</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>業種</th><th>最初の一言（アイスブレーク）</th><th>最も刺さる課題提示</th><th>Next Action</th></tr></thead>
+<tbody>
+<tr><td>銀行</td><td>「FISC第11版の棚卸し、まだ手作業ですか？」</td><td>棚卸し自動化（年30人日→3人日）のROI</td><td>現状診断（棚卸し工数ヒアリング）</td></tr>
+<tr><td>製造</td><td>「SAP S/4移行でSOD違反が出ていませんか？」</td><td>SAP SOD×IGA自動検知・修正</td><td>SAPシステムの権限棚卸し診断提案</td></tr>
+<tr><td>電力</td><td>「発送電分離後のID管理、どう整理されましたか？」</td><td>グループ会社フェデレーション設計</td><td>現状フェデレーション構成ヒアリング</td></tr>
+<tr><td>製薬</td><td>「FDA査察でID管理を指摘されたことはありますか？」</td><td>CSV対応・電子署名・監査証跡</td><td>GxP環境のCSV状況ヒアリング</td></tr>
+<tr><td>小売</td><td>「年間何人のパートが入退社していますか？」</td><td>ID発行廃止の自動化（当日対応）</td><td>HRISとIDMの連携状況ヒアリング</td></tr>
+<tr><td>医療</td><td>「電子カルテのID管理は何で行っていますか？」</td><td>資格連動権限付与の自動化</td><td>電子カルテ・HRシステム連携状況確認</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

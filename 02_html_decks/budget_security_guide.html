@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>予算別 IDセキュリティ施策ガイド</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
+
+.budget-tier{border-radius:12px;padding:24px;margin:16px 0}
+.tier-0{background:linear-gradient(135deg,#f0fff4,#c8e6c9);border-left:6px solid #27ae60}
+.tier-1{background:linear-gradient(135deg,#fff9e0,#ffe082);border-left:6px solid #f39c12}
+.tier-2{background:linear-gradient(135deg,#e8eaf6,#c5cae9);border-left:6px solid #3f51b5}
+.tier-3{background:linear-gradient(135deg,#fce4ec,#f48fb1);border-left:6px solid #e91e63}
+.budget-amount{font-size:1.8em;font-weight:700}
+.tier-0 .budget-amount{color:#27ae60}
+.tier-1 .budget-amount{color:#e65100}
+.tier-2 .budget-amount{color:#3f51b5}
+.tier-3 .budget-amount{color:#e91e63}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>💰 予算別 IDセキュリティ施策ガイド</h1>
+  <p>「予算がない」からでも始められる ― 費用と効果の最大化優先リスト</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>基本方針：効果の高い順に実施する</h2>
+  <p>セキュリティ対策に使える予算が限られている場合、<strong>コスト対効果の高い施策から順番に実施</strong>することが重要です。
+  100万円あれば10億円の侵害リスクを大幅に下げられます。</p>
+  <div class="highlight">
+    <strong>最優先2施策</strong>（費用ほぼゼロ〜）：①MFAの有効化 ②退職者ID停止の即日化<br>
+    この2つだけで、不正ログイン攻撃の99%以上を防げます（Microsoft調査）
+  </div>
+</div>
+
+<div class="budget-tier tier-0">
+  <div class="budget-amount">¥0〜30万円</div>
+  <h3>今すぐできること（費用ゼロ〜低コスト）</h3>
+  <ul>
+    <li><strong>MFAの有効化</strong>：Microsoft 365 / Google Workspaceの管理コンソールで多要素認証を全員に有効化。追加費用ゼロ（既存ライセンスで対応可能）。</li>
+    <li><strong>管理者権限の棚卸し</strong>：ADの管理者グループを確認して不要なメンバーを削除。費用ゼロ。</li>
+    <li><strong>退職者ID停止手順の文書化</strong>：「HRから通知が来たら当日中にIDを停止」という手順を文書化して周知。</li>
+    <li><strong>VPN共有IDの確認</strong>：外部ベンダーが共有しているVPN/IDを洗い出す。</li>
+  </ul>
+</div>
+
+<div class="budget-tier tier-1">
+  <div class="budget-amount">¥30〜200万円</div>
+  <h3>中小企業が最初に投資すべきこと</h3>
+  <ul>
+    <li><strong>M365プランアップグレード</strong>（〜50万円/年、50名換算）：Business Premiumに上げるとMFA・条件付きアクセス・Intune・Defender for Business が一気に使えるようになる。最高コスパ。</li>
+    <li><strong>メール受信の設定強化</strong>（費用ゼロ〜30万円）：SPF/DKIM/DMARCを設定してフィッシングメールを減らす。設定作業費のみ。</li>
+    <li><strong>退職者ID自動停止フローの構築</strong>（30〜80万円）：Power Automateや簡易スクリプトでHRデータ連携を構築。</li>
+    <li><strong>主要SaaSへのSSO設定</strong>（30〜60万円）：Slack・GitHub・AWSの3つにSSO設定を実施。</li>
+  </ul>
+</div>
+
+<div class="budget-tier tier-2">
+  <div class="budget-amount">¥200〜1000万円</div>
+  <h3>中堅企業（300〜3000名）の標準的対応</h3>
+  <ul>
+    <li><strong>HR連携によるIDライフサイクル自動化</strong>（100〜300万円）：入社・異動・退職を人事システムと連動してAD/M365への変更を自動化。</li>
+    <li><strong>外部ベンダー向けPAM（踏み台）導入</strong>（200〜500万円）：SecureCubeまたはBeyondTrustで外部ベンダーのアクセスを記録・管理。</li>
+    <li><strong>全社MFA完全義務化</strong>（100〜300万円）：段階的展開支援・ヘルプデスク対応・例外設計込みの工数。</li>
+    <li><strong>アクセス権の定期棚卸し</strong>（50〜150万円）：Entra ID Governanceのアクセスレビュー機能を設定。</li>
+  </ul>
+</div>
+
+<div class="budget-tier tier-3">
+  <div class="budget-amount">¥1000万円〜</div>
+  <h3>大企業・金融機関レベルの本格対応</h3>
+  <ul>
+    <li><strong>IGAプラットフォーム導入</strong>（2000〜8000万円）：SailPoint・Saviyntを導入してアクセス権の完全自動管理・監査証跡を実現。</li>
+    <li><strong>全社PAM統合基盤</strong>（500〜2000万円）：CyberArkまたはSecureCubeをエンタープライズ規模で展開。</li>
+    <li><strong>SIEM + SOAR連携</strong>（500〜1500万円/年）：IDイベントをSentinel・Splunkに集約してアノマリー検知を実現。</li>
+    <li><strong>AD→Entra ID全面移行</strong>（1000〜5000万円）：2029年問題対応。ADを廃止してEntra IDに完全移行。</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>「投資しなかった場合」のコスト比較</h2>
+  <table>
+    <tr><th>対策内容</th><th>投資額</th><th>防げる被害（目安）</th><th>ROI</th></tr>
+    <tr><td>MFA有効化（費用ゼロ）</td><td>0円</td><td>不正ログイン99%以上防止</td><td>∞</td></tr>
+    <tr><td>退職者ID即日停止</td><td>30〜80万円</td><td>内部不正・情報漏洩リスク大幅低減</td><td>数十〜数百倍</td></tr>
+    <tr><td>外部ベンダーPAM</td><td>300〜500万円</td><td>ランサムウェア被害（1〜10億円）防止</td><td>20〜200倍</td></tr>
+    <tr><td>IGA導入</td><td>2000〜5000万円</td><td>内部統制違反・監査指摘・信用毀損リスク低減</td><td>5〜20倍</td></tr>
+  </table>
+</div>
+
+</div>
+<footer>予算別 IDセキュリティ施策ガイド | 費用対効果の最大化のために</footer>
+</body>
+</html>

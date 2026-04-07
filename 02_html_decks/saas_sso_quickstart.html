@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SaaS SSO設定クイックスタートガイド</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
+  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
+  .tag-red{background:#ffe0e0;color:#c0392b}
+  .tag-green{background:#e0ffe0;color:#27ae60}
+  .tag-blue{background:#e0f0ff;color:#2980b9}
+  .tag-yellow{background:#fff9e0;color:#b8860b}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+
+.saas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin:20px 0}
+.saas-card{background:#fff;border:2px solid #e9ecef;border-radius:10px;padding:16px;text-align:center}
+.saas-card:hover{border-color:#0f3460;box-shadow:0 4px 12px rgba(15,52,96,.15)}
+.saas-icon{font-size:2.5em;margin-bottom:8px}
+.saas-name{font-weight:700;color:#1a1a2e;font-size:1em}
+.saas-status{margin-top:6px}
+.complexity{display:inline-block;padding:2px 8px;border-radius:8px;font-size:.75em;font-weight:600}
+.easy{background:#d4edda;color:#155724}
+.medium{background:#fff3cd;color:#856404}
+.hard{background:#f8d7da;color:#721c24}
+.cost-free{background:#d4edda;color:#155724}
+.cost-paid{background:#cce5ff;color:#004085}
+.setup-steps{counter-reset:steps;margin:20px 0}
+.setup-step{counter-increment:steps;background:#f8f9fa;border-radius:10px;padding:16px;margin:12px 0;position:relative;padding-left:60px}
+.setup-step::before{content:counter(steps);position:absolute;left:16px;top:16px;background:#0f3460;color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.idp-comparison{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+.idp-card{background:#f8f9fa;border-radius:10px;padding:20px;border-top:4px solid #0f3460}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🔗 SaaS SSO設定クイックスタート</h1>
+  <p>社内SaaSを一つのIDで管理 ― 退職者のID停止を一括処理する仕組みを最速で作る</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>SSOで何が変わるか</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="color:#e63946">❌ SSOなし：現在の苦痛</h3>
+      <ul>
+        <li>SaaSごとに別のID/パスワードが必要</li>
+        <li>退職者が出たら全SaaSに個別連絡して停止依頼</li>
+        <li>「Aさんのslackはどうなった？」と確認作業が発生</li>
+        <li>停止もれで元社員がシステムにアクセス</li>
+        <li>社員もパスワード管理に疲弊</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="color:#27ae60">✅ SSOあり：理想の状態</h3>
+      <ul>
+        <li>1つのID（会社のGoogleまたはMicrosoft）で全SaaSにログイン</li>
+        <li>退職者のGoogle/MicrosoftアカウントをOFFにすると全SaaSも使えなくなる</li>
+        <li>新入社員のオンボーディングが当日完了</li>
+        <li>どのSaaSに誰がアクセスしているか一覧把握可能</li>
+        <li>パスワード管理の負担ゼロ</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>どのIdPをSSO基盤にするか（まず選択）</h2>
+  <div class="idp-comparison">
+    <div class="idp-card">
+      <h3 style="margin-top:0;color:#0f3460">🟢 Google Workspace を使う場合</h3>
+      <p><strong>条件</strong>：Google Workspaceを既に使っている</p>
+      <p><strong>コスト</strong>：Business Starter（約700円/月/人〜）でSSO可能</p>
+      <p><strong>設定方法</strong>：各SaaSの管理画面で「SAMLでGoogleを使う」を選択するだけ</p>
+      <p><strong>対応SaaS</strong>：Slack、GitHub、Zoom、Salesforce、Jira、Confluence等500種以上</p>
+    </div>
+    <div class="idp-card">
+      <h3 style="margin-top:0;color:#0f3460">🔵 Microsoft 365 を使う場合</h3>
+      <p><strong>条件</strong>：M365 Business Premium以上（またはEntra ID P1）</p>
+      <p><strong>コスト</strong>：Business Premium 約3,300円/月/人（MFAも含む）</p>
+      <p><strong>設定方法</strong>：AzureポータルからEnterprise Applicationsに各SaaSを追加</p>
+      <p><strong>対応SaaS</strong>：上記に加えAzure/AWSなどクラウドサービスも充実</p>
+    </div>
+  </div>
+  <div class="highlight">
+    <strong>💡 どちらを選ぶべきか</strong>：すでに使っている方を選ぶのが正解です。まだどちらも使っていない場合は、将来的にWindowsサーバーやAzureを使うならM365、Google系ツールが多いならGoogle Workspaceを推奨します。
+  </div>
+</div>
+
+<div class="card">
+  <h2>主要SaaSのSSO設定難易度と費用</h2>
+  <div class="saas-grid">
+    <div class="saas-card"><div class="saas-icon">💬</div><div class="saas-name">Slack</div><div class="saas-status"><span class="complexity easy">設定：簡単</span><br><span class="cost-paid">Proプラン以上</span></div></div>
+    <div class="saas-card"><div class="saas-icon">🐙</div><div class="saas-name">GitHub</div><div class="saas-status"><span class="complexity easy">設定：簡単</span><br><span class="cost-paid">Teamプラン以上</span></div></div>
+    <div class="saas-card"><div class="saas-icon">🎥</div><div class="saas-name">Zoom</div><div class="saas-status"><span class="complexity easy">設定：簡単</span><br><span class="cost-paid">Businessプラン</span></div></div>
+    <div class="saas-card"><div class="saas-icon">☁️</div><div class="saas-name">AWS</div><div class="saas-status"><span class="complexity medium">設定：中</span><br><span class="cost-free">無料</span></div></div>
+    <div class="saas-card"><div class="saas-icon">🔵</div><div class="saas-name">Salesforce</div><div class="saas-status"><span class="complexity medium">設定：中</span><br><span class="cost-free">全プラン対応</span></div></div>
+    <div class="saas-card"><div class="saas-icon">📋</div><div class="saas-name">Jira/Confluence</div><div class="saas-status"><span class="complexity easy">設定：簡単</span><br><span class="cost-paid">Cloud版推奨</span></div></div>
+    <div class="saas-card"><div class="saas-icon">📝</div><div class="saas-name">Notion</div><div class="saas-status"><span class="complexity easy">設定：簡単</span><br><span class="cost-paid">Businessプラン</span></div></div>
+    <div class="saas-card"><div class="saas-icon">📊</div><div class="saas-name">Box</div><div class="saas-status"><span class="complexity easy">設定：簡単</span><br><span class="cost-paid">Business以上</span></div></div>
+    <div class="saas-card"><div class="saas-icon">🔴</div><div class="saas-name">DocuSign</div><div class="saas-status"><span class="complexity medium">設定：中</span><br><span class="cost-paid">Business Pro</span></div></div>
+    <div class="saas-card"><div class="saas-icon">🟠</div><div class="saas-name">HubSpot</div><div class="saas-status"><span class="complexity easy">設定：簡単</span><br><span class="cost-paid">Pro以上</span></div></div>
+  </div>
+  <p style="font-size:.85em;color:#666">※設定難易度はIT担当者1名が初めて設定する場合の目安。「簡単」＝半日以内、「中」＝1〜2日</p>
+</div>
+
+<div class="card">
+  <h2>まず3つのSaaSから始める（推奨手順）</h2>
+  <div class="setup-steps">
+    <div class="setup-step">
+      <strong>Slackにまず設定する（最も効果が高い）</strong><br>
+      Slack管理画面 → 設定 → 認証 → SAML認証を有効化 → IdP（Google/Microsoft）の設定URLを入力。完了後は退職者のGoogleアカウントを止めるとSlackも自動ロックされます。
+    </div>
+    <div class="setup-step">
+      <strong>GitHub Organizationに設定する（エンジニアチームに重要）</strong><br>
+      GitHubOrg設定 → Security → SAML SSO。個人GitHubアカウントのまま使えますが、OrgリポジトリへのアクセスにはSSO認証を通ることが強制されます。退職後はOrgメンバー除外で即アクセス不可。
+    </div>
+    <div class="setup-step">
+      <strong>AWSにSSOを設定する（最優先でセキュリティ効果大）</strong><br>
+      AWS IAM Identity Center（旧AWS SSO）を有効化 → IdPとSAML連携を設定。IAMユーザーの個人アカウントをIAM Identity Centerに移行するとシングルポイント管理が実現します。
+    </div>
+  </div>
+  <div class="success">
+    <strong>この3つだけで</strong>、最もリスクが高い「Slackの元社員アクセス」「GitHubの元社員アクセス」「AWSの元社員アクセス」がワンアクションで止まるようになります。
+  </div>
+</div>
+
+<div class="card">
+  <h2>SSO設定後の次のステップ</h2>
+  <table>
+    <tr><th>優先度</th><th>施策</th><th>効果</th></tr>
+    <tr><td><span class="risk-badge" style="background:#e63946;color:#fff">最優先</span></td><td>退職時IDオフボーディング手順の整備</td><td>退職者のアクセスを漏れなく即停止</td></tr>
+    <tr><td><span class="risk-badge" style="background:#f39c12;color:#fff">優先</span></td><td>MFA（多要素認証）の全社義務化</td><td>パスワード盗難時のアカウント乗っ取りを防止</td></tr>
+    <tr><td><span class="risk-badge" style="background:#27ae60;color:#fff">推奨</span></td><td>SaaSアクセスログの定期確認</td><td>不審なアクセスの早期発見</td></tr>
+    <tr><td><span class="risk-badge" style="background:#6c757d;color:#fff">将来</span></td><td>IDガバナンスツール（Okta・Entra等）の導入</td><td>100名超になったら本格的な自動管理へ</td></tr>
+  </table>
+</div>
+
+</div>
+<footer>SaaS SSO設定クイックスタートガイド | IT担当者向け実践ガイド</footer>
+</body>
+</html>

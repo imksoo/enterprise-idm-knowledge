@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ID管理とは何か - IT非専門家向け入門ガイド</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
+  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
+  .tag-red{background:#ffe0e0;color:#c0392b}
+  .tag-green{background:#e0ffe0;color:#27ae60}
+  .tag-blue{background:#e0f0ff;color:#2980b9}
+  .tag-yellow{background:#fff9e0;color:#b8860b}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+
+.scenario-box{background:#f0f4ff;border:2px solid #4a90d9;border-radius:10px;padding:20px;margin:16px 0}
+.persona{display:flex;align-items:center;gap:12px;margin:12px 0;padding:12px;background:#f8f8ff;border-radius:8px}
+.persona-icon{font-size:2em}
+.myth-fact{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.myth{background:#fff0f0;border-radius:8px;padding:16px}
+.fact{background:#f0fff4;border-radius:8px;padding:16px}
+.myth h4{color:#c0392b;margin:0 0 8px}
+.fact h4{color:#27ae60;margin:0 0 8px}
+.impact-big{font-size:2.5em;font-weight:700;color:#e63946;text-align:center;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>🔑 ID管理とは何か</h1>
+  <p>IT非専門家のための入門ガイド ― なぜこんなに重要で、なぜ難しいのか</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>まずは身近な例から</h2>
+  <p>会社に入社した初日、あなたはどうやって会社のパソコンやメールを使い始めましたか？<br>
+  おそらく人事か情報システム部門から「あなたのID（ユーザー名）とパスワード」が渡されたはずです。</p>
+  <p><strong>これがID管理の出発点です。</strong></p>
+  <div class="scenario-box">
+    <strong>🏢 「IDを管理する」とはこういうこと</strong><br><br>
+    <div class="persona"><span class="persona-icon">👔</span><div><strong>入社時</strong>：IDを作る（メール・PC・社内システムにアクセスできる権限を設定）</div></div>
+    <div class="persona"><span class="persona-icon">🔄</span><div><strong>異動時</strong>：必要なシステムへのアクセスを変える（営業部から総務部に移ったら、営業システムは見えなくして総務システムを追加）</div></div>
+    <div class="persona"><span class="persona-icon">👋</span><div><strong>退職時</strong>：IDを削除する（退職した人が会社のシステムにアクセスできないようにする）</div></div>
+  </div>
+  <p>当たり前のことのように見えますが、<strong>社員が数百〜数千人いる会社でこれを正確に、漏れなく、タイムリーにやる</strong>のは非常に難しいのです。</p>
+</div>
+
+<div class="card">
+  <h2>なぜ「IDの管理ミス」が深刻な問題になるのか</h2>
+  <div class="danger">
+    <strong>⚠️ 実際に起きた問題の例（日本の大企業・公共機関を含む）</strong>
+  </div>
+  <table>
+    <tr><th>状況</th><th>何が起きたか</th><th>被害の規模</th></tr>
+    <tr>
+      <td>退職社員のIDを削除し忘れた</td>
+      <td>元従業員が会社の顧客データにアクセスし持ち出した</td>
+      <td class="tag tag-red">個人情報漏洩・訴訟</td>
+    </tr>
+    <tr>
+      <td>外部委託業者にVPNのIDとパスワードを共有した</td>
+      <td>業者のPCがウイルスに感染→そのIDで社内ネットワークに侵入→ランサムウェア展開</td>
+      <td class="tag tag-red">工場停止・数億円の損害</td>
+    </tr>
+    <tr>
+      <td>一人の「管理者ID」が盗まれた</td>
+      <td>攻撃者がその一つのIDで全社のシステムにアクセス・暗号化</td>
+      <td class="tag tag-red">事業継続危機</td>
+    </tr>
+    <tr>
+      <td>異動後も前の部署の権限が残っていた</td>
+      <td>監査で指摘・内部統制上の重大な問題として認定</td>
+      <td class="tag tag-yellow">金融庁・監査法人指摘</td>
+    </tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>よくある誤解と現実</h2>
+  <div class="myth-fact">
+    <div class="myth">
+      <h4>❌ よくある誤解</h4>
+      <p>「IDの管理なんて、Excelで退職者リストを作って手動でやれば十分」</p>
+    </div>
+    <div class="fact">
+      <h4>✅ 現実</h4>
+      <p>社員300名でも使うシステムが20〜30個あれば、退職時に30か所を漏れなく止めるのは人間には無理。ミスが必ず発生する</p>
+    </div>
+  </div>
+  <div class="myth-fact">
+    <div class="myth">
+      <h4>❌ よくある誤解</h4>
+      <p>「ウチみたいな規模の会社はハッカーに狙われない」</p>
+    </div>
+    <div class="fact">
+      <h4>✅ 現実</h4>
+      <p>大手ほどセキュリティが強化されているので、攻撃者は中堅・中小企業を集中的に狙う。管理が甘い会社が踏み台にされる</p>
+    </div>
+  </div>
+  <div class="myth-fact">
+    <div class="myth">
+      <h4>❌ よくある誤解</h4>
+      <p>「IDとパスワードさえ管理すれば大丈夫」</p>
+    </div>
+    <div class="fact">
+      <h4>✅ 現実</h4>
+      <p>パスワードは盗まれる。重要なシステムへのアクセスには「スマホのコード（多要素認証）」や「どの操作をしたか記録する仕組み」が必要</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>会社の規模別：今すぐやるべき優先対策</h2>
+  <div class="grid3">
+    <div style="background:#f0f4ff;padding:20px;border-radius:10px;border-top:4px solid #4a90d9">
+      <h3 style="color:#4a90d9;margin-top:0">🏢 中小企業（〜300名）</h3>
+      <div class="step"><div class="step-num">1</div><div>退職者ID停止を<strong>即日自動化</strong>（HR連携）</div></div>
+      <div class="step"><div class="step-num">2</div><div>主要SaaSに<strong>SSO（シングルサインオン）</strong>を設定</div></div>
+      <div class="step"><div class="step-num">3</div><div>外部業者には<strong>個人ID</strong>を発行して共有を禁止</div></div>
+      <p style="margin:8px 0 0;font-size:.85em;color:#666">投資目安：年50〜200万円</p>
+    </div>
+    <div style="background:#f0fff4;padding:20px;border-radius:10px;border-top:4px solid #27ae60">
+      <h3 style="color:#27ae60;margin-top:0">🏙️ 中堅企業（300〜3000名）</h3>
+      <div class="step"><div class="step-num">1</div><div>HR連携による<strong>IDライフサイクル自動化</strong></div></div>
+      <div class="step"><div class="step-num">2</div><div>全社員への<strong>多要素認証（MFA）</strong>義務化</div></div>
+      <div class="step"><div class="step-num">3</div><div>外部業者作業の<strong>録画・ログ記録</strong>（踏み台サーバー）</div></div>
+      <p style="margin:8px 0 0;font-size:.85em;color:#666">投資目安：年200〜800万円</p>
+    </div>
+    <div style="background:#fff9e0;padding:20px;border-radius:10px;border-top:4px solid #f39c12">
+      <h3 style="color:#f39c12;margin-top:0">🏛️ 大企業（3000名〜）</h3>
+      <div class="step"><div class="step-num">1</div><div>全アクセス権の<strong>定期棚卸し・承認フロー</strong></div></div>
+      <div class="step"><div class="step-num">2</div><div>管理者権限の<strong>最小化と分離</strong>（一人に全権限を与えない）</div></div>
+      <div class="step"><div class="step-num">3</div><div>ID管理の<strong>ガバナンスプラットフォーム</strong>導入</div></div>
+      <p style="margin:8px 0 0;font-size:.85em;color:#666">投資目安：年1000〜5000万円</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>「それって本当に必要なの？」と感じたら</h2>
+  <p>ID管理への投資を検討する際、役員や予算担当者がよく言うのは「今まで問題なかった」という言葉です。</p>
+  <div class="highlight">
+    <strong>保険と同じ考え方</strong>：火事になったことがない家でも火災保険に入ります。なぜなら、火事になってからでは遅いからです。<br><br>
+    情報セキュリティも同じです。侵害が起きてから「あの時対策すれば良かった」では取り返しがつかない被害が出ます。
+  </div>
+  <div class="grid2">
+    <div>
+      <h3>💰 対策コストの目安</h3>
+      <table>
+        <tr><th>規模</th><th>年間投資額</th></tr>
+        <tr><td>中小（〜300名）</td><td>100〜300万円</td></tr>
+        <tr><td>中堅（〜3000名）</td><td>500〜2000万円</td></tr>
+        <tr><td>大企業（3000名〜）</td><td>2000万〜1億円</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>💸 対策しなかった場合のコスト</h3>
+      <table>
+        <tr><th>インシデントの種類</th><th>被害の目安</th></tr>
+        <tr><td>個人情報漏洩（1万件）</td><td>数億〜十数億円</td></tr>
+        <tr><td>ランサムウェア</td><td>1〜10億円</td></tr>
+        <tr><td>サービス停止（1日）</td><td>数千万〜数億円</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>よく聞く用語の説明（専門用語を平易に解説）</h2>
+  <table>
+    <tr><th>専門用語</th><th>わかりやすい言い換え</th><th>なぜ必要か</th></tr>
+    <tr><td><strong>SSO（シングルサインオン）</strong></td><td>「一つのIDで全サービスにログインできる仕組み」</td><td>退職時に一つのIDを停止するだけで全サービスへのアクセスを遮断できる</td></tr>
+    <tr><td><strong>MFA・多要素認証</strong></td><td>「パスワードに加えてスマホのコードも必要にする仕組み」</td><td>パスワードが盗まれても、スマホがなければログインできない</td></tr>
+    <tr><td><strong>PAM（特権アクセス管理）</strong></td><td>「管理者作業を記録する玄関（踏み台）」</td><td>誰がいつどのサーバーで何をしたかを録画・ログで証拠保全</td></tr>
+    <tr><td><strong>IGA（ID管理・ガバナンス）</strong></td><td>「誰がどのシステムにアクセスできるかを自動で管理・監査するシステム」</td><td>人事異動・退職を検知して自動でアクセス権を変更。監査証跡も自動保管</td></tr>
+    <tr><td><strong>Active Directory (AD)</strong></td><td>「社内IDとパスワードを管理するWindowsの仕組み」</td><td>Windows PCへのログイン・社内ファイル共有の認証に使われる20年来の仕組み</td></tr>
+    <tr><td><strong>Entra ID</strong></td><td>「MicrosoftのクラウドID管理サービス（ADのクラウド版）」</td><td>Microsoft 365・Teams・Azureへのログイン認証に使われる現代の標準</td></tr>
+  </table>
+</div>
+
+</div>
+<footer>IT非専門家向けID管理入門ガイド | 本資料はID管理の重要性を広く理解していただくための入門資料です</footer>
+</body>
+</html>

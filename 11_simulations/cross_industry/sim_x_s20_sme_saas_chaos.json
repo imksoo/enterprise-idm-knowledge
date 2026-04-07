@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "id": "sim_x_s20",
+    "title": "中小IT企業：SaaSが30個あってIDがバラバラのカオス",
+    "scenario_date": "2026年6月",
+    "industry": "sme_itsector",
+    "realistic_level": "スタートアップ〜中小企業の典型的なSaaSカオス"
+  },
+  "company_profile": "社員150名のITベンチャー。Slack、Notion、GitHub、AWS、Salesforce、Zoom、Google Workspace、Jira、Confluence、etc...とSaaSを30個使っている。退職者が出るたびにSaaS担当者（バラバラ）に手動でIDを止める依頼を回している。退職者のAWSアクセスが3ヶ月間止まっていなかった事件があった。IT管理者は1名（兼務）。",
+  "personas": [
+    {
+      "id": "it_admin",
+      "name": "岡田さん（28歳）",
+      "role": "エンジニア兼IT管理者。本来はソフトウェア開発担当。IT管理は仕事の20%程度。IDM・SSOの言葉は知っているが、自分で構築した経験はない。"
+    },
+    {
+      "id": "cto",
+      "name": "石田CTO（35歳）",
+      "role": "技術責任者。セキュリティの重要性は理解している。でも開発スピードを落としたくない。"
+    },
+    {
+      "id": "nssol",
+      "name": "宮下（NSSol）",
+      "role": "中小企業向けSMBSE。コストを最優先に提案する必要がある。"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：SaaSカオスの整理",
+      "setting": "スタートアップオフィス。宮下がヒアリング。",
+      "dialogue": [
+        {
+          "speaker": "岡田さん",
+          "text": "退職者のIDを止めるのが本当に大変で。30個のSaaSに連絡を回さないといけない。先月なんか3ヶ月間AWSのIAMユーザーが残っていて焦りました。"
+        },
+        {
+          "speaker": "宮下（NSSol）",
+          "text": "SSOを導入すると、1つのIDを止めるだけで30個全部止まります。Microsoft 365かGoogle Workspaceをすでに使っていれば、追加費用ほぼゼロから始められます。"
+        },
+        {
+          "speaker": "岡田さん",
+          "text": "Google Workspaceなら使っています。SSOってどうやるんですか？"
+        },
+        {
+          "speaker": "宮下（NSSol）",
+          "text": "まずはSlack・GitHub・Zoomなど主要SaaSにGoogle WorkspaceのSSOを設定します。SAMLというオープンな技術で、SaaSの設定画面から「Googleでサインイン」を有効にするだけです。多くのSaaSは無料または最低プランで対応しています。退職者のGoogleアカウントを停止すれば、SAML連携している全SaaSも自動で使えなくなります。"
+        },
+        {
+          "speaker": "石田CTO",
+          "text": "開発者のGitHubアカウントはどうするんですか？個人アカウントのケースが多いんですが。"
+        },
+        {
+          "speaker": "宮下（NSSol）",
+          "text": "GitHubはOrganizationのSSO設定で会社のGoogleアカウントでの認証を強制できます。個人アカウントのGitHub IDを使っていても、OrganizationリポジトリへのアクセスはSSOを通すので退職と同時にアクセス不可になります。まず3つ設定するだけで体感が変わります。Slack・GitHub・AWSがすぐ設定できます。"
+        }
+      ],
+      "issues_surfaced": [
+        "SaaS30個のID管理が1名で不可能",
+        "SSOの概念をゼロから説明する必要",
+        "Google WorkspaceをIdPにした低コスト解が刺さる"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "SaaS ID統合",
+      "current": "30個バラバラ・手動停止",
+      "target": "Google WorkspaceをIdPにしたSSO統合（低コスト）",
+      "priority": "critical"
+    }
+  ],
+  "html_needs_identified": [
+    "saas_sso_quickstart.html - SaaS SSO設定クイックスタートガイド（非専門家向け）"
+  ],
+  "reflection": "中小企業ではコストが最優先。Google WorkspaceやM365を既に使っているなら、追加費用ほぼゼロでSSOを始められることを強調。専門ツール（IGA・PAM等）は2〜3年後の話。"
+}

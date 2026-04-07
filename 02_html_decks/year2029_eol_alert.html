@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2029年問題：Windows Server/MIM EOL対応 緊急アラート</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
+  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  @media print{body{background:#fff}.hero{padding:30px}.card{box-shadow:none;border:1px solid #ddd}}
+
+.alert-banner{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:30px;text-align:center;border-radius:12px;margin-bottom:24px}
+.alert-banner h2{font-size:2em;margin:0 0 10px}
+.countdown{display:flex;gap:16px;justify-content:center;margin:16px 0;flex-wrap:wrap}
+.cd-item{background:#fff;color:#c0392b;border-radius:10px;padding:16px 24px;text-align:center;min-width:100px}
+.cd-num{font-size:2.5em;font-weight:700;line-height:1}
+.cd-label{font-size:.8em;color:#666;margin-top:4px}
+.timeline{position:relative;padding-left:40px;margin:20px 0}
+.timeline::before{content:"";position:absolute;left:16px;top:0;bottom:0;width:3px;background:#e9ecef}
+.tl-item{position:relative;margin-bottom:24px}
+.tl-item::before{content:"";position:absolute;left:-30px;top:4px;width:14px;height:14px;border-radius:50%;background:#0f3460;border:3px solid #fff;box-shadow:0 0 0 2px #0f3460}
+.tl-critical::before{background:#e63946}
+.tl-date{font-size:.85em;color:#666;font-weight:600}
+.tl-title{font-weight:700;color:#1a1a2e;margin:2px 0}
+.tl-desc{font-size:.9em;color:#444}
+.product-eol{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin:20px 0}
+.eol-card{background:#fff0f0;border:2px solid #e63946;border-radius:10px;padding:16px}
+.eol-card h3{color:#c0392b;margin:0 0 8px;font-size:1em}
+</style>
+</head>
+<body>
+<div class="hero" style="background:linear-gradient(135deg,#7f0000 0%,#c0392b 60%,#1a1a2e 100%)">
+  <h1>⚠️ 2029年問題 緊急アラート</h1>
+  <p>Windows Server 2019 & MIM 2016 が 2029年1月9日 にサポート終了 ― 今から動き始めないと間に合わない</p>
+</div>
+<div class="container">
+
+<div class="alert-banner">
+  <h2>2029年1月9日 まで残り約 2年3ヶ月</h2>
+  <p>ID管理システムの全面刷新には最低18ヶ月かかります。<strong>今から計画しないと間に合いません。</strong></p>
+  <div class="countdown">
+    <div class="cd-item"><div class="cd-num">27</div><div class="cd-label">ヶ月</div></div>
+    <div class="cd-item"><div class="cd-num">≈</div><div class="cd-label"></div></div>
+    <div class="cd-item"><div class="cd-num">2026</div><div class="cd-label">年10月に計画開始</div></div>
+    <div class="cd-item"><div class="cd-num">→</div><div class="cd-label"></div></div>
+    <div class="cd-item"><div class="cd-num">2028</div><div class="cd-label">年春に移行完了</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>サポート終了する製品と影響範囲</h2>
+  <div class="product-eol">
+    <div class="eol-card">
+      <h3>🖥️ Windows Server 2019</h3>
+      <p><strong>EOL</strong>：2029年1月9日</p>
+      <p><strong>影響</strong>：ドメインコントローラー（AD）として利用している場合、セキュリティパッチが出なくなる</p>
+      <p><strong>対応</strong>：Windows Server 2025への移行（または後継ADクラウド化）</p>
+    </div>
+    <div class="eol-card">
+      <h3>🔧 MIM 2016 SP2</h3>
+      <p><strong>EOL</strong>：2029年1月9日</p>
+      <p><strong>重要</strong>：後継製品が<strong>存在しない</strong>。Microsoftが機能をEntra IDに移行する方針</p>
+      <p><strong>対応</strong>：Entra ID Governance、SailPoint、Saviynt等への全面移行が必要</p>
+    </div>
+    <div class="eol-card" style="background:#fff9e0;border-color:#f39c12">
+      <h3 style="color:#856404">📋 ADFS 3.0（WS2016同梱）</h3>
+      <p><strong>EOL</strong>：2027年1月12日（先に終了！）</p>
+      <p><strong>影響</strong>：ADFSでSSO提供している場合、2027年までに移行が必要</p>
+      <p><strong>対応</strong>：Entra ID SSO/Entra External IDへの移行</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>なぜ「2年あるから大丈夫」ではないのか</h2>
+  <div class="highlight">
+    <strong>IT刷新プロジェクトに必要な時間の現実</strong>
+  </div>
+  <table>
+    <tr><th>フェーズ</th><th>作業内容</th><th>期間目安</th></tr>
+    <tr><td>① 現状調査・要件定義</td><td>現在のID管理の棚卸し、移行要件の整理</td><td>3〜4ヶ月</td></tr>
+    <tr><td>② 製品選定・調達</td><td>RFP作成、ベンダー選定、契約</td><td>2〜3ヶ月</td></tr>
+    <tr><td>③ 設計・構築</td><td>新システムの設計・構築・テスト</td><td>4〜6ヶ月</td></tr>
+    <tr><td>④ 移行・並行運用</td><td>全ユーザーの移行・動作確認</td><td>3〜4ヶ月</td></tr>
+    <tr><td>⑤ 安定化</td><td>移行後の問題対応・チューニング</td><td>2〜3ヶ月</td></tr>
+    <tr><td style="font-weight:700">合計</td><td style="font-weight:700">最低所要期間</td><td style="font-weight:700;color:#e63946">18〜20ヶ月</td></tr>
+  </table>
+  <div class="danger">
+    <strong>逆算すると</strong>：2029年1月のEOLに間に合わせるには、遅くとも<strong>2027年6月には移行完了</strong>が必要。つまり<strong>2026年中に意思決定・計画開始</strong>が必須です。
+  </div>
+</div>
+
+<div class="card">
+  <h2>アクションタイムライン</h2>
+  <div class="timeline">
+    <div class="tl-item tl-critical">
+      <div class="tl-date">2026年中（今すぐ）</div>
+      <div class="tl-title">★ 意思決定・予算承認</div>
+      <div class="tl-desc">移行方針を決定し、予算を承認する。この決断が最も重要。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">2026年末〜2027年3月</div>
+      <div class="tl-title">現状調査・製品選定</div>
+      <div class="tl-desc">現在のID管理の棚卸し。MIM代替製品（Entra ID Gov/SailPoint等）の選定・契約。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">2027年4月〜2027年9月</div>
+      <div class="tl-title">構築・テスト</div>
+      <div class="tl-desc">新ID管理基盤の構築・テスト・ユーザー受け入れテスト（UAT）。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">2027年10月〜2027年12月</div>
+      <div class="tl-title">移行・並行運用</div>
+      <div class="tl-desc">全ユーザーを新システムへ移行。旧システムとの並行稼働で安全に切り替え。</div>
+    </div>
+    <div class="tl-item tl-critical">
+      <div class="tl-date">2028年3月（目標）</div>
+      <div class="tl-title">★ 移行完了・旧システム廃止</div>
+      <div class="tl-desc">MIM・旧ADサーバーを廃止。2029年1月のEOLに約10ヶ月の余裕を持って完了。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>移行先の選択肢</h2>
+  <table>
+    <tr><th>移行方向</th><th>適した企業</th><th>費用感</th><th>ポイント</th></tr>
+    <tr>
+      <td><strong>Entra ID + Entra ID Governance</strong><br><small>（Microsoft純正クラウド）</small></td>
+      <td>Microsoft 365を使っている企業</td>
+      <td>ライセンス月額追加（1人あたり+数百〜千円）</td>
+      <td>Microsoft依存が深まるが運用が一元化。2029年以降も継続サポート確実</td>
+    </tr>
+    <tr>
+      <td><strong>SailPoint Identity Security Cloud</strong></td>
+      <td>中〜大規模企業（3000名〜）、金融・製造</td>
+      <td>年間2000〜8000万円</td>
+      <td>機能豊富・大規模実績多数。IdP非依存で柔軟</td>
+    </tr>
+    <tr>
+      <td><strong>Saviynt</strong></td>
+      <td>クラウドファースト企業、SaaS利用が多い企業</td>
+      <td>年間1500〜5000万円</td>
+      <td>クラウドネイティブ設計。SaaS連携に強い</td>
+    </tr>
+    <tr>
+      <td><strong>Entra ID + オンプレAD存続</strong><br><small>（ハイブリッド移行）</small></td>
+      <td>オンプレシステムが多い製造業・インフラ企業</td>
+      <td>Entra P1ライセンス + 構築費500万〜</td>
+      <td>現実的な段階移行。ADを即廃止しない中間策</td>
+    </tr>
+  </table>
+</div>
+
+</div>
+<footer>2029年問題 緊急アラート | 対応計画立案時の参照資料</footer>
+</body>
+</html>

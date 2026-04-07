@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全社MFA義務化 実践ガイド - スマホなし・高齢者・パート対応</title>
+<style>
+
+  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
+  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
+  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
+  .hero p{font-size:1.1em;opacity:.85;margin:0}
+  .container{max-width:1100px;margin:40px auto;padding:0 30px}
+  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
+  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
+  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
+  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
+  tr:nth-child(even) td{background:#f8f9fa}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
+  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700}
+  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
+  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+  @media print{body{background:#fff}.hero{padding:30px}.card{box-shadow:none;border:1px solid #ddd}}
+
+.mfa-method{background:#f8f9fa;border-radius:10px;padding:20px;margin:12px 0;display:flex;gap:16px;align-items:flex-start}
+.mfa-icon{font-size:2.5em;min-width:60px;text-align:center}
+.mfa-info h3{margin:0 0 6px;color:#0f3460}
+.mfa-badge{display:inline-block;padding:3px 8px;border-radius:8px;font-size:.75em;margin:2px}
+.badge-easy{background:#d4edda;color:#155724}
+.badge-cost-low{background:#cce5ff;color:#004085}
+.badge-cost-med{background:#fff3cd;color:#856404}
+.badge-for{background:#e2e3e5;color:#383d41}
+.user-type{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:20px 0}
+.ut-card{border-radius:10px;padding:16px;text-align:center}
+.scenario-flow{display:flex;flex-direction:column;gap:12px;margin:20px 0}
+.sf-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sf-user{background:#e0f0ff;border-radius:8px;padding:8px 14px;font-weight:600;min-width:120px;text-align:center}
+.sf-arrow{font-size:1.2em;color:#0f3460}
+.sf-method{background:#f0fff4;border-radius:8px;padding:8px 14px;border:1px solid #27ae60}
+.sf-reason{font-size:.85em;color:#666;flex:1}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>📱 全社MFA義務化 実践ガイド</h1>
+  <p>「スマホがない社員はどうするの？」に答える ― ユーザータイプ別の現実的MFA設計</p>
+</div>
+<div class="container">
+
+<div class="card">
+  <h2>MFAとは何か（30秒で説明）</h2>
+  <p>通常のログインは「IDとパスワード」の2つで認証します。パスワードは盗まれることがあります。</p>
+  <p><strong>MFA（多要素認証）</strong>は「パスワード＋もう一つの確認」を求める仕組みです。スマホへのコード送信が最も一般的ですが、スマホ以外の方法もあります。</p>
+  <div class="success">
+    <strong>なぜMFAが重要か</strong>：パスワードが盗まれても、スマホや物理キーがなければログインできません。フィッシング・不正ログインを防ぐ最も効果的な対策で、MFAを導入するだけで不正ログインを<strong>99%以上</strong>防げます（Microsoft調査）。
+  </div>
+</div>
+
+<div class="card">
+  <h2>主要MFA方式の比較</h2>
+  <div class="mfa-method">
+    <div class="mfa-icon">📱</div>
+    <div class="mfa-info">
+      <h3>認証アプリ（Microsoft Authenticator / Google Authenticator）</h3>
+      <p>スマホにアプリを入れて、ログイン時に6桁のコードを入力。または「承認」ボタンを押す（Authenticator App）。</p>
+      <span class="mfa-badge badge-easy">設定：簡単</span>
+      <span class="mfa-badge badge-cost-low">費用：無料</span>
+      <span class="mfa-badge badge-for">対象：スマホを使える社員・在宅勤務者</span>
+    </div>
+  </div>
+  <div class="mfa-method">
+    <div class="mfa-icon">💳</div>
+    <div class="mfa-info">
+      <h3>ICカード・社員証タッチ認証（FIDO2/スマートカード）</h3>
+      <p>社員証やICカードをパソコンのリーダーにかざしてMFA完了。スマホ不要。</p>
+      <span class="mfa-badge badge-easy">設定：中程度</span>
+      <span class="mfa-badge badge-cost-med">費用：リーダー1台3000〜8000円</span>
+      <span class="mfa-badge badge-for">対象：スマホなし社員・高齢者・工場・店舗スタッフ</span>
+    </div>
+  </div>
+  <div class="mfa-method">
+    <div class="mfa-icon">🔑</div>
+    <div class="mfa-info">
+      <h3>ハードウェアセキュリティキー（YubiKey等）</h3>
+      <p>USBに差し込むかNFCでタッチするだけでMFA完了。フィッシング耐性が最も高い。</p>
+      <span class="mfa-badge badge-easy">設定：簡単（タッチのみ）</span>
+      <span class="mfa-badge badge-cost-med">費用：1本3000〜8000円</span>
+      <span class="mfa-badge badge-for">対象：セキュリティ要件の高い役員・管理者・リモート勤務者</span>
+    </div>
+  </div>
+  <div class="mfa-method">
+    <div class="mfa-icon">📍</div>
+    <div class="mfa-info">
+      <h3>信頼ネットワークからはMFA免除（条件付きアクセス）</h3>
+      <p>会社のWi-Fi・LAN内からのアクセスはMFA不要。社外からのアクセス時のみMFAを求める。</p>
+      <span class="mfa-badge badge-easy">設定：IT管理者が設定</span>
+      <span class="mfa-badge badge-cost-low">費用：Entra ID P1ライセンス必要</span>
+      <span class="mfa-badge badge-for">対象：在宅勤務しない工場勤務者・店舗専用端末</span>
+    </div>
+  </div>
+  <div class="mfa-method">
+    <div class="mfa-icon">📞</div>
+    <div class="mfa-info">
+      <h3>SMS・音声通話（最終手段）</h3>
+      <p>登録した携帯電話にSMSまたは音声でコードを通知。ガラケーでも対応可能。</p>
+      <span class="mfa-badge" style="background:#f8d7da;color:#721c24">セキュリティ：低（推奨しない）</span>
+      <span class="mfa-badge badge-cost-med">費用：通信費</span>
+      <span class="mfa-badge badge-for">対象：他の方法が使えない場合の最終手段のみ</span>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>ユーザータイプ別の推奨MFA方式</h2>
+  <div class="scenario-flow">
+    <div class="sf-row">
+      <div class="sf-user">💼 オフィス社員<br>（在宅あり）</div>
+      <div class="sf-arrow">→</div>
+      <div class="sf-method">認証アプリ（Authenticator）</div>
+      <div class="sf-reason">スマホを持っており設定も簡単。最もセキュアで費用ゼロ</div>
+    </div>
+    <div class="sf-row">
+      <div class="sf-user">🏭 工場・現場作業員<br>（スマホ持ち込み禁止）</div>
+      <div class="sf-arrow">→</div>
+      <div class="sf-method">ICカード（社員証）タッチ + 社内ネットワーク条件</div>
+      <div class="sf-reason">スマホ持ち込み禁止でも社員証で対応。社内LANからの接続はMFA免除可</div>
+    </div>
+    <div class="sf-row">
+      <div class="sf-user">🛒 店舗パート<br>（60代・スマホなし）</div>
+      <div class="sf-arrow">→</div>
+      <div class="sf-method">店舗端末 + 信頼ネットワーク条件 または ICカード</div>
+      <div class="sf-reason">店舗の固定端末からのアクセスはMFA免除。社外アクセスは発生しない設計</div>
+    </div>
+    <div class="sf-row">
+      <div class="sf-user">👑 役員・経営層</div>
+      <div class="sf-arrow">→</div>
+      <div class="sf-method">YubiKey（ハードウェアキー）+ 認証アプリ</div>
+      <div class="sf-reason">高権限アカウントはフィッシング耐性最高のFIDO2キーを必須化</div>
+    </div>
+    <div class="sf-row">
+      <div class="sf-user">🏗️ 外部委託業者</div>
+      <div class="sf-arrow">→</div>
+      <div class="sf-method">認証アプリ必須（例外なし）</div>
+      <div class="sf-reason">外部アクセスは最大リスク。スマホがない業者とは取引条件の見直しを検討</div>
+    </div>
+    <div class="sf-row">
+      <div class="sf-user">🖥️ システム管理者<br>（特権アカウント）</div>
+      <div class="sf-arrow">→</div>
+      <div class="sf-method">YubiKey + PAM踏み台経由を強制</div>
+      <div class="sf-reason">管理者権限は最も危険。MFAに加えて作業録画も必須</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>全社MFA導入の手順（6ヶ月計画）</h2>
+  <table>
+    <tr><th>時期</th><th>対象</th><th>方法</th><th>注意点</th></tr>
+    <tr>
+      <td><strong>第1ヶ月</strong></td>
+      <td>IT管理者・情報システム部門（先行）</td>
+      <td>認証アプリ設定</td>
+      <td>自分たちで試して問題を洗い出す</td>
+    </tr>
+    <tr>
+      <td><strong>第2〜3ヶ月</strong></td>
+      <td>役員・管理職</td>
+      <td>YubiKeyまたは認証アプリ</td>
+      <td>役員への個別サポートを用意</td>
+    </tr>
+    <tr>
+      <td><strong>第3〜4ヶ月</strong></td>
+      <td>オフィス社員全員</td>
+      <td>認証アプリ</td>
+      <td>設定ヘルプデスクの増員・FAQ整備</td>
+    </tr>
+    <tr>
+      <td><strong>第5〜6ヶ月</strong></td>
+      <td>現場・パート・外部業者</td>
+      <td>ICカード / 条件付きアクセス</td>
+      <td>ユーザータイプ別の例外設計を事前に完成させる</td>
+    </tr>
+  </table>
+  <div class="highlight">
+    <strong>💡 よくある失敗パターン</strong>：全員一斉に「来月からMFA必須」と通知すると、設定できない社員が続出してヘルプデスクがパンクします。必ず段階的な展開を計画してください。
+  </div>
+</div>
+
+</div>
+<footer>全社MFA義務化 実践ガイド | 多様なユーザー環境への対応方法</footer>
+</body>
+</html>

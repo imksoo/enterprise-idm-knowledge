@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MIM後継製品移行ガイド</title><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
+.page{max-width:1100px;margin:0 auto}
+h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
+.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
+h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
+h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
+p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
+.tbl-wrap{overflow-x:auto;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
+td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
+tr:hover td{background:#f8fafc}
+.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
+.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
+.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.alert{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
+.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
+footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
+@media print{body{background:#fff;padding:0}}
+</style></head>
+<body><div class="page">
+<h1>🔄 MIM後継製品移行ガイド</h1>
+<p class="subtitle">Microsoft Identity Manager 2016 EOL（2029年1月9日）対応 | 2026-04-07 | NSSol IDM参照資料</p>
+
+<div class="alert">
+<strong>🚨 2029年問題：</strong> MIM 2016 SP2のExtended Supportが2029年1月9日で終了します。
+Windows Server 2019のExtended Supportも同日終了。今から計画しないと2028年末に手遅れになります。
+<strong>移行検討の開始リミット: 2027年（設計〜展開に18〜24ヶ月必要）</strong>
+</div>
+
+<h2>MIMの利用状況確認</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>MIM機能</th><th>説明</th><th>後継オプション</th><th>優先度</th></tr></thead>
+<tbody>
+<tr><td><strong>プロビジョニング（JML自動化）</strong></td><td>HR→ADへのID自動作成・変更・削除</td><td>IGA製品（SailPoint/One Identity等）、Entra ID Governance + Logic Apps</td><td><span class="badge b-red">Critical</span></td></tr>
+<tr><td><strong>Self-Service Password Reset (SSPR)</strong></td><td>ユーザーがADパスワードをリセット</td><td>Entra ID SSPR（Microsoft提供、MIM不要）</td><td><span class="badge b-blue">先行移行可</span></td></tr>
+<tr><td><strong>グループ管理（セルフサービス）</strong></td><td>ユーザーが自分でグループ参加申請</td><td>Entra ID グループセルフサービス</td><td><span class="badge b-blue">先行移行可</span></td></tr>
+<tr><td><strong>PAM（Privileged Access Management）</strong></td><td>MIM PAM（Tier 0 JIT）</td><td>Entra PIM or CyberArk/BeyondTrustに移行</td><td><span class="badge b-orange">高</span></td></tr>
+<tr><td><strong>証明書管理（CLM）</strong></td><td>スマートカード証明書のライフサイクル管理</td><td>Entra Certificate-Based Auth + PKI統合</td><td><span class="badge b-orange">高</span></td></tr>
+<tr><td><strong>HR統合コネクタ</strong></td><td>SAP/COMPANY等HRISとのデータ同期</td><td>IGA製品のコネクタ（HR→AD同期の核心）</td><td><span class="badge b-red">Critical</span></td></tr>
+</tbody>
+</table></div>
+
+<h2>後継IGA製品比較（MIM移行観点）</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>製品</th><th>MIM移行のしやすさ</th><th>国内HRISコネクタ</th><th>総コスト感（年間）</th><th>推奨ケース</th></tr></thead>
+<tbody>
+<tr><td><strong>One Identity Manager</strong></td><td><span class="badge b-green">◎ 最も容易</span><br>MIMライクなシンクロナイザー設計。MIMから設定を移行しやすい。</td><td>COMPANY/POSITIVE等のカスタムコネクタ実績多数</td><td>1000ユーザー: 2,000〜4,000万/年</td><td>国内HR連携重視・地銀・製造業</td></tr>
+<tr><td><strong>SailPoint ISC</strong></td><td><span class="badge b-blue">○ 可能</span><br>コネクタフレームワークでMIM相当の連携を実装。設計工数が必要。</td><td>カスタムコネクタ開発要（COMPANY等）</td><td>1000ユーザー: 2,500〜5,000万/年</td><td>大規模・グローバル展開・AI機能重視</td></tr>
+<tr><td><strong>Entra ID Governance</strong></td><td><span class="badge b-orange">△ 条件次第</span><br>Entra Connect Sync + Logic Apps + Lifecycle Workflowsで多くのMIM機能を代替可能。ただし複雑なプロビジョニングには限界。</td><td>SCIM対応HRISは標準対応。非SCIM（COMPANY等）はカスタム要</td><td>Entra P2込み（860円/ユーザー/月〜）</td><td>Microsoft中心企業・シンプルなプロビジョニング</td></tr>
+<tr><td><strong>Saviynt EIC</strong></td><td><span class="badge b-blue">○ 可能</span><br>SAP SOD連携が強み。製薬・製造向き。</td><td>SAP SuccessFactors等グローバルHRIS優先</td><td>1000ユーザー: 2,000〜4,500万/年</td><td>SAP環境・グローバル製薬・製造</td></tr>
+</tbody>
+</table></div>
+
+<h2>MIM移行プロジェクト工程</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>フェーズ</th><th>期間</th><th>主な作業</th></tr></thead>
+<tbody>
+<tr><td><span class="badge b-orange">Phase 1</span> 現状調査</td><td>2〜3ヶ月</td><td>MIM利用機能の全棚卸し。接続システムリスト作成。HR連携フロー文書化。JML要件のヒアリング。</td></tr>
+<tr><td><span class="badge b-blue">Phase 2</span> IGA製品選定・PoC</td><td>3〜4ヶ月</td><td>RFP作成。製品評価（デモ・PoC）。コネクタ検証（HRISとの疎通確認が最重要）。選定・契約。</td></tr>
+<tr><td><span class="badge b-purple">Phase 3</span> 設計・構築</td><td>6〜12ヶ月</td><td>IGAシステム設計。ロール定義。コネクタ開発。HR連携フロー実装。テスト環境構築。</td></tr>
+<tr><td><span class="badge b-green">Phase 4</span> 移行・カットオーバー</td><td>2〜4ヶ月</td><td>並行稼働検証。MIMからの段階切り替え。ユーザー教育。MIM廃止。</td></tr>
+</tbody>
+</table></div>
+
+<h2>先行移行できる機能（今すぐ実施推奨）</h2>
+<div class="card green">
+<h3>✅ MIM SSPR → Entra ID SSPR（今すぐ移行可能）</h3>
+<p>MIMのSSPR（Self-Service Password Reset）機能はEntra ID SSPRで完全に代替できます。Entra ID SSPRはモバイルMFAでの確認・秘密の質問・メール確認をサポート。</p>
+<p><strong>移行工数: 1〜2人月。即効性: 高（ヘルプデスクのパスワードリセット問合せを80%削減）。</strong></p>
+</div>
+
+<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+</div></body></html>

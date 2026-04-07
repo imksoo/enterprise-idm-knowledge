@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "id": "sim_x_s14",
+    "title": "大手製造：グループ会社API連携とM2M認証統一",
+    "scenario_date": "2026年11月",
+    "industry": "manufacturing_api"
+  },
+  "company_profile": "大手化学メーカー。国内グループ会社15社がバラバラのAPIで相互接続。一部はBasic認証、一部はAPIキー、一部はOAuth。統一が求められている。",
+  "personas": [
+    {
+      "id": "arch",
+      "name": "木村アーキテクト",
+      "role": "グループシステムアーキテクト"
+    },
+    {
+      "id": "nssol",
+      "name": "中田（NSSol）",
+      "role": "APIセキュリティ専門SE"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：API認証統一の設計",
+      "setting": "グループIT会議。",
+      "dialogue": [
+        {
+          "speaker": "木村アーキテクト",
+          "text": "グループ内APIが15社でバラバラです。BasicなどHTTP基本認証もまだ残っています。"
+        },
+        {
+          "speaker": "中田（NSSol）",
+          "text": "Basic認証はHTTPS前提でも推奨しません。APIキーも管理が属人的になりやすい。グループ共通OAuth 2.0 Authorization ServerをEntra IDまたはAPIゲートウェイ（Apigee/Kong）上に設置し、全グループ会社がClient Credentialsフローで統一するのが最も保守コストが低い設計です。"
+        },
+        {
+          "speaker": "木村アーキテクト",
+          "text": "証明書ベースも検討しています。"
+        },
+        {
+          "speaker": "中田（NSSol）",
+          "text": "mTLS＋OAuth 2.0の組み合わせが高セキュリティ要件に最適です。特に財務系・個人情報系APIはmTLSを追加することでAPIキー漏洩リスクをゼロにできます。HashiCorp VaultでグループのPKIを一元管理し、各社に証明書を動的発行するアーキテクチャを推奨します。"
+        }
+      ],
+      "issues_surfaced": [
+        "グループAPI認証の統一",
+        "Basic認証廃止",
+        "mTLS＋OAuth統合設計"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "API認証統一",
+      "current": "Basic/APIキー/OAuthが混在",
+      "target": "OAuth 2.0 Client Credentials統一（高セキュリティはmTLS追加）",
+      "priority": "high"
+    }
+  ],
+  "html_needs_identified": [
+    "APIセキュリティ設計ガイド（M2M・マイクロサービス向け）"
+  ]
+}
