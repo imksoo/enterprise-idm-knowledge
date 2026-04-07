@@ -1,107 +1,927 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ID管理 現状診断テンプレート</title><style>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AD現状診断チェックリスト — 採点式・優先対策マッピング付き</title>
+<style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
-.page{max-width:1100px;margin:0 auto}
-h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
-.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
-h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
-h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
-p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
-.tbl-wrap{overflow-x:auto;margin-bottom:28px}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
-td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
-tr:hover td{background:#f8fafc}
-.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
-.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
-.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
-.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
-.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
-.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
-.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
-footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
-@media print{body{background:#fff;padding:0}}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:.82rem;font-family:'Courier New',monospace;color:#dc2626}
+pre{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0;font-size:.8rem;line-height:1.6}
+pre .cm{color:#64748b}
+pre .kw{color:#7dd3fc}
+pre .str{color:#86efac}
+pre .fn{color:#fde68a}
+pre .num{color:#fb923c}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+@media(max-width:900px){#toc{display:none}main{margin-left:0}}
+/* Score & Check styles */
+.score-band{border-radius:8px;padding:14px 18px;margin:8px 0;display:flex;align-items:center;gap:14px}
+.score-band.critical{background:#fef2f2;border-left:5px solid #dc2626}
+.score-band.warning{background:#fef9c3;border-left:5px solid #eab308}
+.score-band.caution{background:#fff7ed;border-left:5px solid #f97316}
+.score-band.good{background:#f0fdf4;border-left:5px solid #16a34a;border-left-width:5px}
+.score-band.optimal{background:#eff6ff;border-left:5px solid #3b82f6}
+.score-range{font-size:1.4rem;font-weight:800;min-width:90px}
+.check-section{background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:18px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.check-section h3{margin-top:0;color:#1e3a5f}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f1f5f9}
+.check-item:last-child{border-bottom:none}
+.check-q{flex:1;font-size:.85rem;color:#1e293b}
+.check-opts{display:flex;gap:6px;flex-shrink:0}
+.check-opt{padding:3px 10px;border-radius:12px;font-size:.78rem;font-weight:700;cursor:pointer;border:2px solid transparent}
+.check-opt.circle{background:#dcfce7;color:#166534;border-color:#86efac}
+.check-opt.triangle{background:#fef3c7;color:#92400e;border-color:#fcd34d}
+.check-opt.cross{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.check-score{font-size:.75rem;color:#94a3b8;flex-shrink:0;min-width:40px;text-align:right}
+/* Score counter */
+#score-display{position:sticky;top:0;z-index:50;background:#0f172a;color:#fff;padding:10px 20px;display:flex;align-items:center;gap:20px;border-radius:0 0 10px 10px;margin-bottom:20px}
+#score-display .score-label{font-size:.85rem;color:#94a3b8}
+#score-val{font-size:1.8rem;font-weight:800;color:#7dd3fc;min-width:50px}
+#score-max{font-size:.9rem;color:#64748b}
+#score-bar-wrap{flex:1;background:#1e293b;border-radius:8px;height:12px;overflow:hidden;max-width:300px}
+#score-bar{height:100%;background:linear-gradient(90deg,#3b82f6,#06b6d4);border-radius:8px;transition:width .3s}
+#score-interp{font-size:.82rem;color:#fde68a;min-width:140px}
+</style>
+</head>
+<body>
 
-.q-block{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
-.q-num{display:inline-block;width:24px;height:24px;border-radius:50%;background:#3b82f6;color:#fff;font-size:.75em;font-weight:700;text-align:center;line-height:24px;margin-right:8px}
-.options{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-.opt{padding:6px 14px;border-radius:8px;font-size:.8em;border:1px solid #e2e8f0;cursor:pointer;background:#f8fafc}
-.opt.red{border-color:#fca5a5;background:#fef2f2;color:#dc2626}
-.opt.yellow{border-color:#fde047;background:#fefce8;color:#d97706}
-.opt.green{border-color:#86efac;background:#f0fdf4;color:#15803d}
-.score-legend{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-.sl{padding:6px 16px;border-radius:8px;font-size:.82em;font-weight:700}
-.cat-header{background:#1e293b;color:#f8fafc;padding:10px 16px;border-radius:8px;margin:20px 0 12px;font-weight:700;font-size:.9em}
-</style></head>
-<body><div class="page">
-<h1>🔎 ID管理 現状診断テンプレート</h1>
-<p class="subtitle">IT部門・CISO・監査部門向け ヒアリングチェックリスト | 2026-04-07 | NSSol IDM参照資料</p>
+<!-- TOC -->
+<nav id="toc">
+  <a href="#intro" style="display:block;padding:16px;background:#1e3a5f;color:#fff;font-weight:700;font-size:.9rem;text-decoration:none">
+    🔍 AD現状診断チェックリスト
+  </a>
+  <h2>目次</h2>
+  <a href="#intro">導入・目的</a>
+  <a href="#checklist">診断チェックリスト（25問）</a>
+  <a href="#auth-area" class="toc-sub">①認証管理（5問）</a>
+  <a href="#account-area" class="toc-sub">②アカウント管理（5問）</a>
+  <a href="#priv-area" class="toc-sub">③特権管理（5問）</a>
+  <a href="#audit-area" class="toc-sub">④監査・ログ（5問）</a>
+  <a href="#gov-area" class="toc-sub">⑤ガバナンス（5問）</a>
+  <a href="#scoring">スコア解釈</a>
+  <a href="#priority-map">優先対策マッピング</a>
+  <a href="#powershell">棚卸しスクリプト集</a>
+  <a href="#ps-users" class="toc-sub">ユーザー一覧取得</a>
+  <a href="#ps-dormant" class="toc-sub">休眠アカウント検出</a>
+  <a href="#ps-admins" class="toc-sub">管理者グループ一覧</a>
+  <a href="#ps-svc" class="toc-sub">サービスアカウント検出</a>
+  <a href="#ps-gpo" class="toc-sub">GPO一覧</a>
+  <a href="#actions">スコア別推奨アクション</a>
+  <h2>関連資料</h2>
+  <a href="index.html">ナレッジベース TOP</a>
+  <a href="identity_architecture_overview.html">ID管理アーキテクチャ全体像</a>
+  <a href="privileged_access_management.html">特権アクセス管理（PAM）</a>
+  <a href="ad_to_entra_migration.html">AD → Entra ID 移行パターン</a>
+</nav>
 
-<div class="note">
-<strong>使い方：</strong> 顧客訪問前にこのテンプレートを確認し、各質問に対する顧客の回答を記録します。
-回答パターンから成熟度スコアを算出し、優先課題を特定します。
-<strong>所要時間目安: 2〜3時間（情報システム部長・CISO・内部監査部門の同席が理想）</strong>
-</div>
+<!-- Main -->
+<main>
+  <h1>AD現状診断チェックリスト</h1>
+  <p class="subtitle">採点式（100点満点）・優先対策マッピング付き ／ 対象: 情報システム部長・SE・監査担当</p>
 
-<div class="score-legend">
-<span class="sl" style="background:#fef2f2;color:#dc2626">リスク高（早急対応）</span>
-<span class="sl" style="background:#fefce8;color:#d97706">リスク中（12ヶ月以内）</span>
-<span class="sl" style="background:#f0fdf4;color:#15803d">対応済み / リスク低</span>
-</div>
+  <!-- Score Display Bar -->
+  <div id="score-display">
+    <div>
+      <div class="score-label">現在のスコア</div>
+      <span id="score-val">0</span><span id="score-max"> / 100点</span>
+    </div>
+    <div id="score-bar-wrap"><div id="score-bar" style="width:0%"></div></div>
+    <div id="score-interp">回答を選択してください</div>
+  </div>
 
-<div class="cat-header">A. アカウントガバナンス</div>
-<div class="q-block"><span class="q-num">1</span><strong>退職者のIDは何日以内に無効化されていますか？</strong>
-<div class="options"><span class="opt green">当日〜翌日（自動）</span><span class="opt yellow">3〜7日以内（手動）</span><span class="opt red">2週間以上/不明</span></div></div>
-<div class="q-block"><span class="q-num">2</span><strong>全アカウントの棚卸しは年に何回実施していますか？</strong>
-<div class="options"><span class="opt green">四半期（年4回以上）</span><span class="opt yellow">年1〜2回</span><span class="opt red">実施していない/不定期</span></div></div>
-<div class="q-block"><span class="q-num">3</span><strong>異動時（部署変更）の権限変更は適切に実施されていますか？</strong>
-<div class="options"><span class="opt green">HR連携で自動変更</span><span class="opt yellow">申請ベースで手動変更</span><span class="opt red">旧権限が残り続ける（権限累積）</span></div></div>
+  <!-- 1. 導入 -->
+  <section id="intro">
+    <h2>1. 導入・目的説明</h2>
+    <div class="lead">
+      このチェックリストは情報システム部門が自社の Active Directory / ID管理の現状を自己診断するためのツールです。<strong>5領域25問に回答</strong>することで現状スコアを算出し、優先的に対処すべき課題を特定できます。診断会議・経営報告・監査対応資料としてご活用ください。
+    </div>
 
-<div class="cat-header">B. 認証セキュリティ</div>
-<div class="q-block"><span class="q-num">4</span><strong>MFA（多要素認証）はどの範囲で適用されていますか？</strong>
-<div class="options"><span class="opt green">全ユーザー・全サービス</span><span class="opt yellow">一部（SaaS・VPNのみ等）</span><span class="opt red">ほぼ未適用</span></div></div>
-<div class="q-block"><span class="q-num">5</span><strong>パスワードポリシーの現状は？</strong>
-<div class="options"><span class="opt green">12文字以上・MFAで補完・Have I Been Pwned確認</span><span class="opt yellow">8文字以上・複雑性あり</span><span class="opt red">8文字以下・複雑性なし・無期限</span></div></div>
-<div class="q-block"><span class="q-num">6</span><strong>フィッシング耐性のある認証方式（FIDO2/証明書）は使用していますか？</strong>
-<div class="options"><span class="opt green">FIDO2/WebAuthn/SmartCardを主要ユーザーに展開</span><span class="opt yellow">一部（管理者のみ等）</span><span class="opt red">未使用</span></div></div>
+    <div class="two-col">
+      <div class="card">
+        <h4>📋 このチェックリストの使い方</h4>
+        <p>各設問に対して以下3段階で回答してください：</p>
+        <ul style="padding-left:16px;font-size:.85rem;color:#334155">
+          <li style="margin-bottom:6px"><span class="check-opt circle" style="cursor:default">○ 対応済み</span>　4点</li>
+          <li style="margin-bottom:6px"><span class="check-opt triangle" style="cursor:default">△ 一部対応</span>　2点</li>
+          <li style="margin-bottom:6px"><span class="check-opt cross" style="cursor:default">× 未対応</span>　0点</li>
+        </ul>
+        <p style="margin-top:8px;font-size:.82rem;color:#64748b">25問 × 最大4点 = <strong>100点満点</strong></p>
+      </div>
+      <div class="card">
+        <h4>🎯 活用シーン</h4>
+        <ul style="padding-left:16px;font-size:.85rem;color:#334155">
+          <li style="margin-bottom:4px">情報セキュリティ委員会での現状報告</li>
+          <li style="margin-bottom:4px">経営層・取締役会向けのリスクレポート</li>
+          <li style="margin-bottom:4px">外部監査・ISO 27001 審査前の事前点検</li>
+          <li style="margin-bottom:4px">ISMS・Pマーク・SOC2 対応の証跡収集</li>
+          <li style="margin-bottom:4px">SIer への改善提案・RFP 作成のベースライン</li>
+          <li style="margin-bottom:4px">年次セキュリティレビューの定点観測</li>
+        </ul>
+      </div>
+    </div>
 
-<div class="cat-header">C. 特権アクセス管理</div>
-<div class="q-block"><span class="q-num">7</span><strong>Domain Admins グループに何名登録されていますか？</strong>
-<div class="options"><span class="opt green">5名以下・日常業務では不使用</span><span class="opt yellow">6〜20名</span><span class="opt red">21名以上/不明/日常業務用アカウントが含まれる</span></div></div>
-<div class="q-block"><span class="q-num">8</span><strong>サーバー保守時のサービスアカウントパスワードはどう管理していますか？</strong>
-<div class="options"><span class="opt green">PAM自動ローテーション（gMSA含む）</span><span class="opt yellow">半年〜年1回手動変更</span><span class="opt red">変更していない/共有している/不明</span></div></div>
-<div class="q-block"><span class="q-num">9</span><strong>特権アクセスのセッションログ（録画・コマンド履歴）は記録していますか？</strong>
-<div class="options"><span class="opt green">全セッション録画（PAM）</span><span class="opt yellow">ログオン記録のみ</span><span class="opt red">記録なし</span></div></div>
+    <div class="warn">
+      <strong>注意:</strong> このチェックリストは一般的なベストプラクティスに基づいており、法的義務や規制要件を保証するものではありません。FISC安全対策基準・金融庁ガイドライン・個人情報保護法等の個別要件については専門家にご相談ください。
+    </div>
+  </section>
 
-<div class="cat-header">D. AD/ID基盤の健全性</div>
-<div class="q-block"><span class="q-num">10</span><strong>Active DirectoryのDCサーバーのOSバージョンは？</strong>
-<div class="options"><span class="opt green">Windows Server 2022</span><span class="opt yellow">Windows Server 2019（2029年EOL）</span><span class="opt red">2016以前/不明</span></div></div>
-<div class="q-block"><span class="q-num">11</span><strong>NTLM認証は使用していますか？（廃止すると壊れるアプリがありますか？）</strong>
-<div class="options"><span class="opt green">完全廃止済み/Kerberos only</span><span class="opt yellow">一部レガシーアプリで使用中</span><span class="opt red">多数のシステムがNTLM依存/調査未実施</span></div></div>
-<div class="q-block"><span class="q-num">12</span><strong>ADのバックアップ（System State/DCバックアップ）は最近いつ取得しましたか？</strong>
-<div class="options"><span class="opt green">毎日自動取得・定期復旧テスト実施</span><span class="opt yellow">週次バックアップ</span><span class="opt red">不定期/不明/復旧テスト未実施</span></div></div>
+  <!-- 2. チェックリスト -->
+  <section id="checklist">
+    <div class="phase-header">
+      <h2>2. 診断チェックリスト（25問・100点満点）</h2>
+      <div class="phase-meta">各設問に ○（4点）△（2点）×（0点）で回答 → スコアが自動集計されます</div>
+    </div>
 
-<div class="cat-header">E. コンプライアンス・規制</div>
-<div class="q-block"><span class="q-num">13</span><strong>FISC安全対策基準への対応状況は？（金融機関向け）</strong>
-<div class="options"><span class="opt green">第11版全項目対応済み・エビデンス整備</span><span class="opt yellow">部分対応・一部未整備</span><span class="opt red">未対応・対応状況不明</span></div></div>
-<div class="q-block"><span class="q-num">14</span><strong>IGA（ID管理・棚卸しの自動化ツール）は導入していますか？</strong>
-<div class="options"><span class="opt green">IGA製品を本番稼働</span><span class="opt yellow">部分的に自動化（スクリプト等）</span><span class="opt red">手動Excel管理</span></div></div>
+    <!-- 領域1: 認証管理 -->
+    <div class="check-section" id="auth-area">
+      <h3>① 認証管理（Authentication）<span style="float:right;font-size:.8rem;font-weight:400;color:#64748b">最大20点</span></h3>
+      <p style="font-size:.82rem;color:#64748b;margin-bottom:12px">パスワードポリシー・MFA・条件付きアクセス等の認証強度を評価します</p>
 
-<h2>診断結果サマリーテンプレート</h2>
-<div class="tbl-wrap"><table>
-<thead><tr><th>カテゴリ</th><th>回答サマリー</th><th>優先度</th><th>推奨アクション</th></tr></thead>
-<tbody>
-<tr><td>アカウントガバナンス</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
-<tr><td>認証セキュリティ</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
-<tr><td>特権アクセス管理</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
-<tr><td>AD/ID基盤の健全性</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
-<tr><td>コンプライアンス</td><td>（記入欄）</td><td>（高/中/低）</td><td>（記入欄）</td></tr>
-</tbody>
-</table></div>
+      <div class="check-item" data-id="auth1">
+        <div class="check-q">
+          <strong>Q1.</strong> 全社員のパスワードは8文字以上・複雑性要件（英大小文字・数字・記号）が Active Directory のグループポリシー（Fine-Grained Password Policy 含む）で設定されているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">確認場所: GPO → コンピューターの構成 → Windowsの設定 → セキュリティの設定 → アカウントポリシー</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('auth1',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('auth1',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('auth1',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-auth1">—</div>
+      </div>
 
-<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
-</div></body></html>
+      <div class="check-item" data-id="auth2">
+        <div class="check-q">
+          <strong>Q2.</strong> IT管理者・特権アカウント（Domain Admins 等）の全員に多要素認証（MFA）が適用されているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">確認方法: Entra ID（Azure AD）条件付きアクセス / Azure MFA / 物理トークン等の適用状況確認</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('auth2',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('auth2',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('auth2',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-auth2">—</div>
+      </div>
+
+      <div class="check-item" data-id="auth3">
+        <div class="check-q">
+          <strong>Q3.</strong> 一般社員にもMFAが展開されているか（全社員の50%以上をカバー）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Microsoft Authenticator / Google Authenticator / TOTP / SMS認証等を含む。Entra ID P1 以上のライセンスで条件付きアクセスが利用可能</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('auth3',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('auth3',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('auth3',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-auth3">—</div>
+      </div>
+
+      <div class="check-item" data-id="auth4">
+        <div class="check-q">
+          <strong>Q4.</strong> スマートカード（ICカード社員証）または FIDO2 / Windows Hello for Business による認証が一部でも導入されているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">特定部署・管理者限定での導入でも△。全社展開済みなら○</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('auth4',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('auth4',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('auth4',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-auth4">—</div>
+      </div>
+
+      <div class="check-item" data-id="auth5">
+        <div class="check-q">
+          <strong>Q5.</strong> 条件付きアクセス（Conditional Access）ポリシーが基本設定されているか（社外IP・未管理デバイスからのアクセス制御等）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Entra ID（Azure AD）P1 以上が必要。Microsoft 365 Defender とも連携可</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('auth5',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('auth5',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('auth5',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-auth5">—</div>
+      </div>
+    </div>
+
+    <!-- 領域2: アカウント管理 -->
+    <div class="check-section" id="account-area">
+      <h3>② アカウント管理（Account Management）<span style="float:right;font-size:.8rem;font-weight:400;color:#64748b">最大20点</span></h3>
+      <p style="font-size:.82rem;color:#64748b;margin-bottom:12px">ライフサイクル管理・棚卸し・休眠アカウント処理の運用成熟度を評価します</p>
+
+      <div class="check-item" data-id="acc1">
+        <div class="check-q">
+          <strong>Q6.</strong> 退職者のIDを退職当日または翌営業日に無効化する手順（SOP）があり、実際に運用されているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">人事システム連携または退職通知フローの有無を確認。IGA ツールによる自動化が理想</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('acc1',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('acc1',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('acc1',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-acc1">—</div>
+      </div>
+
+      <div class="check-item" data-id="acc2">
+        <div class="check-q">
+          <strong>Q7.</strong> アカウント棚卸し（全ユーザーリストの確認・不要アカウント整理）を四半期以内のサイクルで実施しているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">年1回のみは△。自動化ツールによる継続監視があれば○</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('acc2',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('acc2',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('acc2',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-acc2">—</div>
+      </div>
+
+      <div class="check-item" data-id="acc3">
+        <div class="check-q">
+          <strong>Q8.</strong> サービスアカウントの一覧と用途・担当者が文書化されているか（Managed Service Account / Group Managed Service Account の活用状況含む）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Excel台帳のみは△。CMDB・IGA・CyberArk等で管理されていれば○</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('acc3',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('acc3',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('acc3',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-acc3">—</div>
+      </div>
+
+      <div class="check-item" data-id="acc4">
+        <div class="check-q">
+          <strong>Q9.</strong> ゲスト・外部ユーザー（取引先・SIer・派遣社員等）アカウントの管理ポリシー（発行条件・有効期限・権限範囲）があるか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Entra B2B / Entra External ID の活用、有効期限設定の有無を確認</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('acc4',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('acc4',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('acc4',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-acc4">—</div>
+      </div>
+
+      <div class="check-item" data-id="acc5">
+        <div class="check-q">
+          <strong>Q10.</strong> 90日以上ログインのない休眠アカウントを定期的に検出・無効化または削除処理しているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">PowerShell スクリプトや IGA ツールによる自動検出が望ましい。手動確認のみは△</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('acc5',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('acc5',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('acc5',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-acc5">—</div>
+      </div>
+    </div>
+
+    <!-- 領域3: 特権管理 -->
+    <div class="check-section" id="priv-area">
+      <h3>③ 特権管理（Privileged Access Management）<span style="float:right;font-size:.8rem;font-weight:400;color:#64748b">最大20点</span></h3>
+      <p style="font-size:.82rem;color:#64748b;margin-bottom:12px">ドメイン管理者・特権アカウント・LAPS・PAMソリューションの整備状況を評価します</p>
+
+      <div class="check-item" data-id="priv1">
+        <div class="check-q">
+          <strong>Q11.</strong> ドメイン管理者（Domain Admins グループ）の人数は5名以下に管理されているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">原則として常駐メンバーは3名以下が推奨。作業時のみ一時付与（JIT）が理想</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('priv1',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('priv1',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('priv1',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-priv1">—</div>
+      </div>
+
+      <div class="check-item" data-id="priv2">
+        <div class="check-q">
+          <strong>Q12.</strong> PAM（特権アクセス管理）ソリューションを導入しているか（CyberArk PAM / BeyondTrust / Delinea / Microsoft PIM 等）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Entra ID の Privileged Identity Management（PIM）は無料〜P2ライセンスで利用可能</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('priv2',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('priv2',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('priv2',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-priv2">—</div>
+      </div>
+
+      <div class="check-item" data-id="priv3">
+        <div class="check-q">
+          <strong>Q13.</strong> 管理者作業は専用管理アカウント（Tier0/Tier1管理専用アカウント）経由で行い、日常業務アカウントと分離されているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Microsoft の Privileged Access Workstation（PAW）・Tier Model に基づく分離が理想</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('priv3',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('priv3',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('priv3',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-priv3">—</div>
+      </div>
+
+      <div class="check-item" data-id="priv4">
+        <div class="check-q">
+          <strong>Q14.</strong> JIT（Just-In-Time）権限付与の仕組みがあるか（作業時のみ特権を付与し、終了後は自動剥奪）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Entra PIM / CyberArk On-Demand Privileges / BeyondTrust EPM 等による実装</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('priv4',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('priv4',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('priv4',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-priv4">—</div>
+      </div>
+
+      <div class="check-item" data-id="priv5">
+        <div class="check-q">
+          <strong>Q15.</strong> Windows サーバー・クライアント端末に LAPS（Local Administrator Password Solution）を導入し、ローカル管理者パスワードが自動ローテーションされているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Windows LAPS（Windows Server 2019+）は無償。旧来の Microsoft LAPS も引き続き利用可能</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('priv5',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('priv5',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('priv5',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-priv5">—</div>
+      </div>
+    </div>
+
+    <!-- 領域4: 監査・ログ -->
+    <div class="check-section" id="audit-area">
+      <h3>④ 監査・ログ（Audit &amp; Logging）<span style="float:right;font-size:.8rem;font-weight:400;color:#64748b">最大20点</span></h3>
+      <p style="font-size:.82rem;color:#64748b;margin-bottom:12px">セキュリティログの取得・保全・分析体制を評価します</p>
+
+      <div class="check-item" data-id="aud1">
+        <div class="check-q">
+          <strong>Q16.</strong> Active Directory の監査ポリシーが有効化されているか（ログオン成功・失敗・アカウント変更・グループポリシー変更・特権使用 等）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">確認: auditpol /get /category:* で全カテゴリーの設定状況を確認</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('aud1',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('aud1',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('aud1',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-aud1">—</div>
+      </div>
+
+      <div class="check-item" data-id="aud2">
+        <div class="check-q">
+          <strong>Q17.</strong> ログの保全期間が90日以上確保されているか（金融機関・医療・上場企業等の規制業種では1年以上が推奨）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Windows イベントログのサイズ設定確認。Security.evtx のデフォルト（20MB）は数日で上書きされる点に注意</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('aud2',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('aud2',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('aud2',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-aud2">—</div>
+      </div>
+
+      <div class="check-item" data-id="aud3">
+        <div class="check-q">
+          <strong>Q18.</strong> SIEM またはログ管理ツール（Microsoft Sentinel / Splunk / IBM QRadar / Elastic SIEM / Graylog 等）に AD のログを転送・集約しているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Microsoft Sentinel は Azure に AD ログを転送するだけで構築可能。Syslog/WEF（Windows Event Forwarding）も有効</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('aud3',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('aud3',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('aud3',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-aud3">—</div>
+      </div>
+
+      <div class="check-item" data-id="aud4">
+        <div class="check-q">
+          <strong>Q19.</strong> 不審なログイン（不審なIP・深夜帯アクセス・短時間内の多数失敗等）を自動検知・アラートする仕組みがあるか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">Microsoft Defender for Identity（旧 Azure ATP）/ SIEM アラートルール / MDR サービス等による自動化</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('aud4',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('aud4',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('aud4',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-aud4">—</div>
+      </div>
+
+      <div class="check-item" data-id="aud5">
+        <div class="check-q">
+          <strong>Q20.</strong> 監査ログのレビューを定期的（月次以上のサイクル）に実施し、異常の有無を担当者が確認しているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">年次のみは△。自動アラート＋週次レビューが実装されていれば○</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('aud5',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('aud5',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('aud5',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-aud5">—</div>
+      </div>
+    </div>
+
+    <!-- 領域5: ガバナンス -->
+    <div class="check-section" id="gov-area">
+      <h3>⑤ ガバナンス（Identity Governance）<span style="float:right;font-size:.8rem;font-weight:400;color:#64748b">最大20点</span></h3>
+      <p style="font-size:.82rem;color:#64748b;margin-bottom:12px">ID管理規程・承認フロー・外部委託管理等のガバナンス体制を評価します</p>
+
+      <div class="check-item" data-id="gov1">
+        <div class="check-q">
+          <strong>Q21.</strong> ID管理規程（ポリシー文書）が最新化・経営承認済みで正式に存在するか（2年以内に更新済みであること）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">ISMS・Pマーク取得済み組織でも規程が陳腐化しているケースが多い。更新年月を確認</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('gov1',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('gov1',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('gov1',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-gov1">—</div>
+      </div>
+
+      <div class="check-item" data-id="gov2">
+        <div class="check-q">
+          <strong>Q22.</strong> 権限申請・承認フローが電子化（メール以外の専用ワークフローシステム）されているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">ServiceNow / JIRA Service Management / Sailpoint / Saviynt / Entra ID Governance 等による電子ワークフロー</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('gov2',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('gov2',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('gov2',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-gov2">—</div>
+      </div>
+
+      <div class="check-item" data-id="gov3">
+        <div class="check-q">
+          <strong>Q23.</strong> 定期的な権限棚卸し・アクセス認定（Access Certification）を年1回以上実施し、管理職による確認・承認の記録が残っているか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">IGA ツールのキャンペーン機能 / Excel 台帳での手動実施を含む。記録の保全も重要</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('gov3',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('gov3',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('gov3',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-gov3">—</div>
+      </div>
+
+      <div class="check-item" data-id="gov4">
+        <div class="check-q">
+          <strong>Q24.</strong> IGA（Identity Governance &amp; Administration）ソリューションの導入計画または導入済みか（SailPoint / Saviynt / Entra ID Governance / One Identity 等）
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">計画・検討中は△。PoC完了・本番稼働中は○</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('gov4',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('gov4',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('gov4',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-gov4">—</div>
+      </div>
+
+      <div class="check-item" data-id="gov5">
+        <div class="check-q">
+          <strong>Q25.</strong> 外部委託先・SIer・クラウドベンダーのアクセス権限を個別管理し、作業後の即時無効化フローがあるか
+          <div style="font-size:.78rem;color:#94a3b8;margin-top:3px">VPN/ジャンプサーバー経由のアクセス記録・有効期限設定・完了後の無効化確認まで含む</div>
+        </div>
+        <div class="check-opts">
+          <button class="check-opt circle" onclick="setScore('gov5',4,this)">○</button>
+          <button class="check-opt triangle" onclick="setScore('gov5',2,this)">△</button>
+          <button class="check-opt cross" onclick="setScore('gov5',0,this)">×</button>
+        </div>
+        <div class="check-score" id="sc-gov5">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. スコア解釈 -->
+  <section id="scoring">
+    <h2>3. スコアリング結果解釈</h2>
+    <p>25問の回答完了後、以下の基準でご自社の成熟度を評価してください。</p>
+
+    <div class="score-band optimal">
+      <div class="score-range">🟢 80〜100</div>
+      <div>
+        <strong>最適化期（Optimized）</strong>
+        <div style="font-size:.83rem;color:#334155;margin-top:4px">基本的なセキュリティ管理は高い水準で整備されています。さらなる高度化としてゼロトラストアーキテクチャの完成・FIDO2全社展開・UEBA（ユーザー行動分析）の導入をご検討ください。外部監査・認証取得でも優位な立場を確保できます。</div>
+      </div>
+    </div>
+
+    <div class="score-band good" style="background:#f0fdf4;border-left:5px solid #16a34a">
+      <div class="score-range">🔵 60〜79</div>
+      <div>
+        <strong>改善期（Managed）</strong>
+        <div style="font-size:.83rem;color:#334155;margin-top:4px">基本的なID管理の仕組みは整備済みです。残存する課題（特定領域の低スコア項目）を計画的に対処することで、次のレベルに到達できます。IGA導入・PAM高度化・FIDO2移行計画の策定をお勧めします。</div>
+      </div>
+    </div>
+
+    <div class="score-band warning">
+      <div class="score-range">🟡 40〜59</div>
+      <div>
+        <strong>要強化（Developing）</strong>
+        <div style="font-size:.83rem;color:#334155;margin-top:4px">複数の重要課題が未対処の状態です。特に低スコアの領域（認証管理・特権管理等）を優先して対処してください。全社MFA展開・LAPS導入・SIEM連携は比較的短期間・低コストで実施可能な対策です。</div>
+      </div>
+    </div>
+
+    <div class="score-band caution">
+      <div class="score-range">🟠 20〜39</div>
+      <div>
+        <strong>要緊急対応（Initial）</strong>
+        <div style="font-size:.83rem;color:#334155;margin-top:4px">基本的なセキュリティ管理が不足しており、外部攻撃・内部不正による侵害リスクが高い状態です。管理者MFA適用・監査ログ有効化・休眠アカウント棚卸しを直ちに実施してください。経営層へのエスカレーションを推奨します。</div>
+      </div>
+    </div>
+
+    <div class="score-band critical">
+      <div class="score-range">🔴 0〜19</div>
+      <div>
+        <strong>危機的状況（Ad-hoc）</strong>
+        <div style="font-size:.83rem;color:#334155;margin-top:4px">ID管理の基盤が脆弱であり、ランサムウェア被害・情報漏洩・内部不正のリスクが極めて高い状態です。<strong>即座に経営層・CISO・情報セキュリティ委員会へ報告し、緊急対処計画を策定してください。</strong>外部のセキュリティ専門家（MSSP）への相談も検討してください。</div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:16px">
+      <strong>スコアの留意点:</strong> このチェックリストは定性的な自己評価です。同じ○であっても実装品質は組織によって異なります。外部ペネトレーションテスト・セキュリティ診断サービスと組み合わせることでより正確な現状把握が可能です。
+    </div>
+  </section>
+
+  <!-- 4. 優先対策マッピング -->
+  <section id="priority-map">
+    <h2>4. 領域別評価基準と優先対策マッピング</h2>
+    <p>各領域でスコアが低い場合の推奨アクションと概算コスト・期間を整理します。</p>
+
+    <table class="wbs-table">
+      <thead>
+        <tr>
+          <th>領域</th>
+          <th>低スコア時のリスク</th>
+          <th>推奨対策</th>
+          <th>対応期間目安</th>
+          <th>概算コスト</th>
+          <th>優先度</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>①認証管理</strong></td>
+          <td>不正ログイン・アカウント乗っ取り・フィッシング被害・クレデンシャルスタッフィング攻撃</td>
+          <td>管理者MFA全員適用 → 全社MFA展開（Authenticator） → 条件付きアクセス基本設定 → FIDO2/WHfB 移行計画</td>
+          <td>1〜3ヶ月</td>
+          <td>無料〜月500円/人（Entra P1）</td>
+          <td><span class="tag tag-must">最優先</span></td>
+        </tr>
+        <tr>
+          <td><strong>②アカウント管理</strong></td>
+          <td>不要アカウント悪用・退職者による不正アクセス・内部不正・監査指摘</td>
+          <td>退職者ID即日無効化フロー整備 → PowerShell 棚卸しスクリプト定期実行 → 休眠アカウント自動検出 → IGA 導入検討</td>
+          <td>1〜6ヶ月</td>
+          <td>0円（スクリプト）〜月数万円（IGA）</td>
+          <td><span class="tag tag-high">高</span></td>
+        </tr>
+        <tr>
+          <td><strong>③特権管理</strong></td>
+          <td>横移動（ラテラルムーブメント）・ドメイン全体の掌握・ランサムウェア被害の全社拡大・Pass-the-Hash攻撃</td>
+          <td>Domain Admins 人数削減 → LAPS 導入（無償） → 管理アカウント分離 → Entra PIM / PAM ソリューション導入</td>
+          <td>1〜12ヶ月</td>
+          <td>無料（LAPS・PIM）〜数百万円/年（CyberArk等）</td>
+          <td><span class="tag tag-must">最優先</span></td>
+        </tr>
+        <tr>
+          <td><strong>④監査・ログ</strong></td>
+          <td>インシデント発見遅延・侵害範囲の特定不能・フォレンジック証跡の欠如・規制違反</td>
+          <td>AD 監査ポリシー全有効化 → イベントログ容量拡大・外部転送設定 → Microsoft Sentinel / SIEM 連携 → アラートルール設定</td>
+          <td>1〜3ヶ月</td>
+          <td>無料（GPO設定）〜数十万円/月（Sentinel）</td>
+          <td><span class="tag tag-high">高</span></td>
+        </tr>
+        <tr>
+          <td><strong>⑤ガバナンス</strong></td>
+          <td>コンプライアンス違反・ISO/ISMS審査不合格・内部不正の温床・SoD（職務分離）違反</td>
+          <td>ID管理規程の最新化・経営承認 → 権限申請ワークフロー電子化 → 年次アクセス認定実施 → IGA 導入ロードマップ策定</td>
+          <td>3〜12ヶ月</td>
+          <td>数十万円（規程整備）〜数百万円（IGA導入）</td>
+          <td><span class="tag tag-med">中</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="good">
+      <strong>コスト効率の高い「すぐできる対策」TOP5:</strong><br>
+      ①管理者MFA適用（Entra ID 無料機能）  ②Windows LAPS 導入（無償）  ③AD監査ポリシー有効化（設定変更のみ）  ④休眠アカウント棚卸しスクリプト実行  ⑤Domain Admins グループの人数削減
+    </div>
+  </section>
+
+  <!-- 5. PowerShell スクリプト集 -->
+  <section id="powershell">
+    <div class="phase-header">
+      <h2>5. 棚卸しスクリプト集（PowerShell）</h2>
+      <div class="phase-meta">Active Directory の棚卸し・現状把握に利用できる PowerShell スクリプト集。ドメインコントローラー上またはAD管理ツールインストール済みのWindows端末で実行してください。</div>
+    </div>
+
+    <div class="danger">
+      <strong>実行前の注意:</strong> これらのスクリプトはドメインに参加した Windows Server 上で、Domain Admins またはそれに相当する権限で実行してください。本番環境での実行前に必ずテスト環境での動作確認を行ってください。
+    </div>
+
+    <h3 id="ps-users">5a. ADユーザー一覧取得（全ユーザー・無効アカウント含む）</h3>
+    <p>全ADユーザーを CSV エクスポートします。棚卸しの基礎データとして活用してください。</p>
+    <pre><span class="cm"># AD全ユーザー一覧（無効アカウント含む）</span>
+<span class="kw">Import-Module</span> ActiveDirectory
+<span class="fn">Get-ADUser</span> -Filter * -Properties DisplayName,Enabled,LastLogonDate,PasswordLastSet,MemberOf |
+    <span class="fn">Select-Object</span> SamAccountName,DisplayName,Enabled,LastLogonDate,PasswordLastSet |
+    <span class="fn">Export-Csv</span> -Path <span class="str">".d_users_$(Get-Date -Format yyyyMMdd).csv"</span> -Encoding UTF8 -NoTypeInformation
+<span class="fn">Write-Host</span> <span class="str">"エクスポート完了"</span> -ForegroundColor Green</pre>
+
+    <h3 id="ps-dormant">5b. 休眠アカウント検出（90日以上ログインなし）</h3>
+    <p>90日以上ログインのない有効アカウントを検出します。棚卸し後の無効化対象リストとして活用してください。</p>
+    <pre><span class="cm"># 90日以上ログインなし（有効アカウントのみ）</span>
+<span class="kw">$threshold</span> = (<span class="fn">Get-Date</span>).AddDays(-<span class="num">90</span>)
+<span class="fn">Get-ADUser</span> -Filter {Enabled -eq $true -and LastLogonDate -lt $threshold} `
+    -Properties DisplayName,LastLogonDate,Department,Manager |
+    <span class="fn">Select-Object</span> SamAccountName,DisplayName,LastLogonDate,Department |
+    <span class="fn">Sort-Object</span> LastLogonDate |
+    <span class="fn">Export-Csv</span> -Path <span class="str">".\dormant_accounts_$(Get-Date -Format yyyyMMdd).csv"</span> -Encoding UTF8 -NoTypeInformation</pre>
+
+    <div class="warn">
+      <strong>注意:</strong> <code>LastLogonDate</code> は DC ごとにレプリケーションに最大14日の遅延が生じることがあります。正確な検出には <code>LastLogon</code> を全DCで確認するか、<code>LastLogonTimestamp</code>（14日以内に同期）を使用してください。
+    </div>
+
+    <h3 id="ps-admins">5c. 特権グループのメンバー一覧</h3>
+    <p>Domain Admins / Enterprise Admins / Schema Admins / Administrators グループのメンバーを一覧表示します。</p>
+    <pre><span class="cm"># 特権グループのメンバー一覧</span>
+<span class="kw">$privilegedGroups</span> = @(<span class="str">"Domain Admins"</span>,<span class="str">"Enterprise Admins"</span>,<span class="str">"Schema Admins"</span>,<span class="str">"Administrators"</span>)
+<span class="kw">foreach</span> ($group <span class="kw">in</span> $privilegedGroups) {
+    <span class="fn">Write-Host</span> <span class="str">"=== $group ==="</span> -ForegroundColor Yellow
+    <span class="fn">Get-ADGroupMember</span> -Identity $group -Recursive |
+        <span class="fn">Where-Object</span> {$_.objectClass -eq <span class="str">"user"</span>} |
+        <span class="fn">Get-ADUser</span> -Properties DisplayName,LastLogonDate |
+        <span class="fn">Select-Object</span> SamAccountName,DisplayName,LastLogonDate
+}</pre>
+
+    <h3 id="ps-svc">5d. サービスアカウント候補の検出</h3>
+    <p>パスワード無期限かつユーザーによる変更不可に設定されているアカウントを抽出します。未管理のサービスアカウントを可視化します。</p>
+    <pre><span class="cm"># サービスアカウント候補（パスワード無期限 かつ ユーザーによるパスワード変更不可）</span>
+<span class="fn">Get-ADUser</span> -Filter {PasswordNeverExpires -eq $true -and CannotChangePassword -eq $true} `
+    -Properties DisplayName,PasswordLastSet,LastLogonDate,ServicePrincipalNames |
+    <span class="fn">Select-Object</span> SamAccountName,DisplayName,PasswordLastSet,LastLogonDate,
+        @{N=<span class="str">'SPN数'</span>;E={$_.ServicePrincipalNames.Count}} |
+    <span class="fn">Export-Csv</span> -Path <span class="str">".\service_accounts.csv"</span> -Encoding UTF8 -NoTypeInformation</pre>
+
+    <div class="good">
+      <strong>推奨改善策:</strong> サービスアカウントは可能な限り <code>gMSA（Group Managed Service Account）</code> に移行してください。gMSA はパスワードが AD によって自動ローテーションされるため、パスワード管理の負担と漏洩リスクを大幅に低減できます。
+    </div>
+
+    <h3 id="ps-gpo">5e. グループポリシーオブジェクト（GPO）一覧</h3>
+    <p>全 GPO の一覧と最終更新日・リンク状況を確認します。未使用・長期未更新の GPO を特定できます。</p>
+    <pre><span class="cm"># グループポリシーオブジェクト一覧（リンク先付き）</span>
+<span class="kw">Import-Module</span> GroupPolicy
+<span class="fn">Get-GPO</span> -All | <span class="fn">Select-Object</span> DisplayName,GpoStatus,CreationTime,ModificationTime |
+    <span class="fn">Sort-Object</span> ModificationTime -Descending |
+    <span class="fn">Export-Csv</span> -Path <span class="str">".\gpo_list.csv"</span> -Encoding UTF8 -NoTypeInformation
+
+<span class="cm"># GPOリンク状況（ドメインルートの継承情報）</span>
+<span class="fn">Get-GPInheritance</span> -Target (<span class="fn">Get-ADDomain</span>).DistinguishedName |
+    <span class="fn">Select-Object</span> -ExpandProperty GpoLinks |
+    <span class="fn">Select-Object</span> DisplayName,Enabled,Enforced,Order</pre>
+
+    <div class="card" style="margin-top:14px">
+      <h4>📌 追加で確認すべき PowerShell コマンド</h4>
+      <div class="two-col" style="margin-top:8px">
+        <div>
+          <p style="font-size:.82rem;margin-bottom:6px"><strong>パスワードポリシー確認:</strong></p>
+          <code>Get-ADDefaultDomainPasswordPolicy</code>
+          <p style="font-size:.82rem;margin-top:8px;margin-bottom:6px"><strong>Fine-Grained Password Policy:</strong></p>
+          <code>Get-ADFineGrainedPasswordPolicy -Filter *</code>
+        </div>
+        <div>
+          <p style="font-size:.82rem;margin-bottom:6px"><strong>監査ポリシー確認:</strong></p>
+          <code>auditpol /get /category:*</code>
+          <p style="font-size:.82rem;margin-top:8px;margin-bottom:6px"><strong>LAPS導入状況確認:</strong></p>
+          <code>Get-ADObject -SearchBase (Get-ADDomain).DistinguishedName -Filter {ms-Mcs-AdmPwdExpirationTime -like "*"} -Properties *</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. スコア別推奨アクション -->
+  <section id="actions">
+    <h2>6. スコア別推奨アクション</h2>
+    <p>診断スコアに応じた具体的なアクションプランです。</p>
+
+    <div class="card" style="border-left:4px solid #dc2626;margin-bottom:16px">
+      <h4 style="color:#dc2626">🔴 緊急対応（スコア 0〜39点）— 今すぐやること</h4>
+      <div class="three-col" style="margin-top:10px">
+        <div style="background:#fef2f2;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#991b1b;margin-bottom:6px">⚡ 今週中</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">Domain Admins 全員のMFA適用（Entra ID / Azure MFA）</li>
+            <li style="margin-bottom:4px">Domain Admins メンバー数の棚卸し・不要メンバー除名</li>
+            <li style="margin-bottom:4px">AD 監査ポリシーの有効化（GPO 変更）</li>
+            <li>イベントログ容量を最低 1GB 以上に拡大</li>
+          </ul>
+        </div>
+        <div style="background:#fff7ed;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#92400e;margin-bottom:6px">📅 今月中</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">休眠アカウント棚卸し（PowerShell スクリプト実行）</li>
+            <li style="margin-bottom:4px">Windows LAPS の展開（Server・クライアント端末）</li>
+            <li style="margin-bottom:4px">退職者アカウント無効化手順の整備</li>
+            <li>サービスアカウント一覧の作成</li>
+          </ul>
+        </div>
+        <div style="background:#fef9c3;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#a16207;margin-bottom:6px">🗓 3ヶ月以内</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">全社員MFA展開ロードマップ策定・展開開始</li>
+            <li style="margin-bottom:4px">ログ外部転送（SIEM / Sentinel）の構築</li>
+            <li style="margin-bottom:4px">ID管理規程の整備・経営承認</li>
+            <li>経営層向けセキュリティ現状報告の実施</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #f97316;margin-bottom:16px">
+      <h4 style="color:#f97316">🟠 要強化（スコア 40〜59点）— 優先アクション</h4>
+      <div class="two-col" style="margin-top:10px">
+        <div style="background:#fff7ed;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#92400e;margin-bottom:6px">🎯 優先対策（〜6ヶ月）</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">全社員向け MFA 展開完了（Entra Authenticator）</li>
+            <li style="margin-bottom:4px">条件付きアクセス（Conditional Access）の基本設定</li>
+            <li style="margin-bottom:4px">Entra PIM（Privileged Identity Management）の導入</li>
+            <li style="margin-bottom:4px">SIEM / Microsoft Sentinel によるログ集約・アラート設定</li>
+            <li>棚卸し・アクセス認定の自動化（IGA 検討開始）</li>
+          </ul>
+        </div>
+        <div style="background:#fff7ed;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#92400e;margin-bottom:6px">📋 中期計画（〜12ヶ月）</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">PAM ソリューション（CyberArk / BeyondTrust）の PoC・導入</li>
+            <li style="margin-bottom:4px">サービスアカウントの gMSA 移行計画</li>
+            <li style="margin-bottom:4px">外部委託先アクセス管理の仕組み化</li>
+            <li>Microsoft Defender for Identity（旧 Azure ATP）の導入</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #3b82f6;margin-bottom:16px">
+      <h4 style="color:#1e40af">🔵 改善期（スコア 60〜79点）— 次のステップ</h4>
+      <div class="two-col" style="margin-top:10px">
+        <div style="background:#eff6ff;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#1e40af;margin-bottom:6px">🚀 高度化施策</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">FIDO2 / Windows Hello for Business への全社移行計画</li>
+            <li style="margin-bottom:4px">IGA ソリューション（SailPoint / Saviynt / Entra Governance）の導入</li>
+            <li style="margin-bottom:4px">ゼロトラストアーキテクチャの設計・段階的実装</li>
+            <li style="margin-bottom:4px">PAM の高度化（セッション録画・Just Enough Access）</li>
+            <li>Entra Workload ID（非人間 ID の管理）への対応</li>
+          </ul>
+        </div>
+        <div style="background:#eff6ff;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#1e40af;margin-bottom:6px">📊 成熟度向上</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">AD → Entra ID への段階的移行計画（Hybrid Join → Cloud Only）</li>
+            <li style="margin-bottom:4px">Entra Internet Access / Private Access によるネットワーク近代化</li>
+            <li style="margin-bottom:4px">ID セキュリティポスチャのスコアリング・定期レビュー体制</li>
+            <li>外部インフラ（AWS / GCP / Salesforce 等）との SSO 統合整備</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #16a34a;margin-bottom:16px">
+      <h4 style="color:#166534">🟢 最適化期（スコア 80〜100点）— さらなる高度化</h4>
+      <div class="three-col" style="margin-top:10px">
+        <div style="background:#f0fdf4;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#166534;margin-bottom:6px">🏆 次世代技術</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">UEBA（ユーザー・エンティティ行動分析）の導入</li>
+            <li style="margin-bottom:4px">AI/ML を活用した脅威インテリジェンス統合</li>
+            <li>継続的アクセス評価（CAE）の完全実装</li>
+          </ul>
+        </div>
+        <div style="background:#f0fdf4;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#166534;margin-bottom:6px">🔬 自動化・効率化</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">ゼロタッチプロビジョニング（HR→AD→SaaS自動連携）</li>
+            <li style="margin-bottom:4px">AI 駆動のアクセス推奨・異常検知</li>
+            <li>SOAR（セキュリティオーケストレーション）との連携</li>
+          </ul>
+        </div>
+        <div style="background:#f0fdf4;border-radius:6px;padding:12px">
+          <div style="font-size:.78rem;font-weight:700;color:#166534;margin-bottom:6px">🌐 エコシステム拡張</div>
+          <ul style="padding-left:14px;font-size:.82rem;color:#1e293b">
+            <li style="margin-bottom:4px">非人間 ID（API・ワークロード）のガバナンス整備</li>
+            <li style="margin-bottom:4px">サプライチェーンリスク管理（取引先 ID の統合管理）</li>
+            <li>分散型 ID（DID / Verifiable Credentials）の検討</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div style="margin-top:48px;padding-top:20px;border-top:1px solid #e2e8f0;font-size:.78rem;color:#94a3b8">
+    <p>本ドキュメントは <strong>エンタープライズ IDM ナレッジベース</strong> の一部です。</p>
+    <p>参考: Microsoft Learn / NIST SP 800-63 / CIS Benchmark for Active Directory / ISO/IEC 27001:2022 / MITRE ATT&amp;CK for Enterprise</p>
+    <p style="margin-top:8px">Active Directory, Entra ID, Microsoft Sentinel, Windows LAPS, Microsoft Defender for Identity は Microsoft Corporation の商標または登録商標です。CyberArk は CyberArk Software Ltd. の商標です。BeyondTrust は BeyondTrust Corporation の商標です。</p>
+  </div>
+</main>
+
+<script>
+const scores = {};
+
+function setScore(id, val, btn) {
+  scores[id] = val;
+  const item = btn.closest('.check-item');
+  item.querySelectorAll('.check-opt').forEach(b => b.style.opacity = '0.4');
+  btn.style.opacity = '1';
+  btn.style.outline = '3px solid #3b82f6';
+  item.querySelectorAll('.check-opt').forEach(b => { if(b !== btn) b.style.outline = 'none'; });
+  document.getElementById('sc-' + id).textContent = val + 'pt';
+  updateTotal();
+}
+
+function updateTotal() {
+  const ids = ['auth1','auth2','auth3','auth4','auth5',
+               'acc1','acc2','acc3','acc4','acc5',
+               'priv1','priv2','priv3','priv4','priv5',
+               'aud1','aud2','aud3','aud4','aud5',
+               'gov1','gov2','gov3','gov4','gov5'];
+  let total = 0;
+  let answered = 0;
+  ids.forEach(id => {
+    if (scores[id] !== undefined) { total += scores[id]; answered++; }
+  });
+  document.getElementById('score-val').textContent = total;
+  const pct = (total / 100) * 100;
+  document.getElementById('score-bar').style.width = pct + '%';
+
+  let interp = '';
+  if (answered < ids.length) {
+    interp = '未回答: ' + (ids.length - answered) + '問';
+  } else if (total >= 80) {
+    interp = '🟢 最適化期（Optimized）';
+  } else if (total >= 60) {
+    interp = '🔵 改善期（Managed）';
+  } else if (total >= 40) {
+    interp = '🟡 要強化（Developing）';
+  } else if (total >= 20) {
+    interp = '🟠 要緊急対応（Initial）';
+  } else {
+    interp = '🔴 危機的状況（Ad-hoc）';
+  }
+  document.getElementById('score-interp').textContent = interp;
+
+  // color score bar
+  const bar = document.getElementById('score-bar');
+  if (total >= 80) bar.style.background = 'linear-gradient(90deg,#16a34a,#22c55e)';
+  else if (total >= 60) bar.style.background = 'linear-gradient(90deg,#3b82f6,#06b6d4)';
+  else if (total >= 40) bar.style.background = 'linear-gradient(90deg,#eab308,#f59e0b)';
+  else if (total >= 20) bar.style.background = 'linear-gradient(90deg,#f97316,#fb923c)';
+  else bar.style.background = 'linear-gradient(90deg,#dc2626,#ef4444)';
+}
+
+// TOC active highlight on scroll
+const sections = document.querySelectorAll('section[id], div[id]');
+const tocLinks = document.querySelectorAll('#toc a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  tocLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+</body>
+</html>

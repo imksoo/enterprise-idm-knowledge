@@ -3,176 +3,801 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>2029年問題：Windows Server/MIM EOL対応 緊急アラート</title>
+<title>2029年 Windows Server / Active Directory EOL警告 — CIO・インフラ担当向け</title>
 <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Helvetica Neue","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+.tag-eol{background:#ede9fe;color:#6d28d9}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.step-flow{display:flex;gap:0;margin:14px 0;overflow-x:auto}
+.step{background:#3b82f6;color:#fff;padding:10px 14px;flex:1;min-width:110px;text-align:center;font-size:.75rem;position:relative}
+.step:not(:last-child)::after{content:"&#9654;";position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:1;color:#1e3a5f;font-size:1rem}
+.step:nth-child(2){background:#2563eb}
+.step:nth-child(3){background:#1d4ed8}
+.step:nth-child(4){background:#1e40af}
+.step:nth-child(5){background:#1e3a8a}
+.step-num{font-size:.65rem;opacity:.8;display:block;margin-bottom:3px}
 
-  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
-  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
-  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
-  .hero p{font-size:1.1em;opacity:.85;margin:0}
-  .container{max-width:1100px;margin:40px auto;padding:0 30px}
-  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
-  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
-  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  table{width:100%;border-collapse:collapse;margin:16px 0}
-  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
-  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
-  tr:nth-child(even) td{background:#f8f9fa}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
-  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700}
-  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
-  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
-  @media print{body{background:#fff}.hero{padding:30px}.card{box-shadow:none;border:1px solid #ddd}}
+/* EOL カレンダー テーブル強調 */
+.eol-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.82rem}
+.eol-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.eol-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:middle}
+.eol-table tr:nth-child(even) td{background:#f8fafc}
+.eol-table tr:hover td{background:#eff6ff}
+.eol-status-eol{background:#fef2f2;color:#dc2626;font-weight:700;border-radius:4px;padding:2px 8px;display:inline-block;font-size:.75rem}
+.eol-status-warn{background:#fef9c3;color:#92400e;font-weight:700;border-radius:4px;padding:2px 8px;display:inline-block;font-size:.75rem}
+.eol-status-ok{background:#f0fdf4;color:#166534;font-weight:700;border-radius:4px;padding:2px 8px;display:inline-block;font-size:.75rem}
+.eol-status-esu{background:#ede9fe;color:#6d28d9;font-weight:700;border-radius:4px;padding:2px 8px;display:inline-block;font-size:.75rem}
+.eol-highlight td{background:#fff0f0 !important;border-left:3px solid #dc2626}
+.eol-highlight td:first-child{font-weight:700;color:#dc2626}
 
-.alert-banner{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;padding:30px;text-align:center;border-radius:12px;margin-bottom:24px}
-.alert-banner h2{font-size:2em;margin:0 0 10px}
-.countdown{display:flex;gap:16px;justify-content:center;margin:16px 0;flex-wrap:wrap}
-.cd-item{background:#fff;color:#c0392b;border-radius:10px;padding:16px 24px;text-align:center;min-width:100px}
-.cd-num{font-size:2.5em;font-weight:700;line-height:1}
-.cd-label{font-size:.8em;color:#666;margin-top:4px}
-.timeline{position:relative;padding-left:40px;margin:20px 0}
-.timeline::before{content:"";position:absolute;left:16px;top:0;bottom:0;width:3px;background:#e9ecef}
-.tl-item{position:relative;margin-bottom:24px}
-.tl-item::before{content:"";position:absolute;left:-30px;top:4px;width:14px;height:14px;border-radius:50%;background:#0f3460;border:3px solid #fff;box-shadow:0 0 0 2px #0f3460}
-.tl-critical::before{background:#e63946}
-.tl-date{font-size:.85em;color:#666;font-weight:600}
-.tl-title{font-weight:700;color:#1a1a2e;margin:2px 0}
-.tl-desc{font-size:.9em;color:#444}
-.product-eol{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin:20px 0}
-.eol-card{background:#fff0f0;border:2px solid #e63946;border-radius:10px;padding:16px}
-.eol-card h3{color:#c0392b;margin:0 0 8px;font-size:1em}
+/* EOL後リスクカード */
+.eol-risk-card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;border-top:4px solid #dc2626;padding:14px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.eol-risk-card.warn-top{border-top-color:#d97706}
+.eol-risk-card.purple-top{border-top-color:#7c3aed}
+.eol-risk-card.blue-top{border-top-color:#2563eb}
+.eol-risk-card h4{margin-top:0;color:#1e293b;font-size:.9rem}
+.eol-risk-card .eol-risk-cost{font-size:1.2rem;font-weight:800;color:#dc2626;margin:4px 0}
+.eol-risk-card.warn-top .eol-risk-cost{color:#d97706}
+.eol-risk-card.purple-top .eol-risk-cost{color:#7c3aed}
+.eol-risk-card.blue-top .eol-risk-cost{color:#2563eb}
+.eol-risk-card ul{padding-left:16px;font-size:.8rem;color:#475569;margin-top:8px}
+.eol-risk-card li{margin-bottom:4px}
+
+/* 選択肢比較テーブル */
+.option-compare{width:100%;border-collapse:collapse;margin:16px 0;font-size:.82rem}
+.option-compare th{padding:8px 10px;text-align:left;font-weight:600}
+.option-compare th:nth-child(1){background:#64748b;color:#fff;width:120px}
+.option-compare th:nth-child(2){background:#dc2626;color:#fff}
+.option-compare th:nth-child(3){background:#d97706;color:#fff}
+.option-compare th:nth-child(4){background:#16a34a;color:#fff}
+.option-compare td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.option-compare tr:nth-child(even) td{background:#f8fafc}
+.option-compare tr:hover td{background:#eff6ff}
+.option-compare td:nth-child(1){font-weight:600;color:#475569;background:#f1f5f9}
+.opt-bad{color:#dc2626}
+.opt-warn{color:#d97706}
+.opt-good{color:#16a34a}
+
+/* CSS ガントチャート */
+.gantt-container{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:16px 20px;margin:16px 0;overflow-x:auto}
+.gantt-header{display:grid;grid-template-columns:160px repeat(12,1fr);gap:0;margin-bottom:6px}
+.gantt-header .gh-label{font-size:.65rem;font-weight:700;color:#64748b;padding:2px 4px;text-align:center}
+.gantt-header .gh-label:first-child{text-align:left;color:#1e293b}
+.gantt-row{display:grid;grid-template-columns:160px repeat(12,1fr);gap:0;margin-bottom:3px;align-items:center;min-height:26px}
+.gantt-row .gr-label{font-size:.75rem;font-weight:600;color:#334155;padding:2px 6px 2px 0;line-height:1.3}
+.gantt-row .gr-label.cat{font-size:.72rem;color:#64748b;font-weight:400;padding-left:8px}
+.gantt-bar{border-radius:3px;height:18px;margin:1px 1px;font-size:.62rem;color:#fff;font-weight:600;display:flex;align-items:center;padding:0 5px;white-space:nowrap;overflow:hidden}
+.gb-red{background:#dc2626}
+.gb-orange{background:#d97706}
+.gb-green{background:#16a34a}
+.gb-blue{background:#2563eb}
+.gb-purple{background:#7c3aed}
+.gb-gray{background:#94a3b8}
+.gb-teal{background:#0d9488}
+.gantt-divider{grid-column:1/-1;border-top:1px dashed #e2e8f0;margin:4px 0}
+
+/* NSSolサービスメニュー */
+.service-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.service-card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);border-top:3px solid #2563eb}
+.service-card.sc-orange{border-top-color:#d97706}
+.service-card.sc-green{border-top-color:#16a34a}
+.service-card.sc-purple{border-top-color:#7c3aed}
+.service-card h4{margin-top:0;font-size:.88rem;color:#1e293b}
+.service-card .sc-phase{font-size:.68rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.service-card .sc-price{font-size:.8rem;font-weight:700;color:#2563eb;margin-top:6px}
+.service-card.sc-orange .sc-price{color:#d97706}
+.service-card.sc-green .sc-price{color:#16a34a}
+.service-card.sc-purple .sc-price{color:#7c3aed}
+.service-card ul{padding-left:16px;font-size:.78rem;color:#475569;margin-top:6px}
+.service-card li{margin-bottom:3px}
+
+@media(max-width:900px){#toc{display:none}main{margin-left:0;padding:20px}}
 </style>
 </head>
 <body>
-<div class="hero" style="background:linear-gradient(135deg,#7f0000 0%,#c0392b 60%,#1a1a2e 100%)">
-  <h1>⚠️ 2029年問題 緊急アラート</h1>
-  <p>Windows Server 2019 & MIM 2016 が 2029年1月9日 にサポート終了 ― 今から動き始めないと間に合わない</p>
-</div>
-<div class="container">
 
-<div class="alert-banner">
-  <h2>2029年1月9日 まで残り約 2年3ヶ月</h2>
-  <p>ID管理システムの全面刷新には最低18ヶ月かかります。<strong>今から計画しないと間に合いません。</strong></p>
-  <div class="countdown">
-    <div class="cd-item"><div class="cd-num">27</div><div class="cd-label">ヶ月</div></div>
-    <div class="cd-item"><div class="cd-num">≈</div><div class="cd-label"></div></div>
-    <div class="cd-item"><div class="cd-num">2026</div><div class="cd-label">年10月に計画開始</div></div>
-    <div class="cd-item"><div class="cd-num">→</div><div class="cd-label"></div></div>
-    <div class="cd-item"><div class="cd-num">2028</div><div class="cd-label">年春に移行完了</div></div>
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#overview">&#128683; EOL警告 概要</a>
+  <a href="#eol-calendar">&#128197; EOLカレンダー一覧</a>
+  <a class="toc-sub" href="#eol-calendar">Windows Server系</a>
+  <a class="toc-sub" href="#eol-calendar">MIM / その他</a>
+  <a href="#eol-risks">&#9888; EOL後の具体的リスク</a>
+  <a class="toc-sub" href="#risk-security">セキュリティリスク</a>
+  <a class="toc-sub" href="#risk-cost">ESU費用増大</a>
+  <a class="toc-sub" href="#risk-audit">監査・コンプライアンス</a>
+  <a class="toc-sub" href="#risk-support">サポート撤退</a>
+  <a href="#eol-options">&#128260; 対応3選択肢比較</a>
+  <a class="toc-sub" href="#eol-options">ESU延命</a>
+  <a class="toc-sub" href="#eol-options">インフラ移行</a>
+  <a class="toc-sub" href="#eol-options">クラウド移行</a>
+  <a href="#timeline">&#128200; 推奨タイムライン</a>
+  <a class="toc-sub" href="#timeline">2025〜2030 ガント</a>
+  <a href="#nssol-services">&#127981; NSSolサービスメニュー</a>
+  <a class="toc-sub" href="#nssol-services">現状調査</a>
+  <a class="toc-sub" href="#nssol-services">計画策定</a>
+  <a class="toc-sub" href="#nssol-services">移行支援</a>
+  <a class="toc-sub" href="#nssol-services">運用サポート</a>
+  <h2>参考</h2>
+  <a href="#appendix">&#128206; FAQ・補足資料</a>
+</nav>
+
+<main>
+<h1>2029年 Windows Server / Active Directory EOL警告</h1>
+<p class="subtitle">CIO・情報システム部長・インフラ担当向け 対応計画ガイド — NSSol Identity Management Team</p>
+
+<!-- ===== 概要 ===== -->
+<section id="overview">
+<div class="phase-header">
+  <h2>&#128683; EOL警告 概要</h2>
+  <div class="phase-meta">2025〜2029年に集中するWindows Server・IDM製品のサポート終了と対応の緊急性</div>
+</div>
+<div class="danger">
+  &#128683; <strong>緊急警告：</strong>Windows Server 2019 の延長サポートが <strong>2029年1月9日</strong> に終了します。日本の多くの企業がこのバージョンを基幹インフラとして使用しており、対応計画が未着手の場合、2028年中に移行を完了することが困難になります。今すぐ計画を開始してください。
+</div>
+<div class="three-col">
+  <div class="card">
+    <h4>&#128683; 2026年 重大EOL</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li><strong>MIM 2016</strong>: 2026年7月14日</li>
+      <li>延長サポート終了でパッチなし</li>
+      <li>プロビジョニング停止リスク</li>
+      <li>代替：Entra ID Governance等</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>&#9888; 2029年 最大波</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li><strong>Windows Server 2019</strong>: 2029年1月9日</li>
+      <li><strong>Windows Server 2016</strong>: 2027年1月12日</li>
+      <li>国内採用率 合計約60%</li>
+      <li>対応期間は2〜3年必要</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>&#128176; ESU費用の現実</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li>Year 1: ライセンス費の75%追加</li>
+      <li>Year 2: ライセンス費の100%追加</li>
+      <li>Year 3: ライセンス費の125%追加</li>
+      <li>3年累積で<strong>実質3倍以上</strong></li>
+    </ul>
   </div>
 </div>
+<div class="step-flow">
+  <div class="step"><span class="step-num">2025年</span>計画策定<br>アセスメント</div>
+  <div class="step"><span class="step-num">2026年</span>MIM EOL<br>IGA移行</div>
+  <div class="step"><span class="step-num">2027年</span>WS2016 EOL<br>移行加速</div>
+  <div class="step"><span class="step-num">2028年</span>WS2019移行<br>完了目標</div>
+  <div class="step"><span class="step-num">2029年</span>WS2019 EOL<br>全移行完了</div>
+</div>
+</section>
 
-<div class="card">
-  <h2>サポート終了する製品と影響範囲</h2>
-  <div class="product-eol">
-    <div class="eol-card">
-      <h3>🖥️ Windows Server 2019</h3>
-      <p><strong>EOL</strong>：2029年1月9日</p>
-      <p><strong>影響</strong>：ドメインコントローラー（AD）として利用している場合、セキュリティパッチが出なくなる</p>
-      <p><strong>対応</strong>：Windows Server 2025への移行（または後継ADクラウド化）</p>
-    </div>
-    <div class="eol-card">
-      <h3>🔧 MIM 2016 SP2</h3>
-      <p><strong>EOL</strong>：2029年1月9日</p>
-      <p><strong>重要</strong>：後継製品が<strong>存在しない</strong>。Microsoftが機能をEntra IDに移行する方針</p>
-      <p><strong>対応</strong>：Entra ID Governance、SailPoint、Saviynt等への全面移行が必要</p>
-    </div>
-    <div class="eol-card" style="background:#fff9e0;border-color:#f39c12">
-      <h3 style="color:#856404">📋 ADFS 3.0（WS2016同梱）</h3>
-      <p><strong>EOL</strong>：2027年1月12日（先に終了！）</p>
-      <p><strong>影響</strong>：ADFSでSSO提供している場合、2027年までに移行が必要</p>
-      <p><strong>対応</strong>：Entra ID SSO/Entra External IDへの移行</p>
-    </div>
-  </div>
+<!-- ===== EOLカレンダー ===== -->
+<section id="eol-calendar">
+<div class="phase-header">
+  <h2>&#128197; Section 1: EOLカレンダー一覧表</h2>
+  <div class="phase-meta">Windows Server・MIM 2016・関連製品のサポート終了日と現在の対応状況</div>
 </div>
 
-<div class="card">
-  <h2>なぜ「2年あるから大丈夫」ではないのか</h2>
-  <div class="highlight">
-    <strong>IT刷新プロジェクトに必要な時間の現実</strong>
-  </div>
-  <table>
-    <tr><th>フェーズ</th><th>作業内容</th><th>期間目安</th></tr>
-    <tr><td>① 現状調査・要件定義</td><td>現在のID管理の棚卸し、移行要件の整理</td><td>3〜4ヶ月</td></tr>
-    <tr><td>② 製品選定・調達</td><td>RFP作成、ベンダー選定、契約</td><td>2〜3ヶ月</td></tr>
-    <tr><td>③ 設計・構築</td><td>新システムの設計・構築・テスト</td><td>4〜6ヶ月</td></tr>
-    <tr><td>④ 移行・並行運用</td><td>全ユーザーの移行・動作確認</td><td>3〜4ヶ月</td></tr>
-    <tr><td>⑤ 安定化</td><td>移行後の問題対応・チューニング</td><td>2〜3ヶ月</td></tr>
-    <tr><td style="font-weight:700">合計</td><td style="font-weight:700">最低所要期間</td><td style="font-weight:700;color:#e63946">18〜20ヶ月</td></tr>
-  </table>
-  <div class="danger">
-    <strong>逆算すると</strong>：2029年1月のEOLに間に合わせるには、遅くとも<strong>2027年6月には移行完了</strong>が必要。つまり<strong>2026年中に意思決定・計画開始</strong>が必須です。
-  </div>
+<div class="danger">
+  &#128308; <strong>2029年1月9日：Windows Server 2019 延長サポート終了</strong> — 最も重要なデッドラインです。多くの日本企業の主要インフラが一斉にEOLを迎えます。
 </div>
 
-<div class="card">
-  <h2>アクションタイムライン</h2>
-  <div class="timeline">
-    <div class="tl-item tl-critical">
-      <div class="tl-date">2026年中（今すぐ）</div>
-      <div class="tl-title">★ 意思決定・予算承認</div>
-      <div class="tl-desc">移行方針を決定し、予算を承認する。この決断が最も重要。</div>
-    </div>
-    <div class="tl-item">
-      <div class="tl-date">2026年末〜2027年3月</div>
-      <div class="tl-title">現状調査・製品選定</div>
-      <div class="tl-desc">現在のID管理の棚卸し。MIM代替製品（Entra ID Gov/SailPoint等）の選定・契約。</div>
-    </div>
-    <div class="tl-item">
-      <div class="tl-date">2027年4月〜2027年9月</div>
-      <div class="tl-title">構築・テスト</div>
-      <div class="tl-desc">新ID管理基盤の構築・テスト・ユーザー受け入れテスト（UAT）。</div>
-    </div>
-    <div class="tl-item">
-      <div class="tl-date">2027年10月〜2027年12月</div>
-      <div class="tl-title">移行・並行運用</div>
-      <div class="tl-desc">全ユーザーを新システムへ移行。旧システムとの並行稼働で安全に切り替え。</div>
-    </div>
-    <div class="tl-item tl-critical">
-      <div class="tl-date">2028年3月（目標）</div>
-      <div class="tl-title">★ 移行完了・旧システム廃止</div>
-      <div class="tl-desc">MIM・旧ADサーバーを廃止。2029年1月のEOLに約10ヶ月の余裕を持って完了。</div>
-    </div>
-  </div>
-</div>
-
-<div class="card">
-  <h2>移行先の選択肢</h2>
-  <table>
-    <tr><th>移行方向</th><th>適した企業</th><th>費用感</th><th>ポイント</th></tr>
+<h3>Windows Server 系 EOLカレンダー</h3>
+<table class="eol-table">
+  <thead>
     <tr>
-      <td><strong>Entra ID + Entra ID Governance</strong><br><small>（Microsoft純正クラウド）</small></td>
-      <td>Microsoft 365を使っている企業</td>
-      <td>ライセンス月額追加（1人あたり+数百〜千円）</td>
-      <td>Microsoft依存が深まるが運用が一元化。2029年以降も継続サポート確実</td>
+      <th>製品名</th>
+      <th>リリース年</th>
+      <th>一般サポート終了</th>
+      <th>延長サポート終了</th>
+      <th>状態</th>
+      <th>ESU提供</th>
+      <th>推奨対応</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Windows Server 2012 R2</strong></td>
+      <td>2013年</td>
+      <td>2018年10月9日</td>
+      <td>2023年10月10日</td>
+      <td><span class="eol-status-eol">EOL済</span></td>
+      <td>ESU Year3（〜2026年10月）</td>
+      <td><span class="tag tag-must">即時移行</span></td>
     </tr>
     <tr>
-      <td><strong>SailPoint Identity Security Cloud</strong></td>
-      <td>中〜大規模企業（3000名〜）、金融・製造</td>
-      <td>年間2000〜8000万円</td>
-      <td>機能豊富・大規模実績多数。IdP非依存で柔軟</td>
+      <td><strong>Windows Server 2016</strong></td>
+      <td>2016年</td>
+      <td>2022年1月11日</td>
+      <td>2027年1月12日</td>
+      <td><span class="eol-status-warn">要対応</span></td>
+      <td>ESUなし（Azureは別途）</td>
+      <td><span class="tag tag-high">2026年中に移行開始</span></td>
+    </tr>
+    <tr class="eol-highlight">
+      <td><strong>Windows Server 2019</strong></td>
+      <td>2018年</td>
+      <td>2024年1月9日</td>
+      <td><strong>2029年1月9日</strong></td>
+      <td><span class="eol-status-warn">★ 最重要</span></td>
+      <td>ESUあり（最大3年）</td>
+      <td><span class="tag tag-must">2028年中に移行完了</span></td>
     </tr>
     <tr>
-      <td><strong>Saviynt</strong></td>
-      <td>クラウドファースト企業、SaaS利用が多い企業</td>
-      <td>年間1500〜5000万円</td>
-      <td>クラウドネイティブ設計。SaaS連携に強い</td>
+      <td><strong>Windows Server 2022</strong></td>
+      <td>2021年</td>
+      <td>2026年10月13日</td>
+      <td>2031年10月13日</td>
+      <td><span class="eol-status-ok">サポート中</span></td>
+      <td>未定</td>
+      <td><span class="tag tag-low">2031年まで継続可</span></td>
     </tr>
     <tr>
-      <td><strong>Entra ID + オンプレAD存続</strong><br><small>（ハイブリッド移行）</small></td>
-      <td>オンプレシステムが多い製造業・インフラ企業</td>
-      <td>Entra P1ライセンス + 構築費500万〜</td>
-      <td>現実的な段階移行。ADを即廃止しない中間策</td>
+      <td><strong>Windows Server 2025</strong></td>
+      <td>2024年</td>
+      <td>2029年10月9日</td>
+      <td>2034年10月9日</td>
+      <td><span class="eol-status-ok">最新版</span></td>
+      <td>未定</td>
+      <td><span class="tag tag-low">移行先候補（オンプレ）</span></td>
     </tr>
-  </table>
+  </tbody>
+</table>
+
+<h3>MIM 2016・その他IDM関連製品</h3>
+<table class="eol-table">
+  <thead>
+    <tr>
+      <th>製品名</th>
+      <th>用途</th>
+      <th>一般サポート終了</th>
+      <th>延長サポート終了</th>
+      <th>状態</th>
+      <th>推奨移行先</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="eol-highlight">
+      <td><strong>Microsoft Identity Manager 2016</strong></td>
+      <td>IDプロビジョニング・パスワード同期</td>
+      <td>2021年1月12日</td>
+      <td><strong>2026年7月14日</strong></td>
+      <td><span class="eol-status-eol">延長のみ</span></td>
+      <td>Entra ID Governance / Saviynt / SailPoint</td>
+    </tr>
+    <tr>
+      <td><strong>Active Directory Federation Services 2.0</strong></td>
+      <td>フェデレーション認証</td>
+      <td>2018年</td>
+      <td>WS2016/2019 に依存</td>
+      <td><span class="eol-status-warn">OS依存</span></td>
+      <td>Entra ID 外部フェデレーション / Okta</td>
+    </tr>
+    <tr>
+      <td><strong>OpenLDAP 2.4.x</strong></td>
+      <td>LDAPディレクトリ（RHEL 7搭載）</td>
+      <td>非公式（2.5以降へ移行）</td>
+      <td>RHEL 7 EOL（2024年6月30日）で実質終了</td>
+      <td><span class="eol-status-eol">EOL済</span></td>
+      <td>Red Hat IdM / 389 Directory Server / Entra ID</td>
+    </tr>
+    <tr>
+      <td><strong>RHEL 7（CentOS 7）</strong></td>
+      <td>LinuxサーバーOS</td>
+      <td>2019年8月6日</td>
+      <td>2024年6月30日</td>
+      <td><span class="eol-status-eol">EOL済</span></td>
+      <td>RHEL 8 / RHEL 9 / AlmaLinux 9</td>
+    </tr>
+    <tr>
+      <td><strong>RHEL 8</strong></td>
+      <td>LinuxサーバーOS</td>
+      <td>2024年5月31日</td>
+      <td>2029年5月31日</td>
+      <td><span class="eol-status-ok">サポート中</span></td>
+      <td>RHEL 9 への将来移行を計画</td>
+    </tr>
+    <tr>
+      <td><strong>Red Hat Directory Server 11 (RHEL 8)</strong></td>
+      <td>LDAPディレクトリ（Red Hat商用版）</td>
+      <td>2019年11月6日</td>
+      <td>2029年5月21日</td>
+      <td><span class="eol-status-ok">サポート中</span></td>
+      <td>RHDS 12 (RHEL 9) または Red Hat IdM</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="warn">
+  &#9888; <strong>Windows Server 2016 は2027年1月12日にEOL：</strong> 2025年現在、移行着手していない場合、残り約2年です。大規模環境では2024年中に移行計画を策定し、2025〜2026年に移行作業を完了させる必要があります。
+</div>
+</section>
+
+<!-- ===== EOL後のリスク ===== -->
+<section id="eol-risks">
+<div class="phase-header">
+  <h2>&#9888; Section 2: EOL後の具体的リスク</h2>
+  <div class="phase-meta">セキュリティパッチなし / ESU費用増 / 監査指摘 / サポート撤退 — 4大リスクの詳細</div>
 </div>
 
+<div class="four-col" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+  <div id="risk-security" class="eol-risk-card">
+    <h4>&#128308; ① セキュリティパッチなしで脆弱性が蓄積</h4>
+    <div class="eol-risk-cost">CVE蓄積：月10〜30件</div>
+    <p style="font-size:.8rem;color:#475569;margin-top:6px">EOL後のWindows Serverには、Microsoftからセキュリティ更新プログラムが提供されなくなります。OSカーネル・Active Directoryサービス・Kerberos実装に発見された脆弱性は<strong>未修正のまま残存</strong>し、攻撃対象になります。</p>
+    <ul>
+      <li>Kerberoasting / Pass-the-Hash 攻撃の成功率向上</li>
+      <li>ゼロデイ脆弱性が公開情報として攻撃に利用される</li>
+      <li>ランサムウェアグループはEOL製品を優先的に狙う</li>
+      <li>ESU未契約時はYear1翌日からパッチゼロ</li>
+    </ul>
+  </div>
+
+  <div id="risk-cost" class="eol-risk-card warn-top">
+    <h4>&#128993; ② ESU（延長セキュリティ更新）費用の逓増</h4>
+    <div class="eol-risk-cost">3年累計：ライセンス費の3倍超</div>
+    <p style="font-size:.8rem;color:#475569;margin-top:6px">MicrosoftはEOL後もESUを最大3年間提供しますが、費用はライセンス費の<strong>75% / 100% / 125%</strong>が毎年加算されます。Azure上での利用は無償ですが、オンプレミスでは追加費用が不可避です。</p>
+    <ul>
+      <li>Windows Server 2019: ESU Year1〜3（2029〜2032年）で逓増</li>
+      <li>Windows Server 2012 R2: ESU Year3まで（〜2026年10月）</li>
+      <li>ESU期間終了後は完全にパッチなしとなる</li>
+      <li>ESU費用は移行コストの一部に充当できない「消費的支出」</li>
+    </ul>
+  </div>
+
+  <div id="risk-audit" class="eol-risk-card purple-top">
+    <h4>&#128995; ③ 監査・コンプライアンス指摘</h4>
+    <div class="eol-risk-cost">PCI DSS: 不適合 / ISMS: 指摘必至</div>
+    <p style="font-size:.8rem;color:#475569;margin-top:6px">PCI DSS v4.0、ISMS（ISO 27001）、J-SOX、金融機関向けFISC安全対策基準はいずれも「サポートされているソフトウェア・OSの使用」を要件として規定しています。EOL製品の継続使用は<strong>審査での不適合・指摘事項</strong>として記録されます。</p>
+    <ul>
+      <li>PCI DSS 6.3.3: セキュリティパッチの適時適用が必須</li>
+      <li>ISMS A.8.8: 技術的脆弱性の管理（EOL製品は管理不能）</li>
+      <li>J-SOX: IT全般統制評価での指摘が財務報告リスクに波及</li>
+      <li>監査法人・外部審査員によるASMR是正要求が増加</li>
+    </ul>
+  </div>
+
+  <div id="risk-support" class="eol-risk-card blue-top">
+    <h4>&#128994; ④ ベンダー・SIerサポートの撤退</h4>
+    <div class="eol-risk-cost">障害対応工数：最大10倍増</div>
+    <p style="font-size:.8rem;color:#475569;margin-top:6px">EOL製品に対しては、Microsoft社による技術サポート（問い合わせ対応）も終了します。SIer・保守ベンダーも EOL製品のサポート継続には追加費用が発生するか、サポート不可となるケースが増えています。</p>
+    <ul>
+      <li>Microsoft サポートへの技術問い合わせ不可（EOL後）</li>
+      <li>SIer保守契約でEOL製品除外条項が適用されるケース増加</li>
+      <li>障害発生時の原因調査・復旧に「経験頼り」しかなくなる</li>
+      <li>新規周辺製品・SaaSとのインテグレーション保証なし</li>
+    </ul>
+  </div>
 </div>
-<footer>2029年問題 緊急アラート | 対応計画立案時の参照資料</footer>
+
+<div class="danger" style="margin-top:16px">
+  &#128683; <strong>複合リスクの発動：</strong>EOL後に重大なセキュリティインシデントが発生した場合、「EOL製品を使用し続けていた」という事実が<strong>取締役の善管注意義務違反・株主代表訴訟・監督官庁からの業務改善命令</strong>の根拠として使われる可能性があります。
+</div>
+</section>
+
+<!-- ===== 対応3選択肢 ===== -->
+<section id="eol-options">
+<div class="phase-header">
+  <h2>&#128260; Section 3: EOL対応 3選択肢 比較表</h2>
+  <div class="phase-meta">ESU延命 / インフラ移行（オンプレ継続） / クラウド移行 — コスト・メリット・デメリット・期間</div>
+</div>
+
+<div class="warn">
+  &#9888; 3つの選択肢は排他的ではありません。実際には「一部システムをESU延命しながら段階的にクラウド移行する」組み合わせ戦略が現実的です。
+</div>
+
+<table class="option-compare">
+  <thead>
+    <tr>
+      <th>比較軸</th>
+      <th>&#128308; 選択肢A: ESU延命</th>
+      <th>&#128993; 選択肢B: インフラ移行（オンプレ継続）</th>
+      <th>&#128994; 選択肢C: クラウド移行</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>概要</td>
+      <td>EOL後もESUを購入してセキュリティパッチを受け取り、現行構成を維持</td>
+      <td>Windows Server 2022/2025 への OS アップグレードやサーバー更改</td>
+      <td>Active Directory を Entra ID へ移行、サーバーを Azure / AWS へ移行</td>
+    </tr>
+    <tr>
+      <td>初期コスト</td>
+      <td class="opt-bad">低（ESU費のみ）</td>
+      <td class="opt-warn">中（ハードウェア・ライセンス・工数）</td>
+      <td class="opt-warn">中〜高（移行プロジェクト費用）</td>
+    </tr>
+    <tr>
+      <td>3年間の総コスト</td>
+      <td class="opt-bad">高（ESU年75%→100%→125%）</td>
+      <td class="opt-warn">中（移行後は通常運用コスト）</td>
+      <td class="opt-good">中〜低（ライセンス型で柔軟）</td>
+    </tr>
+    <tr>
+      <td>セキュリティリスク</td>
+      <td class="opt-bad">高（EOL製品に依存、アーキテクチャ変わらず）</td>
+      <td class="opt-warn">中（最新OSで軽減、設計次第）</td>
+      <td class="opt-good">低（ゼロトラスト・MFA・条件付きアクセス適用可）</td>
+    </tr>
+    <tr>
+      <td>対応期間</td>
+      <td class="opt-good">短（即時）</td>
+      <td class="opt-warn">中（6〜18ヶ月）</td>
+      <td class="opt-bad">長（12〜36ヶ月）</td>
+    </tr>
+    <tr>
+      <td>業務継続性</td>
+      <td class="opt-good">高（変更なし）</td>
+      <td class="opt-warn">中（移行期の並行稼働が必要）</td>
+      <td class="opt-warn">中（アプリ互換性テストが必要）</td>
+    </tr>
+    <tr>
+      <td>将来性</td>
+      <td class="opt-bad">低（3年後に再度EOL問題）</td>
+      <td class="opt-warn">中（次のEOLまでの時間稼ぎ）</td>
+      <td class="opt-good">高（クラウドネイティブへの布石）</td>
+    </tr>
+    <tr>
+      <td>オンプレ依存脱却</td>
+      <td class="opt-bad">なし</td>
+      <td class="opt-bad">なし（オンプレ継続）</td>
+      <td class="opt-good">あり（ハイブリッド→クラウドへ移行）</td>
+    </tr>
+    <tr>
+      <td>コンプライアンス改善</td>
+      <td class="opt-warn">限定的（パッチは来るが古アーキテクチャ）</td>
+      <td class="opt-warn">中（最新OSでパッチ適用可）</td>
+      <td class="opt-good">高（ゼロトラスト実装でISMS/PCI DSS適合強化）</td>
+    </tr>
+    <tr>
+      <td>Active Directory依存</td>
+      <td class="opt-bad">継続</td>
+      <td class="opt-bad">継続</td>
+      <td class="opt-good">段階的削減（Entra ID Hybrid Join経由）</td>
+    </tr>
+    <tr>
+      <td>推奨タイプ</td>
+      <td>移行計画策定中の<strong>短期ブリッジ</strong>のみ</td>
+      <td>クラウド移行が困難な<strong>オンプレ残存系システム</strong></td>
+      <td>新規システム・SaaS中心企業・<strong>中長期戦略</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="three-col" style="margin-top:16px">
+  <div class="card">
+    <h4>&#128308; 選択肢A の注意点</h4>
+    <ul style="padding-left:16px;font-size:.8rem;color:#475569">
+      <li>ESUはあくまでセキュリティパッチのみ（機能追加なし）</li>
+      <li>3年後に再度EOL対応が必要で根本解決にならない</li>
+      <li>ESU費用を移行準備資金として確保することを推奨</li>
+      <li>最長でも1〜2年の延命にとどめるべき</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>&#128993; 選択肢B の注意点</h4>
+    <ul style="padding-left:16px;font-size:.8rem;color:#475569">
+      <li>Windows Server 2022/2025 へのアップグレード or 新規調達が必要</li>
+      <li>ハードウェアのEOL（サーバー保守期限）と合わせて判断</li>
+      <li>Active Directory のドメイン機能レベル引き上げに注意</li>
+      <li>DCのOS更改と役割移行（FSMO）の計画が必要</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>&#128994; 選択肢C の注意点</h4>
+    <ul style="padding-left:16px;font-size:.8rem;color:#475569">
+      <li>Entra Hybrid Join から段階移行が現実的</li>
+      <li>オンプレ専用アプリはAzure AD DS / ドメイン参加VMが必要</li>
+      <li>Kerberos認証が必要なアプリは移行難易度高</li>
+      <li>グループポリシー代替としてIntuneの設計が必要</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ===== タイムライン ===== -->
+<section id="timeline">
+<div class="phase-header">
+  <h2>&#128200; Section 4: 推奨タイムライン 2025〜2030</h2>
+  <div class="phase-meta">CSS ガントチャート形式 — EOLデッドラインから逆算した推奨アクションスケジュール</div>
+</div>
+
+<div class="gantt-container">
+  <div class="gantt-header">
+    <div class="gh-label" style="text-align:left;color:#1e293b;font-size:.8rem">タスク / フェーズ</div>
+    <div class="gh-label">2025<br>Q1</div>
+    <div class="gh-label">2025<br>Q2</div>
+    <div class="gh-label">2025<br>Q3</div>
+    <div class="gh-label">2025<br>Q4</div>
+    <div class="gh-label">2026<br>Q1</div>
+    <div class="gh-label">2026<br>Q2</div>
+    <div class="gh-label">2026<br>Q3</div>
+    <div class="gh-label">2026<br>Q4</div>
+    <div class="gh-label">2027<br>Q1</div>
+    <div class="gh-label">2027<br>Q2</div>
+    <div class="gh-label">2027<br>Q3</div>
+    <div class="gh-label">2027<br>Q4</div>
+  </div>
+
+  <!-- 現状調査フェーズ -->
+  <div class="gantt-row">
+    <div class="gr-label">&#128269; 現状アセスメント</div>
+    <div style="grid-column:2/4"><div class="gantt-bar gb-blue">現状調査・棚卸し</div></div>
+  </div>
+  <div class="gantt-row">
+    <div class="gr-label cat">EOLカレンダー確認</div>
+    <div style="grid-column:2/3"><div class="gantt-bar gb-gray">確認</div></div>
+  </div>
+  <div class="gantt-row">
+    <div class="gr-label cat">移行計画策定</div>
+    <div style="grid-column:3/5"><div class="gantt-bar gb-blue">計画・承認</div></div>
+  </div>
+  <div class="gantt-divider"></div>
+
+  <!-- MIM移行 -->
+  <div class="gantt-row">
+    <div class="gr-label">&#9888; MIM 2016 EOL対応</div>
+    <div style="grid-column:2/5"><div class="gantt-bar gb-orange">MIM 依存調査・要件整理</div></div>
+    <div style="grid-column:5/8"><div class="gantt-bar gb-red">IGA製品 PoC・導入</div></div>
+    <div style="grid-column:8/9"><div class="gantt-bar gb-green">移行完了</div></div>
+  </div>
+  <div class="gantt-row">
+    <div class="gr-label cat" style="font-size:.68rem;color:#dc2626">&#9650; MIM EOL: 2026/07/14</div>
+    <div style="grid-column:7/8;display:flex;align-items:center;justify-content:center">
+      <div style="width:2px;height:100%;background:#dc2626;position:relative"><div style="position:absolute;top:0;left:-20px;font-size:.6rem;color:#dc2626;white-space:nowrap;font-weight:700">EOL&#128683;</div></div>
+    </div>
+  </div>
+  <div class="gantt-divider"></div>
+
+  <!-- WS2016 移行 -->
+  <div class="gantt-row">
+    <div class="gr-label">&#128260; WS2016 → WS2022/2025</div>
+    <div style="grid-column:3/6"><div class="gantt-bar gb-orange">サーバー棚卸し・設計</div></div>
+    <div style="grid-column:6/10"><div class="gantt-bar gb-teal">段階移行（DC更改）</div></div>
+    <div style="grid-column:10/12"><div class="gantt-bar gb-green">移行完了</div></div>
+  </div>
+  <div class="gantt-row">
+    <div class="gr-label cat" style="font-size:.68rem;color:#d97706">&#9650; WS2016 EOL: 2027/01/12</div>
+  </div>
+  <div class="gantt-divider"></div>
+
+  <!-- Entra ID移行 -->
+  <div class="gantt-row">
+    <div class="gr-label">&#9729; Entra Hybrid Join 展開</div>
+    <div style="grid-column:3/5"><div class="gantt-bar gb-blue">パイロット設計</div></div>
+    <div style="grid-column:5/10"><div class="gantt-bar gb-blue">部門展開（段階）</div></div>
+    <div style="grid-column:10/12"><div class="gantt-bar gb-green">全社展開</div></div>
+  </div>
+  <div class="gantt-row">
+    <div class="gr-label cat">PAM 導入（CyberArk等）</div>
+    <div style="grid-column:4/6"><div class="gantt-bar gb-purple">PoC</div></div>
+    <div style="grid-column:6/10"><div class="gantt-bar gb-purple">本番導入・運用</div></div>
+  </div>
+  <div class="gantt-row">
+    <div class="gr-label cat">MFA 全社適用</div>
+    <div style="grid-column:2/4"><div class="gantt-bar gb-blue">管理者から適用</div></div>
+    <div style="grid-column:4/8"><div class="gantt-bar gb-blue">全社員展開</div></div>
+    <div style="grid-column:8/9"><div class="gantt-bar gb-green">100%達成</div></div>
+  </div>
+  <div class="gantt-divider"></div>
+
+  <!-- WS2019準備 -->
+  <div class="gantt-row">
+    <div class="gr-label">&#128683; WS2019 EOL準備</div>
+    <div style="grid-column:8/11"><div class="gantt-bar gb-orange">WS2019環境棚卸し・設計</div></div>
+    <div style="grid-column:11/13"><div class="gantt-bar gb-red">移行着手</div></div>
+  </div>
+  <div class="gantt-row">
+    <div class="gr-label cat">RHEL 7 / OpenLDAP 2.4 EOL対応</div>
+    <div style="grid-column:2/5"><div class="gantt-bar gb-red">RHEL 8/9 移行（EOL済対応）</div></div>
+    <div style="grid-column:5/7"><div class="gantt-bar gb-green">Red Hat IdM 評価</div></div>
+  </div>
+</div>
+
+<div class="warn" style="margin-top:8px">
+  &#9888; <strong>2028年上半期が実質的なデッドライン：</strong>Windows Server 2019 の EOL は2029年1月ですが、大規模環境での移行完了には12〜18ヶ月必要です。2028年6月末を移行完了目標とし、2026〜2027年に本格移行を開始することを推奨します。
+</div>
+
+<h3>2028〜2030年 後半フェーズ（参考）</h3>
+<table class="wbs-table">
+  <thead>
+    <tr><th>期間</th><th>主要マイルストーン</th><th>対象製品</th><th>目標状態</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>2028年Q1〜Q2</td><td>Windows Server 2019 移行完了</td><td>Windows Server 2019 全サーバー</td><td>WS2022/2025 または Azure への移行完了</td></tr>
+    <tr><td>2028年Q3〜Q4</td><td>Entra ID クラウドネイティブ化加速</td><td>Entra ID / Intune / Sentinel</td><td>条件付きアクセス全適用・PAM本番稼働</td></tr>
+    <tr><td>2029年Q1</td><td>WS2019 EOLデッドライン</td><td>Windows Server 2019</td><td>ESU契約 または 移行完了済のいずれか</td></tr>
+    <tr><td>2029年Q2〜2030年</td><td>ゼロトラスト完全実装・次世代IDM</td><td>Entra ID P2 / CyberArk / SIEM</td><td>クラウドネイティブIDM基盤 完成</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ===== NSSolサービスメニュー ===== -->
+<section id="nssol-services">
+<div class="phase-header">
+  <h2>&#127981; Section 5: NSSolサービスメニュー</h2>
+  <div class="phase-meta">現状調査から移行支援・運用サポートまで — IDM近代化を一貫支援</div>
+</div>
+
+<div class="lead">
+NSSol（日本製鉄ソリューションズ）は、製造業・金融・流通・医療など幅広い業種で<strong>Active Directory / Entra ID / PAM / IGA の設計・移行・運用</strong>を支援しています。EOL対応の緊急性から逆算した現実的な計画策定を得意とします。
+</div>
+
+<div class="service-grid">
+  <div class="service-card">
+    <div class="sc-phase">STEP 1</div>
+    <h4>&#128269; IDM現状調査・リスクアセスメント</h4>
+    <ul>
+      <li>Active Directory / LDAP 環境棚卸し</li>
+      <li>EOLカレンダー作成（製品別・サーバー別）</li>
+      <li>特権アカウント・退職者アカウント棚卸し</li>
+      <li>MIM 2016 依存システムマッピング</li>
+      <li>セキュリティリスク評点（CVSS準拠）</li>
+      <li>経営報告書（CIO向けサマリー）作成</li>
+    </ul>
+    <div class="sc-price">&#128176; 初回アセスメント：無償〜100万円（規模による）</div>
+  </div>
+
+  <div class="service-card sc-orange">
+    <div class="sc-phase">STEP 2</div>
+    <h4>&#128196; IDM近代化 移行計画策定</h4>
+    <ul>
+      <li>EOLデッドライン逆算ロードマップ作成</li>
+      <li>3〜5年の投資計画・ROIシミュレーション</li>
+      <li>Entra ID / PAM / IGA 製品選定支援</li>
+      <li>段階移行設計（Hybrid Join → クラウド）</li>
+      <li>RFP作成支援・ベンダー評価支援</li>
+      <li>情報システム部門・経営層向け説明資料作成</li>
+    </ul>
+    <div class="sc-price">&#128176; 計画策定：300万〜800万円（規模・期間による）</div>
+  </div>
+
+  <div class="service-card sc-green">
+    <div class="sc-phase">STEP 3</div>
+    <h4>&#128260; 移行支援（設計・構築・テスト）</h4>
+    <ul>
+      <li>Windows Server 2022/2025 DC更改・移行</li>
+      <li>Entra Hybrid Join / Entra Join 展開</li>
+      <li>MIM 2016 → IGA製品（Saviynt/SailPoint等）移行</li>
+      <li>PAM 導入（CyberArk / Delinea）</li>
+      <li>Microsoft Sentinel SIEM 構築・チューニング</li>
+      <li>Red Hat IdM / 389 DS 移行（Linux認証）</li>
+    </ul>
+    <div class="sc-price">&#128176; 移行支援：1,000万〜5億円（環境規模による）</div>
+  </div>
+
+  <div class="service-card sc-purple">
+    <div class="sc-phase">STEP 4</div>
+    <h4>&#128736; 運用サポート・継続的改善</h4>
+    <ul>
+      <li>Active Directory / Entra ID 運用代行</li>
+      <li>月次セキュリティレポート・脆弱性監視</li>
+      <li>IDM設定変更・ライフサイクル管理支援</li>
+      <li>インシデント発生時の緊急対応（24/7対応オプション）</li>
+      <li>次期EOLに向けた継続的ロードマップ更新</li>
+      <li>セキュリティ教育・管理者トレーニング</li>
+    </ul>
+    <div class="sc-price">&#128176; 運用サポート：月次100万〜500万円（SLAによる）</div>
+  </div>
+</div>
+
+<div class="good" style="margin-top:8px">
+  &#128222; <strong>お問い合わせ・無償診断のご依頼：</strong>NSSol 情報システム基盤事業部 IDMチームまでお気軽にご相談ください。現状のEOL状況・リスク評点・優先度付けを無償でアドバイスいたします。特に「まず何から始めるべきか」のご相談を多数承っております。
+</div>
+
+<h3>サービス選定の目安</h3>
+<table class="wbs-table">
+  <thead>
+    <tr><th>状況</th><th>推奨サービス</th><th>優先度</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>EOL対応計画が未着手</td><td>STEP 1 現状調査（無償診断から開始）</td><td><span class="tag tag-must">今すぐ</span></td></tr>
+    <tr><td>MIM 2016 の移行先が未決定</td><td>STEP 2 計画策定（製品評価・ROI試算）</td><td><span class="tag tag-must">2025年中</span></td></tr>
+    <tr><td>Windows Server 2016 が稼働中</td><td>STEP 3 移行支援（2026年前半に着手必須）</td><td><span class="tag tag-high">高</span></td></tr>
+    <tr><td>特権アカウント管理が未整備</td><td>PAM 導入支援（STEP 3 の一部）</td><td><span class="tag tag-high">高</span></td></tr>
+    <tr><td>AD管理の人員不足・属人化</td><td>STEP 4 運用代行（即時開始可）</td><td><span class="tag tag-med">中</span></td></tr>
+    <tr><td>クラウド移行を本格化したい</td><td>STEP 2 ロードマップ + STEP 3 Entra ID移行</td><td><span class="tag tag-med">中長期</span></td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="appendix">
+<div class="phase-header">
+  <h2>&#128206; FAQ・補足資料</h2>
+  <div class="phase-meta">よくある質問と参考情報</div>
+</div>
+
+<h3>よくある質問</h3>
+<table class="wbs-table">
+  <thead>
+    <tr><th>質問</th><th>回答</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ESUを契約すれば2029年以降も安全か？</strong></td>
+      <td>セキュリティパッチは受け取れますが、アーキテクチャの根本的なリスク（横展開しやすいAD構造・MFA未適用等）は解消されません。ESUはあくまで移行準備中の「時間稼ぎ」です。</td>
+    </tr>
+    <tr>
+      <td><strong>Entra ID移行でオンプレのアプリはどうなるか？</strong></td>
+      <td>Kerberos / NTLM 認証が必要なアプリは、Entra ID の「Entra Domain Services（Azure AD DS）」または Hybrid Join で対応できます。完全クラウド移行の前に互換性調査が必要です。</td>
+    </tr>
+    <tr>
+      <td><strong>Windows Server 2025 は長期使えるか？</strong></td>
+      <td>Windows Server 2025 の延長サポートは2034年10月9日まで。オンプレ継続の場合の移行先として推奨されます。ただし、同時にクラウド移行計画も並行して立案することを推奨します。</td>
+    </tr>
+    <tr>
+      <td><strong>Red Hat IdM と Active Directory は共存できるか？</strong></td>
+      <td>はい。Red Hat IdM の「AD Trust」機能を使用することで、Linux 環境は Red Hat IdM で管理しつつ、Windows 環境の Active Directory と相互認証できます。ハイブリッド企業に推奨の構成です。</td>
+    </tr>
+    <tr>
+      <td><strong>MIM 2016 の延長サポート終了後に何が起きるか？</strong></td>
+      <td>2026年7月14日以降、セキュリティパッチが提供されなくなります。プロビジョニング機能自体は動作しますが、脆弱性が発見されても修正されません。また、Microsoft のテクニカルサポートも受けられなくなります。</td>
+    </tr>
+    <tr>
+      <td><strong>OpenLDAP から Red Hat IdM への移行は難しいか？</strong></td>
+      <td>スキーマ・属性設計が大きく異なるため、単純なデータ移行ではなく「認証基盤の再設計」に近い作業です。特にアプリが OpenLDAP 固有の bind/search フォーマットに依存している場合、アプリ側の改修が必要になることがあります。</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="warn" style="margin-top:16px">
+  &#9888; <strong>本資料の情報について：</strong>EOL日程はMicrosoft・Red Hatの公式情報に基づきますが、変更される場合があります。最新情報は各ベンダーの公式サポートサイトでご確認ください。
+  <ul style="padding-left:20px;margin-top:6px;font-size:.82rem">
+    <li>Microsoft Product Lifecycle: https://docs.microsoft.com/lifecycle</li>
+    <li>Red Hat Product Life Cycle: https://access.redhat.com/product-life-cycles</li>
+  </ul>
+</div>
+</section>
+
+</main>
+<script>
+const sections = document.querySelectorAll("section[id]");
+const links = document.querySelectorAll("#toc a[href^='#']");
+window.addEventListener("scroll", () => {
+  let current = "";
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  links.forEach(a => {
+    a.classList.remove("active");
+    if (a.getAttribute("href") === "#" + current) a.classList.add("active");
+  });
+});
+</script>
 </body>
 </html>

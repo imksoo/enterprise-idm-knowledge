@@ -3,202 +3,558 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ID管理とは何か - IT非専門家向け入門ガイド</title>
+<title>Active Directoryとは何か — ITを知らないCIOのためのID管理入門</title>
 <style>
-
-  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
-  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
-  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
-  .hero p{font-size:1.1em;opacity:.85;margin:0}
-  .container{max-width:1100px;margin:40px auto;padding:0 30px}
-  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
-  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
-  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
-  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1em}
-  table{width:100%;border-collapse:collapse;margin:16px 0}
-  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
-  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
-  tr:nth-child(even) td{background:#f8f9fa}
-  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
-  .tag-red{background:#ffe0e0;color:#c0392b}
-  .tag-green{background:#e0ffe0;color:#27ae60}
-  .tag-blue{background:#e0f0ff;color:#2980b9}
-  .tag-yellow{background:#fff9e0;color:#b8860b}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
-  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
-
-.scenario-box{background:#f0f4ff;border:2px solid #4a90d9;border-radius:10px;padding:20px;margin:16px 0}
-.persona{display:flex;align-items:center;gap:12px;margin:12px 0;padding:12px;background:#f8f8ff;border-radius:8px}
-.persona-icon{font-size:2em}
-.myth-fact{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
-.myth{background:#fff0f0;border-radius:8px;padding:16px}
-.fact{background:#f0fff4;border-radius:8px;padding:16px}
-.myth h4{color:#c0392b;margin:0 0 8px}
-.fact h4{color:#27ae60;margin:0 0 8px}
-.impact-big{font-size:2.5em;font-weight:700;color:#e63946;text-align:center;margin:10px 0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.8}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.6rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px;font-size:.92rem}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.93rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.87rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.87rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.87rem}
+.info{background:#f0f9ff;border-left:4px solid #0284c7;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.87rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:18px 22px;margin:28px 0 18px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.15rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:6px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:16px 0}
+.card{background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.9rem;margin-bottom:8px}
+.card p{font-size:.85rem;color:#475569;margin-bottom:0}
+.analogy-box{background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;border-radius:12px;padding:20px 24px;margin:20px 0}
+.analogy-box h3{color:#92400e;margin-top:0;margin-bottom:10px;font-size:1rem}
+.analogy-row{display:flex;align-items:flex-start;gap:16px;margin:12px 0}
+.analogy-icon{font-size:2rem;min-width:42px;text-align:center}
+.analogy-text{flex:1}
+.analogy-text strong{display:block;color:#92400e;font-size:.88rem;margin-bottom:2px}
+.analogy-text span{color:#78350f;font-size:.83rem}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.85rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:10px 12px;text-align:left;font-weight:600}
+.wbs-table td{padding:9px 12px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.tag{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-blue{background:#dbeafe;color:#1e40af}
+.tag-red{background:#fee2e2;color:#991b1b}
+.tag-green{background:#dcfce7;color:#166534}
+.tag-yellow{background:#fef9c3;color:#854d0e}
+.tag-purple{background:#f3e8ff;color:#7e22ce}
+.timeline{position:relative;padding-left:28px;margin:16px 0}
+.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:#bfdbfe}
+.timeline-item{position:relative;margin-bottom:18px}
+.timeline-item::before{content:'';position:absolute;left:-24px;top:4px;width:12px;height:12px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 0 0 2px #3b82f6}
+.timeline-item .year{font-size:.75rem;font-weight:700;color:#3b82f6;margin-bottom:2px}
+.timeline-item .event{font-size:.87rem;color:#334155}
+.step-flow{display:flex;gap:0;margin:16px 0;overflow-x:auto}
+.step{background:#3b82f6;color:#fff;padding:12px 14px;flex:1;min-width:100px;text-align:center;font-size:.75rem;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;right:-11px;top:50%;transform:translateY(-50%);z-index:1;border-top:12px solid transparent;border-bottom:12px solid transparent;border-left:12px solid #3b82f6}
+.step:nth-child(2){background:#2563eb}
+.step:nth-child(2)::after{border-left-color:#2563eb}
+.step:nth-child(3){background:#1d4ed8}
+.step:nth-child(3)::after{border-left-color:#1d4ed8}
+.step:nth-child(4){background:#1e40af}
+.step:nth-child(4)::after{border-left-color:#1e40af}
+.step:nth-child(5){background:#1e3a8a}
+.step-num{font-size:.65rem;opacity:.8;display:block;margin-bottom:3px}
+.checklist{list-style:none;padding:0;margin:10px 0}
+.checklist li{padding:6px 0 6px 28px;position:relative;border-bottom:1px solid #f1f5f9;font-size:.87rem}
+.checklist li::before{content:'\2610';position:absolute;left:2px;color:#3b82f6;font-size:1rem}
+.checklist li.done::before{content:'\2611';color:#16a34a}
+.big-number{font-size:2.2rem;font-weight:800;color:#2563eb;display:block;line-height:1}
+.stat-box{text-align:center;padding:16px;background:#fff;border-radius:10px;border:1px solid #dbeafe}
+.stat-box small{display:block;font-size:.75rem;color:#64748b;margin-top:4px}
+.glossary-item{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:12px 16px;margin:8px 0}
+.glossary-item dt{font-weight:700;color:#1e3a5f;font-size:.9rem;display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.glossary-item dd{color:#475569;font-size:.85rem;margin-left:0}
+.action-box{background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;border-radius:12px;padding:22px 26px;margin:20px 0}
+.action-box h3{color:#7dd3fc;margin-top:0;margin-bottom:16px;font-size:1rem}
+.action-step{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.action-num{background:#2563eb;color:#fff;font-weight:800;font-size:1.1rem;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;min-width:34px}
+.action-content strong{display:block;color:#e2e8f0;font-size:.9rem;margin-bottom:3px}
+.action-content span{color:#94a3b8;font-size:.83rem}
+@media(max-width:900px){#toc{display:none}main{margin-left:0;padding:20px}}
 </style>
 </head>
 <body>
-<div class="hero">
-  <h1>🔑 ID管理とは何か</h1>
-  <p>IT非専門家のための入門ガイド ― なぜこんなに重要で、なぜ難しいのか</p>
-</div>
-<div class="container">
 
-<div class="card">
-  <h2>まずは身近な例から</h2>
-  <p>会社に入社した初日、あなたはどうやって会社のパソコンやメールを使い始めましたか？<br>
-  おそらく人事か情報システム部門から「あなたのID（ユーザー名）とパスワード」が渡されたはずです。</p>
-  <p><strong>これがID管理の出発点です。</strong></p>
-  <div class="scenario-box">
-    <strong>🏢 「IDを管理する」とはこういうこと</strong><br><br>
-    <div class="persona"><span class="persona-icon">👔</span><div><strong>入社時</strong>：IDを作る（メール・PC・社内システムにアクセスできる権限を設定）</div></div>
-    <div class="persona"><span class="persona-icon">🔄</span><div><strong>異動時</strong>：必要なシステムへのアクセスを変える（営業部から総務部に移ったら、営業システムは見えなくして総務システムを追加）</div></div>
-    <div class="persona"><span class="persona-icon">👋</span><div><strong>退職時</strong>：IDを削除する（退職した人が会社のシステムにアクセスできないようにする）</div></div>
-  </div>
-  <p>当たり前のことのように見えますが、<strong>社員が数百〜数千人いる会社でこれを正確に、漏れなく、タイムリーにやる</strong>のは非常に難しいのです。</p>
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#what-is-ad">&#x1F3E2; ADとは何か</a>
+  <a class="toc-sub" href="#analogy">身近なアナロジー</a>
+  <a class="toc-sub" href="#history">20年の歴史</a>
+  <a href="#strengths">&#x2705; ADの功績</a>
+  <a class="toc-sub" href="#sso-benefit">シングルサインオン効果</a>
+  <a class="toc-sub" href="#gpo-benefit">一括管理の力</a>
+  <a href="#weaknesses">&#x26A0;&#xFE0F; ADの限界と問題</a>
+  <a class="toc-sub" href="#cloud-gap">クラウドとの乖離</a>
+  <a class="toc-sub" href="#security-risk">セキュリティリスク</a>
+  <a href="#complexity">&#x1F914; なぜ複雑なのか</a>
+  <a class="toc-sub" href="#cant-remove">捨てられないAD</a>
+  <a class="toc-sub" href="#glossary">用語解説</a>
+  <a href="#future">&#x1F680; 次のID管理の方向性</a>
+  <a class="toc-sub" href="#entra-id">Entra IDとは</a>
+  <a class="toc-sub" href="#zerotrust">ゼロトラストの概念</a>
+  <a href="#cio-actions">&#x1F454; CIOが今すべき3つのこと</a>
+</nav>
+
+<main>
+<h1>Active Directoryとは何か</h1>
+<p class="subtitle">ITを知らないCIOのためのID管理入門 &#x2014; 2026年版</p>
+
+<div class="lead">
+このドキュメントは、情報システム部門から「AD移行」「Entra ID」「ゼロトラスト」という言葉を聞かされ、何が問題で何をすべきか判断に迷っているCIO・役員・情シス部長のために書かれています。
+<strong>技術的な詳細よりも「なぜ重要か」「何が問題か」「何をすべきか」</strong>を平易な言葉で解説します。
 </div>
 
-<div class="card">
-  <h2>なぜ「IDの管理ミス」が深刻な問題になるのか</h2>
-  <div class="danger">
-    <strong>⚠️ 実際に起きた問題の例（日本の大企業・公共機関を含む）</strong>
+<!-- ===== Section 1 ===== -->
+<section id="what-is-ad">
+<div class="phase-header">
+  <h2>&#x1F3E2; Section 1: Active Directoryとは何か</h2>
+  <div class="phase-meta">「会社のIDカード管理システム」から始まる説明</div>
+</div>
+
+<p>Active Directory（アクティブ ディレクトリ）とは、<strong>Microsoft社が1999年に提供を開始した、企業内のIT資産と社員情報を一元管理するシステム</strong>です。現在も日本企業の大多数で動き続けている、いわば「会社のIT基盤の縁の下」です。</p>
+<p>「AD」と略して呼ばれることが多く、情シス部門では当たり前の前提として会話に登場します。</p>
+
+<h3 id="analogy">身近なアナロジーで理解する</h3>
+<div class="analogy-box">
+  <h3>&#x1F3E2; 会社のID管理を「ビルの入退館システム」で考える</h3>
+  <div class="analogy-row">
+    <div class="analogy-icon">&#x1FAA6;</div>
+    <div class="analogy-text">
+      <strong>社員証（= Windowsログイン認証）</strong>
+      <span>社員証をかざすと「この人は誰か」を確認します。Active Directoryも、社員がPCにIDとパスワードを入力するとき「この人は本当に社員か」を確認しています。</span>
+    </div>
   </div>
-  <table>
-    <tr><th>状況</th><th>何が起きたか</th><th>被害の規模</th></tr>
+  <div class="analogy-row">
+    <div class="analogy-icon">&#x1F4D6;</div>
+    <div class="analogy-text">
+      <strong>名刺帳・社員名簿（= ディレクトリ情報）</strong>
+      <span>「田中さんは営業部で、こんなシステムへのアクセス権がある」という情報を一冊の名簿にまとめています。ADも全社員・全PCの情報を一か所に保管しています。</span>
+    </div>
+  </div>
+  <div class="analogy-row">
+    <div class="analogy-icon">&#x1F511;</div>
+    <div class="analogy-text">
+      <strong>金庫の鍵束（= アクセス権限管理）</strong>
+      <span>「営業部の人は営業フォルダを開ける」「経理部の人は経理システムを使える」という鍵の管理もADが担っています。退職者の鍵を全部回収するのも、ADで一括処理します。</span>
+    </div>
+  </div>
+  <div class="analogy-row">
+    <div class="analogy-icon">&#x1F4CB;</div>
+    <div class="analogy-text">
+      <strong>PC設定マニュアル（= グループポリシー）</strong>
+      <span>「全社員のPCにはウイルス対策ソフトを入れ、パスワードは90日で変更させる」という規則を、ADが全PCに自動で配布・適用します。手作業なしで一括設定できます。</span>
+    </div>
+  </div>
+</div>
+
+<h3 id="history">20年間、日本企業を支えてきた仕組み</h3>
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="year">1999〜2000年</div>
+    <div class="event">Windows 2000とともにActive Directory登場。「ドメイン参加したPCは全部まとめて管理できる」という革命的な仕組みが広まる</div>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2000〜2005年</div>
+    <div class="event">日本企業でWindowsサーバー導入と一体で標準化。SIer（システムインテグレーター）のノウハウが蓄積され、大量導入モデルが確立</div>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2005〜2015年</div>
+    <div class="event">グループポリシーによるPC管理が標準化。ファイルサーバー・VPN・業務アプリがすべてADを前提に構築される</div>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2015〜2022年</div>
+    <div class="event">Microsoft 365とEntra IDの普及。ADはクラウドへの橋渡し基盤へ位置付けが変化し始める</div>
+  </div>
+  <div class="timeline-item">
+    <div class="year">2023〜2026年</div>
+    <div class="event">セキュリティ強化・テレワーク常態化でADの限界が顕在化。「延命対象」から「縮退対象」として評価される案件が急増</div>
+  </div>
+</div>
+
+<div class="three-col">
+  <div class="stat-box">
+    <span class="big-number">400万+</span>
+    世界の導入組織数
+    <small>中小企業から大企業まで</small>
+  </div>
+  <div class="stat-box">
+    <span class="big-number">90%+</span>
+    日本大企業の採用率
+    <small>従業員500人以上企業</small>
+  </div>
+  <div class="stat-box">
+    <span class="big-number">25年</span>
+    稼働し続けている期間
+    <small>1999年登場。まだ現役</small>
+  </div>
+</div>
+
+<h3>具体的に何をしているか（3つの主要機能）</h3>
+<div class="three-col">
+  <div class="card">
+    <h4>&#x1F510; 認証（Authentication）</h4>
+    <p>「あなたは本当に社員ですか？」を確認します。PCログイン時にIDとパスワードを照合し、正しければ「Kerberosチケット（入館証のようなもの）」を発行します。</p>
+  </div>
+  <div class="card">
+    <h4>&#x1F5DD;&#xFE0F; 認可（Authorization）</h4>
+    <p>「あなたはどこまで使えますか？」を管理します。「営業部はこのフォルダ、管理職はこの情報」という権限を、グループ単位で一括設定します。</p>
+  </div>
+  <div class="card">
+    <h4>&#x2699;&#xFE0F; グループポリシー（Policy）</h4>
+    <p>全PCへの設定自動配布です。「パスワードポリシー」「ウイルス対策設定」「画面ロック時間」を中央から一括適用し、手作業での個別設定を不要にします。</p>
+  </div>
+</div>
+</section>
+
+<!-- ===== Section 2 ===== -->
+<section id="strengths">
+<div class="phase-header">
+  <h2>&#x2705; Section 2: なぜADが重要か &#x2014; 20年間の功績</h2>
+  <div class="phase-meta">日本企業がADを手放せない4つの理由</div>
+</div>
+
+<h3 id="sso-benefit">1回のログインで全システムが使える</h3>
+<p>ADの最大のメリットは、朝PCにログインすると、ファイルサーバー・社内イントラ・プリンターなど、あらゆる社内システムにパスワード入力なしでアクセスできることです。これを<strong>シングルサインオン（SSO）</strong>と呼びます。</p>
+<div class="good">
+<strong>体験のイメージ</strong>: 社員は朝一回パスワードを入力するだけ。その後、ファイルサーバーを開いても、社内システムを使っても、いちいちパスワードを聞かれない。これがADの提供する利便性です。
+</div>
+
+<h3 id="gpo-benefit">PCの設定を一括管理できる（グループポリシー）</h3>
+<p>1,000台のPCに同じセキュリティ設定を適用したいとき、ADがあれば中央から一括配布できます。「全PCのパスワードを90日ごとに変更させる」「特定サイトへのアクセスをブロックする」「USBメモリを使えなくする」といった制御が、数クリックで全社に適用されます。</p>
+<div class="two-col">
+  <div class="card">
+    <h4>グループポリシーでできること（例）</h4>
+    <ul class="checklist">
+      <li>パスワードの複雑さ・有効期限の強制</li>
+      <li>画面ロック（スクリーンセーバー）の自動起動</li>
+      <li>ウイルス対策ソフトの設定配布</li>
+      <li>USBメモリの使用禁止</li>
+      <li>ソフトウェアの自動インストール</li>
+      <li>デスクトップの壁紙・設定の統一</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>ADがない場合の手間（比較）</h4>
+    <ul class="checklist">
+      <li class="done">1,000台のPCに個別ログインして設定変更</li>
+      <li class="done">社員が自分でパスワードを変えず放置</li>
+      <li class="done">退職者のPC設定が残ったままになる</li>
+      <li class="done">部署ごとにバラバラなセキュリティ設定</li>
+      <li class="done">ソフトウェア配布が手作業になる</li>
+    </ul>
+  </div>
+</div>
+
+<h3>400万社以上が使う業界標準</h3>
+<p>Active Directoryは世界で400万以上の組織が導入している業界標準です。日本では大企業の90%以上が採用しており、SIerのノウハウも25年間蓄積されています。ファイルサーバー・VPN・業務アプリ・プリンターなど、ほぼすべての社内IT製品がADとの連携を前提に設計されています。</p>
+<div class="info">
+<strong>なぜ日本で特に定着したか</strong>: 2000年代の日本企業は、高価な商用UNIXサーバーからWindowsサーバーへの移行期でした。Windowsサーバーを入れるとADが自動的についてくる構造だったため、「気づいたらADが全社の基盤になっていた」企業が多くあります。SIer主導の大量展開モデルとの相性も良く、急速に標準化されました。
+</div>
+</section>
+
+<!-- ===== Section 3 ===== -->
+<section id="weaknesses">
+<div class="phase-header">
+  <h2>&#x26A0;&#xFE0F; Section 3: ADの限界と問題 &#x2014; クラウド・テレワーク時代の罪</h2>
+  <div class="phase-meta">「オンプレミス前提」の設計が引き起こす問題</div>
+</div>
+
+<h3 id="cloud-gap">クラウド時代に何が困るか</h3>
+<p>Active Directoryが設計された1999年当時の前提は明確でした。「社員は会社支給のWindows PCを使い、オフィスのネットワークへつながり、社内に置かれたサーバーへアクセスする」。しかし2020年代、この前提は完全に崩れました。</p>
+<div class="three-col">
+  <div class="card" style="border-top:3px solid #dc2626">
+    <h4>&#x1F4F1; スマートフォン・タブレット</h4>
+    <p>iPhone・iPad・AndroidはADの世界に素直に組み込めません。「ドメイン参加」という概念がないため、ADのID管理が適用されない「例外端末」になります。</p>
+  </div>
+  <div class="card" style="border-top:3px solid #dc2626">
+    <h4>&#x2601;&#xFE0F; SaaSアプリ</h4>
+    <p>Salesforce・Slack・Zoom・Microsoft 365などのクラウドアプリは、ADとは別の認証方法（SAML・OpenID Connect）を使います。ADだけでは管理できず、別途連携設定が必要です。</p>
+  </div>
+  <div class="card" style="border-top:3px solid #dc2626">
+    <h4>&#x1F3E0; テレワーク・在宅勤務</h4>
+    <p>ADはオフィスのネットワーク内にいることを前提に設計されています。自宅からVPN経由でアクセスする場合、認証が遅くなったり、一部機能が使えなくなる問題が発生します。</p>
+  </div>
+</div>
+<div class="danger">
+<strong>実態の問題</strong>: 多くの日本企業では、テレワーク導入時に「とりあえずVPNを張ってADにつなぐ」という対処療法を取りました。しかしこの方法はセキュリティ上のリスクが高く、VPNの帯域逼迫や業務効率低下を招いています。根本的な解決にはID基盤の刷新が必要です。
+</div>
+
+<h3 id="security-risk">セキュリティの弱点</h3>
+<p>ADは設計が古く、<strong>現代のサイバー攻撃に対して脆弱な部分があります</strong>。特に、ADが侵害されると会社のIT環境全体が攻撃者に掌握されるリスクがあります。</p>
+<div class="danger">
+<strong>「ドメインコントローラー」は最も危険な標的</strong><br>
+ADの中枢サーバーである「ドメインコントローラー（DC）」が攻撃者に制御されると、全社員のパスワードが窃取され、全PCに不正なソフトウェアが配布され、すべてのシステムへのアクセスが奪われます。ランサムウェア攻撃の多くが、最終的にDCを標的にしている理由がここにあります。
+</div>
+<table class="wbs-table">
+  <thead>
     <tr>
-      <td>退職社員のIDを削除し忘れた</td>
-      <td>元従業員が会社の顧客データにアクセスし持ち出した</td>
-      <td class="tag tag-red">個人情報漏洩・訴訟</td>
+      <th>リスクの種類</th>
+      <th>何が起きるか</th>
+      <th>現実の発生状況</th>
+      <th>深刻度</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>パスワード窃取・横展開</strong></td>
+      <td>1台のPCが侵害されると、パスワード情報を使って次々と他のPCやサーバーへ侵入される</td>
+      <td>ランサムウェア攻撃の主流手口</td>
+      <td><span class="tag tag-red">最高</span></td>
     </tr>
     <tr>
-      <td>外部委託業者にVPNのIDとパスワードを共有した</td>
-      <td>業者のPCがウイルスに感染→そのIDで社内ネットワークに侵入→ランサムウェア展開</td>
-      <td class="tag tag-red">工場停止・数億円の損害</td>
+      <td><strong>特権アカウントの共有</strong></td>
+      <td>「Administratorアカウント」を複数人で使い回し、誰が何をしたか追跡不能になる</td>
+      <td>日本企業の約70%が該当</td>
+      <td><span class="tag tag-red">高</span></td>
     </tr>
     <tr>
-      <td>一人の「管理者ID」が盗まれた</td>
-      <td>攻撃者がその一つのIDで全社のシステムにアクセス・暗号化</td>
-      <td class="tag tag-red">事業継続危機</td>
+      <td><strong>グループポリシーの悪用</strong></td>
+      <td>攻撃者がADを掌握すると、全PCに悪意あるソフトを「正規の設定」として配布できる</td>
+      <td>大規模侵害で頻出</td>
+      <td><span class="tag tag-red">最高</span></td>
     </tr>
     <tr>
-      <td>異動後も前の部署の権限が残っていた</td>
-      <td>監査で指摘・内部統制上の重大な問題として認定</td>
-      <td class="tag tag-yellow">金融庁・監査法人指摘</td>
+      <td><strong>古いNTLM認証の残存</strong></td>
+      <td>古い認証方式「NTLM」が使われ続け、パスワードを知らなくても認証を突破できる攻撃が可能</td>
+      <td>古いシステムほど高リスク</td>
+      <td><span class="tag tag-yellow">中〜高</span></td>
     </tr>
-  </table>
+    <tr>
+      <td><strong>サービスアカウントの放置</strong></td>
+      <td>システム間連携用のアカウントが管理されず、パスワード変更不能・退職者紐付けのまま放置</td>
+      <td>大企業ほど深刻</td>
+      <td><span class="tag tag-yellow">中</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>日本企業のADの「老朽化」実態</h3>
+<div class="warn">
+<strong>典型的な日本企業のAD現状</strong>: 「2008年に構築したドメインコントローラーが今も現役」「グループポリシーが500件以上あるが何が何だか誰も分からない」「サービスアカウントが200個あるが停止していいか誰も判断できない」「Administratorパスワードが引継ぎ文書に書いてある」。これは特殊ケースではなく、多くの日本企業の実態です。
+</div>
+<div class="two-col">
+  <div class="card" style="border-left:4px solid #eab308">
+    <h4>&#x26A0;&#xFE0F; 「神アカウント」問題</h4>
+    <p>全権限を持つAdministratorアカウントを複数人で共有。誰が何をしたか追跡できず、委託先SIerが同じIDを年単位で使い続けているケースも多い。</p>
+  </div>
+  <div class="card" style="border-left:4px solid #eab308">
+    <h4>&#x26A0;&#xFE0F; OU設計が組織図そのまま問題</h4>
+    <p>人事組織変更のたびにOU（組織単位）が増殖し、セキュリティ境界の意図が失われる。誰も整理できないまま10年以上放置されているOUが普通に存在する。</p>
+  </div>
+  <div class="card" style="border-left:4px solid #eab308">
+    <h4>&#x26A0;&#xFE0F; グループポリシー肥大化問題</h4>
+    <p>過去プロジェクトの名残で設定が積み上がり、現行要件と無関係なポリシーが動き続ける。「これを消したら何かが壊れる気がして消せない」状態が常態化。</p>
+  </div>
+  <div class="card" style="border-left:4px solid #eab308">
+    <h4>&#x26A0;&#xFE0F; サービスアカウント地獄</h4>
+    <p>システム間連携用のサービスアカウントのオーナー不明・パスワード不明・停止影響不明の状態が長期化。「触ると壊れる」として放置される。</p>
+  </div>
+</div>
+</section>
+
+<!-- ===== Section 4 ===== -->
+<section id="complexity">
+<div class="phase-header">
+  <h2>&#x1F914; Section 4: なぜIDM議論はこれほど複雑か</h2>
+  <div class="phase-meta">CIOが「意思決定しにくい」理由を解説します</div>
 </div>
 
-<div class="card">
-  <h2>よくある誤解と現実</h2>
-  <div class="myth-fact">
-    <div class="myth">
-      <h4>❌ よくある誤解</h4>
-      <p>「IDの管理なんて、Excelで退職者リストを作って手動でやれば十分」</p>
-    </div>
-    <div class="fact">
-      <h4>✅ 現実</h4>
-      <p>社員300名でも使うシステムが20〜30個あれば、退職時に30か所を漏れなく止めるのは人間には無理。ミスが必ず発生する</p>
+<h3 id="cant-remove">「捨てられないAD」問題</h3>
+<p>Active Directoryが厄介なのは、単独で動いているのではなく、<strong>会社中の無数のシステムが前提条件としてADを使っている</strong>点です。</p>
+<div class="analogy-box">
+  <h3>&#x1F3DB;&#xFE0F; 「建物を建てたまま基礎工事をやり直す」問題</h3>
+  <p>ADをクラウドの新基盤に移行することは、「築25年のビルに住み続けながら、基礎だけを新しくする工事」のようなものです。ビルを一時的に空にできれば簡単ですが、社員が毎日使い続けている中での工事は、非常に慎重な計画が必要です。</p>
+</div>
+<p>典型的な大企業では、ADを前提としたシステムが以下のように絡み合っています：</p>
+<div class="step-flow">
+  <div class="step"><span class="step-num">中核</span>AD認証基盤</div>
+  <div class="step"><span class="step-num">依存</span>ファイルサーバー</div>
+  <div class="step"><span class="step-num">依存</span>VPN認証</div>
+  <div class="step"><span class="step-num">依存</span>業務アプリ</div>
+  <div class="step"><span class="step-num">依存</span>プリンター等</div>
+</div>
+<p style="margin-top:12px">ADを変更・移行すると、これら全てに影響が出る可能性があります。これが「IDM近代化は複雑」と言われる最大の理由です。</p>
+
+<h3 id="glossary">CIOが聞かされる用語を3行で理解する</h3>
+<dl>
+<div class="glossary-item">
+  <dt>&#x1F3E2; Entra ID（エントラID）<span class="tag tag-blue">Microsoft製品</span></dt>
+  <dd>MicrosoftのクラウドベースのID管理サービス。旧称はAzure Active Directory（AAD）。ADの「クラウド版」に近いイメージですが、設計思想は大きく異なります。スマートフォン・SaaSアプリ・テレワーク環境を前提に設計されており、ADが苦手な領域を補います。</dd>
+</div>
+<div class="glossary-item">
+  <dt>&#x1F504; ハイブリッド構成<span class="tag tag-yellow">移行パターン</span></dt>
+  <dd>オンプレミスのADとクラウドのEntra IDを両方動かす移行期の構成。「Entra Connect」というツールで両者を同期し、段階的に移行を進めます。日本企業の大多数がこの構成に向かっています。いきなり全部クラウドに移すのではなく、数年かけて移行する現実的な選択肢です。</dd>
+</div>
+<div class="glossary-item">
+  <dt>&#x1F512; MFA（多要素認証）<span class="tag tag-green">セキュリティ対策</span></dt>
+  <dd>パスワードに加えて、スマートフォンのアプリや指紋などで本人確認する仕組み。「パスワードが漏れても、スマホがないとログインできない」状態にします。Microsoft Authenticatorアプリが広く使われます。</dd>
+</div>
+<div class="glossary-item">
+  <dt>&#x1F6E1;&#xFE0F; ゼロトラスト<span class="tag tag-purple">セキュリティ概念</span></dt>
+  <dd>「社内ネットワークは安全」という前提を捨て、「誰でも・どこからでも、毎回検証する」という考え方。従来の「城壁型セキュリティ」から「常時検証型セキュリティ」への転換です。具体的にはMFA・Conditional Access（条件付きアクセス）・端末状態チェックなどで実現します。</dd>
+</div>
+<div class="glossary-item">
+  <dt>&#x1F513; SSO（シングルサインオン）<span class="tag tag-blue">機能</span></dt>
+  <dd>1回のログインで複数システムが使える仕組み。ADがオンプレミスで提供していた機能を、クラウドのEntra IDがSaaSアプリ向けに拡張したものです。「Salesforceも、Slackも、社内システムも、朝1回のログインで全部使える」状態を目指します。</dd>
+</div>
+<div class="glossary-item">
+  <dt>&#x1F511; パスワードレス・FIDO2<span class="tag tag-green">次世代技術</span></dt>
+  <dd>パスワードを使わずに認証する技術。スマートフォンの顔認証・指紋認証、またはUSBセキュリティキーを使います。「パスワードを忘れた」「漏れた」というリスクがゼロになります。Microsoftも積極的に推進しています。</dd>
+</div>
+</dl>
+</section>
+
+<!-- ===== Section 5 ===== -->
+<section id="future">
+<div class="phase-header">
+  <h2>&#x1F680; Section 5: 「次のID管理」の方向性</h2>
+  <div class="phase-meta">ADを捨てるのではなく、段階的に重心を移す</div>
+</div>
+
+<h3 id="entra-id">Entra IDへの移行（ハイブリッド構成）</h3>
+<p>現実的な移行の主流は、<strong>ADとEntra IDを長期間並行して動かしながら、段階的にクラウド側に重心を移す「ハイブリッド構成」</strong>です。ADを一気に廃止するのではなく、3〜5年かけて移行を進めます。</p>
+<div class="good">
+<strong>なぜ一気に廃止できないか</strong>: ファイルサーバー・基幹業務システム・Kerberos認証を使うアプリ・Windows Server管理などは、しばらくADを必要とし続けます。「段階移行」が唯一の現実解です。
+</div>
+<div class="two-col">
+  <div class="card" style="border-top:3px solid #3b82f6">
+    <h4>&#x1F4E6; Phase 1: ハイブリッド基盤の構築（6〜12ヶ月）</h4>
+    <p>Entra Connect（同期ツール）を使い、ADのユーザー情報をEntra IDへコピーします。SaaSの認証をEntra IDへ切り替え、MFAを全社展開します。</p>
+  </div>
+  <div class="card" style="border-top:3px solid #2563eb">
+    <h4>&#x1F512; Phase 2: 認証強化（6〜12ヶ月）</h4>
+    <p>Conditional Access（条件付きアクセス）を設定。「未知のデバイスからのアクセスはブロック」「海外からのログインは追加確認」などのルールを自動適用します。</p>
+  </div>
+  <div class="card" style="border-top:3px solid #1d4ed8">
+    <h4>&#x1F3DB;&#xFE0F; Phase 3: 特権管理強化（6〜12ヶ月）</h4>
+    <p>LAPS（ローカル管理者パスワード個別管理）とJIT（必要なときだけ管理者権限を付与）を導入。「神アカウント問題」を解決し、攻撃者の横展開を防ぎます。</p>
+  </div>
+  <div class="card" style="border-top:3px solid #1e40af">
+    <h4>&#x2601;&#xFE0F; Phase 4: ADフリー化（長期目標）</h4>
+    <p>新規PCをEntra Joinのみに、業務アプリのKerberos依存を解消。完全にADなしで動く環境を目指しますが、基幹システム残存のため5〜10年スパンが現実的です。</p>
+  </div>
+</div>
+
+<h3 id="zerotrust">ゼロトラストの概念：「城壁型」から「常時検証型」へ</h3>
+<div class="two-col">
+  <div class="card" style="border-top:3px solid #dc2626">
+    <h4>&#x1F3F0; 従来の「城壁型」セキュリティ（AD時代）</h4>
+    <p>社内ネットワーク＝安全地帯という考え方。VPNで社内に入れば信頼する。城壁（ファイアウォール）の外は敵、中は味方という発想。</p>
+    <p style="color:#dc2626;font-size:.82rem;margin-top:8px">問題: VPNを突破されたり、内部犯行の場合に無力。テレワーク時代に設計が合わない。</p>
+  </div>
+  <div class="card" style="border-top:3px solid #16a34a">
+    <h4>&#x1F6E1;&#xFE0F; ゼロトラスト「常時検証型」（Entra ID時代）</h4>
+    <p>誰でも・どこからでも、毎回検証する考え方。「社内にいるから安全」ではなく、「誰が・どの端末で・どこから・何の目的で」を毎回確認。</p>
+    <p style="color:#16a34a;font-size:.82rem;margin-top:8px">効果: 社内からの攻撃・VPN突破後の横展開を抑止。テレワーク・クラウド時代に適合。</p>
+  </div>
+</div>
+
+<h3>パスワードレス・FIDO2の将来</h3>
+<p>Microsoftは2025年以降、パスワードを完全に廃止する「パスワードレス」を本格推進しています。Windows Helloの顔認証・指紋認証、Microsoft Authenticatorアプリ、FIDO2セキュリティキーを使えば、パスワードという概念自体がなくなります。</p>
+<div class="info">
+<strong>CIOへのメッセージ</strong>: 「いつかパスワードレスに移行しよう」ではなく、「新規システムはパスワードレス前提で設計し、既存システムを段階的に移行する」という方針を今から打ち立てることが重要です。MFAの全社展開が第一歩になります。
+</div>
+</section>
+
+<!-- ===== Section 6 ===== -->
+<section id="cio-actions">
+<div class="phase-header">
+  <h2>&#x1F454; Section 6: CIOとして最初にすべき3つのこと</h2>
+  <div class="phase-meta">「意思決定」のための現状把握・リスク評価・計画策定</div>
+</div>
+
+<div class="action-box">
+  <h3>&#x1F4CB; CIOアクションリスト（今日から始めること）</h3>
+  <div class="action-step">
+    <div class="action-num">1</div>
+    <div class="action-content">
+      <strong>現状把握: AD環境の棚卸しを情シス部門に指示する</strong>
+      <span>「ADのドメインコントローラーは何台？いつ構築した？」「グループポリシーは何件？」「サービスアカウントは何個？」「ADに依存している業務システムは?」を一覧化させる。これがあらゆる意思決定の出発点です。</span>
     </div>
   </div>
-  <div class="myth-fact">
-    <div class="myth">
-      <h4>❌ よくある誤解</h4>
-      <p>「ウチみたいな規模の会社はハッカーに狙われない」</p>
-    </div>
-    <div class="fact">
-      <h4>✅ 現実</h4>
-      <p>大手ほどセキュリティが強化されているので、攻撃者は中堅・中小企業を集中的に狙う。管理が甘い会社が踏み台にされる</p>
+  <div class="action-step">
+    <div class="action-num">2</div>
+    <div class="action-content">
+      <strong>リスク評価: セキュリティギャップ診断をMicrosoftまたはSIerに依頼する</strong>
+      <span>「ADのセキュリティ診断」「Entra IDセキュリティスコア確認」「特権アカウント棚卸し」を外部視点で評価してもらう。Microsoftには無料の診断ツールがあります。「いつランサムウェアに狙われてもおかしくない状態か？」を客観的に知ることが重要です。</span>
     </div>
   </div>
-  <div class="myth-fact">
-    <div class="myth">
-      <h4>❌ よくある誤解</h4>
-      <p>「IDとパスワードさえ管理すれば大丈夫」</p>
-    </div>
-    <div class="fact">
-      <h4>✅ 現実</h4>
-      <p>パスワードは盗まれる。重要なシステムへのアクセスには「スマホのコード（多要素認証）」や「どの操作をしたか記録する仕組み」が必要</p>
+  <div class="action-step">
+    <div class="action-num">3</div>
+    <div class="action-content">
+      <strong>計画策定: 3年間の移行ロードマップを作成・承認する</strong>
+      <span>「今すぐやること（MFA全社展開・特権アカウント整理）」「1年以内にやること（Entra Connect導入・ハイブリッド化）」「3年以内にやること（ADフリー化の範囲確定・業務アプリ移行）」を段階的に計画します。一気に全部変えようとしないことが成功の鍵です。</span>
     </div>
   </div>
 </div>
 
-<div class="card">
-  <h2>会社の規模別：今すぐやるべき優先対策</h2>
-  <div class="grid3">
-    <div style="background:#f0f4ff;padding:20px;border-radius:10px;border-top:4px solid #4a90d9">
-      <h3 style="color:#4a90d9;margin-top:0">🏢 中小企業（〜300名）</h3>
-      <div class="step"><div class="step-num">1</div><div>退職者ID停止を<strong>即日自動化</strong>（HR連携）</div></div>
-      <div class="step"><div class="step-num">2</div><div>主要SaaSに<strong>SSO（シングルサインオン）</strong>を設定</div></div>
-      <div class="step"><div class="step-num">3</div><div>外部業者には<strong>個人ID</strong>を発行して共有を禁止</div></div>
-      <p style="margin:8px 0 0;font-size:.85em;color:#666">投資目安：年50〜200万円</p>
-    </div>
-    <div style="background:#f0fff4;padding:20px;border-radius:10px;border-top:4px solid #27ae60">
-      <h3 style="color:#27ae60;margin-top:0">🏙️ 中堅企業（300〜3000名）</h3>
-      <div class="step"><div class="step-num">1</div><div>HR連携による<strong>IDライフサイクル自動化</strong></div></div>
-      <div class="step"><div class="step-num">2</div><div>全社員への<strong>多要素認証（MFA）</strong>義務化</div></div>
-      <div class="step"><div class="step-num">3</div><div>外部業者作業の<strong>録画・ログ記録</strong>（踏み台サーバー）</div></div>
-      <p style="margin:8px 0 0;font-size:.85em;color:#666">投資目安：年200〜800万円</p>
-    </div>
-    <div style="background:#fff9e0;padding:20px;border-radius:10px;border-top:4px solid #f39c12">
-      <h3 style="color:#f39c12;margin-top:0">🏛️ 大企業（3000名〜）</h3>
-      <div class="step"><div class="step-num">1</div><div>全アクセス権の<strong>定期棚卸し・承認フロー</strong></div></div>
-      <div class="step"><div class="step-num">2</div><div>管理者権限の<strong>最小化と分離</strong>（一人に全権限を与えない）</div></div>
-      <div class="step"><div class="step-num">3</div><div>ID管理の<strong>ガバナンスプラットフォーム</strong>導入</div></div>
-      <p style="margin:8px 0 0;font-size:.85em;color:#666">投資目安：年1000〜5000万円</p>
-    </div>
-  </div>
+<div class="warn">
+<strong>よくある失敗パターン</strong>: 「ADは大丈夫だろう」と思い込んで後回しにした結果、ランサムウェア被害でADが暗号化され、全社のPCが使えなくなった事例が日本でも複数発生しています。ID基盤のセキュリティ強化は、「いつかやること」ではなく「今すぐやること」です。
 </div>
 
-<div class="card">
-  <h2>「それって本当に必要なの？」と感じたら</h2>
-  <p>ID管理への投資を検討する際、役員や予算担当者がよく言うのは「今まで問題なかった」という言葉です。</p>
-  <div class="highlight">
-    <strong>保険と同じ考え方</strong>：火事になったことがない家でも火災保険に入ります。なぜなら、火事になってからでは遅いからです。<br><br>
-    情報セキュリティも同じです。侵害が起きてから「あの時対策すれば良かった」では取り返しがつかない被害が出ます。
-  </div>
-  <div class="grid2">
-    <div>
-      <h3>💰 対策コストの目安</h3>
-      <table>
-        <tr><th>規模</th><th>年間投資額</th></tr>
-        <tr><td>中小（〜300名）</td><td>100〜300万円</td></tr>
-        <tr><td>中堅（〜3000名）</td><td>500〜2000万円</td></tr>
-        <tr><td>大企業（3000名〜）</td><td>2000万〜1億円</td></tr>
-      </table>
-    </div>
-    <div>
-      <h3>💸 対策しなかった場合のコスト</h3>
-      <table>
-        <tr><th>インシデントの種類</th><th>被害の目安</th></tr>
-        <tr><td>個人情報漏洩（1万件）</td><td>数億〜十数億円</td></tr>
-        <tr><td>ランサムウェア</td><td>1〜10億円</td></tr>
-        <tr><td>サービス停止（1日）</td><td>数千万〜数億円</td></tr>
-      </table>
-    </div>
-  </div>
-</div>
+<h3>CIOが情シス部門に問うべき5つの質問</h3>
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th>質問</th>
+      <th>なぜ重要か</th>
+      <th>理想の回答</th>
+      <th>危険な回答</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>ADドメインコントローラーはいつ更改しましたか？</strong></td>
+      <td>サポート切れのOSは深刻なセキュリティリスク</td>
+      <td>Windows Server 2019以上</td>
+      <td>2008・2012（サポート終了）</td>
+    </tr>
+    <tr>
+      <td><strong>MFA（多要素認証）は全社員に適用されていますか？</strong></td>
+      <td>パスワード漏洩時の最後の防衛線</td>
+      <td>全社員・全システムに適用済み</td>
+      <td>一部の管理者のみ、または未適用</td>
+    </tr>
+    <tr>
+      <td><strong>「神アカウント（共有Administrator）」は廃止していますか？</strong></td>
+      <td>内部不正・侵害時の証跡追跡ができない</td>
+      <td>全員個人アカウントで証跡あり</td>
+      <td>複数人で共有している</td>
+    </tr>
+    <tr>
+      <td><strong>ランサムウェア感染時のAD復旧手順はありますか？</strong></td>
+      <td>ADが落ちると全社が停止する</td>
+      <td>手順書・バックアップ・訓練実施済み</td>
+      <td>手順書なし・バックアップ未確認</td>
+    </tr>
+    <tr>
+      <td><strong>Entra IDへの移行計画はありますか？</strong></td>
+      <td>テレワーク・SaaS時代の必須基盤</td>
+      <td>3年ロードマップあり・予算確保済み</td>
+      <td>検討中・予算なし・担当者不在</td>
+    </tr>
+  </tbody>
+</table>
 
-<div class="card">
-  <h2>よく聞く用語の説明（専門用語を平易に解説）</h2>
-  <table>
-    <tr><th>専門用語</th><th>わかりやすい言い換え</th><th>なぜ必要か</th></tr>
-    <tr><td><strong>SSO（シングルサインオン）</strong></td><td>「一つのIDで全サービスにログインできる仕組み」</td><td>退職時に一つのIDを停止するだけで全サービスへのアクセスを遮断できる</td></tr>
-    <tr><td><strong>MFA・多要素認証</strong></td><td>「パスワードに加えてスマホのコードも必要にする仕組み」</td><td>パスワードが盗まれても、スマホがなければログインできない</td></tr>
-    <tr><td><strong>PAM（特権アクセス管理）</strong></td><td>「管理者作業を記録する玄関（踏み台）」</td><td>誰がいつどのサーバーで何をしたかを録画・ログで証拠保全</td></tr>
-    <tr><td><strong>IGA（ID管理・ガバナンス）</strong></td><td>「誰がどのシステムにアクセスできるかを自動で管理・監査するシステム」</td><td>人事異動・退職を検知して自動でアクセス権を変更。監査証跡も自動保管</td></tr>
-    <tr><td><strong>Active Directory (AD)</strong></td><td>「社内IDとパスワードを管理するWindowsの仕組み」</td><td>Windows PCへのログイン・社内ファイル共有の認証に使われる20年来の仕組み</td></tr>
-    <tr><td><strong>Entra ID</strong></td><td>「MicrosoftのクラウドID管理サービス（ADのクラウド版）」</td><td>Microsoft 365・Teams・Azureへのログイン認証に使われる現代の標準</td></tr>
-  </table>
+<div class="good">
+<strong>最後に &#x2014; CIOへのメッセージ</strong>: Active Directoryの問題は「技術的な詳細」ではなく「経営リスク」です。サイバー攻撃によるAD侵害は、会社全体のIT停止を意味します。ID基盤の近代化投資は、コストではなくリスク管理への投資として捉えてください。最初の一歩は「現状把握の指示」です。情シス部門に今日から動いてもらいましょう。
 </div>
+</section>
 
-</div>
-<footer>IT非専門家向けID管理入門ガイド | 本資料はID管理の重要性を広く理解していただくための入門資料です</footer>
+<div style="height:40px"></div>
+</main>
 </body>
 </html>

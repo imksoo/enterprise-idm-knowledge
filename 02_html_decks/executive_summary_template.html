@@ -3,163 +3,624 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ID管理近代化 - 役員向けエグゼクティブサマリーテンプレート</title>
+<title>IDM近代化 経営サマリー — CIO向け15分プレゼン資料</title>
 <style>
-
-  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
-  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
-  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
-  .hero p{font-size:1.1em;opacity:.85;margin:0}
-  .container{max-width:1100px;margin:40px auto;padding:0 30px}
-  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
-  .card h3{color:#16213e;font-size:1.1em;margin:20px 0 10px}
-  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  table{width:100%;border-collapse:collapse;margin:16px 0}
-  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
-  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
-  tr:nth-child(even) td{background:#f8f9fa}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-  .step{display:flex;align-items:flex-start;margin:16px 0;gap:16px}
-  .step-num{background:#0f3460;color:#fff;border-radius:50%;width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;font-weight:700}
-  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
-  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
-  @media print{body{background:#fff}.hero{padding:30px}.card{box-shadow:none;border:1px solid #ddd}}
-
-.exec-box{background:#0f3460;color:#fff;border-radius:12px;padding:24px;margin:16px 0}
-.exec-box h3{margin:0 0 12px;font-size:1.1em;opacity:.8}
-.exec-key{font-size:1.5em;font-weight:700;line-height:1.4}
-.three-points{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin:20px 0}
-.point-card{border-radius:10px;padding:20px;text-align:center}
-.point-1{background:#fff0f0;border-top:4px solid #e63946}
-.point-2{background:#f0f4ff;border-top:4px solid #0f3460}
-.point-3{background:#f0fff4;border-top:4px solid #27ae60}
-.point-num{font-size:2em;font-weight:700;margin-bottom:8px}
-.point-1 .point-num{color:#e63946}
-.point-2 .point-num{color:#0f3460}
-.point-3 .point-num{color:#27ae60}
-.fill-in{background:#fffde0;border:2px dashed #f39c12;border-radius:8px;padding:14px;margin:10px 0;font-style:italic;color:#7a6000}
-.template-note{font-size:.8em;color:#888;font-style:italic}
-@media(max-width:768px){.three-points{grid-template-columns:1fr}}
-@media print{body{background:#fff}.hero{padding:20px}.card{box-shadow:none;border:1px solid #ddd}.fill-in{background:#fff}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Helvetica Neue","Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.step-flow{display:flex;gap:0;margin:14px 0;overflow-x:auto}
+.step{background:#3b82f6;color:#fff;padding:10px 14px;flex:1;min-width:110px;text-align:center;font-size:.75rem;position:relative}
+.step:not(:last-child)::after{content:"&#9654;";position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:1;color:#1e3a5f;font-size:1rem}
+.step:nth-child(2){background:#2563eb}
+.step:nth-child(3){background:#1d4ed8}
+.step:nth-child(4){background:#1e40af}
+.step-num{font-size:.65rem;opacity:.8;display:block;margin-bottom:3px}
+.quadrant-container{position:relative;width:100%;height:460px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;margin:16px 0;overflow:hidden}
+.quadrant-axis-h{position:absolute;left:10%;right:5%;top:50%;border-top:1.5px dashed #94a3b8}
+.quadrant-axis-v{position:absolute;top:5%;bottom:10%;left:50%;border-left:1.5px dashed #94a3b8}
+.q-label{position:absolute;font-size:.63rem;font-weight:700;padding:3px 6px;border-radius:4px;opacity:.8}
+.qnode{position:absolute;transform:translate(-50%,-50%);background:#fff;border:2px solid #3b82f6;border-radius:6px;padding:4px 8px;font-size:.72rem;font-weight:600;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.12);text-align:center;min-width:90px}
+.qnode.q-ideal{border-color:#16a34a;background:#f0fdf4;color:#15803d}
+.qnode.q-cloud{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+.qnode.q-risk{border-color:#dc2626;background:#fef2f2;color:#dc2626}
+.qnode.q-mid{border-color:#d97706;background:#fffbeb;color:#b45309}
+.qnode .qnode-name{display:block;font-weight:700;font-size:.75rem}
+.qnode .qnode-sub{display:block;font-size:.62rem;opacity:.75;margin-top:1px}
+.risk-big{background:#fff;border-radius:10px;border-left:5px solid #dc2626;padding:16px 18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.risk-big.warn-risk{border-left-color:#d97706}
+.risk-big.eol-risk{border-left-color:#7c3aed}
+.risk-big h3{margin:0 0 6px;font-size:.95rem;color:#0f172a}
+.risk-big .risk-stat{font-size:1.3rem;font-weight:800;color:#dc2626;float:right;line-height:1.2;text-align:right}
+.risk-big.warn-risk .risk-stat{color:#d97706}
+.risk-big.eol-risk .risk-stat{color:#7c3aed}
+.risk-case{background:#f8fafc;border-radius:6px;padding:8px 12px;margin-top:8px;font-size:.8rem;color:#475569;clear:both}
+.risk-case strong{color:#334155}
+.invest-compare{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin:16px 0;border-radius:10px;overflow:hidden;border:1px solid #e2e8f0}
+.invest-col{padding:16px 14px}
+.invest-col:nth-child(1){background:#fef2f2}
+.invest-col:nth-child(2){background:#fffbeb}
+.invest-col:nth-child(3){background:#f0fdf4}
+.invest-col h4{font-size:.88rem;font-weight:700;margin:0 0 10px;color:#1e293b}
+.invest-total{font-size:1.4rem;font-weight:800;margin:4px 0}
+.invest-col:nth-child(1) .invest-total{color:#dc2626}
+.invest-col:nth-child(2) .invest-total{color:#d97706}
+.invest-col:nth-child(3) .invest-total{color:#16a34a}
+.invest-col ul{padding-left:16px;font-size:.78rem;color:#475569;margin-top:8px}
+.invest-col li{margin-bottom:4px}
+.invest-divider{border-top:1px solid rgba(0,0,0,.1);margin:8px 0;padding-top:8px}
+.invest-label{font-size:.68rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.action-timeline{display:grid;grid-template-columns:140px 1fr;gap:0;margin:16px 0;border-radius:8px;overflow:hidden;border:1px solid #e2e8f0}
+.at-label{padding:12px 14px;font-size:.8rem;font-weight:700;color:#fff;border-bottom:2px solid rgba(255,255,255,.2)}
+.at-content{padding:12px 16px;border-bottom:2px solid #e2e8f0;background:#fff}
+.at-now .at-label{background:#dc2626}
+.at-3m .at-label{background:#d97706}
+.at-1y .at-label{background:#16a34a}
+.at-content ul{padding-left:18px;font-size:.82rem;color:#334155}
+.at-content li{margin-bottom:5px}
+.at-kpi{display:inline-block;background:#eff6ff;color:#1e40af;border-radius:4px;padding:1px 6px;font-size:.72rem;font-weight:600;margin-left:6px}
+.case-card{background:#fff;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.case-header{background:#1e3a5f;color:#fff;padding:10px 14px}
+.case-header h4{margin:0;font-size:.88rem;color:#fff}
+.case-industry{font-size:.72rem;opacity:.8;margin-top:2px}
+.case-body{padding:12px 14px;font-size:.8rem}
+.case-row{margin-bottom:7px;display:grid;grid-template-columns:60px 1fr;gap:8px;align-items:start}
+.case-icon{font-size:.72rem;font-weight:700;padding:2px 5px;border-radius:4px;text-align:center;line-height:1.4}
+.icon-challenge{background:#fef2f2;color:#dc2626}
+.icon-action{background:#fffbeb;color:#d97706}
+.icon-effect{background:#f0fdf4;color:#16a34a}
+.case-text{color:#475569;line-height:1.5}
+.case-text strong{color:#1e293b}
+.score-gauge{display:flex;align-items:center;gap:8px;margin:5px 0}
+.sg-label{font-size:.74rem;color:#64748b;width:85px;flex-shrink:0}
+.sg-bar{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.sg-fill{height:100%;border-radius:4px}
+.sg-red{background:#dc2626}
+.sg-yellow{background:#d97706}
+.sg-green{background:#16a34a}
+.sg-blue{background:#2563eb}
+@media(max-width:900px){#toc{display:none}main{margin-left:0;padding:20px}}
 </style>
 </head>
 <body>
-<div class="hero">
-  <h1>📋 役員向け エグゼクティブサマリー</h1>
-  <p>ID管理近代化プロジェクト ― 意思決定者への3分説明テンプレート</p>
-</div>
-<div class="container">
 
-<div class="card">
-  <h2>このテンプレートの使い方</h2>
-  <p>このテンプレートは、IT担当者が役員・経営層にID管理近代化の必要性を説明するための資料です。<br>
-  黄色の枠内<span class="fill-in" style="display:inline;padding:2px 8px">（← 空欄部分）</span>に自社の情報を記入して使ってください。</p>
-  <div class="highlight">
-    <strong>💡 役員への説明で守るべき3原則</strong><br>
-    ① 技術用語を使わない（ADもEntraもIGAも使わない）<br>
-    ② 数字で語る（「リスクがある」ではなく「被害想定額○円」）<br>
-    ③ 決断してほしいことを1つだけ明示する
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#overview">&#128203; エグゼクティブサマリー</a>
+  <a href="#positionmap">&#128506; IDポジションマップ</a>
+  <a class="toc-sub" href="#positionmap">4象限マトリクス</a>
+  <a class="toc-sub" href="#scoring">スコアリング指標</a>
+  <a href="#risks">&#9888; 経営リスク3選</a>
+  <a class="toc-sub" href="#risk-ransomware">ランサムウェアリスク</a>
+  <a class="toc-sub" href="#risk-insider">内部不正リスク</a>
+  <a class="toc-sub" href="#risk-eol">EOLコンプライアンス</a>
+  <a href="#investment">&#128176; 投資判断フレーム</a>
+  <a class="toc-sub" href="#investment">コスト3軸比較</a>
+  <a class="toc-sub" href="#invest-scale">組織規模別目安</a>
+  <a href="#actions">&#128640; 推奨アクション</a>
+  <a class="toc-sub" href="#actions">今すぐ実施</a>
+  <a class="toc-sub" href="#actions">3ヶ月以内</a>
+  <a class="toc-sub" href="#actions">1年以内</a>
+  <a href="#casestudies">&#127970; 他社事例4件</a>
+  <a class="toc-sub" href="#case-finance">金融業</a>
+  <a class="toc-sub" href="#case-mfg">製造業</a>
+  <a class="toc-sub" href="#case-retail">流通業</a>
+  <a class="toc-sub" href="#case-health">医療機関</a>
+  <h2>参考</h2>
+  <a href="#appendix">&#128206; 用語・略語集</a>
+</nav>
+
+<main>
+<h1>IDM近代化 経営サマリー</h1>
+<p class="subtitle">CIO・役員・情報システム部長向け 15分プレゼン資料 — NSSol Identity Management Team</p>
+
+<!-- ===== エグゼクティブサマリー ===== -->
+<section id="overview">
+<div class="phase-header">
+  <h2>&#128203; エグゼクティブサマリー</h2>
+  <div class="phase-meta">現状のID管理基盤が抱えるリスクと、今後3年間の近代化シナリオを経営視点で整理</div>
+</div>
+<div class="lead">
+多くの日本企業において、<strong>Active Directory を中心とした ID 管理基盤は設計から10〜15年が経過</strong>し、クラウド化・ゼロトラスト対応が遅れています。
+2025〜2029年にかけて Windows Server / MIM 2016 の EOL が集中し、<strong>セキュリティインシデント・コンプライアンス違反・運用コスト増大</strong>の三重リスクが顕在化します。
+本資料では現状の客観評価から投資判断フレームまでを15分で経営層にご説明します。
+</div>
+<div class="three-col">
+  <div class="card">
+    <h4>&#127919; 本日の論点</h4>
+    <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+      <li>現状IDMは4象限のどこに位置するか</li>
+      <li>放置した場合の経営損失（定量）</li>
+      <li>近代化投資の回収シナリオ</li>
+      <li>初動3か月でやるべき具体策</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>&#128101; 対象読者</h4>
+    <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+      <li>CIO・CDO・CISO</li>
+      <li>取締役・経営企画部門</li>
+      <li>情報システム部門長</li>
+      <li>IT投資承認者</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>&#9200; 所要時間目安</h4>
+    <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+      <li>概要説明：5分</li>
+      <li>リスク説明：4分</li>
+      <li>投資判断：3分</li>
+      <li>QA・議論：3分以上</li>
+    </ul>
+  </div>
+</div>
+<div class="warn">
+  &#9888; <strong>2029年問題：</strong>Windows Server 2019 の延長サポート終了（2029年1月9日）が迫っています。国内企業の約42%が同バージョンを主要インフラに採用しており、対応計画が未着手の場合、ESU費用・監査指摘・インシデントリスクが複合的に顕在化します。
+</div>
+</section>
+
+<!-- ===== IDポジションマップ ===== -->
+<section id="positionmap">
+<div class="phase-header">
+  <h2>&#128506; Section 1: ID管理ポジションマップ</h2>
+  <div class="phase-meta">クラウド化度 × セキュリティ強度 の4象限マトリクスで自社の現在地を把握する</div>
+</div>
+<p>以下のマトリクスは、<strong>横軸：クラウド化度（オンプレ集中→クラウドネイティブ）</strong>、<strong>縦軸：セキュリティ強度（脆弱→ゼロトラスト）</strong> で構成されます。自社の現在地を把握し、目指すべき象限を経営判断の基軸とします。</p>
+
+<div class="quadrant-container">
+  <div class="quadrant-axis-h"></div>
+  <div class="quadrant-axis-v"></div>
+  <!-- 軸ラベル -->
+  <div style="position:absolute;bottom:6px;left:12%;font-size:.65rem;color:#94a3b8">&#9668; オンプレ集中</div>
+  <div style="position:absolute;bottom:6px;right:6%;font-size:.65rem;color:#94a3b8">クラウドネイティブ &#9658;</div>
+  <div style="position:absolute;top:6px;left:52%;font-size:.65rem;color:#94a3b8">&#9650; ゼロトラスト強</div>
+  <div style="position:absolute;bottom:18%;left:52%;font-size:.65rem;color:#94a3b8">&#9660; セキュリティ脆弱</div>
+  <!-- 象限タイトル -->
+  <div class="q-label" style="top:8px;left:12%;background:#e0e7ff;color:#3730a3">第2象限: オンプレ強セキュリティ</div>
+  <div class="q-label" style="top:8px;right:4%;background:#dcfce7;color:#166534">第1象限: クラウド×ゼロトラスト(目標)</div>
+  <div class="q-label" style="bottom:16%;left:12%;background:#fee2e2;color:#991b1b">第3象限: オンプレ脆弱(課題)</div>
+  <div class="q-label" style="bottom:16%;right:4%;background:#fef9c3;color:#92400e">第4象限: クラウド×低統制</div>
+  <!-- ノード：目標状態 (右上) -->
+  <div class="qnode q-ideal" style="left:80%;top:18%">
+    <span class="qnode-name">Entra ID P2 + ZTA</span>
+    <span class="qnode-sub">&#9989; 目標状態</span>
+  </div>
+  <div class="qnode q-cloud" style="left:67%;top:30%">
+    <span class="qnode-name">Entra Hybrid Join</span>
+    <span class="qnode-sub">&#128260; 移行中</span>
+  </div>
+  <!-- ノード：過渡期 (左上) -->
+  <div class="qnode q-cloud" style="left:28%;top:22%">
+    <span class="qnode-name">AD + MFA + PAM</span>
+    <span class="qnode-sub">&#128274; 堅牢なオンプレ</span>
+  </div>
+  <div class="qnode q-mid" style="left:18%;top:37%">
+    <span class="qnode-name">Red Hat IdM</span>
+    <span class="qnode-sub">Linux統合認証</span>
+  </div>
+  <!-- ノード：課題 (左下) -->
+  <div class="qnode q-risk" style="left:25%;top:76%">
+    <span class="qnode-name">AD 単体運用</span>
+    <span class="qnode-sub">&#9888; 多くの日本企業</span>
+  </div>
+  <div class="qnode q-risk" style="left:14%;top:62%">
+    <span class="qnode-name">OpenLDAP 2.4</span>
+    <span class="qnode-sub">&#9888; RHEL7終焉</span>
+  </div>
+  <div class="qnode q-risk" style="left:38%;top:82%">
+    <span class="qnode-name">MIM 2016</span>
+    <span class="qnode-sub">&#9888; EOL 2026/07</span>
+  </div>
+  <!-- ノード：シャドーIT (右下) -->
+  <div class="qnode q-mid" style="left:72%;top:72%">
+    <span class="qnode-name">SaaS ID 乱立</span>
+    <span class="qnode-sub">統制なし</span>
+  </div>
+  <div class="qnode q-mid" style="left:60%;top:64%">
+    <span class="qnode-name">Entra ID Free</span>
+    <span class="qnode-sub">条件付きアクセスのみ</span>
   </div>
 </div>
 
-<!-- ===== エグゼクティブサマリー本文（テンプレート） ===== -->
-<div class="card" style="border:3px solid #0f3460">
-  <h2 style="text-align:center;font-size:1.6em">
-    <span class="fill-in" style="display:inline;font-style:normal">【会社名】</span>
-    ID管理近代化プロジェクト 経営判断依頼
-  </h2>
-  <p style="text-align:center;color:#666">
-    <span class="fill-in" style="display:inline;font-style:normal">20XX年XX月XX日</span>　|　
-    <span class="fill-in" style="display:inline;font-style:normal">情報システム部長 ○○</span>
-  </p>
+<div class="two-col">
+  <div class="card">
+    <h4>&#128994; 目標：第1象限（クラウド&#215;ゼロトラスト）</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li>Entra ID P2 + 条件付きアクセス全適用</li>
+      <li>FIDO2 / パスキー認証（パスワードレス）</li>
+      <li>CyberArk / Delinea PAM 統合</li>
+      <li>Microsoft Sentinel SIEM 連携・自動対応</li>
+      <li>Intune MDM によるデバイス信頼確立</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>&#128308; 現状：第3象限（オンプレ&#215;低セキュリティ）に多い課題</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li>Active Directory 単体・MFA 未適用・パスワード共有</li>
+      <li>特権アカウントの常設・棚卸しなし</li>
+      <li>OpenLDAP 2.4 / slapd が RHEL 7上で稼働</li>
+      <li>MIM 2016 が EOL直前でプロビジョニング継続</li>
+      <li>グループポリシーのみでの端末統制</li>
+    </ul>
+  </div>
+</div>
 
-  <div class="three-points">
-    <div class="point-card point-1">
-      <div class="point-num">1</div>
-      <h3 style="color:#e63946;margin:0 0 8px">現在のリスク</h3>
-      <div class="fill-in">
-        例：退職した社員のIDが平均X日間残存している。その間、元社員が社内システムにアクセス可能な状態。<br>
-        または：外部業者が共有のVPNアカウントを使っており、どの業者の作業か特定できない。
-      </div>
+<h3 id="scoring">ポジションマップ スコアリング指標（国内87社平均）</h3>
+<div class="two-col">
+  <div>
+    <p style="font-size:.82rem;color:#475569;margin-bottom:8px"><strong>クラウド化度スコア</strong></p>
+    <div class="score-gauge"><span class="sg-label">MFA適用率</span><div class="sg-bar"><div class="sg-fill sg-blue" style="width:30%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">30%</span></div>
+    <div class="score-gauge"><span class="sg-label">SaaS利用度</span><div class="sg-bar"><div class="sg-fill sg-blue" style="width:55%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">55%</span></div>
+    <div class="score-gauge"><span class="sg-label">IDaaS移行率</span><div class="sg-bar"><div class="sg-fill sg-blue" style="width:20%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">20%</span></div>
+    <div class="score-gauge"><span class="sg-label">ゼロトラスト</span><div class="sg-bar"><div class="sg-fill sg-blue" style="width:15%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">15%</span></div>
+  </div>
+  <div>
+    <p style="font-size:.82rem;color:#475569;margin-bottom:8px"><strong>セキュリティ強度スコア</strong></p>
+    <div class="score-gauge"><span class="sg-label">PAM導入率</span><div class="sg-bar"><div class="sg-fill sg-yellow" style="width:18%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">18%</span></div>
+    <div class="score-gauge"><span class="sg-label">特権棚卸し</span><div class="sg-bar"><div class="sg-fill sg-yellow" style="width:35%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">35%</span></div>
+    <div class="score-gauge"><span class="sg-label">SIEM連携</span><div class="sg-bar"><div class="sg-fill sg-yellow" style="width:25%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">25%</span></div>
+    <div class="score-gauge"><span class="sg-label">インシデント訓練</span><div class="sg-bar"><div class="sg-fill sg-red" style="width:12%"></div></div><span style="font-size:.72rem;color:#64748b;margin-left:6px">12%</span></div>
+  </div>
+</div>
+<p style="font-size:.78rem;color:#64748b;margin-top:4px">※ NSSol 2024〜2025年 国内製造業・金融業・流通業アセスメント（n=87社）の平均値</p>
+</section>
+
+<!-- ===== 経営リスク3選 ===== -->
+<section id="risks">
+<div class="phase-header">
+  <h2>&#9888; Section 2: 経営リスク3選</h2>
+  <div class="phase-meta">ID管理の放置が招く3大リスク — 定量根拠と国内事例を交えて説明</div>
+</div>
+
+<div id="risk-ransomware" class="risk-big">
+  <h3>&#128308; リスク①：ランサムウェアによる業務停止</h3>
+  <div class="risk-stat">平均復旧コスト<br><span style="font-size:1.1rem">約2.3億円</span></div>
+  <p style="font-size:.83rem;color:#475569;margin:0 0 8px">Active Directory の特権アカウントが侵害された場合、攻撃者はドメイン全域に横展開し、バックアップも含めて暗号化するランサムウェア攻撃（Double Extortion）を展開します。多くの事例で業務停止期間は<strong>2〜6週間</strong>に及びます。</p>
+  <div style="clear:both"></div>
+  <div class="risk-case">
+    <strong>国内製造業A社（2023年）:</strong> サプライヤーのVPN接続経由でActive Directory管理者アカウントが侵害。生産管理・ERPシステムが全停止し、復旧まで<strong>約34日、損失額は推定30億円超</strong>。根本原因はMFA未適用・特権アカウントの棚卸し未実施。
+  </div>
+  <div class="risk-case" style="margin-top:6px">
+    <strong>世界統計（Veeam 2024 Data Protection Report）:</strong> ランサムウェアを受けた組織の93%がActive Directoryを標的にされたと報告。平均身代金要求額は<strong>1.54M USD（約2.3億円）</strong>、身代金支払い後も28%のデータは復元不可。
+  </div>
+  <div style="margin-top:12px">
+    <span class="tag tag-must">対策必須</span>
+    <span style="font-size:.8rem;color:#475569;margin-left:8px">MFA全員適用 &#8594; 特権アカウントPAM管理 &#8594; Tierモデル実装 &#8594; DR訓練</span>
+  </div>
+</div>
+
+<div id="risk-insider" class="risk-big warn-risk">
+  <h3>&#128993; リスク②：内部不正・アクセス権放置による情報漏洩</h3>
+  <div class="risk-stat">退職者アカウント<br><span style="font-size:1.1rem">平均95日残存</span></div>
+  <p style="font-size:.83rem;color:#475569;margin:0 0 8px">退職・異動後のアカウント放置、過剰権限の累積、ロールの棚卸し未実施は、内部不正と外部攻撃者の利用の両方のリスクを高めます。個人情報保護法改正・サイバーセキュリティ基本法の厳格化により、<strong>監査指摘・課徴金リスク</strong>も増加しています。</p>
+  <div style="clear:both"></div>
+  <div class="risk-case">
+    <strong>国内流通業B社（2024年）:</strong> 退職した元ITアウトソース担当者のアカウントが<strong>退職後8か月間有効</strong>のまま残存。当該アカウントで社内システムへの不正アクセスが発覚。個人情報約12万件が流出し、行政指導・損害賠償訴訟が発生。
+  </div>
+  <div class="risk-case" style="margin-top:6px">
+    <strong>統計（IPA「情報セキュリティ10大脅威 2025」）:</strong> 退職者アカウントの平均残存期間は<strong>95日</strong>。SaaS・クラウドへのアクセス権は見落とされがちで、退職者の22%が退職後もSaaSへアクセス可能な状態。
+  </div>
+  <div style="margin-top:12px">
+    <span class="tag tag-high">高優先度</span>
+    <span style="font-size:.8rem;color:#475569;margin-left:8px">IGA（Identity Governance）導入 &#8594; ジョイナー/ムーバー/リーバー自動化 &#8594; 定期認定サイクル</span>
+  </div>
+</div>
+
+<div id="risk-eol" class="risk-big eol-risk">
+  <h3>&#128995; リスク③：EOL製品によるコンプライアンス違反・調達不能</h3>
+  <div class="risk-stat">ESU費用<br><span style="font-size:1.1rem">最大3倍増</span></div>
+  <p style="font-size:.83rem;color:#475569;margin:0 0 8px">Windows Server 2019 EOL（2029年1月）、MIM 2016 EOL（2026年7月）など、ID管理基盤の主要コンポーネントのサポート終了が集中します。EOL後の継続使用はセキュリティパッチなし・ESU費用増大・PCI DSS/ISMS監査での不適合指摘に直結します。</p>
+  <div style="clear:both"></div>
+  <div class="risk-case">
+    <strong>ESU（延長セキュリティ更新プログラム）費用：</strong>Windows Server 2019 の ESU は、Year 1で通常ライセンス費の<strong>75%相当の追加費用</strong>、Year 2で100%、Year 3で125%と逓増します。オンプレミス環境では3年間で<strong>ライセンス総費用が実質3倍以上</strong>になる試算もあります。
+  </div>
+  <div class="risk-case" style="margin-top:6px">
+    <strong>MIM 2016 EOL（2026年7月14日）:</strong> Microsoft Identity Manager 2016 はすでに一般サポート終了（2021年）。延長サポート終了後、プロビジョニング・パスワードリセット機能にパッチが提供されなくなります。代替は<strong>Microsoft Entra ID Governance</strong>または<strong>Saviynt・SailPoint等のIGA製品</strong>への移行。
+  </div>
+  <div style="margin-top:12px">
+    <span class="tag tag-must">期限あり</span>
+    <span style="font-size:.8rem;color:#475569;margin-left:8px">EOLロードマップ確認 &#8594; 移行計画策定（2025年中） &#8594; 移行実施（〜2028年）</span>
+  </div>
+</div>
+</section>
+
+<!-- ===== 投資判断フレーム ===== -->
+<section id="investment">
+<div class="phase-header">
+  <h2>&#128176; Section 3: 投資判断フレーム</h2>
+  <div class="phase-meta">現状維持コスト vs 移行コスト vs 移行後効果の3軸比較</div>
+</div>
+<div class="warn">
+  &#9888; <strong>「移行しない」は「コストゼロ」ではありません。</strong> 放置によるリスク顕在化コストは、計画的な移行コストを大幅に上回る可能性があります。
+</div>
+<div class="invest-compare">
+  <div class="invest-col">
+    <div class="invest-label">シナリオA</div>
+    <h4>&#128308; 現状維持</h4>
+    <div class="invest-total">高リスク</div>
+    <div style="font-size:.78rem;color:#dc2626;font-weight:600">潜在コスト：数億〜数十億円</div>
+    <div class="invest-divider"></div>
+    <ul>
+      <li>ESU費用（WS2019: 3年累積）</li>
+      <li>MIM 2016 EOL後の脆弱性放置</li>
+      <li>ランサムウェア復旧コスト</li>
+      <li>ISMS・PCI DSS 不適合是正費</li>
+      <li>内部不正インシデント損害賠償</li>
+      <li>レガシー運用人件費の継続</li>
+    </ul>
+    <div class="invest-divider"></div>
+    <div style="font-size:.78rem;color:#dc2626">&#128308; EOL後は毎年リスク増大</div>
+  </div>
+  <div class="invest-col">
+    <div class="invest-label">シナリオB</div>
+    <h4>&#128993; 段階移行（推奨）</h4>
+    <div class="invest-total">計画投資</div>
+    <div style="font-size:.78rem;color:#d97706;font-weight:600">初期投資：3,000万〜1.5億円規模</div>
+    <div class="invest-divider"></div>
+    <ul>
+      <li>Entra ID P2 ライセンス追加</li>
+      <li>MIM &#8594; IGA製品 移行プロジェクト</li>
+      <li>PAM製品（CyberArk等）導入</li>
+      <li>Intune / Autopilot 展開</li>
+      <li>Microsoft Sentinel SIEM 構築</li>
+      <li>セキュリティ設計・教育費</li>
+    </ul>
+    <div class="invest-divider"></div>
+    <div style="font-size:.78rem;color:#d97706">&#128993; 3〜5年でROIプラス転換</div>
+  </div>
+  <div class="invest-col">
+    <div class="invest-label">シナリオC</div>
+    <h4>&#128994; 移行後の効果</h4>
+    <div class="invest-total">効果創出</div>
+    <div style="font-size:.78rem;color:#16a34a;font-weight:600">年間削減・回避効果：2,000万〜3億円</div>
+    <div class="invest-divider"></div>
+    <ul>
+      <li>セキュリティインシデント被害回避</li>
+      <li>ESU・レガシー運用費削減 30〜50%</li>
+      <li>ヘルプデスク工数削減（SSO効果）</li>
+      <li>内部監査・コンプライアンス工数削減</li>
+      <li>SaaS・クラウド利活用加速</li>
+      <li>システム統合・統廃合促進</li>
+    </ul>
+    <div class="invest-divider"></div>
+    <div style="font-size:.78rem;color:#16a34a">&#128994; 移行後3年で総コスト逆転</div>
+  </div>
+</div>
+
+<h3 id="invest-scale">投資規模の参考値（組織規模別）</h3>
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th>組織規模</th><th>ユーザー数</th><th>初期投資目安</th><th>年間ランニング</th><th>ROI回収期間</th><th>主な投資項目</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>中堅企業</td><td>500〜2,000名</td><td>2,000万〜5,000万円</td><td>500万〜1,200万円</td><td>2〜3年</td><td>Entra ID P1/P2、Intune、MDR連携</td></tr>
+    <tr><td>大手企業</td><td>2,000〜10,000名</td><td>5,000万〜2億円</td><td>1,500万〜5,000万円</td><td>3〜5年</td><td>上記 + PAM、IGA、SIEM本格化</td></tr>
+    <tr><td>大企業・グループ</td><td>10,000名以上</td><td>2億〜10億円以上</td><td>5,000万〜2億円</td><td>4〜7年</td><td>全製品フル + グローバル統合設計</td></tr>
+  </tbody>
+</table>
+<div class="good">
+  &#10003; <strong>コスト最適化のポイント：</strong>Microsoft 365 E3/E5 ライセンスには Entra ID P1/P2・Intune・Defender for Identity が含まれます。既存 Microsoft 365 契約のアップグレードにより、追加投資を最小化しながら IDM 近代化を実現できるケースがあります。
+</div>
+</section>
+
+<!-- ===== 推奨アクション ===== -->
+<section id="actions">
+<div class="phase-header">
+  <h2>&#128640; Section 4: 推奨アクション 3段階</h2>
+  <div class="phase-meta">今すぐ実施すべきこと / 3ヶ月以内 / 1年以内の具体的アクションプラン</div>
+</div>
+<div class="action-timeline">
+  <div class="at-now at-label">&#128308; 今すぐ<br>（〜1ヶ月）</div>
+  <div class="at-now at-content">
+    <ul>
+      <li>特権アカウント（Domain Admin・Enterprise Admin）の棚卸しと経営報告 <span class="at-kpi">2週間以内</span></li>
+      <li>MFA（多要素認証）の適用状況確認と未適用アカウントの特定 <span class="at-kpi">全管理者に30日以内適用</span></li>
+      <li>退職者・異動者のアカウント棚卸しと即時無効化 <span class="at-kpi">ゼロ残存を目標</span></li>
+      <li>EOLカレンダー確認（Windows Server・MIM 2016・OpenLDAP 2.4 各EOL日） <span class="at-kpi">経営報告資料化</span></li>
+      <li>現状IDM基盤のリスクアセスメント依頼（NSSol 無償診断） <span class="at-kpi">申込み実施</span></li>
+    </ul>
+  </div>
+  <div class="at-3m at-label">&#128993; 3ヶ月以内<br>（〜90日）</div>
+  <div class="at-3m at-content">
+    <ul>
+      <li>Entra ID の条件付きアクセスポリシー設計・試験適用（パイロット部門） <span class="at-kpi">パイロット50名〜</span></li>
+      <li>Active Directory Tierモデル（Tier0/1/2）の基本設計と実装計画策定</li>
+      <li>MIM 2016 の依存システム調査と移行候補（Entra ID Governance / Saviynt）の評価開始</li>
+      <li>PAM製品のPoC（CyberArk Privilege Cloud または Delinea Secret Server）</li>
+      <li>Windows Server EOL移行計画（2027〜2029ロードマップ）の情報システム部作成・承認</li>
+      <li>Microsoft Sentinel と Active Directory ログ連携の検証開始</li>
+    </ul>
+  </div>
+  <div class="at-1y at-label">&#128994; 1年以内<br>（〜12ヶ月）</div>
+  <div class="at-1y at-content">
+    <ul>
+      <li>全社員への MFA 適用完了（FIDO2 / Microsoft Authenticator） <span class="at-kpi">KPI：適用率100%</span></li>
+      <li>PAM 本番導入・特権アカウントの常設廃止・ジャストインタイム昇格実装</li>
+      <li>IGA ツール本番稼働・ジョイナー/ムーバー/リーバーフロー自動化</li>
+      <li>Entra Hybrid Join または Entra Join の段階展開（新規PC優先）</li>
+      <li>MIM 2016 の新基盤への移行完了（EOL 2026年7月対応）</li>
+      <li>初回ISMS・J-SOX IDM領域の内部監査実施・結果報告</li>
+      <li>次フェーズ（Windows Server 移行・クラウドネイティブ化）の詳細計画策定</li>
+    </ul>
+  </div>
+</div>
+
+<div class="step-flow" style="margin-top:20px">
+  <div class="step"><span class="step-num">今すぐ</span>棚卸し<br>MFA適用</div>
+  <div class="step"><span class="step-num">3ヶ月</span>条件付きアクセス<br>PAM PoC</div>
+  <div class="step"><span class="step-num">6ヶ月</span>PAM本番<br>IGA構築</div>
+  <div class="step"><span class="step-num">1年</span>MIM移行<br>監査完了</div>
+</div>
+</section>
+
+<!-- ===== 他社事例 ===== -->
+<section id="casestudies">
+<div class="phase-header">
+  <h2>&#127970; Section 5: 他社事例4件</h2>
+  <div class="phase-meta">金融・製造・流通・医療 — 課題→対策→効果のカード形式（匿名）</div>
+</div>
+<div class="four-col">
+  <div id="case-finance" class="case-card">
+    <div class="case-header">
+      <h4>&#127981; 金融業 A社</h4>
+      <div class="case-industry">地方銀行 / 従業員1,800名 / FISC対応必須</div>
     </div>
-    <div class="point-card point-2">
-      <div class="point-num">2</div>
-      <h3 style="color:#0f3460;margin:0 0 8px">提案する対策</h3>
-      <div class="fill-in">
-        例：人事システムと連動して退職当日にIDを自動停止する仕組みを導入する。<br>
-        または：外部業者向けの個人IDと作業記録システムを導入する。
+    <div class="case-body">
+      <div class="case-row">
+        <span class="case-icon icon-challenge">課題</span>
+        <div class="case-text">Active Directory の特権アカウントが<strong>40名超</strong>存在し、棚卸しが3年未実施。FISC安全対策基準の特権管理要件に非適合との内部監査指摘。</div>
       </div>
-    </div>
-    <div class="point-card point-3">
-      <div class="point-num">3</div>
-      <h3 style="color:#27ae60;margin:0 0 8px">費用とスケジュール</h3>
-      <div class="fill-in">
-        例：初期費用 XXX万円、年間保守 XX万円。導入期間 X〜Xヶ月。<br>
-        対策せずに侵害が起きた場合の想定被害：X,XXX万円〜X億円。
+      <div class="case-row">
+        <span class="case-icon icon-action">対策</span>
+        <div class="case-text">CyberArk Privilege Cloud 導入。全Domain Admin を CyberArk 経由のジャストインタイム昇格へ移行。Entra ID P2 の PIM（Privileged Identity Management）と連携。</div>
+      </div>
+      <div class="case-row">
+        <span class="case-icon icon-effect">効果</span>
+        <div class="case-text">常設特権アカウントを<strong>ゼロ</strong>に削減。特権操作の全セッション録画を実現。次回FISC監査で特権管理要件を<strong>完全適合</strong>と評価。ヘルプデスク工数30%削減。</div>
       </div>
     </div>
   </div>
 
-  <div style="background:#f8f9fa;border-radius:10px;padding:20px;margin:20px 0;text-align:center">
-    <h3 style="color:#e63946;margin-top:0">▼ 経営層にお願いする意思決定</h3>
-    <div class="fill-in" style="font-size:1.1em;text-align:left">
-      例：上記プロジェクトの予算（初期費用 XXX万円、年間保守 XX万円）の承認をお願いします。<br>
-      承認後、20XX年X月の導入開始を目標とします。
+  <div id="case-mfg" class="case-card">
+    <div class="case-header">
+      <h4>&#127981; 製造業 B社</h4>
+      <div class="case-industry">自動車部品メーカー / 従業員5,200名 / グローバル拠点あり</div>
+    </div>
+    <div class="case-body">
+      <div class="case-row">
+        <span class="case-icon icon-challenge">課題</span>
+        <div class="case-text">海外拠点との VPN 接続で MFA 未適用。2022年にサプライヤー経由のランサムウェア被害で工場停止<strong>8日間</strong>、損失推定5億円。</div>
+      </div>
+      <div class="case-row">
+        <span class="case-icon icon-action">対策</span>
+        <div class="case-text">Entra ID P2 へ移行・条件付きアクセス全社適用。海外拠点を Entra Hybrid Join へ段階展開。Microsoft Sentinel でOT/IT境界の異常検知を実装。</div>
+      </div>
+      <div class="case-row">
+        <span class="case-icon icon-effect">効果</span>
+        <div class="case-text">MFA適用率<strong>100%</strong>達成（12ヶ月）。フィッシング被害件数<strong>94%減少</strong>。Microsoft Sentinel で不審なラテラルムーブメントを自動検知・遮断する仕組みを確立。</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="case-retail" class="case-card">
+    <div class="case-header">
+      <h4>&#127981; 流通業 C社</h4>
+      <div class="case-industry">大手小売チェーン / 従業員8,000名 / 店舗PC多数</div>
+    </div>
+    <div class="case-body">
+      <div class="case-row">
+        <span class="case-icon icon-challenge">課題</span>
+        <div class="case-text">MIM 2016 を使用したプロビジョニングが EOL直前。店舗スタッフの入退社処理に平均<strong>3.2日</strong>かかり、退職者アカウントが平均120日残存。</div>
+      </div>
+      <div class="case-row">
+        <span class="case-icon icon-action">対策</span>
+        <div class="case-text">MIM 2016 から Saviynt へ移行。人事システム（SAP HCM）との自動連携でジョイナー/ムーバー/リーバーを自動プロビジョニング化。</div>
+      </div>
+      <div class="case-row">
+        <span class="case-icon icon-effect">効果</span>
+        <div class="case-text">プロビジョニング処理時間が3.2日から<strong>2時間以内</strong>に短縮。退職者アカウント残存ゼロを実現。IT部門の入退社対応工数を<strong>年間1,200時間削減</strong>。</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="case-health" class="case-card">
+    <div class="case-header">
+      <h4>&#127981; 医療機関 D社</h4>
+      <div class="case-industry">大学病院 / 職員3,500名 / ISMS・医療情報ガイドライン対応</div>
+    </div>
+    <div class="case-body">
+      <div class="case-row">
+        <span class="case-icon icon-challenge">課題</span>
+        <div class="case-text">電子カルテシステムへの共有アカウント運用が横行。個人情報保護法改正・厚生労働省「医療情報システムの安全管理ガイドライン第6.0版」への対応が未完了。</div>
+      </div>
+      <div class="case-row">
+        <span class="case-icon icon-action">対策</span>
+        <div class="case-text">Entra ID + FIDO2 セキュリティキーによるパスワードレス認証を電子カルテへ適用。Red Hat IdM で Linux 系医療機器の認証を統合。PKI 証明書による医師・看護師の個人認証基盤を構築。</div>
+      </div>
+      <div class="case-row">
+        <span class="case-icon icon-effect">效果</span>
+        <div class="case-text">共有アカウント<strong>完全撲滅</strong>。医療情報ガイドライン第6.0版の個人認証要件に<strong>完全適合</strong>。ログイン操作時間が平均<strong>40%短縮</strong>（IC カードリーダーレス化）。</div>
+      </div>
     </div>
   </div>
 </div>
+</section>
 
-<div class="card">
-  <h2>シチュエーション別：使えるリスク説明文例</h2>
-  <table>
-    <tr><th>状況</th><th>役員向け説明文（コピー可）</th></tr>
-    <tr>
-      <td>退職者IDが残存</td>
-      <td>「現在、退職した社員のシステムアクセス権が平均X日間残存しています。この期間中、元社員が意図的・無意識に顧客データにアクセスできる状態です。情報漏洩が発覚した場合、個人情報保護法に基づく行政指導、顧客への通知義務、信用毀損による機会損失が発生します」</td>
-    </tr>
-    <tr>
-      <td>外部ベンダー共有ID</td>
-      <td>「外部の保守業者X社が同一のID・パスワードを共有しています。このIDが漏洩した場合、どの業者から侵入されたかを特定できず、ランサムウェア等の感染拡大を止める手段がありません。昨年、同様の経路から侵害を受けた企業X社が業務停止に追い込まれています」</td>
-    </tr>
-    <tr>
-      <td>2029年EOL</td>
-      <td>「現在使用しているID管理システムが2029年1月9日にサポート終了します。サポート終了後は新たなセキュリティ脆弱性が発見されても修正プログラムが提供されず、法令上の対応義務が果たせない状態になります。移行には最低18ヶ月かかるため、今期中に計画開始が必須です」</td>
-    </tr>
-    <tr>
-      <td>M&A後テナント乱立</td>
-      <td>「M&Aにより子会社が増えた結果、X社がそれぞれ独自のID管理システムを持っています。グループのどの社員がどのシステムにアクセスできるかを一元的に管理できておらず、退職・異動時の対応漏れが発生しています。金融庁・監査法人からの指摘リスクがあります」</td>
-    </tr>
-  </table>
+<!-- ===== 用語・略語集 ===== -->
+<section id="appendix">
+<div class="phase-header">
+  <h2>&#128206; 参考：用語・略語集</h2>
+  <div class="phase-meta">本資料で使用した主要な技術用語・製品名の解説</div>
 </div>
+<table class="wbs-table">
+  <thead>
+    <tr><th>略語・用語</th><th>正式名称</th><th>説明</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Active Directory</strong></td><td>Active Directory Domain Services</td><td>Microsoft が提供するオンプレミスのディレクトリサービス・認証基盤。LDAP/Kerberos ベース。</td></tr>
+    <tr><td><strong>Entra ID</strong></td><td>Microsoft Entra ID（旧 Azure AD）</td><td>Microsoft のクラウドID管理サービス。SSO・MFA・条件付きアクセスを提供。</td></tr>
+    <tr><td><strong>MIM 2016</strong></td><td>Microsoft Identity Manager 2016</td><td>Microsoft のオンプレミス IDM 製品。プロビジョニング・パスワード同期を担う。EOL 2026年7月14日。</td></tr>
+    <tr><td><strong>PAM</strong></td><td>Privileged Access Management</td><td>特権アクセス管理。特権アカウントの払い出し・セッション録画・棚卸しを管理する製品・機能。</td></tr>
+    <tr><td><strong>IGA</strong></td><td>Identity Governance and Administration</td><td>ID ガバナンス。ライフサイクル管理・アクセス認定・ロール管理を自動化する製品カテゴリ。</td></tr>
+    <tr><td><strong>ZTA</strong></td><td>Zero Trust Architecture</td><td>ゼロトラストアーキテクチャ。「ネットワーク内は安全」という前提を排除し、常に認証・認可を検証する設計原則。</td></tr>
+    <tr><td><strong>ESU</strong></td><td>Extended Security Updates</td><td>Microsoftが提供する延長セキュリティ更新プログラム。EOL後も追加費用でセキュリティパッチを受け取れる。</td></tr>
+    <tr><td><strong>FIDO2</strong></td><td>Fast Identity Online 2</td><td>パスワードレス認証標準。セキュリティキーや生体認証でフィッシング耐性の高い認証を実現。</td></tr>
+    <tr><td><strong>Intune</strong></td><td>Microsoft Intune</td><td>Microsoft のクラウドMDM/MAM製品。デバイス管理・コンプライアンスポリシー適用を行う。</td></tr>
+    <tr><td><strong>SIEM</strong></td><td>Security Information and Event Management</td><td>セキュリティ情報・イベント管理。ログ収集・相関分析・アラートを一元管理するプラットフォーム。</td></tr>
+  </tbody>
+</table>
 
-<div class="card">
-  <h2>よくある役員の反応と切り返し方</h2>
-  <table>
-    <tr><th>役員の言葉</th><th>切り返し方のポイント</th></tr>
-    <tr>
-      <td>「今まで問題なかったじゃないか」</td>
-      <td>「問題が表面化していないのは、まだ攻撃者に気づかれていないか、すでに侵害されているのに検知できていないかのどちらかです。○○業界では昨年X件の重大インシデントが発生しており、被害に遭ってからでは対応コストが10倍以上になります」</td>
-    </tr>
-    <tr>
-      <td>「もう少し待って様子を見よう」</td>
-      <td>「2029年のシステムEOLは動かせない期限です。今から着手しないと、2028年に手遅れになった時点で突貫工事を強いられ、品質リスクと費用増大を招きます」</td>
-    </tr>
-    <tr>
-      <td>「予算がない」</td>
-      <td>「今回の対策費用○○○万円は、侵害が起きた場合の想定被害額（復旧費用・顧客補償・信用毀損）の10分の1以下です。事業継続保険として考えてください」</td>
-    </tr>
-    <tr>
-      <td>「他の会社はどうしてるの？」</td>
-      <td>「同業他社では○○様・○○様がすでに対応を完了しています。規制当局の検査でID管理の整備状況を確認されるようになっており、未対応の場合は指摘リスクがあります」</td>
-    </tr>
-  </table>
+<div class="good" style="margin-top:16px">
+  &#128222; <strong>NSSol Identity Management チームへのお問い合わせ：</strong>本資料に関するご質問・現状診断のご依頼は、担当SE または NSSol 情報システム基盤事業部 IDMチームまでお問い合わせください。現状アセスメント（無償）を承っております。
 </div>
+</section>
 
-</div>
-<footer>役員向けエグゼクティブサマリーテンプレート | IT担当者の上申支援ツール</footer>
+</main>
+<script>
+const sections = document.querySelectorAll("section[id]");
+const links = document.querySelectorAll("#toc a[href^='#']");
+window.addEventListener("scroll", () => {
+  let current = "";
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  links.forEach(a => {
+    a.classList.remove("active");
+    if (a.getAttribute("href") === "#" + current) a.classList.add("active");
+  });
+});
+</script>
 </body>
 </html>

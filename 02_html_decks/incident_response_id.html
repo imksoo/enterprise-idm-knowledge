@@ -1,119 +1,667 @@
 <!DOCTYPE html>
-<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IDインシデント対応プレイブック</title><style>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IDを起点にしたセキュリティ侵害シナリオと対策</title>
+<style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Hiragino Sans','Yu Gothic UI','Noto Sans JP',sans-serif;font-size:14px;color:#1a1a2e;background:#f0f2f5;padding:24px}
-.page{max-width:1100px;margin:0 auto}
-h1{font-size:1.8em;font-weight:700;color:#1e293b;margin-bottom:6px}
-.subtitle{color:#64748b;margin-bottom:28px;font-size:.95em}
-h2{font-size:1.1em;font-weight:700;color:#1e293b;border-left:4px solid #3b82f6;padding-left:12px;margin:28px 0 12px}
-h3{font-size:.95em;font-weight:700;color:#1e293b;margin:16px 0 8px}
-p{line-height:1.7;color:#374151;font-size:.9em;margin-bottom:10px}
-.tbl-wrap{overflow-x:auto;margin-bottom:28px}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-th{background:#1e293b;color:#f8fafc;padding:11px 14px;text-align:left;font-size:.82em;white-space:nowrap}
-td{padding:10px 14px;border-bottom:1px solid #f1f5f9;font-size:.88em;vertical-align:top}
-tr:hover td{background:#f8fafc}
-.card{background:#fff;border-radius:10px;padding:20px;border-left:5px solid #3b82f6;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
-.card.green{border-left-color:#22c55e}.card.red{border-left-color:#ef4444}.card.yellow{border-left-color:#f59e0b}.card.purple{border-left-color:#8b5cf6}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
-.list{padding:0 0 0 18px}.list li{margin:4px 0;line-height:1.55;font-size:.88em}
-.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75em;font-weight:700;color:#fff;margin:2px}
-.b-blue{background:#3b82f6}.b-green{background:#22c55e}.b-red{background:#ef4444}.b-gray{background:#9ca3af}.b-orange{background:#f97316}.b-purple{background:#8b5cf6}
-.note{background:#fffbeb;border:1px solid #fde047;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
-.alert{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 18px;margin-bottom:20px;font-size:.88em;line-height:1.7}
-.cn{color:#16a34a;font-weight:700;text-align:center}.cp{color:#d97706;text-align:center}.cm{color:#9ca3af;text-align:center}
-footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-top:16px;border-top:1px solid #e2e8f0}
-@media print{body{background:#fff;padding:0}}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header p{opacity:.85;font-size:.85rem;margin:0}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.attack-card{background:#fff;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:20px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.attack-header{background:linear-gradient(135deg,#dc2626,#991b1b);color:#fff;padding:12px 16px}
+.attack-header h3{color:#fff;margin:0;font-size:1rem}
+.attack-header .attack-meta{font-size:.78rem;opacity:.85;margin-top:4px}
+.attack-body{padding:16px}
+.attack-section{margin-bottom:14px}
+.attack-section h4{font-size:.85rem;font-weight:700;color:#475569;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.step-list{list-style:none;padding:0;counter-reset:step}
+.step-list li{counter-increment:step;padding:6px 0 6px 32px;position:relative;border-bottom:1px solid #f1f5f9;font-size:.83rem}
+.step-list li::before{content:counter(step);position:absolute;left:4px;top:7px;background:#3b82f6;color:#fff;width:20px;height:20px;border-radius:50%;text-align:center;font-size:.7rem;line-height:20px;font-weight:700}
+.countermeasure-list{list-style:none;padding:0}
+.countermeasure-list li{padding:5px 0 5px 22px;position:relative;font-size:.83rem;border-bottom:1px solid #f1f5f9}
+.countermeasure-list li::before{content:"✓";position:absolute;left:2px;color:#16a34a;font-weight:700}
+.priority-tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.7rem;font-weight:700}
+.priority-critical{background:#fee2e2;color:#991b1b}
+.priority-high{background:#fef3c7;color:#92400e}
+.priority-medium{background:#dbeafe;color:#1e40af}
+.timeline{position:relative;padding-left:30px;margin:16px 0}
+.timeline::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:#3b82f6}
+.timeline-item{position:relative;margin-bottom:16px}
+.timeline-item::before{content:"";position:absolute;left:-24px;top:4px;width:10px;height:10px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 0 0 2px #3b82f6}
+.timeline-time{font-size:.75rem;font-weight:700;color:#3b82f6;margin-bottom:4px}
+.timeline-content{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;font-size:.83rem}
+.solution-phase{background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:16px;margin-bottom:14px}
+.solution-phase h4{color:#1e3a5f;font-size:.9rem;margin-bottom:10px;border-bottom:1px solid #e2e8f0;padding-bottom:6px}
+.solution-item{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid #f1f5f9}
+.solution-item:last-child{border-bottom:none}
+.solution-badge{min-width:70px;text-align:center;padding:4px 8px;border-radius:6px;font-size:.72rem;font-weight:700;height:fit-content}
+.badge-emergency{background:#fee2e2;color:#991b1b}
+.badge-short{background:#fef3c7;color:#92400e}
+.badge-medium{background:#dbeafe;color:#1e40af}
+code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:.82rem;font-family:monospace;color:#dc2626}
+ul{padding-left:20px;margin-bottom:10px}
+ul li{margin-bottom:4px;font-size:.85rem}
+.cost-table{width:100%;border-collapse:collapse;font-size:.82rem;margin:14px 0}
+.cost-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:center}
+.cost-table td{padding:7px 10px;border-bottom:1px solid #e2e8f0;text-align:center}
+.cost-table tr:nth-child(even) td{background:#f8fafc}
+@media(max-width:900px){#toc{display:none}main{margin-left:0;padding:16px}}
+</style>
+</head>
+<body>
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#overview">�� なぜIDが核心か</a>
+  <a href="#attack-chain">⛓️ 攻撃チェーン</a>
+  <a href="#attacks">⚔️ 攻撃手法×対策</a>
+  <a class="toc-sub" href="#pth">Pass-the-Hash</a>
+  <a class="toc-sub" href="#kerberoasting">Kerberoasting</a>
+  <a class="toc-sub" href="#ransomware">ランサムウェア</a>
+  <a class="toc-sub" href="#mfa-fatigue">MFA疲労攻撃</a>
+  <a class="toc-sub" href="#service-accounts">サービスアカウント悪用</a>
+  <a class="toc-sub" href="#insider">内部不正・残留ID</a>
+  <a href="#incident-timeline">⏱️ インシデント初動</a>
+  <a href="#solutions">💼 NSSolソリューション</a>
+  <a href="#cost">💰 概算費用</a>
+</nav>
 
-.playbook-step{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:5px solid #ef4444}
-.pb-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.pb-time{background:#ef4444;color:#fff;padding:2px 10px;border-radius:10px;font-size:.75em;font-weight:700}
-.pb-title{font-weight:700;font-size:.95em;color:#1e293b}
-</style></head>
-<body><div class="page">
-<h1>🚨 IDインシデント対応プレイブック</h1>
-<p class="subtitle">アカウント侵害・ランサムウェア・特権ID乗っ取り時の初動対応手順 | 2026-04-07 | NSSol IDM参照資料</p>
+<main>
+<h1>IDを起点にしたセキュリティ侵害シナリオと対策</h1>
+<p class="subtitle">攻撃手法・被害範囲・技術対策・推奨製品 — NSSol CISO/情報システム部門向けガイド</p>
 
-<div class="alert">
-<strong>⚠️ 本書の使い方：</strong> インシデント発生時は感情的にならず本書の手順に従ってください。
-<strong>最初の30分の行動が被害を10分の1にする</strong>可能性があります。勝手な「復旧作業」は証拠を消し、被害を拡大させます。
-</div>
+<section id="overview">
+<div class="phase-header"><h2>📋 なぜID管理がセキュリティの核心か</h2><p>「IDを制する者が企業インフラを制する」— すべての侵害はクレデンシャルから始まる</p></div>
 
-<h2>シナリオ別対応手順</h2>
-<h3>シナリオA: 管理者アカウントの乗っ取り疑い</h3>
-<div class="playbook-step">
-<div class="pb-header"><span class="pb-time">T+0〜5分</span><span class="pb-title">状況確認（ログを見る、動かさない）</span></div>
-<ul class="list">
-<li>Entra ID サインインログ / AD セキュリティイベントログで不審な認証元IPを確認</li>
-<li>問題のアカウントの最近の操作（GPO変更・ユーザー追加・ファイル削除）をログで確認</li>
-<li>CISOと上長に即報（口頭+Slack/Teamsプライベートチャンネル）</li>
-</ul>
-</div>
-<div class="playbook-step">
-<div class="pb-header"><span class="pb-time">T+5〜15分</span><span class="pb-title">侵害アカウントの隔離（無効化）</span></div>
-<ul class="list">
-<li>Entra ID: 対象ユーザーをサインインブロック。全セッションを失効（Revoke sessions）</li>
-<li>AD: 対象ユーザーをDisable。AD属性でsmartcardLogonRequired=Trueに設定（追加保護）</li>
-<li>PAM: 対象ユーザーに紐づいた特権セッションを強制切断</li>
-<li>MFAデバイスの登録情報もクリア（乗っ取り者が登録したMFA削除）</li>
-</ul>
-</div>
-<div class="playbook-step">
-<div class="pb-header"><span class="pb-time">T+15〜60分</span><span class="pb-title">横移動の痕跡調査</span></div>
-<ul class="list">
-<li>侵害アカウントがアクセスした全リソースリスト（Entraサインインログ90日分）を取得</li>
-<li>ADで新規作成ユーザー・GPO変更・グループメンバー追加を確認（過去24〜72時間）</li>
-<li>SIEMでLateral Movement指標（Pass-the-Hash / Pass-the-Ticket）を検索</li>
-<li>影響を受けたサーバーはネットワーク隔離（VLANセグメント分離）検討</li>
-</ul>
-</div>
-<div class="playbook-step" style="border-left-color:#f59e0b">
-<div class="pb-header"><span class="pb-time" style="background:#f59e0b">T+1〜24時間</span><span class="pb-title">復旧計画と再発防止</span></div>
-<ul class="list">
-<li>侵害の根本原因特定（フィッシング / 弱パスワード / 未パッチ脆弱性 / インサイダー）</li>
-<li>侵害アカウントのパスワードリセット + MFA再登録（本人確認後）</li>
-<li>KRBTGT パスワード変更（Golden Ticketが作られた可能性がある場合、24時間間隔で2回）</li>
-<li>証拠保全：ログをSOC/SIEMに長期保存。法的対応の可能性があれば改ざん防止保存。</li>
-</ul>
-</div>
-
-<h3 style="margin-top:24px">シナリオB: ランサムウェア感染・ID基盤への波及確認</h3>
-<div class="playbook-step">
-<div class="pb-header"><span class="pb-time">T+0〜10分</span><span class="pb-title">ADの安全性確認（最優先）</span></div>
-<ul class="list">
-<li>DCへのネットワーク疎通確認（pingとポート確認）</li>
-<li>ADイベントログ4625（ログイン失敗）・4720（ユーザー作成）・4728（グループ追加）を確認</li>
-<li>DCのC:/Windows/NTDS/ntds.dit のタイムスタンプ確認（改ざんされていないか）</li>
-<li>AD DCをネットワーク的に最高優先度で保護（DCへのRDP・SMBを一時制限）</li>
-</ul>
-</div>
-<div class="playbook-step">
-<div class="pb-header"><span class="pb-time">T+10〜30分</span><span class="pb-title">特権IDの緊急保護</span></div>
-<ul class="list">
-<li>Domain Admins グループのメンバーを全員確認（不審なアカウントを即無効化）</li>
-<li>Enterprise Admins / Schema Admins グループも同様に確認</li>
-<li>PAMシステムでサービスアカウントのパスワードを全件緊急ローテーション</li>
-<li>Entra ID の緊急アクセスアカウント（Break-glass）の安全性確認</li>
-</ul>
-</div>
-<div class="playbook-step" style="border-left-color:#8b5cf6">
-<div class="pb-header"><span class="pb-time" style="background:#8b5cf6">T+30分〜4時間</span><span class="pb-title">復旧優先順位の決定</span></div>
-<ul class="list">
-<li>AD自体の健全性確認（ADバックアップからの復旧が必要かを判断）</li>
-<li>DCのスナップショット/バックアップの取得状況確認（過去いつのバックアップが使えるか）</li>
-<li>KRBTGT パスワードが漏洩した可能性がある場合は、ADフォレスト全体の復旧（Forest Recovery）を検討</li>
-<li>感染端末とADの間のネットワーク経路を遮断しながら段階的復旧</li>
-</ul>
+<div class="lead">
+Verizon DBIR 2024によると、<strong>セキュリティ侵害の86%がクレデンシャル窃取を伴う</strong>。攻撃者はADドメイン管理者権限を1つ取れば、全社のファイルサーバー・メール・業務システム・バックアップに無制限アクセスできる。IDM（ID管理）の強化は、セキュリティ対策の中でも最も投資対効果が高い領域の一つだ。
 </div>
 
-<h2>KRBTGT パスワード変更手順（Golden Ticket対策）</h2>
-<div class="card yellow">
-<h3>⚠️ KRBTGTとは？なぜ変更が必要か</h3>
-<p>KRBTGTはKerberosチケット発行サービスアカウントです。このパスワードが漏洩すると、攻撃者は任意のユーザーに「なりすます」Kerberosチケット（Golden Ticket）を偽造できます。このGolden Ticketは<strong>最大10年間有効</strong>で、パスワードを変えても無効化されません（KRBTGTのパスワードを変えるまで）。</p>
-<p><strong>重要：KRBTGTパスワード変更は24時間間隔で2回実施が必須です。</strong> 1回目でGolden Ticketを無効化、2回目で前のKRBTGTパスワードのキャッシュを完全に削除します。</p>
+<div class="two-col">
+<div class="card">
+  <h4>🎯 AD が「攻撃の王冠」と呼ばれる理由</h4>
+  <ul>
+    <li>ドメイン管理者アカウント1つで<strong>全社インフラへのアクセス</strong>が可能</li>
+    <li>GPOを悪用すれば<strong>全端末にマルウェアを一斉展開</strong>できる</li>
+    <li>Kerberosチケットを偽造すれば<strong>パスワードなしで認証突破</strong>できる</li>
+    <li>ADのバックアップ（ntds.dit）を取得すれば<strong>全ハッシュを一括抽出</strong>できる</li>
+    <li>NTLM認証を悪用すれば<strong>パスワードを知らずに認証</strong>できる（Pass-the-Hash）</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>📊 日本企業のID管理の現実</h4>
+  <ul>
+    <li>管理者アカウントが<strong>複数人で共有</strong>されているケースが多い</li>
+    <li>サービスアカウントのパスワードが<strong>数年間変更なし</strong></li>
+    <li>退職者のIDが<strong>30日以上有効</strong>なままの企業が半数超</li>
+    <li>特権アカウントのMFA未導入率：<strong>中堅企業で60%超</strong></li>
+    <li>AD監査ログが<strong>SIEMに転送されていない</strong>企業が多数</li>
+  </ul>
+</div>
+</div>
+</section>
+
+<section id="attack-chain">
+<h2>⛓️ 典型的なAD侵害→全社ランサムウェアの攻撃チェーン</h2>
+
+<div style="overflow-x:auto;margin:16px 0">
+<div style="display:flex;align-items:center;gap:0;min-width:800px">
+  <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px;text-align:center;flex:1;font-size:.8rem">
+    <div style="font-size:1.2rem">🎣</div>
+    <div style="font-weight:700">1. 初期侵入</div>
+    <div style="color:#64748b">フィッシング<br>VPN脆弱性<br>サプライチェーン</div>
+  </div>
+  <div style="padding:0 8px;color:#94a3b8;font-size:1.2rem">→</div>
+  <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:12px;text-align:center;flex:1;font-size:.8rem">
+    <div style="font-size:1.2rem">🔑</div>
+    <div style="font-weight:700">2. 資格情報窃取</div>
+    <div style="color:#64748b">Mimikatz<br>LSASS Dump<br>NTLM Hash取得</div>
+  </div>
+  <div style="padding:0 8px;color:#94a3b8;font-size:1.2rem">→</div>
+  <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:12px;text-align:center;flex:1;font-size:.8rem">
+    <div style="font-size:1.2rem">🕸️</div>
+    <div style="font-weight:700">3. 横展開</div>
+    <div style="color:#64748b">Pass-the-Hash<br>RDP横移動<br>DC到達</div>
+  </div>
+  <div style="padding:0 8px;color:#94a3b8;font-size:1.2rem">→</div>
+  <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px;text-align:center;flex:1;font-size:.8rem">
+    <div style="font-size:1.2rem">👑</div>
+    <div style="font-weight:700">4. 特権昇格</div>
+    <div style="color:#64748b">Kerberoasting<br>DCSync攻撃<br>ドメイン管理者権限</div>
+  </div>
+  <div style="padding:0 8px;color:#94a3b8;font-size:1.2rem">→</div>
+  <div style="background:#dc2626;border:1px solid #b91c1c;border-radius:8px;padding:12px;text-align:center;flex:1;font-size:.8rem;color:#fff">
+    <div style="font-size:1.2rem">💥</div>
+    <div style="font-weight:700">5. 全社展開</div>
+    <div style="opacity:.9">GPOでマルウェア配布<br>バックアップ削除<br>全社暗号化</div>
+  </div>
+</div>
 </div>
 
-<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
-</div></body></html>
+<div class="danger">
+  <strong>⚠️ 平均侵害期間:</strong> 初期侵入からランサムウェア展開まで<strong>平均16日間</strong>（Mandiant M-Trends 2024）。この間、適切な監視がなければ検知できない。
+</div>
+</section>
+
+<section id="attacks">
+<div class="phase-header"><h2>⚔️ 攻撃手法×被害×対策 — 6種の主要攻撃パターン</h2><p>各攻撃パターンの手順・被害・技術対策・推奨製品・実装優先度を網羅</p></div>
+
+<!-- Attack 1: Pass-the-Hash -->
+<div class="attack-card" id="pth">
+  <div class="attack-header">
+    <h3>🔑 攻撃1: Pass-the-Hash / Pass-the-Ticket</h3>
+    <div class="attack-meta">影響範囲: 高 | 検知難易度: 中〜高 | 対策優先度: <span style="background:rgba(255,255,255,.2);padding:1px 6px;border-radius:8px">緊急</span></div>
+  </div>
+  <div class="attack-body">
+    <div class="two-col">
+      <div>
+        <div class="attack-section">
+          <h4>⚡ 攻撃手順</h4>
+          <ol class="step-list">
+            <li>フィッシング等でエンドポイントへ侵入</li>
+            <li>Mimikatz等のツールでLSASSプロセスからNTLMハッシュを抽出</li>
+            <li>取得したハッシュを使って認証（パスワード不要）</li>
+            <li>他サーバーへ横移動（RDP/SMB/WinRM）</li>
+            <li>より高権限のハッシュを収集してDCへ到達</li>
+          </ol>
+        </div>
+        <div class="attack-section">
+          <h4>💥 被害範囲</h4>
+          <ul>
+            <li>パスワード変更前の全システムへの不正アクセス</li>
+            <li>横移動によるネットワーク全域への拡散</li>
+            <li>DC到達後は全社の認証インフラ掌握</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="attack-section">
+          <h4>🛡️ 技術的対策</h4>
+          <ul class="countermeasure-list">
+            <li>Windows Credential Guard（VBS）の有効化 → LSASSからのハッシュ抽出を困難化</li>
+            <li>NTLM認証の段階的無効化（まず監査→Kerberos優先→NTLM禁止）</li>
+            <li>Protected Usersグループへの管理者追加（NTLM/RC4禁止）</li>
+            <li>LSA Protection の有効化（RunAsPPL: 1）</li>
+            <li>管理者アカウントの端末間共有禁止（ローカル管理者パスワードをLAPSで個別化）</li>
+            <li>SMB Signing 必須化（中間者攻撃防止）</li>
+          </ul>
+        </div>
+        <div class="attack-section">
+          <h4>🔧 推奨製品・設定</h4>
+          <ul>
+            <li><strong>Microsoft LAPS</strong>（無償）: ローカル管理者パスワードの個別化・自動ローテーション</li>
+            <li><strong>CyberArk EPM</strong>: エンドポイントでのMimikatz系ツール実行ブロック</li>
+            <li><strong>Microsoft Defender for Identity</strong>: LSASS Dumpの異常検知</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attack 2: Kerberoasting -->
+<div class="attack-card" id="kerberoasting">
+  <div class="attack-header">
+    <h3>🎟️ 攻撃2: Kerberoasting / Golden Ticket攻撃</h3>
+    <div class="attack-meta">影響範囲: 非常に高 | 検知難易度: 高 | 対策優先度: <span style="background:rgba(255,255,255,.2);padding:1px 6px;border-radius:8px">緊急</span></div>
+  </div>
+  <div class="attack-body">
+    <div class="two-col">
+      <div>
+        <div class="attack-section">
+          <h4>⚡ 攻撃手順（Kerberoasting）</h4>
+          <ol class="step-list">
+            <li>ドメインユーザー権限でSPNが設定されたサービスアカウントを列挙</li>
+            <li>KerberosサービスチケットをKDCにリクエスト</li>
+            <li>取得したチケットをオフラインでブルートフォース</li>
+            <li>弱いパスワードのサービスアカウントのパスワードを解読</li>
+            <li>サービスアカウントで高権限システムへアクセス</li>
+          </ol>
+        </div>
+        <div class="attack-section">
+          <h4>⚡ Golden Ticket攻撃</h4>
+          <ol class="step-list">
+            <li>DCSync攻撃またはntds.dit取得でkrbtgtアカウントハッシュを入手</li>
+            <li>krbtgtハッシュを使って任意のKerberosチケットを偽造（Golden Ticket）</li>
+            <li>偽造チケットで任意ユーザーとして全ドメインリソースにアクセス</li>
+            <li>検知されてもkrbtgtパスワードをリセットするまで有効</li>
+          </ol>
+        </div>
+      </div>
+      <div>
+        <div class="attack-section">
+          <h4>🛡️ 技術的対策</h4>
+          <ul class="countermeasure-list">
+            <li>サービスアカウントのパスワードを20文字以上のランダム文字列に変更</li>
+            <li>gMSA（グループ管理サービスアカウント）への移行（自動ローテーション）</li>
+            <li>Kerberos AES暗号化の強制（RC4-HMAC禁止）</li>
+            <li>krbtgtアカウントのパスワードを定期的に2回リセット（最低年2回）</li>
+            <li>DCSync権限を持つアカウントの最小化と監視</li>
+            <li>Defender for Identity でKerberoastingの異常検知</li>
+          </ul>
+        </div>
+        <div class="attack-section">
+          <h4>🔧 推奨製品</h4>
+          <ul>
+            <li><strong>Microsoft Entra ID / AD</strong>: gMSAによるSPN管理</li>
+            <li><strong>CyberArk PAM</strong>: サービスアカウントのボールト管理・自動ローテーション</li>
+            <li><strong>Defender for Identity</strong>: Kerberoasting・DCSync異常検知</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attack 3: Ransomware -->
+<div class="attack-card" id="ransomware">
+  <div class="attack-header">
+    <h3>💥 攻撃3: ランサムウェア（AD管理者乗っ取り→全社暗号化）</h3>
+    <div class="attack-meta">影響範囲: 全社 | 被害額: 数億〜数十億円 | 対策優先度: <span style="background:rgba(255,255,255,.2);padding:1px 6px;border-radius:8px">最緊急</span></div>
+  </div>
+  <div class="attack-body">
+    <div class="two-col">
+      <div>
+        <div class="attack-section">
+          <h4>⚡ 攻撃手順</h4>
+          <ol class="step-list">
+            <li>フィッシングメール・VPN脆弱性・RDPブルートフォースで初期侵入</li>
+            <li>1〜2週間かけてネットワーク内を静かに偵察・横移動</li>
+            <li>ドメイン管理者権限を取得（Kerberoasting・Pass-the-Hash等）</li>
+            <li>バックアップシステムを特定・削除または暗号化</li>
+            <li>GPOを使って全端末・サーバーにランサムウェアを一斉展開</li>
+            <li>暗号化実行→脅迫メッセージ表示→身代金要求</li>
+          </ol>
+        </div>
+        <div class="attack-section">
+          <h4>💥 被害範囲・影響</h4>
+          <ul>
+            <li>全社システム停止（平均復旧期間: 3〜4週間）</li>
+            <li>身代金要求: 数千万〜数億円</li>
+            <li>復旧費用（システム再構築含む）: 数億〜数十億円</li>
+            <li>事業機会損失・レピュテーション損傷</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="attack-section">
+          <h4>🛡️ 技術的対策</h4>
+          <ul class="countermeasure-list">
+            <li>Tiered Admin Model: ドメイン管理者をDC専用機からのみ使用可能に制限</li>
+            <li>LAPS: ローカル管理者パスワードを個別化して横移動を阻止</li>
+            <li>ネットワークセグメンテーション: サーバー・端末間のSMB通信制限</li>
+            <li>バックアップの隔離: 3-2-1ルール＋オフライン/不変ストレージ</li>
+            <li>EDR（Defender for Endpoint等）でのプロセス監視</li>
+            <li>GPO悪用の検知: 不審なGPO変更をアラート</li>
+          </ul>
+        </div>
+        <div class="attack-section">
+          <h4>🔧 推奨製品</h4>
+          <ul>
+            <li><strong>Microsoft LAPS / Entra LAPS</strong>: ローカル管理者パスワード管理（無償）</li>
+            <li><strong>CyberArk PAM / Delinea Server PAM</strong>: 特権アクセス制御</li>
+            <li><strong>Defender for Identity</strong>: ADへの異常アクセス検知</li>
+            <li><strong>Microsoft Sentinel</strong>: SIEM・SOC統合</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attack 4: MFA Fatigue -->
+<div class="attack-card" id="mfa-fatigue">
+  <div class="attack-header">
+    <h3>📱 攻撃4: フィッシング → MFA疲労攻撃 → セッションハイジャック</h3>
+    <div class="attack-meta">影響範囲: 中〜高 | 近年急増 | 対策優先度: <span style="background:rgba(255,255,255,.2);padding:1px 6px;border-radius:8px">高</span></div>
+  </div>
+  <div class="attack-body">
+    <div class="two-col">
+      <div>
+        <div class="attack-section">
+          <h4>⚡ 攻撃手順</h4>
+          <ol class="step-list">
+            <li>フィッシングサイトでメール・パスワードを窃取（AiTM: Adversary-in-the-Middle）</li>
+            <li>取得した資格情報でログイン試行 → MFAプッシュ通知が対象者に送信される</li>
+            <li>深夜や繰り返しプッシュ通知を送り続けて「承認疲れ」を狙う</li>
+            <li>対象者が誤って承認 → 攻撃者がセッションCookieを取得</li>
+            <li>セッションCookieでMFAをバイパスしてメール・SharePointにアクセス</li>
+          </ol>
+        </div>
+      </div>
+      <div>
+        <div class="attack-section">
+          <h4>🛡️ 技術的対策</h4>
+          <ul class="countermeasure-list">
+            <li>プッシュ通知の「番号照合（Number Matching）」を必須化</li>
+            <li>FIDO2/パスキーへの移行（フィッシング耐性あり）</li>
+            <li>条件付きアクセス: 登録済みデバイスからのみ許可</li>
+            <li>UEBA（異常認証検知）によるAiTM検知</li>
+            <li>継続的アクセス評価（CAE）でセッションCookie窃取を無効化</li>
+          </ul>
+        </div>
+        <div class="attack-section">
+          <h4>🔧 推奨製品</h4>
+          <ul>
+            <li><strong>Entra ID P2</strong>: Number Matching、CAE、サインインリスク検知</li>
+            <li><strong>FIDO2 セキュリティキー</strong>: YubiKey等（フィッシング完全耐性）</li>
+            <li><strong>Microsoft Sentinel / Defender XDR</strong>: AiTM攻撃の検知</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attack 5: Service Account Abuse -->
+<div class="attack-card" id="service-accounts">
+  <div class="attack-header">
+    <h3>⚙️ 攻撃5: サービスアカウント悪用（権限過剰・パスワード不変）</h3>
+    <div class="attack-meta">影響範囲: 中〜高 | 発見難易度: 高（長期潜伏） | 対策優先度: <span style="background:rgba(255,255,255,.2);padding:1px 6px;border-radius:8px">高</span></div>
+  </div>
+  <div class="attack-body">
+    <div class="two-col">
+      <div>
+        <div class="attack-section">
+          <h4>⚡ 攻撃手順</h4>
+          <ol class="step-list">
+            <li>Kerberoasting等でサービスアカウントのパスワードを解読</li>
+            <li>サービスアカウントの権限（多くはDomain Adminsに過剰付与）で横移動</li>
+            <li>サービスアカウントは通常ログを監視されないため長期潜伏可能</li>
+            <li>業務システムの設定ファイルにパスワードがハードコードされている場合も悪用</li>
+          </ol>
+        </div>
+      </div>
+      <div>
+        <div class="attack-section">
+          <h4>🛡️ 技術的対策</h4>
+          <ul class="countermeasure-list">
+            <li>gMSA（グループ管理サービスアカウント）への移行: パスワード自動ローテーション</li>
+            <li>サービスアカウントの最小権限化: 必要なリソースにのみアクセス許可</li>
+            <li>PAMボールトへの格納: CyberArk/Delineaでパスワード管理・自動更新</li>
+            <li>設定ファイルのパスワードハードコード禁止: Secrets Manager移行</li>
+            <li>サービスアカウントへの不審なログイン監視</li>
+          </ul>
+        </div>
+        <div class="attack-section">
+          <h4>🔧 推奨製品</h4>
+          <ul>
+            <li><strong>CyberArk/Delinea</strong>: サービスアカウントボールト・自動ローテーション</li>
+            <li><strong>Microsoft gMSA</strong>: AD標準機能（無償）</li>
+            <li><strong>HashiCorp Vault / Azure Key Vault</strong>: アプリのシークレット管理</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Attack 6: Insider Threat -->
+<div class="attack-card" id="insider">
+  <div class="attack-header">
+    <h3>👤 攻撃6: 内部不正・退職者残留アカウント</h3>
+    <div class="attack-meta">影響範囲: 中〜高 | 発見難易度: 非常に高 | 対策優先度: <span style="background:rgba(255,255,255,.2);padding:1px 6px;border-radius:8px">高</span></div>
+  </div>
+  <div class="attack-body">
+    <div class="two-col">
+      <div>
+        <div class="attack-section">
+          <h4>⚡ リスクシナリオ</h4>
+          <ol class="step-list">
+            <li>退職者のIDが30日以上有効のままクラウドシステムにアクセス可能</li>
+            <li>異動後も前部署の権限が残ったまま（権限の累積）</li>
+            <li>不満を持つ現職員が退職前に機密データを外部転送</li>
+            <li>委託先SE離任後もVPN/クラウドアクセスが残留</li>
+            <li>共有アカウントのため誰が操作したか特定不可能</li>
+          </ol>
+        </div>
+      </div>
+      <div>
+        <div class="attack-section">
+          <h4>🛡️ 技術的対策</h4>
+          <ul class="countermeasure-list">
+            <li>IGAによる退職処理の自動化: 人事システム連携でDay0無効化</li>
+            <li>権限レビュー（アクセス認定）の定期実施: 四半期ごとに棚卸し</li>
+            <li>UEBA（異常行動分析）: 深夜アクセス・大量ダウンロードの検知</li>
+            <li>JIT（Just-in-Time）権限: 常時付与ではなく必要時のみ付与</li>
+            <li>DLP（データ損失防止）: 機密データの外部転送をブロック</li>
+          </ul>
+        </div>
+        <div class="attack-section">
+          <h4>🔧 推奨製品</h4>
+          <ul>
+            <li><strong>SailPoint / Entra ID Governance</strong>: IGA・アクセス認定の自動化</li>
+            <li><strong>Microsoft Purview / Defender for Cloud Apps</strong>: UEBA・DLP</li>
+            <li><strong>Entra ID P2</strong>: アクセスレビュー機能</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="incident-timeline">
+<div class="phase-header"><h2>⏱️ インシデント発生時の初動対応タイムライン</h2><p>「何をいつやるか」の優先順位が被害の最小化を決める</p></div>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="timeline-time">0〜1時間: 検知・封じ込め</div>
+    <div class="timeline-content">
+      <strong>最優先アクション:</strong><br>
+      1. 侵害端末のネットワーク隔離（NICの無効化またはVLAN切り離し）<br>
+      2. インシデントレスポンスチームの召集（CISO・情シス・法務・経営）<br>
+      3. 影響範囲の初期判断（どのシステムが侵害されたか）<br>
+      4. ドメイン管理者アカウントのパスワード即時変更（疑い段階でも実施）
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-time">1〜6時間: 範囲特定・証拠保全</div>
+    <div class="timeline-content">
+      <strong>調査アクション:</strong><br>
+      1. ADの監査ログ・イベントログの保全（書き換え防止のためエクスポート）<br>
+      2. Mimikatz実行痕跡・新規管理者アカウント追加の確認<br>
+      3. 攻撃者がアクセスしたシステム・データの特定<br>
+      4. バックアップの完全性確認（ランサムウェア展開前のバックアップは残っているか）
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-time">6〜24時間: 封じ込め・初期復旧</div>
+    <div class="timeline-content">
+      <strong>復旧アクション:</strong><br>
+      1. krbtgtアカウントのパスワードを2回リセット（Golden Ticket無効化）<br>
+      2. 侵害済みアカウントの全セッション強制切断・パスワード変更<br>
+      3. 侵害端末の完全クリーンアップ（イメージ再展開）<br>
+      4. バックアップからの重要システム復旧順序の決定
+    </div>
+  </div>
+  <div class="timeline-item">
+    <div class="timeline-time">1〜7日: 全社復旧・再発防止</div>
+    <div class="timeline-content">
+      <strong>恒久対策アクション:</strong><br>
+      1. セキュリティベースラインの再適用（LAPS・Credential Guard・SMB Signing）<br>
+      2. 全ユーザーのパスワード強制変更<br>
+      3. MFAが未設定のアカウントへの緊急展開<br>
+      4. インシデント報告書の作成（必要に応じて個人情報保護委員会への報告）
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="solutions">
+<div class="phase-header"><h2>💼 NSSolとして提案できるソリューション体系</h2><p>緊急→短期→中期の3フェーズで体系的に防御を構築</p></div>
+
+<div class="solution-phase">
+  <h4>🚨 緊急対策（〜1ヶ月）: 今すぐできるリスク低減</h4>
+  <div class="solution-item">
+    <div class="solution-badge badge-emergency">緊急</div>
+    <div>
+      <strong>LAPS（ローカル管理者パスワード管理）導入</strong><br>
+      <span style="font-size:.82rem;color:#64748b">全端末のローカルAdministratorパスワードを個別化・自動ローテーション。横移動の最も効果的な阻止策。実装工数: 2〜4週間、費用: 無償（Entra LAPS）</span>
+    </div>
+  </div>
+  <div class="solution-item">
+    <div class="solution-badge badge-emergency">緊急</div>
+    <div>
+      <strong>特権ID棚卸し・管理者MFA必須化</strong><br>
+      <span style="font-size:.82rem;color:#64748b">ドメイン管理者・Enterprise Adminsの洗い出しと人数削減。全特権アカウントへのMFA適用。実装工数: 1〜2週間</span>
+    </div>
+  </div>
+  <div class="solution-item">
+    <div class="solution-badge badge-emergency">緊急</div>
+    <div>
+      <strong>AD監査ログの有効化とSIEM転送</strong><br>
+      <span style="font-size:.82rem;color:#64748b">主要なADイベント（ログオン失敗・特権操作・グループ変更）のログを有効化してSentinel/SIEMに転送。実装工数: 1〜2週間</span>
+    </div>
+  </div>
+</div>
+
+<div class="solution-phase">
+  <h4>⚡ 短期対策（〜3ヶ月）: セキュリティ基盤の構築</h4>
+  <div class="solution-item">
+    <div class="solution-badge badge-short">短期</div>
+    <div>
+      <strong>MFA全社展開（Entra MFA / Okta）</strong><br>
+      <span style="font-size:.82rem;color:#64748b">全従業員へのMFA展開。Microsoft Authenticatorプッシュ通知からFIDO2への段階移行。概算費用: Entra P1 約1,000円/人/月</span>
+    </div>
+  </div>
+  <div class="solution-item">
+    <div class="solution-badge badge-short">短期</div>
+    <div>
+      <strong>PAM基盤構築（CyberArk/Delinea）</strong><br>
+      <span style="font-size:.82rem;color:#64748b">特権アカウントのボールト管理・セッション録画・自動パスワードローテーション。概算費用: 1,000名規模で年間2,000〜5,000万円</span>
+    </div>
+  </div>
+  <div class="solution-item">
+    <div class="solution-badge badge-short">短期</div>
+    <div>
+      <strong>Credential Guard / SMB Signing 全展開</strong><br>
+      <span style="font-size:.82rem;public color:#64748b">Intune/GPOでCredential Guard（VBS）とSMB Signingを全端末に適用。Pass-the-Hash攻撃の大幅阻止。実装工数: 4〜8週間</span>
+    </div>
+  </div>
+</div>
+
+<div class="solution-phase">
+  <h4>📅 中期対策（〜1年）: ゼロトラスト・IGA体制確立</h4>
+  <div class="solution-item">
+    <div class="solution-badge badge-medium">中期</div>
+    <div>
+      <strong>IGA導入（SailPoint/Entra Governance）</strong><br>
+      <span style="font-size:.82rem;color:#64748b">IDライフサイクルの自動化・権限レビュー・シャドーIT可視化。退職者ID自動無効化で残留アカウントリスクを解消。</span>
+    </div>
+  </div>
+  <div class="solution-item">
+    <div class="solution-badge badge-medium">中期</div>
+    <div>
+      <strong>ゼロトラスト移行（Entra条件付きアクセス＋Intune）</strong><br>
+      <span style="font-size:.82rem;color:#64748b">デバイスコンプライアンス確認・リスクベース認証・マイクロセグメンテーションによるゼロトラスト体制構築。</span>
+    </div>
+  </div>
+  <div class="solution-item">
+    <div class="solution-badge badge-medium">中期</div>
+    <div>
+      <strong>Defender for Identity / Sentinel SOC構築</strong><br>
+      <span style="font-size:.82rem;color:#64748b">ADへの攻撃をリアルタイム検知するSOC体制。Sentinel SIEM＋Defender XDRでの統合セキュリティ監視。</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="cost">
+<h2>💰 概算費用感（企業規模別）</h2>
+
+<table class="cost-table">
+  <thead>
+    <tr>
+      <th>対策項目</th>
+      <th>500名規模</th>
+      <th>1,000名規模</th>
+      <th>3,000名規模</th>
+      <th>備考</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>LAPS導入</strong></td>
+      <td>無償〜50万円</td>
+      <td>無償〜100万円</td>
+      <td>無償〜200万円</td>
+      <td>Entra LAPSは無償。構築工数のみ</td>
+    </tr>
+    <tr>
+      <td><strong>Entra ID P2 MFA</strong></td>
+      <td>年600万円</td>
+      <td>年1,200万円</td>
+      <td>年3,600万円</td>
+      <td>1,000円/人/月想定（CSP割引あり）</td>
+    </tr>
+    <tr>
+      <td><strong>PAM（CyberArk基本）</strong></td>
+      <td>年1,000万円</td>
+      <td>年2,000万円</td>
+      <td>年5,000万円</td>
+      <td>ライセンス＋構築費（規模・機能で変動）</td>
+    </tr>
+    <tr>
+      <td><strong>IGA（SailPoint等）</strong></td>
+      <td>年1,500万円</td>
+      <td>年2,500万円</td>
+      <td>年6,000万円</td>
+      <td>ライセンス＋初期構築費含む</td>
+    </tr>
+    <tr>
+      <td><strong>Defender for Identity</strong></td>
+      <td>年200万円</td>
+      <td>年400万円</td>
+      <td>年1,200万円</td>
+      <td>M365 E5/E3+追加ライセンス</td>
+    </tr>
+    <tr style="background:#fee2e2;font-weight:700">
+      <td><strong>ランサムウェア被害（参考）</strong></td>
+      <td>1億〜5億円</td>
+      <td>3億〜15億円</td>
+      <td>10億〜数十億円</td>
+      <td>復旧費用・機会損失・レピュテーション損傷含む</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="good">
+  <strong>💡 投資対効果の考え方:</strong> 中堅企業（1,000名）でランサムウェア被害が発生した場合の平均損失を5億円と想定すると、PAM＋MFA＋IGA年間5,000万円の投資でも10年間で十分な回収が見込める。セキュリティ保険の掛け金も加味すると、対策費用の正当化は難しくない。
+</div>
+</section>
+
+</main>
+</body>
+</html>
