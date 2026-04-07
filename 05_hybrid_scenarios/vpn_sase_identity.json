@@ -1,0 +1,328 @@
+{
+  "metadata": {
+    "id": "vpn_sase_identity",
+    "title": "VPN・SASE・ZTNAとID管理連携",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "VPN",
+      "SASE",
+      "ZTNA",
+      "RADIUS",
+      "SAML",
+      "OpenID Connect",
+      "Entra ID",
+      "ゼロトラスト"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/zero_trust_architecture.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "../04_server_auth/active_directory_legacy.json",
+      "../04_server_auth/os_auth_methods.json",
+      "./remote_work_id_reality.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json"
+    ]
+  },
+  "traditional_vpn": {
+    "auth_methods": [
+      "RADIUS",
+      "LDAP",
+      "SAML",
+      "クライアント証明書",
+      "スマートカード"
+    ],
+    "products": [
+      {
+        "vendor": "Cisco",
+        "product": "Cisco ASA / Secure Client",
+        "auth_protocols": [
+          "RADIUS",
+          "LDAP",
+          "SAML",
+          "証明書"
+        ],
+        "ad_integration": "NPSやLDAP経由でActive Directoryと接続しやすい。",
+        "mfa_support": "Duo Security、RADIUS challenge、SAML IdP連携に対応しやすい。"
+      },
+      {
+        "vendor": "Palo Alto Networks",
+        "product": "GlobalProtect",
+        "auth_protocols": [
+          "RADIUS",
+          "LDAP",
+          "SAML",
+          "証明書"
+        ],
+        "ad_integration": "Active Directory、NPS、証明書配布との連携実績が多い。",
+        "mfa_support": "SAML連携とクライアント証明書併用で強い。"
+      },
+      {
+        "vendor": "Fortinet",
+        "product": "FortiGate SSL-VPN / IPsec VPN",
+        "auth_protocols": [
+          "RADIUS",
+          "LDAP",
+          "SAML",
+          "証明書"
+        ],
+        "ad_integration": "中堅企業ではLDAP直接連携が多く、成熟企業ではRADIUSやSAMLへ移る。",
+        "mfa_support": "FortiToken、RADIUS、SAML IdP連携に対応する。"
+      },
+      {
+        "vendor": "Juniper",
+        "product": "SRX / Secure Connect",
+        "auth_protocols": [
+          "RADIUS",
+          "LDAP",
+          "SAML",
+          "証明書"
+        ],
+        "ad_integration": "ネットワーク主体の運用チームが扱いやすく、RADIUS連携が多い。",
+        "mfa_support": "RADIUSとSAML連携が中心。"
+      }
+    ],
+    "common_japan_config": "日本企業ではVPN装置がRADIUSでNPSへ認証委譲し、NPSがActive Directoryで資格情報を検証する構成が依然として主流である。高統制業務ではクライアント証明書、スマートカード、Duo SecurityやTOTPを多要素認証として重ねる。",
+    "problems": [
+      "接続後に内部ネットワーク全体へ広い到達性を与えやすく、ラテラルムーブメントの踏み台になる。",
+      "認証がRADIUSやLDAPに閉じると、Entra IDのConditional Accessと一体制御しにくい。",
+      "ログが接続成功失敗中心で、実際にどの内部アプリへアクセスしたかまで追いにくい。",
+      "クライアント証明書やAD CS依存が残ると、VPN更改だけで終わらない。",
+      "委託先やBYODを例外で受け入れるほど、境界依存の統制が崩れやすい。"
+    ]
+  },
+  "sase": {
+    "definition": "SASE（Secure Access Service Edge）は、ネットワークとセキュリティ機能をクラウド配信で統合し、利用者、端末、アプリ、拠点を一体で制御する考え方である。実務ではSWG、CASB、ZTNA、FWaaS、SD-WANの統合度が焦点になる。",
+    "components": [
+      "SWG（Secure Web Gateway）",
+      "CASB",
+      "ZTNA",
+      "FWaaS",
+      "SD-WAN"
+    ],
+    "vendors": [
+      {
+        "vendor": "Zscaler",
+        "product": "Zscaler Internet Access / Zscaler Private Access",
+        "japan_availability": "国内販売、導入支援、運用支援の体制がある。大手企業で採用実績が増えている。",
+        "strengths": [
+          "Webアクセスと内部アプリ公開を分けて設計しやすい。",
+          "アプリ単位アクセスに寄せやすい。",
+          "IdP連携の実績が多い。"
+        ],
+        "id_integration": "SAMLとOpenID ConnectでEntra IDやOktaと連携しやすい。"
+      },
+      {
+        "vendor": "Palo Alto Networks",
+        "product": "Prisma Access",
+        "japan_availability": "日本市場でのSASE案件が多く、既存Palo Alto Networks顧客に入りやすい。",
+        "strengths": [
+          "FWaaSとネットワーク境界設計の延長で説明しやすい。",
+          "GlobalProtectからの移行シナリオを描きやすい。",
+          "ZTNA 2.0を含めた段階提案がしやすい。"
+        ],
+        "id_integration": "SAMLや証明書連携、端末ポスチャ連携を組み合わせる。"
+      },
+      {
+        "vendor": "Cisco",
+        "product": "Cisco Secure Access",
+        "japan_availability": "Ciscoネットワーク基盤を持つ企業で受け入れられやすい。",
+        "strengths": [
+          "既存Cisco運用チームとの親和性が高い。",
+          "ネットワーク更改と一体で提案しやすい。",
+          "Duo Securityなど既存資産と結び付けやすい。"
+        ],
+        "id_integration": "SAML、RADIUS、Duo Security、証明書の連携を整理しやすい。"
+      },
+      {
+        "vendor": "Netskope",
+        "product": "Netskope One / Netskope Private Access",
+        "japan_availability": "大手企業とグローバル企業で導入が進み、日本での営業・サポート体制もある。",
+        "strengths": [
+          "CASBとデータ保護の文脈で説明しやすい。",
+          "SaaS利用の可視化と制御に強い。",
+          "ZTNAを組み合わせた統合提案が可能である。"
+        ],
+        "id_integration": "SAML、OpenID Connect、デバイスポスチャ連携を軸に設計する。"
+      }
+    ],
+    "japan_reality_2026": "2025年国内調査ではSASEをよく知っているまたはある程度知っている層は4割前後で、導入済み企業は増えている一方、全社標準として定着した企業はまだ大企業中心である。2026年の実態としては、WebアクセスとSaaS保護は進むが、サーバー管理アクセスやレガシーアプリ接続はVPN併存が一般的だと推定される。",
+    "why_vpn_parity_problem": "SASEと言いながらVPNと大差ない構成になる主因は、内部ネットワーク単位の接続を残したまま、認証フロントだけをクラウド化しているためである。アプリ棚卸し不足、SMBやRDPの残存、端末コンプライアンス未整備、委託先例外の多さが本質的な阻害要因になる。"
+  },
+  "ztna": {
+    "concept": "ZTNA（Zero Trust Network Access）はネットワーク全体ではなく、利用者と端末の状態を評価しながらアプリ単位にアクセスを許可する方式である。",
+    "vs_vpn": "VPNが接続後の内部到達性を広く許しやすいのに対し、ZTNAはアプリ単位、セッション単位、ポリシー単位で到達範囲を絞り込む。",
+    "products": [
+      "Zscaler Private Access",
+      "Palo Alto ZTNA 2.0",
+      "Microsoft Entra Private Access"
+    ],
+    "server_os_access": {
+      "windows": "RDPや管理Webに対する制御は設計可能だが、ドメイン参加、SMB、管理共有、PowerShell Remotingのような運用は例外が残りやすい。",
+      "linux": "SSH、管理Web、特定TCPアプリへの適用は比較的進めやすい。SSSDやPAM（Linux）の認証自体を置き換えるのではなく、入口制御として使う。",
+      "legacy_unix": "AIXやOracle Solarisはエージェントやモダン認証が使いにくく、ジャンプサーバーやVDIとの組み合わせが現実的である。"
+    }
+  },
+  "id_integration_patterns": [
+    "SAML / OpenID Connect によるVPN・SASEのIdP連携",
+    "Entra ID Conditional Access + SASE",
+    "Intune + SASE によるデバイスコンプライアンス連携",
+    "サービスアカウント・非人間IDの例外設計",
+    "オンプレミスLDAP・Active DirectoryとSASEのブリッジ"
+  ],
+  "japan_scenarios": [
+    "FISC文脈では、許可された作業端末、許可された作業場所、証跡保全を組み合わせてZTNAと整合させる設計が必要である。",
+    "段階移行は、まずVPN認証をSAML化し、その後SaaSと内部WebをSASE / ZTNAへ移し、最後にRDPや管理接続を再設計する順序が現実的である。",
+    "AIX、Oracle Solaris、古いWindows Server、SMB前提運用ではZTNA単独で置換しにくく、VPNまたは専用管理経路が当面残る。",
+    "委託先アクセスでは共有IDを残すと効果が大きく下がるため、個人単位ID、期間限定権限、操作記録が前提になる。"
+  ],
+  "knowledge_items": [
+    {
+      "id": "vpn_knowledge_001",
+      "title": "日本企業のVPNは依然としてRADIUS + Active Directoryが主流である",
+      "content": "NPSを介した集中認証は運用実績が多く、ネットワーク担当とWindows担当の役割分担にも合致しやすい。",
+      "tags": [
+        "VPN",
+        "RADIUS",
+        "Active Directory"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_002",
+      "title": "LDAP直接連携は簡単だが将来性が低い",
+      "content": "MFA統合やポリシー一元化の観点では、LDAP bindよりSAMLやRADIUS連携の方が拡張しやすい。",
+      "tags": [
+        "LDAP",
+        "VPN"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_003",
+      "title": "証明書認証はVPN強化の重要要素である",
+      "content": "クライアント証明書を併用すると利用者要素だけでなく端末要素も評価できるが、AD CSの維持が別論点になる。",
+      "tags": [
+        "証明書",
+        "AD CS"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_004",
+      "title": "Duo SecurityやTOTPはVPNのMFAとして定着している",
+      "content": "ただしSaaS側の多要素認証と分断されると、運用者と利用者の負担が増える。",
+      "tags": [
+        "多要素認証",
+        "Duo Security"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_005",
+      "title": "VPNの問題は認証の弱さより到達性の広さにある",
+      "content": "接続後に内部ネットワーク全体へ到達できる設計は、侵害後の横展開を容易にする。",
+      "tags": [
+        "ラテラルムーブメント",
+        "VPN"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_006",
+      "title": "SASEは製品名より統合度で評価すべきである",
+      "content": "SWG、CASB、ZTNA、FWaaS、SD-WANがどこまで一体運用できるかが実務上の差になる。",
+      "tags": [
+        "SASE",
+        "設計"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_007",
+      "title": "2025年国内調査ではSASE認知はまだ4割程度である",
+      "content": "導入事例は増えているが、日本市場全体では過渡期にあり、VPN完全代替は限定的と見るべきである。",
+      "tags": [
+        "SASE",
+        "日本市場"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_008",
+      "title": "SASE導入でもVPNが残る最大要因はSMBとRDPである",
+      "content": "内部アプリ単位公開に乗りにくい管理プロトコルが残ると、全体最適にならない。",
+      "tags": [
+        "SMB",
+        "RDP"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_009",
+      "title": "ZTNAはネットワークではなくアプリを守る発想である",
+      "content": "利用者と端末を評価してアプリ単位に許可するため、接続後の内部探索余地を減らせる。",
+      "tags": [
+        "ZTNA",
+        "ゼロトラスト"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_010",
+      "title": "ZPAやEntra Private AccessはIdP成熟度に依存する",
+      "content": "人事連携、MFA、デバイス準拠性が整っていない企業では、ZTNAのポリシーが例外だらけになりやすい。",
+      "tags": [
+        "Zscaler Private Access",
+        "Microsoft Entra Private Access"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_011",
+      "title": "サーバーOS認証とZTNAは役割が異なる",
+      "content": "ZTNAは入口制御であり、Windows ServerやLinux サーバー内部の認証方式そのものを置換するわけではない。",
+      "tags": [
+        "OS認証",
+        "ZTNA"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_012",
+      "title": "AIXやOracle SolarisはZTNAの適用限界が早く来る",
+      "content": "エージェント非対応や古い管理プロトコルの制約から、VDIや踏み台との併用が現実的である。",
+      "tags": [
+        "AIX",
+        "Oracle Solaris"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_013",
+      "title": "Conditional AccessとSASEは競合ではなく分担関係である",
+      "content": "認証条件はIdP、トラフィック制御とアプリ公開はSASEという整理が最も運用しやすい。",
+      "tags": [
+        "Conditional Access",
+        "SASE"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_014",
+      "title": "非人間IDはSASEの得意領域ではない",
+      "content": "RPAやサーバー間通信を人のVPNやZTNAへ無理に寄せるより、証明書やワークロードIDへ分離すべきである。",
+      "tags": [
+        "非人間ID",
+        "サービスアカウント"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_015",
+      "title": "FISC文脈では場所制約を完全に捨てない設計が必要である",
+      "content": "ZTNAを採用しても、許可された端末、許可された拠点、操作記録、JITを組み合わせる方が現実的である。",
+      "tags": [
+        "FISC",
+        "ZTNA"
+      ]
+    },
+    {
+      "id": "vpn_knowledge_016",
+      "title": "VPNから完全SASEへの移行は三段階で考えると失敗しにくい",
+      "content": "認証のSAML化、WebとSaaSの先行移行、最後に管理接続の再設計という順序が実務的である。",
+      "tags": [
+        "移行",
+        "SASE"
+      ]
+    }
+  ]
+}

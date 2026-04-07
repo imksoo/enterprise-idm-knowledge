@@ -1,0 +1,472 @@
+{
+  "metadata": {
+    "id": "ldap_directory_comparison",
+    "title": "LDAPディレクトリサービス比較",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "LDAP",
+      "OpenLDAP",
+      "Red Hat Directory Server",
+      "389 Directory Server",
+      "FreeIPA",
+      "Red Hat IdM",
+      "Active Directory Lightweight Directory Services",
+      "OpenDJ"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "./directory_services_lifecycle.json",
+      "./os_auth_methods.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json"
+    ]
+  },
+  "ldap_fundamentals": {
+    "what_is_ldap": "LDAPはディレクトリサービスへ属性ベースで問い合わせるための標準プロトコルであり、ユーザー、グループ、ホスト、サービス、ポリシーの参照と一部認証連携に使われる。",
+    "vs_rdb": "RDBがトランザクション更新や複雑な結合に強いのに対し、LDAPディレクトリは階層型の名前空間、読み取り最適化、キャッシュやレプリケーション前提の運用に向く。更新頻度が低く参照頻度が高いID情報の保持に適している。",
+    "key_concepts": [
+      {
+        "term": "DN",
+        "description": "Distinguished Name。エントリーを一意に示す完全修飾名。"
+      },
+      {
+        "term": "RDN",
+        "description": "Relative Distinguished Name。親ノード配下での相対名。"
+      },
+      {
+        "term": "objectClass",
+        "description": "エントリーに許可される属性集合と意味を定義するクラス。"
+      },
+      {
+        "term": "schema",
+        "description": "属性型、オブジェクトクラス、構文、制約を定義する枠組み。"
+      },
+      {
+        "term": "bind",
+        "description": "クライアントがディレクトリへ認証付き接続する操作。"
+      },
+      {
+        "term": "base DN",
+        "description": "検索対象の起点となるディレクトリツリーの根。"
+      }
+    ]
+  },
+  "products": [
+    {
+      "id": "openldap",
+      "name": "OpenLDAP",
+      "vendor": "OpenLDAP Project",
+      "license": "OpenLDAP Public License",
+      "rhel_support": "RHEL 8/9ではサーバー用途の標準提供なし。クライアントライブラリ中心。",
+      "description": "長い歴史を持つOSSのLDAPサーバー。柔軟だが、近年のRHEL系では標準サーバー製品としての位置付けが後退している。",
+      "strengths": [
+        "LDAPサーバーとしての導入実績が多い。",
+        "設定自由度が高く、軽量に構築できる。",
+        "アプリケーション専用ディレクトリとしては依然有力である。"
+      ],
+      "weaknesses": [
+        "RHEL 8以降ではサーバーパッケージが標準サポートから外れた。",
+        "統合Kerberos、DNS、HBACを単体で持たない。",
+        "設定の学習コストと運用属人化が起こりやすい。"
+      ],
+      "japan_adoption": "RHEL 7世代や古いCentOSで稼働している残存環境が多い。新規提案では減少傾向。",
+      "eol_risk": "コミュニティ継続はあるが、企業サポートの観点ではOSベンダー非推奨が大きい。",
+      "feature_matrix": {
+        "multi_master_replication": true,
+        "web_ui": false,
+        "kerberos_integration": false,
+        "sudo_policy": false,
+        "hbac": false,
+        "ad_trust": false,
+        "scim_support": false
+      }
+    },
+    {
+      "id": "red_hat_directory_server",
+      "name": "Red Hat Directory Server",
+      "vendor": "Red Hat",
+      "license": "commercial_subscription",
+      "rhel_support": "RHEL 8/9で正式サポートされるLDAPサーバー製品。",
+      "description": "389 Directory Serverの商用ダウンストリーム。RHEL環境でOpenLDAPサーバーの正式後継候補として扱いやすい。",
+      "strengths": [
+        "Red Hatによる長期サポートを受けられる。",
+        "マルチサプライヤーレプリケーションに対応する。",
+        "CockpitベースのWeb UIがあり運用しやすい。"
+      ],
+      "weaknesses": [
+        "FreeIPAやRed Hat IdMほどの認証統合機能は持たない。",
+        "OpenLDAPからのACL移行やスキーマ整理が必要になる。",
+        "Windows中心企業には訴求しにくい。"
+      ],
+      "japan_adoption": "RHEL標準サポートを重視する製造、公共、通信系で提案しやすいが、実績はOpenLDAP残存からの更改案件が中心。",
+      "eol_risk": "低い。RHELライフサイクルと連動して計画しやすい。",
+      "feature_matrix": {
+        "multi_master_replication": true,
+        "web_ui": true,
+        "kerberos_integration": false,
+        "sudo_policy": false,
+        "hbac": false,
+        "ad_trust": false,
+        "scim_support": false
+      }
+    },
+    {
+      "id": "directory_server_389",
+      "name": "389 Directory Server",
+      "vendor": "Fedora Project community",
+      "license": "GPL/LGPL系OSS",
+      "rhel_support": "アップストリーム。RHEL標準サポートが必要ならRed Hat Directory Serverを選ぶ。",
+      "description": "Fedora系コミュニティが維持するLDAPサーバー。Red Hat Directory Serverの上流にあたる。",
+      "strengths": [
+        "マルチマスター系の成熟した実装を持つ。",
+        "Red Hat系スタックとの親和性が高い。",
+        "将来的にRed Hat Directory Serverへ寄せやすい。"
+      ],
+      "weaknesses": [
+        "商用サポートは別途考慮が必要。",
+        "運用知見がOpenLDAPほど一般化していない。",
+        "Linux認証統合基盤としては追加コンポーネントが要る。"
+      ],
+      "japan_adoption": "直接採用は限定的だが、FreeIPAやRed Hat Directory Serverの内側として間接利用される。",
+      "eol_risk": "中程度。コミュニティ継続性はあるが、企業採用では責任分界を設計する必要がある。",
+      "feature_matrix": {
+        "multi_master_replication": true,
+        "web_ui": true,
+        "kerberos_integration": false,
+        "sudo_policy": false,
+        "hbac": false,
+        "ad_trust": false,
+        "scim_support": false
+      }
+    },
+    {
+      "id": "freeipa_red_hat_idm",
+      "name": "FreeIPA / Red Hat IdM",
+      "vendor": "FreeIPA community / Red Hat",
+      "license": "OSS community + commercial_subscription",
+      "rhel_support": "RHELではRed Hat IdMとして正式サポートされる。",
+      "description": "LDAP、Kerberos、DNS、NTP、CAを統合したLinux中心のID管理基盤。Linuxサーバーのドメイン参加運用を統一できる。",
+      "strengths": [
+        "Linuxサーバー向け集中認証とポリシー管理に強い。",
+        "SSSD、sudo、HBAC、証明書配布を一体で扱える。",
+        "Active Directory trustによりWindows中心環境との共存が可能である。"
+      ],
+      "weaknesses": [
+        "Windows端末管理やグループポリシーの代替にはならない。",
+        "既存OpenLDAPからは再設計を伴う移行になりやすい。",
+        "日本企業では運用知見を持つ要員が限られる。"
+      ],
+      "japan_adoption": "Linuxサーバー比率が高い研究機関、製造、通信、HPC系で相性が良い。一般企業では知名度がまだ限定的。",
+      "eol_risk": "低い。コミュニティとRed Hat商用の両輪がある。",
+      "feature_matrix": {
+        "multi_master_replication": true,
+        "web_ui": true,
+        "kerberos_integration": true,
+        "sudo_policy": true,
+        "hbac": true,
+        "ad_trust": true,
+        "scim_support": false
+      }
+    },
+    {
+      "id": "ad_lds",
+      "name": "Active Directory Lightweight Directory Services",
+      "vendor": "Microsoft",
+      "license": "Windows Server included",
+      "rhel_support": "非該当。Windows Server上のアプリケーション用ディレクトリ。",
+      "description": "ドメインコントローラー不要で使えるWindows向けLDAPディレクトリ。アプリケーション専用ディレクトリとして利用する。",
+      "strengths": [
+        "Active Directoryに近い運用感覚でアプリ専用LDAPを提供できる。",
+        "ドメインコントローラーを追加せずに分離できる。",
+        "Windows連携アプリの互換性を取りやすい。"
+      ],
+      "weaknesses": [
+        "Enterprise ID基盤としては機能が限定的である。",
+        "Kerberos、HBAC、sudoの統合基盤にはならない。",
+        "新規採用より既存アプリ維持用途が中心である。"
+      ],
+      "japan_adoption": "業務アプリ専用ディレクトリの延命用途で残ることがあるが、新規の主戦場ではない。",
+      "eol_risk": "中程度。Windows Server依存のためOSライフサイクルに追随する必要がある。",
+      "feature_matrix": {
+        "multi_master_replication": true,
+        "web_ui": false,
+        "kerberos_integration": false,
+        "sudo_policy": false,
+        "hbac": false,
+        "ad_trust": false,
+        "scim_support": false
+      }
+    },
+    {
+      "id": "apache_directory_server",
+      "name": "Apache Directory Server",
+      "vendor": "Apache Software Foundation",
+      "license": "Apache License 2.0",
+      "rhel_support": "標準サポートなし。",
+      "description": "JavaベースのLDAPサーバー。学習用途や組み込み用途では知られるが、企業の主力ディレクトリとしては採用が限定的。",
+      "strengths": [
+        "Apache License 2.0で扱いやすい。",
+        "Java系環境での組み込み適性がある。",
+        "開発検証用途で利用しやすい。"
+      ],
+      "weaknesses": [
+        "企業向け大規模導入実績が少ない。",
+        "運用者コミュニティと情報量が限定的である。",
+        "日本企業のRHEL更改案件の本命になりにくい。"
+      ],
+      "japan_adoption": "ほぼ限定的。PoCや研究用途が中心。",
+      "eol_risk": "高め。主力採用の判断材料が乏しい。",
+      "feature_matrix": {
+        "multi_master_replication": false,
+        "web_ui": false,
+        "kerberos_integration": false,
+        "sudo_policy": false,
+        "hbac": false,
+        "ad_trust": false,
+        "scim_support": false
+      }
+    },
+    {
+      "id": "opendj",
+      "name": "OpenDJ",
+      "vendor": "Open Identity Platform community",
+      "license": "CDDL系 community license",
+      "rhel_support": "標準サポートなし。",
+      "description": "ForgeRock系の流れを引くLDAPディレクトリ。機能は豊富だが、日本企業での採用は限定的で、製品系統の理解が必要。",
+      "strengths": [
+        "高性能ディレクトリとして設計されている。",
+        "RESTや同期系の拡張発想を持つ。",
+        "旧ForgeRock知見のある環境では扱いやすい。"
+      ],
+      "weaknesses": [
+        "コミュニティと商用の系譜が分かりにくい。",
+        "日本市場での要員確保が難しい。",
+        "RHELの正式後継として提案しにくい。"
+      ],
+      "japan_adoption": "一部の海外製品連携や特殊案件を除くと限定的。",
+      "eol_risk": "中から高。継続性よりも体制確保がリスクになりやすい。",
+      "feature_matrix": {
+        "multi_master_replication": true,
+        "web_ui": true,
+        "kerberos_integration": false,
+        "sudo_policy": false,
+        "hbac": false,
+        "ad_trust": false,
+        "scim_support": true
+      }
+    }
+  ],
+  "selection_guide": [
+    {
+      "scenario": "RHEL 8/9でLDAPサーバーを新規構築したい",
+      "recommendation": "Red Hat Directory Server もしくは FreeIPA / Red Hat IdM を選ぶ。",
+      "reason": "OpenLDAPサーバーがRHEL標準の主軸から外れており、サポート責任が明確な構成が必要である。",
+      "migration_path": "アプリ専用ディレクトリならRed Hat Directory Server、Linux認証統合まで必要ならFreeIPA / Red Hat IdMへ進む。"
+    },
+    {
+      "scenario": "Linuxサーバーの集中認証、sudo、ホスト制御をまとめたい",
+      "recommendation": "FreeIPA / Red Hat IdM を第一候補にする。",
+      "reason": "LDAP単体ではなくKerberos、DNS、HBAC、sudoポリシーまで統合できるため。",
+      "migration_path": "OpenLDAPの属性とACLを再設計し、SSSDクライアント参加へ切り替える。"
+    },
+    {
+      "scenario": "既存OpenLDAPアプリのLDAP互換を重視して段階移行したい",
+      "recommendation": "Red Hat Directory Server または 389 Directory Server を優先する。",
+      "reason": "LDAPサーバーとしての役割を維持しつつ、RHEL系の将来性を確保しやすい。",
+      "migration_path": "スキーマ、ACL、bindアカウント、レプリケーションを比較し、アプリ接続試験を先に実施する。"
+    },
+    {
+      "scenario": "Windowsアプリ専用の分離されたLDAPが欲しい",
+      "recommendation": "Active Directory Lightweight Directory Services を検討する。",
+      "reason": "ドメインコントローラーを増やさずにアプリ専用ディレクトリを持てるため。",
+      "migration_path": "Active Directory本体から対象アプリを切り出し、アプリ改修範囲を最小化する。"
+    },
+    {
+      "scenario": "新規構築で日本企業向けの実装確実性を優先したい",
+      "recommendation": "Linux中心ならFreeIPA / Red Hat IdM、Windows中心ならActive Directory、LDAP専用ならRed Hat Directory Serverを選ぶ。",
+      "reason": "採用実績、保守体制、要員確保の観点で説明しやすい。",
+      "migration_path": "ディレクトリ単体選定ではなく、OS認証、VPN、RADIUS、証明書、運用責任分界まで含めて設計する。"
+    }
+  ],
+  "rhel_openldap_deprecation": {
+    "timeline": "RHEL 7ではOpenLDAPサーバーが広く使われたが、RHEL 8以降はopenldap-serversが標準サーバー構成の主軸から外れ、RHEL 9でもクライアントライブラリ中心の位置付けになった。",
+    "impact": "OS更改だけではLDAPサーバー機能を維持できず、ディレクトリ製品の更改を同時に計画する必要がある。",
+    "affected_companies": "RHEL 7やCentOS 7でslapdを運用してきた製造、公共、通信、教育、社内認証基盤を持つ企業に影響が大きい。",
+    "migration_options": [
+      "Red Hat Directory Serverへ移行し、LDAPアプリ互換を重視する。",
+      "FreeIPA / Red Hat IdMへ移行し、Linux認証統合基盤として再設計する。",
+      "アプリをSAMLやOpenID Connectへ更改し、LDAP依存そのものを縮小する。",
+      "Windows中心ならActive DirectoryまたはActive Directory Lightweight Directory Servicesへ役割を寄せる。"
+    ]
+  },
+  "sssd_pam_integration": {
+    "description": "LinuxサーバーではSSSDがLDAPまたはKerberos系のバックエンドと接続し、PAM（Linux）とNSSへ認証・属性・グループ情報を中継する。これによりローカル `/etc/passwd` 管理を減らし、集中認証を実現できる。",
+    "config_example": "[sssd]\nservices = nss, pam\nconfig_file_version = 2\ndomains = example\n\n[domain/example]\nid_provider = ldap\nauth_provider = ldap\nldap_uri = ldaps://ldap.example.jp\nldap_search_base = dc=example,dc=jp\ncache_credentials = true",
+    "supported_backends": [
+      "OpenLDAP",
+      "Red Hat Directory Server",
+      "389 Directory Server",
+      "FreeIPA / Red Hat IdM",
+      "Active Directory",
+      "Active Directory Lightweight Directory Services（用途限定）"
+    ]
+  },
+  "knowledge_items": [
+    {
+      "id": "ldap_knowledge_001",
+      "title": "LDAPはRDBの代替ではなくID情報向けの読み取り基盤である",
+      "content": "ユーザー属性やグループ参照のように参照頻度が高い領域ではLDAPの階層型構造が有効である。",
+      "tags": [
+        "LDAP",
+        "ディレクトリサービス"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_002",
+      "title": "DNとRDNの理解不足は移行トラブルの原因になる",
+      "content": "アプリ設定に埋め込まれたbase DNやbind DNを見落とすと、製品更改後に認証不能となる。",
+      "tags": [
+        "DN",
+        "移行"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_003",
+      "title": "OpenLDAP残存はRHEL更改と同時に問題化する",
+      "content": "RHEL 8以降ではOpenLDAPサーバーの標準採用が難しくなるため、OS更新時に製品更改が発生する。",
+      "tags": [
+        "OpenLDAP",
+        "RHEL"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_004",
+      "title": "OpenLDAPの最大の強みは自由度であり最大の弱みも自由度である",
+      "content": "柔軟だが、設計書が薄い環境では属人化しやすい。",
+      "tags": [
+        "OpenLDAP",
+        "運用"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_005",
+      "title": "Red Hat Directory ServerはRHEL系企業の現実解である",
+      "content": "Red Hatのサポート責任を確保しつつ、LDAPサーバー役割を継続できる。",
+      "tags": [
+        "Red Hat Directory Server",
+        "RHEL"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_006",
+      "title": "389 Directory Serverは間接的に多くの企業で使われている",
+      "content": "FreeIPAやRed Hat Directory Serverの基盤技術として利用されるため、直接採用が少なくても重要である。",
+      "tags": [
+        "389 Directory Server",
+        "FreeIPA"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_007",
+      "title": "FreeIPA / Red Hat IdMはLinux版Active Directoryに近い運用モデルを持つ",
+      "content": "LDAP、Kerberos、DNS、CA、sudo、HBACを一体で管理できる点が本質である。",
+      "tags": [
+        "FreeIPA",
+        "Red Hat IdM"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_008",
+      "title": "Active Directory Lightweight Directory Servicesはアプリ専用用途が中心である",
+      "content": "エンタープライズ全体のID基盤ではなく、アプリケーションを分離するためのディレクトリとして考えるべきである。",
+      "tags": [
+        "Active Directory Lightweight Directory Services",
+        "Windows Server"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_009",
+      "title": "Apache Directory Serverは日本企業の標準提案にはなりにくい",
+      "content": "ライセンスは扱いやすいが、運用実績と要員確保の面で主力候補から外れやすい。",
+      "tags": [
+        "Apache Directory Server",
+        "選定"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_010",
+      "title": "OpenDJは技術力より体制確保が論点になる",
+      "content": "機能比較だけでなく、国内運用体制と将来の保守主体を確認する必要がある。",
+      "tags": [
+        "OpenDJ",
+        "運用体制"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_011",
+      "title": "LDAPサーバー選定ではWeb UIの有無が運用品質に直結する",
+      "content": "CLI前提の製品は小規模では問題ないが、引き継ぎや監査対応で不利になりやすい。",
+      "tags": [
+        "Web UI",
+        "運用"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_012",
+      "title": "Linuxログイン統合が必要ならLDAP単体では足りない",
+      "content": "Kerberos、SSSD、sudo、HBACまで視野に入れるとFreeIPA / Red Hat IdMが優位になる。",
+      "tags": [
+        "SSSD",
+        "PAM（Linux）"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_013",
+      "title": "LDAP選定ではアプリ改修回避の期待を過信してはいけない",
+      "content": "同じLDAPでもスキーマ、ACL、属性名、パスワードポリシー実装差があるため、無改修移行を前提にすると失敗しやすい。",
+      "tags": [
+        "アプリ連携",
+        "移行"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_014",
+      "title": "OpenLDAPからの移行ではACLとスキーマが最大論点である",
+      "content": "データエクスポート自体よりも、属性名、アクセス制御、bindアカウントの整合が難しい。",
+      "tags": [
+        "ACL",
+        "スキーマ"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_015",
+      "title": "AD trustが必要ならFreeIPA / Red Hat IdMの価値が高い",
+      "content": "Linux側の認証管理を独立させつつ、Windows側のActive Directoryと共存できる。",
+      "tags": [
+        "AD trust",
+        "FreeIPA"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_016",
+      "title": "日本企業の新規構築では保守責任の明確さが製品比較以上に重要である",
+      "content": "純粋な機能差よりも、誰が24時間保守し、障害時にどこまで責任を持つかが採否を左右する。",
+      "tags": [
+        "日本企業",
+        "保守"
+      ]
+    },
+    {
+      "id": "ldap_knowledge_017",
+      "title": "LDAP依存を減らすこと自体が有力な移行戦略である",
+      "content": "アプリをSAMLやOpenID Connectへ移せるなら、ディレクトリ更改負担を大きく減らせる。",
+      "tags": [
+        "SAML",
+        "OpenID Connect"
+      ]
+    }
+  ]
+}

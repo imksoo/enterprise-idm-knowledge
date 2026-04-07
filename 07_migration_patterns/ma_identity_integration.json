@@ -1,0 +1,411 @@
+{
+  "metadata": {
+    "id": "ma_identity_integration",
+    "title": "M&A・合併統合時のID管理シナリオ集",
+    "version": "1.0"
+  },
+  "overview": "企業合併・買収（M&A）において、ID管理は最初の技術的問題として浮上する。「合併したのに社員がお互いのシステムにアクセスできない」「両社のADをどう統合するか」という問題は、M&AのIT統合の最難関の一つ。法的統合日（Day 1）から何を動かすかの計画が鍵となる。",
+  "integration_phases": [
+    {
+      "phase": "due_diligence",
+      "name": "デューデリジェンス（DD）フェーズ",
+      "timing": "M&A決定前〜合意後",
+      "id_tasks": [
+        "相手先ADフォレスト数・ドメイン数・ユーザー数の把握",
+        "ADサーバーのOSバージョン・EOL状況確認",
+        "サービスアカウント数・SPN設定状況",
+        "GPO数と主要ポリシーの確認",
+        "セキュリティリスク（MFAの有無・未パッチDC）の評価",
+        "ライセンス状況（M365・Windowsサーバー等）",
+        "ID管理ツール（MIM等）の状況と契約"
+      ],
+      "critical_success_factors": [
+        "IT担当者へのヒアリングアクセス確保",
+        "NDA下でのアーキテクチャドキュメント開示"
+      ],
+      "typical_duration": "1〜3ヶ月"
+    },
+    {
+      "phase": "day1",
+      "name": "Day 1準備フェーズ",
+      "timing": "合意〜法的統合日（通常3〜12ヶ月）",
+      "id_tasks": [
+        "フォレスト信頼関係の一時設定（相互アクセスのため）",
+        "暫定VPN接続の確立",
+        "共有メール（info@newcompany等）の設定",
+        "経営幹部のM365テナント統合優先対応",
+        "ITセキュリティポリシーの最低限の統一（パスワードポリシー等）"
+      ],
+      "critical_success_factors": [
+        "Day 1範囲の明確化（全て統合しようとしない）",
+        "経営コミットメントとスコープ合意"
+      ],
+      "typical_duration": "法的統合日の3〜12ヶ月前から着手"
+    },
+    {
+      "phase": "integration",
+      "name": "システム統合フェーズ",
+      "timing": "Day 1後〜2年",
+      "id_tasks": [
+        "ADフォレスト統合方針決定（統合or並存+Entra）",
+        "Entra IDテナントの統合または統廃合",
+        "ユーザーIDの名寄せ（同一人物の複数アカウント統合）",
+        "HRMS連携の再設計（ジョイン・ムーブ・リーブプロセス）",
+        "アプリケーションの認証基盤統一",
+        "PAM・踏み台サーバーの統合"
+      ],
+      "critical_success_factors": [
+        "IDマスターの決定（どちらのシステムを正とするか）",
+        "アプリケーション影響調査の完了"
+      ],
+      "typical_duration": "6ヶ月〜2年"
+    },
+    {
+      "phase": "optimization",
+      "name": "最適化・レガシー廃止フェーズ",
+      "timing": "統合後〜",
+      "id_tasks": [
+        "旧フォレスト廃止",
+        "信頼関係の削除",
+        "レガシー認証プロトコル（NTLM・Basic）の無効化",
+        "ゼロトラストアーキテクチャへの移行",
+        "ID棚卸し・IGA導入"
+      ],
+      "critical_success_factors": [
+        "アプリケーション全数の認証確認",
+        "ユーザー教育"
+      ],
+      "typical_duration": "2〜5年（継続的改善）"
+    }
+  ],
+  "integration_scenarios": [
+    {
+      "scenario_id": "SC01",
+      "title": "大手メーカーによるIT子会社の完全吸収合併",
+      "acquirer_profile": "従業員2万人・ADフォレスト2つ（本社・工場）・M365 E3",
+      "target_profile": "従業員3000人・ADフォレスト1つ・M365 Business",
+      "integration_approach": "被吸収企業のM365テナントを吸収企業テナントにマイグレーション（IMAP移行→ドメイン追加）。ADは吸収企業フォレストにADMT移行。OU設計は吸収企業標準に統一。旧テナント・旧フォレストは12ヶ月で廃止。アプリケーション127本の認証設定変更が最大の作業。",
+      "day1_solution": "M365テナントに旧社のカスタムドメインを追加してメール継続。VPN接続を確立してファイルサーバーアクセス暫定対応。フォレスト信頼は設定せず、必要最小限のアクセスはゲストアカウントで対応。",
+      "timeline_months": 18,
+      "key_challenges": [
+        "M365テナント移行時のTeams会議履歴消失",
+        "SAPの認証設定変更",
+        "旧社UPNへの依存（メールアドレス変更の社内外調整）"
+      ],
+      "lessons_learned": [
+        "Day 1スコープを絞り込んだことで混乱を防止",
+        "アプリケーションのAD依存調査に予定の2倍の工数",
+        "HR部門との連携が最も重要（IDマスターの整合）"
+      ]
+    },
+    {
+      "scenario_id": "SC02",
+      "title": "同規模の銀行同士の合併（対等合併）",
+      "acquirer_profile": "地方銀行A：従業員2500人・ADフォレスト1・勘定系はMainframe",
+      "target_profile": "地方銀行B：従業員2200人・ADフォレスト1・勘定系は別メーカー",
+      "integration_approach": "統合後の持ち株会社にEntra IDテナントを新設。両銀行ADはそれぞれEntra Connect Syncで同期。クラウドアプリはEntra IDで統合認証。銀行業務システム（勘定系・CIF）はそれぞれのADで認証継続。5年計画で勘定系統合後にADも統合。FISC安全対策基準への準拠継続が最重要要件。",
+      "day1_solution": "経営幹部のM365アカウントを新持ち株会社テナントに移行。両銀行社員間のTeams連絡はゲストアクセスで暫定対応。統合後1年以内にB2B連携を整備。",
+      "timeline_months": 60,
+      "key_challenges": [
+        "FISC安全対策基準への準拠維持（認証変更には審査が必要）",
+        "勘定系システムのベンダーが異なるため統合困難",
+        "ATMネットワーク統合とIDの整合"
+      ],
+      "lessons_learned": [
+        "金融規制があるため拙速な統合は禁物",
+        "Entra IDアンブレラで最低限の統合を先行させる戦略が有効",
+        "人事部門のIDマスター（人事システム）の一本化が最優先"
+      ]
+    },
+    {
+      "scenario_id": "SC03",
+      "title": "外資系グローバル企業による日本企業買収",
+      "acquirer_profile": "グローバルEntra IDテナント（10万ユーザー）・AzureAD Premium P2・SASE導入済み",
+      "target_profile": "日本企業：従業員5000人・ADフォレスト3つ（本社・IT子会社・研究所）・MIM 2016",
+      "integration_approach": "日本企業の全ユーザーをグローバルEntraテナントに移行（別テナントを廃止）。AD 3フォレストはEntra Connect Syncでグローバルテナントに同期。段階的にZTNA・SASEに移行。MIM 2016はEntra ID Governanceに移行計画。研究所フォレストは機密性から分離維持。",
+      "day1_solution": "グローバルテナントに日本法人のカスタムドメイン追加。日本のユーザーにグローバルM365ライセンス付与。外資系本社からのVPNアクセスは既存VPNを暫定継続。",
+      "timeline_months": 24,
+      "key_challenges": [
+        "ADフォレスト3つのEntra Connect Sync設定（重複アカウント問題）",
+        "グローバル情報セキュリティポリシーへの日本での適用（PIPA等）",
+        "日本語固有の属性（カナ氏名・社員コード体系）の引継ぎ"
+      ],
+      "lessons_learned": [
+        "外資系のグローバル標準を押し付けると現場の反発が大きい",
+        "日本の法律（個人情報保護法）要件をグローバルチームに理解させる必要",
+        "ADMigrationはMicrosoftのFastTrackサービスを活用"
+      ]
+    },
+    {
+      "scenario_id": "SC04",
+      "title": "持株会社化（グループ再編）",
+      "acquirer_profile": "事業会社A（本体）：従業員8000人・ADフォレスト2",
+      "target_profile": "持株会社を新設。A社を含む5事業会社がグループ会社に",
+      "integration_approach": "新設持株会社にEntra IDテナントを新規作成。全事業会社をEntra Connect Syncで同期。経営層・コーポレートスタッフは持株会社テナントで管理。各事業会社は既存ADフォレストを維持。グループ共通のSAML/OIDC連携アプリ（Salesforce・ServiceNow等）は持株会社テナントで統合。将来的にフォレスト統合は長期計画。",
+      "day1_solution": "持株会社の経営陣にEntra IDアカウントを発行。グループ横断のTeamsを持株会社テナントに作成。各事業会社社員はゲストとして参加。",
+      "timeline_months": 36,
+      "key_challenges": [
+        "5フォレストのEntra Connect Sync競合回避",
+        "グループ横断のSSOアプリの権限設計",
+        "各事業会社のAD管理権限を維持しながらグループ統制"
+      ],
+      "lessons_learned": [
+        "持株会社テナントを「調整者」として位置付けることで各社の抵抗を減らせた",
+        "Entra B2Bではなく同一テナントにすることで管理が格段に楽になった",
+        "MIM→Entra IDガバナンスへの移行は持株会社テナントで先行実施"
+      ]
+    }
+  ],
+  "day1_checklist": [
+    {
+      "item": "相互メール送受信",
+      "priority": "must",
+      "typical_solution": "両社ドメインのMXをそのまま維持。統合後も旧メールアドレスを転送設定",
+      "time_required": "1日"
+    },
+    {
+      "item": "共有ファイルアクセス（最小限）",
+      "priority": "must",
+      "typical_solution": "経営幹部用の共有SharePoint/Teams設定",
+      "time_required": "1週間"
+    },
+    {
+      "item": "VPN相互接続",
+      "priority": "must",
+      "typical_solution": "S2S VPNで両社ネットワーク接続。または両社VPNクライアントを配布",
+      "time_required": "2〜4週間"
+    },
+    {
+      "item": "フォレスト信頼（暫定）",
+      "priority": "should",
+      "typical_solution": "一方向信頼またはSelective Authenticationで最小権限アクセス",
+      "time_required": "1〜2週間"
+    },
+    {
+      "item": "経営層のコミュニケーションツール統合",
+      "priority": "should",
+      "typical_solution": "Microsoft Teamsのゲストアクセスまたはテナント間通話",
+      "time_required": "1週間"
+    },
+    {
+      "item": "セキュリティポリシー最低限の統一",
+      "priority": "should",
+      "typical_solution": "パスワードポリシー・MFAポリシーの最低基準を統一（高い方に合わせる）",
+      "time_required": "1〜2ヶ月"
+    },
+    {
+      "item": "人事マスター連携（氏名・部署）",
+      "priority": "should",
+      "typical_solution": "人事システム統合は後回し。手動でID棚卸しを実施",
+      "time_required": "1〜3ヶ月"
+    }
+  ],
+  "due_diligence_items": [
+    {
+      "item": "ADフォレスト数・ドメイン数",
+      "why_important": "統合の複雑度と工数見積もりの基礎情報",
+      "red_flags": [
+        "フォレスト数が5以上",
+        "ドメインレベルがWindows 2008以前"
+      ]
+    },
+    {
+      "item": "DCのOS版数・EOL状況",
+      "why_important": "EOL済みDCはセキュリティリスクと移行コスト",
+      "red_flags": [
+        "Windows 2008/2012 R2 DC現役",
+        "パッチ未適用"
+      ]
+    },
+    {
+      "item": "サービスアカウント数と管理状況",
+      "why_important": "統合時のアプリケーション認証変更範囲",
+      "red_flags": [
+        "数百以上のサービスアカウント",
+        "パスワード管理不明"
+      ]
+    },
+    {
+      "item": "MFA導入状況",
+      "why_important": "セキュリティリスクの評価",
+      "red_flags": [
+        "MFA未導入",
+        "特権アカウントにMFAなし"
+      ]
+    },
+    {
+      "item": "ID管理ツール（MIM等）の契約・設定",
+      "why_important": "統合後のIDプロビジョニング設計",
+      "red_flags": [
+        "MIM未設定・ERPとの連携なし",
+        "IdMツールなし"
+      ]
+    },
+    {
+      "item": "フォレスト信頼関係の棚卸し",
+      "why_important": "セキュリティリスクと統合影響の範囲",
+      "red_flags": [
+        "未知のフォレスト信頼が存在",
+        "双方向信頼が多数"
+      ]
+    }
+  ],
+  "failure_patterns": [
+    {
+      "pattern": "Day 1に全て統合しようとした",
+      "cause": "楽観的なスケジュールと経営圧力",
+      "consequence": "混乱・業務停止・手戻り大量発生",
+      "prevention": "Day 1スコープを経営層と合意。最小限に絞る。"
+    },
+    {
+      "pattern": "ADマイグレーションとアプリ移行を分離しなかった",
+      "cause": "ADが替わればアプリも自動で動くと思っていた",
+      "consequence": "アプリ認証エラー多発・サービス停止",
+      "prevention": "ADマイグレーション前に全アプリのAD依存箇所を洗い出す。"
+    },
+    {
+      "pattern": "旧社のID廃止が遅れた",
+      "cause": "「まだ使っているかもしれない」という懸念",
+      "consequence": "退職者アカウントが残存・セキュリティリスク",
+      "prevention": "IDライフサイクル管理のプロセスを統合早期に確立。"
+    },
+    {
+      "pattern": "IDマスターが決まらないまま進めた",
+      "cause": "どちらの人事システムを正とするかが政治的問題",
+      "consequence": "同一人物のIDが複数存在・属性不整合",
+      "prevention": "M&A合意段階でIDマスターをどちらにするか経営判断として決める。"
+    },
+    {
+      "pattern": "Entra Connect Syncのアカウント競合を軽視",
+      "cause": "同一メールアドレスのアカウントが両テナントに存在",
+      "consequence": "同期エラー・片方のメールが届かない",
+      "prevention": "統合前に両社のUPN・メールアドレスの重複確認を実施。"
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "ma_k001",
+      "title": "M&A Day 1のID対応は「最小限」が鉄則",
+      "content": "M&Aの法的統合日（Day 1）に全てのID統合を完了させようとすると必ず失敗する。Day 1には「経営層のコミュニケーション」「緊急のファイル共有」「メール送受信継続」の3つを最優先に対応し、本格統合は6ヶ月〜2年かけて行う。",
+      "tags": [
+        "ma",
+        "day1",
+        "strategy"
+      ]
+    },
+    {
+      "id": "ma_k002",
+      "title": "DDでのAD評価が統合コスト見積もりの基礎",
+      "content": "M&AのITデューデリジェンスでは、相手先のADフォレスト数・DC状況・サービスアカウント数・アプリケーション数を調査することでIT統合コストの見積もり精度が上がる。アプリケーション数 × 平均認証変更工数 が統合費用の主要部分を占める。",
+      "tags": [
+        "due_diligence",
+        "cost",
+        "active_directory"
+      ]
+    },
+    {
+      "id": "ma_k003",
+      "title": "同規模合併では対等な統合設計が重要",
+      "content": "対等合併では、どちらのADを「親」にするかが政治的問題になる。新設テナントにEntra IDを立て、両社ADをフラットにSync接続する設計にすることで「どちらが上か」という摩擦を避けられる場合がある。",
+      "tags": [
+        "ma",
+        "politics",
+        "entra_id"
+      ]
+    },
+    {
+      "id": "ma_k004",
+      "title": "IDマスターはHRシステムで決まる",
+      "content": "M&A統合後のID管理で最も重要なのは「誰が正式な社員か」を管理するHRシステムの統合。HRシステムが統合されるまでは、IDのジョイン・ムーブ・リーブプロセスが機能しない。HR統合をIT統合の前提条件として扱う。",
+      "tags": [
+        "hr",
+        "id_master",
+        "jml",
+        "ma"
+      ]
+    },
+    {
+      "id": "ma_k005",
+      "title": "外資系買収では日本の法規制を必ず伝える",
+      "content": "外資系企業による日本企業の買収では、グローバルのIT標準を日本に適用する際に個人情報保護法（PIPA）・金融規制・医療規制への対応が必要。グローバルIDチームに日本固有の要件（ログ保存期間・アクセス制御の詳細度等）を明示的に伝える。",
+      "tags": [
+        "compliance",
+        "japan",
+        "global",
+        "pipa"
+      ]
+    },
+    {
+      "id": "ma_k006",
+      "title": "退職者アカウントの統合漏れが最大のセキュリティリスク",
+      "content": "M&A統合時に旧社の退職者アカウントが新しいAD/Entraに混入するケースがある。統合前に両社の退職者アカウントを全数確認・無効化してから移行する。統合後もIGAツールで定期棚卸しを継続。",
+      "tags": [
+        "offboarding",
+        "security",
+        "iga",
+        "ma"
+      ]
+    },
+    {
+      "id": "ma_k007",
+      "title": "サービスアカウントはM&A統合の最難関",
+      "content": "人間のユーザーIDよりもサービスアカウントの移行が困難。どのアプリがどのサービスアカウントに依存しているかのマッピングが不完全な場合、認証エラーの原因特定に多大な工数がかかる。統合前にCMDB・AD管理ツールでサービスアカウント棚卸しを実施する。",
+      "tags": [
+        "service_account",
+        "ma",
+        "application"
+      ]
+    },
+    {
+      "id": "ma_k008",
+      "title": "M&AのITコストの過半はID管理関連",
+      "content": "M&AのIT統合コストを分析すると、ID管理（AD統合・アプリ認証変更・Entra移行）が全体コストの40〜60%を占める場合が多い。事前のADデューデリジェンスとアプリケーション調査の精度がプロジェクトコストの確度を決める。",
+      "tags": [
+        "cost",
+        "ma",
+        "due_diligence"
+      ]
+    },
+    {
+      "id": "ma_k009",
+      "title": "Entra IDのマルチテナント管理",
+      "content": "Entra IDはマルチテナント管理機能（Microsoft Entra Multi-Tenant Organization）が2024年から利用可能。複数テナントのユーザーが同一Teamsスペースでシームレスに連携できる。M&A後の暫定対応として活用価値が高い。",
+      "tags": [
+        "entra_id",
+        "multi_tenant",
+        "ma"
+      ]
+    },
+    {
+      "id": "ma_k010",
+      "title": "金融機関のM&A統合では規制対応が最優先",
+      "content": "銀行・証券・保険のM&A統合では、FISCや金融庁ガイドラインへの準拠維持が最優先。認証方式の変更・ログ設計の変更は事前に当局への報告・確認が必要な場合がある。ID統合プランは法務・コンプライアンス部門と連携して策定する。",
+      "tags": [
+        "finance",
+        "compliance",
+        "fisc",
+        "ma"
+      ]
+    },
+    {
+      "id": "ma_k011",
+      "title": "ADMTはMicrosoft提供の無償マイグレーションツール",
+      "content": "Active Directory Migration Tool（ADMT）はフォレスト間のユーザー・グループ・コンピューターを移行するMicrosoft提供の無償ツール。SID History移行もサポート。大規模移行ではADMTと独自PowerShellスクリプトの組み合わせが標準。",
+      "tags": [
+        "admt",
+        "migration",
+        "tools"
+      ]
+    },
+    {
+      "id": "ma_k012",
+      "title": "M&A後のPAM統合は独立したプロジェクトとして扱う",
+      "content": "特権アクセス管理（PAM）の統合は通常のADユーザー統合とは別の専門的なプロジェクト。CyberArk・BeyondTrustなどのPAMツールには別のVaultが必要で、移行時のセキュリティ継続性確保が重要。PAMプロジェクトを独立して計画する。",
+      "tags": [
+        "pam",
+        "ma",
+        "privileged_access"
+      ]
+    }
+  ]
+}

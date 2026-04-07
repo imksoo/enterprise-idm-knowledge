@@ -1,0 +1,421 @@
+{
+  "metadata": {
+    "id": "active_directory_legacy",
+    "title": "Active Directoryの功罪と移行観点",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "Active Directory",
+      "Kerberos",
+      "LDAP",
+      "NTLM",
+      "グループポリシー",
+      "Entra ID",
+      "ハイブリッドID"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "./kerberos_cifs_auth.json",
+      "./os_auth_methods.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/group_policy_alternatives.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "history": {
+    "timeline": [
+      {
+        "year": "1999-2000",
+        "event": "Windows 2000世代でActive Directory Domain Servicesが一般提供され、LDAP、Kerberos、DNSを統合した企業向けディレクトリサービスとして普及が始まった。",
+        "impact": "Windows NTドメインの限界を超え、ユーザー、コンピューター、ポリシー、サービスプリンシパルを一元管理できる基盤になった。"
+      },
+      {
+        "year": "2000-2005",
+        "event": "グループポリシーがWindows XPとWindows Server 2003の管理標準として定着した。",
+        "impact": "端末設定、ログオンスクリプト、セキュリティ制御を一括配布できるようになった。"
+      },
+      {
+        "year": "2005-2015",
+        "event": "日本企業でWindows Server導入と一体でActive Directoryが標準化された。",
+        "impact": "ファイルサーバー、RADIUS、VPN、業務アプリ認証の中心に据えられた。"
+      },
+      {
+        "year": "2015-2022",
+        "event": "Microsoft 365とEntra IDの普及により、Active DirectoryはクラウドIDへの橋渡し基盤へ位置付けが変化した。",
+        "impact": "Entra Connect Sync、Entra Hybrid Join、パスワードハッシュ同期が現実解になった。"
+      },
+      {
+        "year": "2023-2026",
+        "event": "NTLM縮退、Windows LAPS統合、特権分離強化の流れの中で、Active Directoryは延命対象ではなく縮退対象として評価される案件が増えた。",
+        "impact": "何をクラウドへ寄せ、何をオンプレミスに残すかの切り分けが中心論点になった。"
+      }
+    ],
+    "revolutionary_aspects": [
+      "LDAPによる標準化されたディレクトリ参照と属性管理をWindows運用へ持ち込んだこと。",
+      "KerberosベースのシングルサインオンをWindowsクライアント、ファイル共有、サーバーサービスへ広く適用したこと。",
+      "DNSと統合したドメイン参加により、大規模な名前解決と認証を一体設計できたこと。",
+      "グループポリシーにより、端末設定を集中管理できる運用モデルを企業ITへ定着させたこと。",
+      "Windows Serverに標準搭載されたことで、日本企業にとって追加製品選定なしで導入できたこと。"
+    ]
+  },
+  "strengths": [
+    "WindowsクライアントとWindows Serverの認証、認可、コンピューター管理を一つのディレクトリで扱える。",
+    "KerberosのTGTとサービスチケットにより、ドメイン参加端末では高い利用体験のシングルサインオンを実現できる。",
+    "グループポリシーで端末とサーバーの構成をまとめて配布でき、日本企業の標準PC運用と相性が良い。",
+    "ファイルサーバー、RADIUS、VPN、業務アプリ、AD FS、証明書配布など周辺製品との接続実績が非常に多い。",
+    "委任、サービス プリンシパル名、グループベース認可など、オンプレミス業務システムに必要な機能が豊富である。",
+    "管理者スキルセットとSIer実装ノウハウが蓄積しており、レガシー統合案件では依然として実務価値が高い。"
+  ],
+  "weaknesses": [
+    {
+      "id": "ad_weak_001",
+      "name": "フラットなドメイン設計によるラテラルムーブメント",
+      "category": "design",
+      "description": "単一フォレスト、単一ドメイン、共有管理端末が組み合わさると、一台の侵害からドメイン全域へ横展開しやすい。",
+      "attack_technique": "資格情報窃取後の横展開",
+      "severity": "critical",
+      "real_world_example": "ランサムウェア侵害では、管理者端末やファイルサーバーの資格情報を足掛かりにドメイン全体へ拡大する事例が多い。",
+      "mitigation": "Tier Model、管理端末分離、サーバー管理経路の限定、不要なローカル管理者権限の削減を行う。"
+    },
+    {
+      "id": "ad_weak_002",
+      "name": "Pass-the-Hash攻撃",
+      "category": "attack",
+      "description": "NTLMハッシュが窃取されると、平文パスワードを知らなくても横展開に利用される。",
+      "attack_technique": "Pass-the-Hash",
+      "severity": "critical",
+      "real_world_example": "端末侵害後にLSASSやSAMから資格情報派生値を抜かれ、管理共有経由で複数サーバーへ移動する攻撃が典型である。",
+      "mitigation": "Credential Guard、LAPS、ローカル管理者パスワードの一意化、NTLM削減、管理者アカウントの分離を進める。"
+    },
+    {
+      "id": "ad_weak_003",
+      "name": "Pass-the-Ticket攻撃",
+      "category": "attack",
+      "description": "Kerberosチケットを窃取されると、正規ユーザーとしてサービスへアクセスされる。",
+      "attack_technique": "Pass-the-Ticket",
+      "severity": "high",
+      "real_world_example": "管理端末上に残ったTGTやサービスチケットが窃取され、SMBや管理系アプリへ再利用される。",
+      "mitigation": "管理者端末の分離、Protected Users Security Group、チケット寿命の適正化を実施する。"
+    },
+    {
+      "id": "ad_weak_004",
+      "name": "Golden Ticket攻撃",
+      "category": "attack",
+      "description": "KRBTGTに相当する秘密が奪取されると、攻撃者が任意のTGTを偽造できる。",
+      "attack_technique": "Golden Ticket",
+      "severity": "critical",
+      "real_world_example": "ドメインコントローラー侵害後にKRBTGTリセットまで実施できず、長期間の潜伏を許すケースがある。",
+      "mitigation": "Tier 0分離、ドメインコントローラーの専用管理、侵害時のKRBTGT二重リセット手順整備を行う。"
+    },
+    {
+      "id": "ad_weak_005",
+      "name": "Silver Ticket攻撃",
+      "category": "attack",
+      "description": "サービスアカウントやコンピューターアカウントの秘密が漏れると、特定サービス向けチケットを偽造される。",
+      "attack_technique": "Silver Ticket",
+      "severity": "high",
+      "real_world_example": "IIS、SQL Server、ファイルサーバー向けのSPN付きアカウントが狙われる。",
+      "mitigation": "グループ管理サービスアカウントの利用、サービスアカウント棚卸し、SPNの整理を行う。"
+    },
+    {
+      "id": "ad_weak_006",
+      "name": "ドメインコントローラーとSYSVOLの高価値ターゲット化",
+      "category": "design",
+      "description": "認証、ディレクトリ、GPO、SYSVOLが集中するため、侵害1点で被害が全域に波及しやすい。",
+      "attack_technique": "DC侵害、GPO改ざん、SYSVOL悪用",
+      "severity": "critical",
+      "real_world_example": "GPO改ざんにより全端末へ悪性設定や起動スクリプトを配布されると、復旧が極めて困難になる。",
+      "mitigation": "Tier 0隔離、バックアップ、変更監査、ドメインコントローラーの専用運用を徹底する。"
+    },
+    {
+      "id": "ad_weak_007",
+      "name": "Kerberoasting",
+      "category": "attack",
+      "description": "SPN付きアカウントのサービスチケットをオフライン解析し、弱いパスワードを破られる。",
+      "attack_technique": "Kerberoasting",
+      "severity": "high",
+      "real_world_example": "古いサービスアカウントに長期固定パスワードが残る企業で被害が出やすい。",
+      "mitigation": "グループ管理サービスアカウント、長く強いランダムパスワード、RC4無効化、SPN棚卸しを行う。"
+    },
+    {
+      "id": "ad_weak_008",
+      "name": "AS-REP Roasting",
+      "category": "attack",
+      "description": "事前認証不要のアカウントはAS-REP応答をオフライン解析され、パスワード特定の足掛かりになる。",
+      "attack_technique": "AS-REP Roasting",
+      "severity": "medium",
+      "real_world_example": "古い互換設定や例外設定が残った特権アカウントが狙われる。",
+      "mitigation": "Kerberos事前認証を必須化し、古い互換設定を棚卸しして解消する。"
+    },
+    {
+      "id": "ad_weak_009",
+      "name": "NTLM残存",
+      "category": "design",
+      "description": "レガシー互換のためNTLMが残りやすく、最新の資格情報防御を阻害する。",
+      "attack_technique": "NTLM relay、Pass-the-Hash",
+      "severity": "high",
+      "real_world_example": "NAS、古い業務アプリ、VPN機器、RADIUS連携でNTLMが温存されることが多い。",
+      "mitigation": "NTLM利用箇所の可視化、Kerberos化、機器更改を段階的に実施する。"
+    },
+    {
+      "id": "ad_weak_010",
+      "name": "グループポリシーの複雑化とデバッグ困難",
+      "category": "operational",
+      "description": "OU、WMIフィルター、ループバック、優先順位、例外設定が増えると、設定理由の追跡が難しくなる。",
+      "attack_technique": "該当なし",
+      "severity": "medium",
+      "real_world_example": "15年前のログオンスクリプトやレジストリ配布が残り、誰も変更影響を説明できない環境が多い。",
+      "mitigation": "GPO棚卸し、適用対象の簡素化、Intuneや構成管理ツールへの分離、変更履歴管理を行う。"
+    },
+    {
+      "id": "ad_weak_011",
+      "name": "クラウド・モバイル・外部委託に弱い前提",
+      "category": "design",
+      "description": "社内LAN、ドメイン参加端末、常時接続を前提とした設計のため、SaaS中心、BYOD、委託先の短期利用に適しにくい。",
+      "attack_technique": "該当なし",
+      "severity": "high",
+      "real_world_example": "VPN接続が前提となり、委託先や海外拠点のアクセス制御がネットワーク境界依存のまま残る。",
+      "mitigation": "SAML、OpenID Connect、Conditional Access、ZTNA、Entra Joinへの置換を進める。"
+    }
+  ],
+  "japan_specific_problems": [
+    {
+      "id": "jp_ad_001",
+      "name": "神アカウントの共有",
+      "description": "全権限Administratorを複数人で共有し、個人責任と証跡が失われる。委託先が同じ認証情報を長期利用する例もある。"
+    },
+    {
+      "id": "jp_ad_002",
+      "name": "OU設計が組織図そのまま",
+      "description": "人事組織変更に引きずられてOUが増殖し、管理委任やセキュリティ境界の意図が失われる。"
+    },
+    {
+      "id": "jp_ad_003",
+      "name": "長期未見直しのグループポリシー",
+      "description": "過去案件の名残でGPOが積み上がり、現行要件と無関係な設定が動き続ける。"
+    },
+    {
+      "id": "jp_ad_004",
+      "name": "Service Account地獄",
+      "description": "サービスアカウントのオーナー不明、パスワード不明、停止影響不明の状態が長期化する。"
+    }
+  ],
+  "best_practices_if_keeping_ad": [
+    {
+      "name": "Tier Model（Tier 0/1/2）",
+      "purpose": "ドメインコントローラーと特権を一般端末から分離し、資格情報窃取の横展開を抑える。"
+    },
+    {
+      "name": "LAPS",
+      "purpose": "ローカル管理者パスワードを端末ごとに一意化し、Pass-the-Hashの横展開を抑える。"
+    },
+    {
+      "name": "Protected Users Security Group",
+      "purpose": "特権アカウントに対して古い認証方式や長期資格情報キャッシュを抑止する。"
+    },
+    {
+      "name": "Credential Guard",
+      "purpose": "資格情報派生値の保護により、端末侵害後の資格情報窃取難度を上げる。"
+    },
+    {
+      "name": "ESAE（Enhanced Security Admin Environment）",
+      "purpose": "現在は専用管理フォレストより、特権アクセス ワークステーションとTier 0分離の考え方として活用する。"
+    }
+  ],
+  "migration_to_entra": {
+    "hybrid_options": [
+      {
+        "option": "Entra Connect Sync + Password Hash Synchronization",
+        "fit": "Microsoft 365とSaaS認証を先行統合したい場合。",
+        "limit": "Kerberos、SMB、GPO、LDAP bindを使うオンプレミスアプリは残る。"
+      },
+      {
+        "option": "Entra Hybrid Join",
+        "fit": "既存のドメイン参加端末を維持しつつ、Conditional AccessやIntuneを段階導入したい場合。",
+        "limit": "ドメイン参加、GPO、ラインオブビジネスアプリへの依存は残る。"
+      },
+      {
+        "option": "Entra Join",
+        "fit": "新規Windows端末やSaaS中心業務からクラウドネイティブ化したい場合。",
+        "limit": "SMB、NTLM、旧式アプリ、オンプレミス証明書配布との整合に課題が残る。"
+      }
+    ],
+    "migration_steps": [
+      "Active Directory依存の棚卸しを行い、Kerberos、NTLM、LDAP bind、GPO、AD CS、ファイル共有、RADIUS、VPN連携を列挙する。",
+      "Entra Connect Syncの対象属性と責任分界を定義し、同期するものとしないものを整理する。",
+      "ユーザー認証はSAMLまたはOpenID Connectへ寄せ、AD FSやLDAP bindを段階廃止する。",
+      "端末管理はEntra Hybrid Joinから開始し、最終的にEntra JoinとIntune中心へ移す。",
+      "サービスアカウント、SPN、gMSA、証明書ベース認証の残存期間を個別に設計する。"
+    ],
+    "challenges": [
+      {
+        "name": "Entra Connect Syncの役割と限界",
+        "description": "属性同期と一部認証方式の橋渡しには有効だが、オンプレミスのKerberos、GPO、LDAPアプリ、サーバー管理認証を置き換えるものではない。"
+      },
+      {
+        "name": "Entra Hybrid JoinとEntra Joinの判断",
+        "description": "ハイブリッドは過渡期には有効だが、最終到達点にしないことが重要である。"
+      },
+      {
+        "name": "AD CS移行",
+        "description": "Wi-Fi、VPN、スマートカード、端末証明書、サーバー証明書、NPS連携にAD CSが埋め込まれていることが多く、ID移行より難度が高い場合がある。"
+      },
+      {
+        "name": "オンプレミス残存ADとの共存期間",
+        "description": "ファイルサーバー、Windows Server管理、非Webアプリ、工場や金融の閉域運用が残る限り、数年単位の共存が前提になる。"
+      }
+    ]
+  },
+  "knowledge_items": [
+    {
+      "id": "ad_knowledge_001",
+      "title": "Active DirectoryはLDAPとKerberosとDNSの統合価値で普及した",
+      "content": "1999年から2000年にかけて登場したActive Directoryは、ディレクトリ参照、チケット認証、名前解決を一体運用できる点が当時の企業ITにとって大きな進歩だった。",
+      "tags": [
+        "Active Directory",
+        "Kerberos",
+        "LDAP",
+        "DNS"
+      ]
+    },
+    {
+      "id": "ad_knowledge_002",
+      "title": "グループポリシーはWindows運用の標準化を進めた",
+      "content": "端末設定の集中適用は日本企業のPC標準化と親和性が高く、SIerの大量展開モデルを支えた。",
+      "tags": [
+        "グループポリシー",
+        "Windows Server"
+      ]
+    },
+    {
+      "id": "ad_knowledge_003",
+      "title": "KerberosのTGTはシングルサインオンの中心である",
+      "content": "ドメイン参加端末ではTGTを起点にファイル共有や業務サーバーへ追加認証を減らせる。",
+      "tags": [
+        "Kerberos",
+        "シングルサインオン"
+      ]
+    },
+    {
+      "id": "ad_knowledge_004",
+      "title": "日本企業ではWindows Server導入と一体で標準化された",
+      "content": "Active Directoryは追加製品選定の負担が小さく、ファイルサーバー、プリントサーバー、VPN、RADIUSの認証基盤として採用しやすかった。",
+      "tags": [
+        "日本企業",
+        "Windows Server"
+      ]
+    },
+    {
+      "id": "ad_knowledge_005",
+      "title": "Active Directoryの最大の強みは同時に最大の攻撃面でもある",
+      "content": "認証、認可、ポリシー、サービスプリンシパルが集中しているため、1つの侵害が全域に波及しやすい。",
+      "tags": [
+        "ラテラルムーブメント",
+        "ドメインコントローラー"
+      ]
+    },
+    {
+      "id": "ad_knowledge_006",
+      "title": "NTLM残存は移行阻害要因である",
+      "content": "互換性維持のためNTLMを残すと、クラウド認証強化だけでは防げない攻撃面が温存される。",
+      "tags": [
+        "NTLM",
+        "移行"
+      ]
+    },
+    {
+      "id": "ad_knowledge_007",
+      "title": "Golden TicketはTier 0侵害の象徴である",
+      "content": "KRBTGT漏えいはActive Directoryが持つ集中性リスクを示しており、ドメインコントローラー防御が最優先になる。",
+      "tags": [
+        "Golden Ticket",
+        "Tier 0"
+      ]
+    },
+    {
+      "id": "ad_knowledge_008",
+      "title": "Service Account地獄は運用課題と攻撃面を同時に悪化させる",
+      "content": "オーナー不明のサービスアカウントは、停止判断不能とKerberoasting耐性不足を同時に招く。",
+      "tags": [
+        "サービスアカウント",
+        "Kerberoasting"
+      ]
+    },
+    {
+      "id": "ad_knowledge_009",
+      "title": "OUは組織図ではなく管理境界で設計すべきである",
+      "content": "OUを人事組織に合わせすぎると、権限委任とGPO適用が複雑化しやすい。",
+      "tags": [
+        "OU",
+        "設計"
+      ]
+    },
+    {
+      "id": "ad_knowledge_010",
+      "title": "LAPSはAD延命ではなく最低限の被害抑止策である",
+      "content": "ローカル管理者パスワード一意化は横展開抑止に有効だが、ドメイン全体の構造的課題を解消するものではない。",
+      "tags": [
+        "LAPS",
+        "特権アクセス管理"
+      ]
+    },
+    {
+      "id": "ad_knowledge_011",
+      "title": "Protected Users Security Groupは互換性検証が前提である",
+      "content": "古い認証方式や旧式サーバーとの互換性に影響するため、特権アカウントへ段階適用する必要がある。",
+      "tags": [
+        "Protected Users Security Group",
+        "互換性"
+      ]
+    },
+    {
+      "id": "ad_knowledge_012",
+      "title": "ESAEは製品ではなく管理分離の思想として再解釈すべきである",
+      "content": "現在の実務では専用フォレスト構築そのものより、特権アクセス ワークステーションとTier 0分離の考え方が重要である。",
+      "tags": [
+        "ESAE",
+        "Tier Model"
+      ]
+    },
+    {
+      "id": "ad_knowledge_013",
+      "title": "Entra Connect Syncは属性同期の橋であって置換ではない",
+      "content": "ユーザー属性や認証の一部はクラウドへ寄せられるが、オンプレミスサーバー認証の依存は別途解消が必要である。",
+      "tags": [
+        "Entra Connect Sync",
+        "ハイブリッドID"
+      ]
+    },
+    {
+      "id": "ad_knowledge_014",
+      "title": "Entra Hybrid Joinは過渡期の現実解である",
+      "content": "既存端末をすぐ捨てられない企業では有効だが、恒久解として固定化すると技術的負債が残る。",
+      "tags": [
+        "Entra Hybrid Join",
+        "移行"
+      ]
+    },
+    {
+      "id": "ad_knowledge_015",
+      "title": "AD CSは見落とされやすい最大の残存要素である",
+      "content": "Wi-Fi、VPN、スマートカード、端末証明書配布に関与している場合、Active Directory本体より長く残ることが多い。",
+      "tags": [
+        "AD CS",
+        "PKI"
+      ]
+    },
+    {
+      "id": "ad_knowledge_016",
+      "title": "AD廃止はゼロか100かではなく縮退設計で考えるべきである",
+      "content": "ユーザー認証、端末管理、サーバー管理、証明書、アプリ認証を分けて移行しないと、無理な一括更改になる。",
+      "tags": [
+        "移行",
+        "縮退"
+      ]
+    }
+  ]
+}

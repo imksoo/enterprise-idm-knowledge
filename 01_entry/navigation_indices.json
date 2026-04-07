@@ -12,12 +12,19 @@
     "related_files": [
       "./knowledge_graph.json",
       "../03_identity_architecture/idp_comparison.json",
+      "../03_identity_architecture/multi_forest_consolidation.json",
       "../03_identity_architecture/iga_tool_comparison.json",
+      "../04_server_auth/active_directory_primer.json",
+      "../04_server_auth/active_directory_legacy.json",
       "../04_server_auth/kerberos_cifs_auth.json",
+      "../04_server_auth/ldap_directory_comparison.json",
       "../04_server_auth/oracle_db_auth.json",
+      "../05_hybrid_scenarios/vpn_sase_identity.json",
+      "../06_security_hardening/ransomware_id_attack_scenarios.json",
       "../06_security_hardening/industry_manufacturing_auth.json",
       "../06_security_hardening/industry_energy_auth.json",
       "../06_security_hardening/audit_log_operations.json",
+      "../07_migration_patterns/ma_identity_integration.json",
       "../03_identity_architecture/iam_capability_product_matrix.json",
       "../03_identity_architecture/iam_product_landscape_japan.json",
       "../08_identity_subjects/machine_identity_modern.json",
@@ -56,6 +63,7 @@
           "Kerberos が動かない",
           "SMB 移行で認証が不安",
           "NTLM を減らしたい",
+          "なぜ ID 管理がランサムウェア対策の根幹なのか説明したい",
           "どの IdP を選ぶべきか",
           "Oracleの共有SYSDBAをやめたい",
           "特権IDの棚卸しをどう回すか分からない",
@@ -298,6 +306,126 @@
           "クラウドアーキテクト"
         ]
       }
+    },
+    {
+      "id": "nav_node_021",
+      "label": "Active Directory入門",
+      "object_type": "concept",
+      "description": "若手エンジニアや営業が、Active Directory、Kerberos、グループポリシー、ハイブリッド化、2029年問題を読み物として理解するための入口。",
+      "properties": {
+        "file": "../04_server_auth/active_directory_primer.json",
+        "personas": [
+          "若手エンジニア",
+          "営業",
+          "プリセールス",
+          "SIerアーキテクト"
+        ],
+        "symptoms": [
+          "顧客会議で Active Directory の話についていけない",
+          "なぜ IDM 近代化が難しいのか背景から理解したい",
+          "Entra ID を入れても Active Directory が残る理由を知りたい"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_022",
+      "label": "ランサムウェア×ID管理シナリオ",
+      "object_type": "concept",
+      "description": "攻撃キルチェーン、ID 管理欠陥、製造業・証券会社・病院の侵害ストーリーを通じて、なぜ ID 管理がセキュリティの根幹なのかを説明する入口。",
+      "properties": {
+        "file": "../06_security_hardening/ransomware_id_attack_scenarios.json",
+        "personas": [
+          "CISO",
+          "情報システム部長",
+          "SIerコンサルタント",
+          "内部監査部門"
+        ],
+        "symptoms": [
+          "なぜ ID 管理がランサムウェア対策の根幹なのか説明したい",
+          "製品比較だけでは危険だと経営に伝えたい",
+          "攻撃者視点で ID 管理の欠陥を整理したい"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_023",
+      "label": "LDAPディレクトリサービス比較",
+      "object_type": "concept",
+      "description": "OpenLDAP、Red Hat Directory Server、389 Directory Server、FreeIPA / Red Hat IdM、Active Directory Lightweight Directory Services、OpenDJを比較する入口。",
+      "properties": {
+        "file": "../04_server_auth/ldap_directory_comparison.json",
+        "personas": [
+          "Linux基盤担当",
+          "SIerアーキテクト",
+          "情報システム部門"
+        ],
+        "symptoms": [
+          "OpenLDAP から何へ移行すべきか分からない",
+          "RHEL 8 以降の LDAP サーバー更改方針を決めたい",
+          "FreeIPA / Red Hat IdM と LDAP 単体製品の違いを整理したい"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_024",
+      "label": "VPN・SASE・ZTNA連携",
+      "object_type": "concept",
+      "description": "VPN、SASE、ZTNAとID管理、Conditional Access、委託先アクセス統制、FISC文脈を横断する入口。",
+      "properties": {
+        "file": "../05_hybrid_scenarios/vpn_sase_identity.json",
+        "personas": [
+          "ネットワーク責任者",
+          "CISO",
+          "SIerコンサルタント",
+          "ゼロトラスト推進担当"
+        ],
+        "symptoms": [
+          "VPN をどこまで残すべきか判断できない",
+          "SASE と言っているが VPN と何が違うか説明したい",
+          "ZTNA と Entra ID の役割分担を整理したい"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_025",
+      "label": "マルチフォレスト統合",
+      "object_type": "concept",
+      "description": "本社、子会社、製造、管理用など複数の Active Directory フォレストを統合・集約する際の入口。",
+      "properties": {
+        "file": "../03_identity_architecture/multi_forest_consolidation.json",
+        "personas": [
+          "CIO",
+          "CISO",
+          "情報システム部門",
+          "SIerアーキテクト"
+        ],
+        "symptoms": [
+          "子会社ごとに Active Directory が分かれている",
+          "Forest Trust をいつまで残すべきか分からない",
+          "Entra ID を上からかぶせて統合したい"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_026",
+      "label": "M&A ID統合シナリオ",
+      "object_type": "concept",
+      "description": "M&A、合併、持株会社化における Day 1 から完全統合までの ID 管理シナリオ入口。",
+      "properties": {
+        "file": "../07_migration_patterns/ma_identity_integration.json",
+        "personas": [
+          "CIO",
+          "CISO",
+          "経営企画",
+          "情報システム部門",
+          "SIerコンサルタント"
+        ],
+        "symptoms": [
+          "M&A の Day 1 で何をつなぐべきか分からない",
+          "買収先 AD をどう扱うべきか判断できない",
+          "合併後も相手会社のシステムに入れない"
+        ]
+      }
     }
   ],
   "edges": [
@@ -516,6 +644,78 @@
       "to": "nav_node_002",
       "relationship": "example_of",
       "description": "サービスアカウントや API キーが増えすぎたという主訴の入口として参照する。"
+    },
+    {
+      "from": "nav_node_021",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "サーバー認証とハイブリッド ID の前提を学ぶ基礎入口として配置する。"
+    },
+    {
+      "from": "nav_node_021",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "顧客会議で Active Directory の背景が分からないという相談の入口として参照する。"
+    },
+    {
+      "from": "nav_node_023",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "LDAPサーバー選定とLinux認証基盤更改を扱う入口として配置する。"
+    },
+    {
+      "from": "nav_node_023",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "OpenLDAPから何へ移るべきかという主訴の入口として参照する。"
+    },
+    {
+      "from": "nav_node_024",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "ゼロトラストとハイブリッドIDをつなぐネットワーク認証入口として配置する。"
+    },
+    {
+      "from": "nav_node_024",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "VPNを段階的にSASEやZTNAへ移したいという主訴の入口として参照する。"
+    },
+    {
+      "from": "nav_node_025",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "複数フォレスト統合を扱う技術領域の入口として配置する。"
+    },
+    {
+      "from": "nav_node_025",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "Forest Trust の扱いや統合方針に悩む主訴の入口として参照する。"
+    },
+    {
+      "from": "nav_node_026",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "移行パターンとハイブリッド ID をまたぐ M&A 統合の入口として配置する。"
+    },
+    {
+      "from": "nav_node_026",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "M&A の Day 1 で何をつなぐべきかという主訴の入口として参照する。"
+    },
+    {
+      "from": "nav_node_022",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "セキュリティ強化と ID 管理基盤の関係を経営へ説明する入口として配置する。"
+    },
+    {
+      "from": "nav_node_022",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "ランサムウェア対策を製品比較だけで語れない理由を説明する相談の入口として参照する。"
     },
     {
       "from": "nav_node_012",
@@ -773,6 +973,90 @@
         "nav_node_001",
         "nav_node_002",
         "nav_node_020"
+      ]
+    },
+    {
+      "id": "nav_knowledge_021",
+      "topic": "Active Directory入門入口",
+      "summary": "若手エンジニアや営業が、Active Directory の歴史、Kerberos、グループポリシー、ハイブリッド化、2029年問題を背景から理解する入口を追加した。",
+      "details": [
+        "対象ファイル: ../04_server_auth/active_directory_primer.json",
+        "主要テーマ: Active Directory の成立背景、LDAP、Kerberos、グループポリシー、ラテラルムーブメント、ゴールデンチケット攻撃、Entra ID との役割分担、2029年問題"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_021"
+      ]
+    },
+    {
+      "id": "nav_knowledge_022",
+      "topic": "ランサムウェア×ID管理シナリオ入口",
+      "summary": "攻撃者視点で ID 管理の欠陥を説明し、製造業・証券会社・病院の侵害シナリオを横断する入口を追加した。",
+      "details": [
+        "対象ファイル: ../06_security_hardening/ransomware_id_attack_scenarios.json",
+        "主要テーマ: 初期侵入、ラテラルムーブメント、Kerberoasting、DCSync、グループポリシー悪用、委託先残存アカウント、病院・製造業・証券会社の日本企業パターン"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_022"
+      ]
+    },
+    {
+      "id": "nav_knowledge_023",
+      "topic": "LDAPディレクトリサービス比較入口",
+      "summary": "OpenLDAP残存問題と、Red Hat Directory Server、389 Directory Server、FreeIPA / Red Hat IdMへの移行パスを整理する入口を追加した。",
+      "details": [
+        "対象ファイル: ../04_server_auth/ldap_directory_comparison.json",
+        "主要テーマ: OpenLDAP、RHEL 8/9、389 Directory Server、FreeIPA、Red Hat IdM、Active Directory Lightweight Directory Services、OpenDJ、SSSD"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_023"
+      ]
+    },
+    {
+      "id": "nav_knowledge_024",
+      "topic": "VPN・SASE・ZTNA連携入口",
+      "summary": "VPN、SASE、ZTNAとEntra ID、Conditional Access、デバイス準拠性、委託先アクセス統制を横断する入口を追加した。",
+      "details": [
+        "対象ファイル: ../05_hybrid_scenarios/vpn_sase_identity.json",
+        "主要テーマ: RADIUS、SAML、OpenID Connect、Cisco、Palo Alto Networks、Fortinet、Juniper、Zscaler、Prisma Access、Netskope、FISC"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_024"
+      ]
+    },
+    {
+      "id": "nav_knowledge_025",
+      "topic": "マルチフォレスト統合入口",
+      "summary": "日本企業に多い複数 Active Directory フォレストの成り立ち、Forest Trust の危険性、統合パターンを整理する入口を追加した。",
+      "details": [
+        "対象ファイル: ../03_identity_architecture/multi_forest_consolidation.json",
+        "主要テーマ: 分社化、M&A、Forest Trust、Selective Authentication、SID History、AD CS、Entra ID アンブレラ、段階廃止"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_025"
+      ]
+    },
+    {
+      "id": "nav_knowledge_026",
+      "topic": "M&A ID統合シナリオ入口",
+      "summary": "合併、買収、持株会社化に伴う Day 1、Due Diligence、統合、最適化の実務を扱う入口を追加した。",
+      "details": [
+        "対象ファイル: ../07_migration_patterns/ma_identity_integration.json",
+        "主要テーマ: Day 1、メール統合、共有ファイル、VPN、委託先ID、Entra ID、Forest Trust、PMO"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_026"
       ]
     }
   ]

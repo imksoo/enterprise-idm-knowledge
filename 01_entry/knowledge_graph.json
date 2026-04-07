@@ -14,6 +14,7 @@
     ],
     "related_files": [
       "03_identity_architecture/identity_landscape.json",
+      "03_identity_architecture/multi_forest_consolidation.json",
       "03_identity_architecture/idp_comparison.json",
       "03_identity_architecture/iga_tool_comparison.json",
       "03_identity_architecture/app_architecture_id_design.json",
@@ -21,14 +22,19 @@
       "03_identity_architecture/zero_trust_architecture.json",
       "03_identity_architecture/pam_tool_comparison.json",
       "04_server_auth/os_auth_methods.json",
+      "04_server_auth/active_directory_primer.json",
+      "04_server_auth/active_directory_legacy.json",
       "04_server_auth/kerberos_cifs_auth.json",
+      "04_server_auth/ldap_directory_comparison.json",
       "04_server_auth/oracle_db_auth.json",
       "04_server_auth/commercial_unix_survival.json",
       "04_server_auth/directory_services_lifecycle.json",
       "05_hybrid_scenarios/entra_hybrid_join.json",
       "05_hybrid_scenarios/remote_work_id_reality.json",
+      "05_hybrid_scenarios/vpn_sase_identity.json",
       "06_security_hardening/privileged_access_management.json",
       "06_security_hardening/ransomware_defense.json",
+      "06_security_hardening/ransomware_id_attack_scenarios.json",
       "06_security_hardening/group_policy_alternatives.json",
       "06_security_hardening/ops_paradigm_shift.json",
       "06_security_hardening/sysadmin_access_evolution.json",
@@ -37,6 +43,7 @@
       "06_security_hardening/industry_energy_auth.json",
       "06_security_hardening/audit_log_operations.json",
       "07_migration_patterns/ad_to_entra_migration.json",
+      "07_migration_patterns/ma_identity_integration.json",
       "11_simulations/securities/sim_sec_03_sier_account_incident.json",
       "11_simulations/cross_industry/sim_x_03_byod_mdm_conflict.json",
       "11_simulations/finance/sim_fin_02_oracle_auth_review.json",
@@ -637,6 +644,47 @@
       }
     },
     {
+      "id": "node_063",
+      "label": "Active Directory入門",
+      "object_type": "concept",
+      "description": "若手エンジニアや営業向けに、Active Directory の歴史、構造、運用負債、近代化の難しさを読み物形式で整理した入口。",
+      "properties": {
+        "file": "04_server_auth/active_directory_primer.json",
+        "audience": [
+          "junior_se",
+          "sales",
+          "presales"
+        ]
+      }
+    },
+    {
+      "id": "node_067",
+      "label": "Active Directory功罪と移行観点",
+      "object_type": "concept",
+      "description": "Active Directoryの歴史的功績、攻撃面、日本企業特有の運用負債、Entra ID移行論点を整理する領域。",
+      "properties": {
+        "file": "04_server_auth/active_directory_legacy.json"
+      }
+    },
+    {
+      "id": "node_068",
+      "label": "LDAPディレクトリサービス比較",
+      "object_type": "concept",
+      "description": "OpenLDAP、Red Hat Directory Server、389 Directory Server、FreeIPA / Red Hat IdM、Active Directory Lightweight Directory Services、OpenDJを比較する領域。",
+      "properties": {
+        "file": "04_server_auth/ldap_directory_comparison.json"
+      }
+    },
+    {
+      "id": "node_069",
+      "label": "VPN・SASE・ZTNAとID管理連携",
+      "object_type": "concept",
+      "description": "VPN、SASE、ZTNA、Conditional Access、デバイス準拠性、委託先アクセス統制をつなぐ領域。",
+      "properties": {
+        "file": "05_hybrid_scenarios/vpn_sase_identity.json"
+      }
+    },
+    {
       "id": "node_058",
       "label": "証券会社の委託先アカウント残存シナリオ",
       "object_type": "pattern",
@@ -671,9 +719,60 @@
       "properties": {
         "file": "11_simulations/cross_industry/sim_x_04_nonhuman_id_explosion.json"
       }
+    },
+    {
+      "id": "node_064",
+      "label": "ランサムウェア侵害シナリオと ID 管理の根幹性",
+      "object_type": "concept",
+      "description": "攻撃キルチェーン、ID 管理欠陥、製造業・証券会社・病院の侵害シナリオを通じて、なぜ ID 管理がセキュリティの根幹なのかを説明する参照領域。",
+      "properties": {
+        "file": "06_security_hardening/ransomware_id_attack_scenarios.json"
+      }
+    },
+    {
+      "id": "node_065",
+      "label": "マルチフォレスト統合",
+      "object_type": "pattern",
+      "description": "複数の Active Directory フォレストを統合、集約、またはアンブレラ IdP で束ねる設計領域。",
+      "properties": {
+        "file": "03_identity_architecture/multi_forest_consolidation.json"
+      }
+    },
+    {
+      "id": "node_066",
+      "label": "M&A ID統合",
+      "object_type": "pattern",
+      "description": "M&A、合併、持株会社化で Day 1 から完全統合までを段階的に進める ID 統合パターン。",
+      "properties": {
+        "file": "07_migration_patterns/ma_identity_integration.json"
+      }
     }
   ],
   "edges": [
+    {
+      "from": "node_001",
+      "to": "node_065",
+      "relationship": "complements",
+      "description": "Active Directory は複数フォレスト統合の主要な対象基盤である。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_065",
+      "relationship": "complements",
+      "description": "ハイブリッド ID はマルチフォレスト統合のクラウド側集約パターンを補完する。"
+    },
+    {
+      "from": "node_065",
+      "to": "node_066",
+      "relationship": "complements",
+      "description": "マルチフォレスト統合は M&A 後の ID 統合シナリオと密接に関係する。"
+    },
+    {
+      "from": "node_066",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "M&A ID統合では Active Directory から Entra ID への移行パターンが部分的に再利用される。"
+    },
     {
       "from": "node_001",
       "to": "node_003",
@@ -739,6 +838,18 @@
       "to": "node_011",
       "relationship": "mitigates",
       "description": "特権アクセス管理はランサムウェア対策の中核となる。"
+    },
+    {
+      "from": "node_064",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "ランサムウェア侵害シナリオはランサムウェア対策の背景理解を補完する。"
+    },
+    {
+      "from": "node_064",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "侵害シナリオは特権アクセス管理の必要性を攻撃者視点で具体化する。"
     },
     {
       "from": "node_008a",
@@ -1419,6 +1530,84 @@
       "description": "非人間ID爆発シミュレーションはランサムウェアの横展開面としてサービスアカウント悪用を補足する。"
     },
     {
+      "from": "node_063",
+      "to": "node_001",
+      "relationship": "example_of",
+      "description": "Active Directory入門は Active Directory を理解するための初学者向け入口である。"
+    },
+    {
+      "from": "node_063",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "Kerberos の役割と攻撃観点を若手向けに平易化して補足する。"
+    },
+    {
+      "from": "node_063",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "ハイブリッドIDが複雑になる背景を理解する前提資料として機能する。"
+    },
+    {
+      "from": "node_063",
+      "to": "node_020",
+      "relationship": "complements",
+      "description": "日本型IT組織課題と Active Directory 定着の背景を結び付けて説明する。"
+    },
+    {
+      "from": "node_063",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "オンプレミス残存が近代化を難しくする理由を読み物として解説する。"
+    },
+    {
+      "from": "node_067",
+      "to": "node_001",
+      "relationship": "deepens",
+      "description": "Active Directoryの歴史的価値と現代の攻撃面を詳細化する。"
+    },
+    {
+      "from": "node_067",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "Active Directory縮退とEntra ID移行の境界を補完する。"
+    },
+    {
+      "from": "node_067",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "Active Directoryの延命には特権アクセス管理の強化が不可欠である。"
+    },
+    {
+      "from": "node_068",
+      "to": "node_004",
+      "relationship": "deepens",
+      "description": "LDAPプロトコルの実装製品差分と選定論点を詳細化する。"
+    },
+    {
+      "from": "node_068",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "Linux サーバーのOS認証とSSSD連携の土台として補完する。"
+    },
+    {
+      "from": "node_069",
+      "to": "node_009",
+      "relationship": "deepens",
+      "description": "ゼロトラストのネットワークアクセス実装論点を具体化する。"
+    },
+    {
+      "from": "node_069",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "ハイブリッドIDとリモートアクセス制御の接点を補完する。"
+    },
+    {
+      "from": "node_069",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "委託先や管理者のリモート接続統制で特権アクセス管理を補完する。"
+    },
+    {
       "from": "node_024",
       "to": "node_007",
       "relationship": "complements",
@@ -1537,7 +1726,7 @@
       "japan_specific": true
     },
     {
-      "id": "k_015",
+      "id": "k_015a",
       "topic": "サーバー直ログインの削減は運用自動化と特権統制を同時に進める論点である",
       "content": "追加した `06_security_hardening/ops_paradigm_shift.json` では、対話的OSログインの問題構造、Ansible や Infrastructure as Code による代替、GitOps、JEA、Break Glass、金融業の現実的移行順序を整理した。",
       "evidence_level": "high",
@@ -1655,6 +1844,55 @@
       "id": "k_029",
       "topic": "電力会社のOT/IT統合シナリオを追加した",
       "content": "発電所SCADAへのActive Directory統合是非、Windows XP/7残存、委託業者VPN常時開放、OT向けPAM、Just-in-Time Access、設備更新を段階的に議論する電力業向けシナリオを追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_030",
+      "topic": "Active Directory入門の入口を追加した",
+      "content": "若手エンジニア、営業、プリセールス向けに、Active Directory の歴史、LDAP、Kerberos、グループポリシー、運用負債、ハイブリッド化、2029年問題を読み物形式で整理した `04_server_auth/active_directory_primer.json` を追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_031",
+      "topic": "ランサムウェア侵害シナリオと ID 管理の根幹性を追加した",
+      "content": "攻撃者がなぜ ID を狙うのか、攻撃キルチェーンと ID 管理欠陥がどう対応するのか、日本企業の製造業・証券会社・病院でどのように侵害が広がるのかを整理した `06_security_hardening/ransomware_id_attack_scenarios.json` を追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_032",
+      "topic": "Active Directory功罪と移行観点を追加した",
+      "content": "追加した `04_server_auth/active_directory_legacy.json` では、Active Directoryの歴史、グループポリシーの功績、NTLMやKerberos攻撃面、日本企業特有の運用負債、LAPSやTier Model、Entra ID移行論点を整理した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_033",
+      "topic": "LDAPディレクトリサービス比較を追加した",
+      "content": "追加した `04_server_auth/ldap_directory_comparison.json` では、OpenLDAP残存問題、RHEL 8/9の更改圧力、Red Hat Directory Server、389 Directory Server、FreeIPA / Red Hat IdM、Active Directory Lightweight Directory Services、OpenDJを比較した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_034",
+      "topic": "VPN・SASE・ZTNA連携を追加した",
+      "content": "追加した `05_hybrid_scenarios/vpn_sase_identity.json` では、RADIUS中心のVPN現実、SASEの日本市場成熟度、ZTNAの適用限界、Conditional Accessとデバイス準拠性の組み合わせ、FISC文脈のリモートアクセス統制を整理した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_035",
+      "topic": "マルチフォレスト統合の入口を追加した",
+      "content": "本社、製造、海外子会社、管理用など複数の Active Directory フォレストが併存する日本企業向けに、Forest Trust の危険性、リソースフォレスト、Entra ID アンブレラ、段階廃止までを整理した `03_identity_architecture/multi_forest_consolidation.json` を追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_036",
+      "topic": "M&A と合併時の ID 統合シナリオを追加した",
+      "content": "Day 1、Due Diligence、統合、最適化の各フェーズと、日本企業のM&A実務で起きやすいメール、共有ファイル、VPN、委託先IDの課題を整理した `07_migration_patterns/ma_identity_integration.json` を追加した。",
       "evidence_level": "high",
       "japan_specific": true
     }
