@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "id": "b2b_partner_id",
+    "title": "B2B取引先ID管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "B2B",
+      "取引先",
+      "パートナー",
+      "外部ID"
+    ]
+  },
+  "knowledge": [
+    {
+      "category": "B2B取引先IDのパターン",
+      "content": "1)取引先がゲストIDとして自社テナントに招待（Entra B2B Guest）: 小規模パートナー向け。2)Direct Federation（Entra Direct Federation）: 大手取引先が独自のEntra/ADFSを持つ場合。取引先社員は自社の認証情報でアクセス。3)アプリケーション固有のID発行: ベンダーポータル等で独自ID発行。最もセキュリティが低い。"
+    },
+    {
+      "category": "取引先IDの棚卸し",
+      "content": "取引先IDはIGA製品のExternal ID管理機能または手動のスプレッドシートで管理している企業が多い。年1〜2回の棚卸しでContact先に確認を取る手順が一般的。Entra Access ReviewはゲストIDの定期レビューを自動化できる。"
+    },
+    {
+      "category": "取引先IDのリスク事例",
+      "content": "2013年の米Targetのカードデータ侵害は、HVAC（空調）ベンダーのVPNアカウントが侵害されたことが起点。取引先IDも自社の直接的なリスクになる。最小権限・PAM経由・二要素認証の徹底が必要。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "B2B取引先ID",
+      "object_type": "concept",
+      "description": "ビジネスパートナー企業の従業員に付与するアクセスID"
+    },
+    {
+      "id": "n002",
+      "label": "Entra B2B Guest",
+      "object_type": "product",
+      "description": "EntraテナントへのゲストID招待機能"
+    },
+    {
+      "id": "n003",
+      "label": "Direct Federation",
+      "object_type": "product",
+      "description": "取引先のIdPと直接SAMLフェデレーション"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "implements",
+      "description": "Entra B2BゲストでB2B取引先IDを実現"
+    },
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "implements",
+      "description": "Direct FederationでB2B取引先IDを実現"
+    }
+  ]
+}

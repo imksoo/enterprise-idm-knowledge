@@ -1,0 +1,100 @@
+{
+  "metadata": {
+    "id": "microservices_id",
+    "title": "マイクロサービスID・mTLS設計",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "マイクロサービス",
+      "mTLS",
+      "サービスメッシュ",
+      "SPIFFE",
+      "Istio",
+      "JWT"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "マイクロサービス間認証",
+      "object_type": "concept",
+      "description": "複数マイクロサービス間のAPI呼び出しでの相互認証"
+    },
+    {
+      "id": "n002",
+      "label": "mTLS（Mutual TLS）",
+      "object_type": "protocol",
+      "description": "サービス間の相互証明書認証。Istio Service Meshで自動化できる。"
+    },
+    {
+      "id": "n003",
+      "label": "SPIFFE/SPIRE",
+      "object_type": "product",
+      "description": "Secure Production Identity Framework for Everyone。マイクロサービスに短命な証明書（SVID）を動的発行する。"
+    },
+    {
+      "id": "n004",
+      "label": "Istio Service Mesh",
+      "object_type": "product",
+      "description": "Kubernetes向けサービスメッシュ。mTLSを自動化し、サービス間認証・認可・可観測性を提供。"
+    },
+    {
+      "id": "n005",
+      "label": "JWT（JSON Web Token）",
+      "object_type": "protocol",
+      "description": "API認証で広く使われるトークン形式。ユーザーIDとクレームを含む署名付きJSON。"
+    },
+    {
+      "id": "n006",
+      "label": "OPA（Open Policy Agent）",
+      "object_type": "product",
+      "description": "汎用ポリシーエンジン。マイクロサービスの認可ポリシーを一元定義・評価。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "implements",
+      "description": "mTLSでサービス間認証"
+    },
+    {
+      "from": "n002",
+      "to": "n003",
+      "relationship": "enabled_by",
+      "description": "SPIFFE/SPIREがmTLSの証明書を管理"
+    },
+    {
+      "from": "n004",
+      "to": "n002",
+      "relationship": "automates",
+      "description": "IstioがmTLSを自動化"
+    },
+    {
+      "from": "n001",
+      "to": "n005",
+      "relationship": "uses",
+      "description": "ユーザーコンテキストはJWTで伝播"
+    },
+    {
+      "from": "n001",
+      "to": "n006",
+      "relationship": "governed_by",
+      "description": "OPAで認可ポリシーを一元管理"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "マイクロサービスのID課題",
+      "content": "モノリスからマイクロサービスへの移行で認証・認可が各サービスに分散するリスクがある。Istioなどのサービスメッシュを使うことで認証・認可・ログ収集をサイドカープロキシ層で横断的に処理できる。"
+    },
+    {
+      "category": "SPIFFEとゼロトラスト",
+      "content": "SPIFFE/SPIREはKubernetesのPodやVM等のワークロードに対して短命なX.509証明書（SVID）を自動発行する。証明書の有効期間は1時間以下にすることで、証明書漏洩のリスクを最小化できる。CNCFの卒業プロジェクト。"
+    },
+    {
+      "category": "JWTの適切な使い方",
+      "content": "JWTの有効期限は15〜60分程度に設定する（長すぎると漏洩時のリスク大）。APIゲートウェイでJWTの署名検証・クレーム確認を行い、各バックエンドサービスは署名検証済みのJWTを信頼する設計にする。JWTをLocal Storageに保存することはXSS攻撃のリスクがあるため避ける（HttpOnly Cookieを推奨）。"
+    }
+  ]
+}

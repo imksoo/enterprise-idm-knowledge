@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "id": "id_ops_framework",
+    "title": "ID運用管理フレームワーク",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "運用",
+      "KPI",
+      "SLA",
+      "ID管理"
+    ]
+  },
+  "knowledge": [
+    {
+      "category": "ID運用の4大プロセス",
+      "content": "1. プロビジョニング（ID発行・権限付与）2. 棚卸し（Certification：年次/四半期）3. インシデント対応（侵害ID即時無効化）4. 廃止（Deprovisioning）。この4プロセスを自動化したものがIGA。"
+    },
+    {
+      "category": "SLAの設定例",
+      "content": "入社ID発行: 4時間以内（ビジネスアワー内）。退職ID無効化: 即日（当日23:59まで）。権限変更: 1営業日以内。インシデント対応（侵害疑い）: 30分以内に無効化。パスワードリセット（SSPR）: 即時（自動）。"
+    },
+    {
+      "category": "KPIダッシュボード指標",
+      "content": "月次KPI: 孤立ID数（0目標）、90日未使用ID数（低いほど良い）、特権ID棚卸し完了率（100%目標）、退職後24時間以内無効化率（100%目標）、MFA適用率（100%目標）、パスワードリセットのSSPR自動化率（80%以上目標）"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "ID運用管理",
+      "object_type": "concept",
+      "description": "IDライフサイクル全体を管理する運用プロセス"
+    },
+    {
+      "id": "n002",
+      "label": "ID棚卸し",
+      "object_type": "concept",
+      "description": "全IDと権限の定期的な棚卸し（Certification）。権限累積・不要権限の発見。"
+    },
+    {
+      "id": "n003",
+      "label": "ID KPI",
+      "object_type": "concept",
+      "description": "ID管理の成熟度・品質を測るKPI指標群"
+    },
+    {
+      "id": "n004",
+      "label": "SLA",
+      "object_type": "concept",
+      "description": "ID発行・無効化・変更のサービスレベル合意"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "includes",
+      "description": "棚卸しは運用の重要プロセス"
+    },
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "measures",
+      "description": "KPIで運用品質を測定"
+    },
+    {
+      "from": "n001",
+      "to": "n004",
+      "relationship": "governed_by",
+      "description": "SLAに基づいて運用を実施"
+    }
+  ]
+}

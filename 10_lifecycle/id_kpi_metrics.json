@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "id": "id_kpi_metrics",
+    "title": "ID管理KPI・メトリクス定義",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "KPI",
+      "メトリクス",
+      "成熟度",
+      "ガバナンス"
+    ]
+  },
+  "knowledge": [
+    {
+      "category": "Tier 1 KPI（経営層向け）",
+      "content": "MFA適用率（目標100%）、退職後24h以内ID無効化率（目標100%）、特権IDの承認なし使用率（目標0%）、四半期棚卸し完了率（目標100%）"
+    },
+    {
+      "category": "Tier 2 KPI（CISO・IT部門長向け）",
+      "content": "孤立ID数（退職者などのアカウント残留数）、パスワード未変更180日超のID数、Domain Adminsグループ人数、未使用特権IDの検出数、PAMセッション録画カバレッジ率"
+    },
+    {
+      "category": "Tier 3 KPI（担当者レベル）",
+      "content": "日次: 新規ID発行数・廃止数、パスワードリセット件数、異常認証アラート件数。週次: 棚卸し進捗率、権限変更完了率。月次: SOD違反検知数、アクセスレビュー完了率"
+    },
+    {
+      "category": "金融FISC向け追加指標",
+      "content": "FISC第11版対応項目の完了率、監査証跡の保管日数（最低1年以上）、棚卸しレポートの提出期日遵守率、特権ID使用ログの保管率100%"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "Tier 1 KPI",
+      "object_type": "concept",
+      "description": "経営層・取締役会向けのハイレベルKPI"
+    },
+    {
+      "id": "n002",
+      "label": "Tier 2 KPI",
+      "object_type": "concept",
+      "description": "CISO・部門長向けの管理KPI"
+    },
+    {
+      "id": "n003",
+      "label": "Tier 3 KPI",
+      "object_type": "concept",
+      "description": "担当者・オペレーター向けのオペレーショナルKPI"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "includes",
+      "description": "Tier 1はTier 2を集約した上位KPI"
+    },
+    {
+      "from": "n002",
+      "to": "n003",
+      "relationship": "includes",
+      "description": "Tier 2はTier 3の集約"
+    }
+  ]
+}

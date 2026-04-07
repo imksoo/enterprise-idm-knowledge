@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "id": "id_incident_response",
+    "title": "ID起因インシデント対応フレームワーク",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "インシデント対応",
+      "CSIRT",
+      "侵害",
+      "KRBTGT",
+      "Golden Ticket"
+    ]
+  },
+  "knowledge": [
+    {
+      "category": "ID侵害インシデントの5段階",
+      "content": "1.検知（SIEM/MDRアラート・ユーザー申告）2.初動確認（ログ参照・影響範囲把握）3.封じ込め（ID無効化・セッション切断・ネットワーク隔離）4.根本原因分析（侵害経路の特定）5.復旧と再発防止（ID再発行・設定強化）。各段階の完了判定基準を事前に決めておく。"
+    },
+    {
+      "category": "KRBTGT緊急対応",
+      "content": "Golden Ticketが使われた疑いがある場合、KRBTGTパスワードを24時間間隔で2回変更する。1回目：既存の全Kerberosチケットを事実上無効化（既発行のTGTは前のKRBTGTパスワードで暗号化されているため即時無効化されないが、TGT取得試みはブロック）。2回目（24時間後）：古いKRBTGTパスワードのキャッシュを完全に削除。"
+    },
+    {
+      "category": "ADフォレストリカバリ",
+      "content": "ADのDCが全滅またはntds.ditが完全に汚染された場合、ADフォレストリカバリが必要。マイクロソフトの「Active Directory フォレストの回復」ガイドに従い、オフラインバックアップからDCを1台ずつ復旧する。RTO（目標復旧時間）を事前に定義し、定期的にリハーサルすることが重要。日本企業では「ADのフルリカバリ演習」をしている企業は極めて少ない。"
+    },
+    {
+      "category": "ID侵害の証拠保全",
+      "content": "Entra IDのサインインログ（30〜90日保存）、ADのセキュリティイベントログ、PAMのセッション録画をSIEMに長期保存する。法的対応の可能性がある場合はImmutable Storageに保全する。ログを削除・上書きすると証拠として使えなくなる。インシデント対応中に「余計なことをしない（ログを消さない）」が鉄則。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "ID侵害インシデント",
+      "object_type": "risk",
+      "description": "アカウント乗っ取り・特権ID悪用・Golden Ticket等のID関連インシデント"
+    },
+    {
+      "id": "n002",
+      "label": "封じ込め（Containment）",
+      "object_type": "concept",
+      "description": "インシデント拡大防止のための緊急措置。ID無効化・ネットワーク隔離・セッション切断。"
+    },
+    {
+      "id": "n003",
+      "label": "KRBTGT再設定",
+      "object_type": "concept",
+      "description": "Golden Ticket無効化のための特殊対応。24時間間隔×2回実施が必須。"
+    },
+    {
+      "id": "n004",
+      "label": "フォレストリカバリ",
+      "object_type": "concept",
+      "description": "AD全滅時のバックアップからの完全復旧手順。演習必須。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "requires",
+      "description": "インシデント発生時は封じ込めを最優先"
+    },
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "may_require",
+      "description": "Golden Ticket疑いの場合にKRBTGT再設定"
+    },
+    {
+      "from": "n001",
+      "to": "n004",
+      "relationship": "may_escalate_to",
+      "description": "重大インシデントはフォレストリカバリに至る可能性"
+    }
+  ]
+}

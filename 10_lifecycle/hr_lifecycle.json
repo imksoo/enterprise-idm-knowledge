@@ -1,0 +1,86 @@
+{
+  "metadata": {
+    "id": "hr_lifecycle",
+    "title": "HR連携・組織変更ID管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "JML",
+      "HR連携",
+      "プロビジョニング",
+      "SCIM"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "HRISシステム",
+      "object_type": "product",
+      "description": "HR情報の真正性ソース（Source of Truth）。SAP SuccessFactors、Workday、国内製品（COMPANY、POSITIVE等）"
+    },
+    {
+      "id": "n002",
+      "label": "SCIM",
+      "object_type": "protocol",
+      "description": "System for Cross-domain Identity Management。HR→IDMへの標準プロビジョニングプロトコル（RFC 7643/7644）"
+    },
+    {
+      "id": "n003",
+      "label": "Joiner（入社）",
+      "object_type": "concept",
+      "description": "採用決定からID発行・システムアクセス付与までのプロセス"
+    },
+    {
+      "id": "n004",
+      "label": "Mover（異動）",
+      "object_type": "concept",
+      "description": "部署変更・昇格・役職変更に伴う権限変更プロセス。旧権限削除が最重要。"
+    },
+    {
+      "id": "n005",
+      "label": "Leaver（退職）",
+      "object_type": "concept",
+      "description": "退職・契約終了・長期休職に伴うID無効化・削除プロセス"
+    },
+    {
+      "id": "n006",
+      "label": "権限累積問題",
+      "object_type": "risk",
+      "description": "Moverで旧権限が削除されず累積し続ける問題。FISC/PCI監査で最頻出指摘事項。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "implements",
+      "description": "HRISがSCIMでIDMにデータを送信"
+    },
+    {
+      "from": "n002",
+      "to": "n003",
+      "relationship": "enables",
+      "description": "SCIMがJoinerプロビジョニングを自動化"
+    },
+    {
+      "from": "n004",
+      "to": "n006",
+      "relationship": "mitigates",
+      "description": "Moverプロセスの適切な実装が権限累積を防ぐ"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "JMLの最重要ポイント",
+      "content": "Leaver（退職）プロセスの即日自動化が最も重要。退職者IDの放置は内部不正・元従業員不正アクセスの主要リスク。HRシステムの退職日フィールドをIDMが監視し、退職日当日にID無効化→60日後削除の流れを自動化する。"
+    },
+    {
+      "category": "Moverの権限累積防止",
+      "content": "異動時に旧部署の権限を削除せずに新部署の権限を追加するだけでは、数年で過剰権限ユーザーが量産される。IGAのSOD検知と棚卸しCertificationの組み合わせで発見・修正する。"
+    },
+    {
+      "category": "国内HRISとのSCIM連携",
+      "content": "国内製HRISはSCIM標準対応が遅れていることが多い。COMPANY（Works Human Intelligence）、POSITIVE等のAPIをOne Identity Manager等のコネクタで吸収する事例が多い。カスタムコネクタ開発が必要な場合もある。"
+    }
+  ]
+}

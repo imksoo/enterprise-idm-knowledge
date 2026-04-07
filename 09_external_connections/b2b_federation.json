@@ -1,0 +1,93 @@
+{
+  "metadata": {
+    "id": "b2b_federation",
+    "title": "B2Bフェデレーション詳細設計",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "B2B",
+      "フェデレーション",
+      "外部ID",
+      "SAML",
+      "OIDC"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "B2Bフェデレーション",
+      "object_type": "concept",
+      "description": "異なる組織間でIDを相互認証する仕組み。取引先・グループ会社・パートナーとのSSO。"
+    },
+    {
+      "id": "n002",
+      "label": "SAML 2.0",
+      "object_type": "protocol",
+      "description": "Security Assertion Markup Language。Webアプリ向けフェデレーション標準。エンタープライズで広く使用。"
+    },
+    {
+      "id": "n003",
+      "label": "OIDC/OAuth 2.0",
+      "object_type": "protocol",
+      "description": "OpenID Connect。モバイル・SaaS向けのモダンフェデレーション。"
+    },
+    {
+      "id": "n004",
+      "label": "Entra External ID（B2B）",
+      "object_type": "product",
+      "description": "Microsoftの外部IDフェデレーション。取引先はGoogleアカウント等でゲストとして参加可能。"
+    },
+    {
+      "id": "n005",
+      "label": "WS-Federation",
+      "object_type": "protocol",
+      "description": "ADFSが使うフェデレーションプロトコル。レガシーオンプレミスに多い。"
+    },
+    {
+      "id": "n006",
+      "label": "Direct Federation",
+      "object_type": "concept",
+      "description": "Entraの機能。特定ドメインと直接SAMLフェデレーションを設定。取引先社員が自社認証情報でアクセス可能。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "implements",
+      "description": "SAMLでフェデレーション実現"
+    },
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "implements",
+      "description": "OIDCでフェデレーション実現"
+    },
+    {
+      "from": "n004",
+      "to": "n006",
+      "relationship": "includes",
+      "description": "Entra External IDのDirect Federation機能"
+    },
+    {
+      "from": "n005",
+      "to": "n002",
+      "relationship": "complemented_by",
+      "description": "WS-FederationはSAML 2.0に移行されることが多い"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "日本企業のB2Bフェデレーション現状",
+      "content": "大手企業間のフェデレーションは依然としてADFS+SAMLが多い。M365移行に伴いEntra External ID（B2B）への移行が進んでいる。EDI接続は別途IPSec VPN+証明書認証が一般的。"
+    },
+    {
+      "category": "Entra B2B Direct Federationの設計",
+      "content": "特定取引先のドメイン（例: partner-corp.com）に対してDirect Federationを設定すると、取引先社員は自社のEntra IDで認証後、自社テナントのゲストとして扱われる。取引先側でのMFA状態を信頼するか、自社でMFAを再要求するかをCAで制御できる。"
+    },
+    {
+      "category": "OTセグメントとのB2Bアクセス",
+      "content": "製造業でサプライヤーがOT機器の保守にリモートアクセスする場合、B2Bフェデレーション+PAM Proxy+セッション録画の組み合わせが推奨。サプライヤーIDを直接OTネットワークに入れない設計が重要。"
+    }
+  ]
+}

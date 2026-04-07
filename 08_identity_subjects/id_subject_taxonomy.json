@@ -1,0 +1,145 @@
+{
+  "metadata": {
+    "id": "id_subject_taxonomy",
+    "title": "ID主体分類マスター",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "ID分類",
+      "主体",
+      "エンティティ"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "人間ユーザー",
+      "object_type": "concept",
+      "description": "実在の人物が操作するID"
+    },
+    {
+      "id": "n002",
+      "label": "正規従業員",
+      "object_type": "concept",
+      "description": "雇用契約のある社員・パート・アルバイト"
+    },
+    {
+      "id": "n003",
+      "label": "外部協力者",
+      "object_type": "concept",
+      "description": "代理店・協力会社・派遣・監査法人など"
+    },
+    {
+      "id": "n004",
+      "label": "システムID",
+      "object_type": "concept",
+      "description": "人間が操作しない非人格的なID"
+    },
+    {
+      "id": "n005",
+      "label": "サービスアカウント",
+      "object_type": "concept",
+      "description": "バッチジョブ・Windowsサービス等が使うADアカウント"
+    },
+    {
+      "id": "n006",
+      "label": "gMSA",
+      "object_type": "product",
+      "description": "Group Managed Service Account。ADが自動管理する120文字パスワードのサービスアカウント。パスワードスプレー攻撃を無効化。"
+    },
+    {
+      "id": "n007",
+      "label": "APIキー/クライアント認証情報",
+      "object_type": "concept",
+      "description": "APIサーバー間通信で使用するClient ID/Secretまたは証明書"
+    },
+    {
+      "id": "n008",
+      "label": "マシンアカウント",
+      "object_type": "concept",
+      "description": "PCやサーバーのコンピューターオブジェクトID（AD上）"
+    },
+    {
+      "id": "n009",
+      "label": "デバイスID",
+      "object_type": "concept",
+      "description": "MDM/Entra IDに登録されたデバイスの識別子"
+    },
+    {
+      "id": "n010",
+      "label": "ワークロードID",
+      "object_type": "concept",
+      "description": "クラウドネイティブな非人格的ID（マネージドID・サービスプリンシパル）"
+    },
+    {
+      "id": "n011",
+      "label": "Entra Managed Identity",
+      "object_type": "product",
+      "description": "Azure リソースに自動割り当てられるワークロードID。シークレット不要。"
+    },
+    {
+      "id": "n012",
+      "label": "緊急アクセスアカウント",
+      "object_type": "concept",
+      "description": "Break-glass。IdP障害時に使用する最後の手段のアカウント。MFAなし・監視強化。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "includes",
+      "description": "人間ユーザーの一分類"
+    },
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "includes",
+      "description": "人間ユーザーの一分類"
+    },
+    {
+      "from": "n004",
+      "to": "n005",
+      "relationship": "includes",
+      "description": "システムIDの一種"
+    },
+    {
+      "from": "n004",
+      "to": "n007",
+      "relationship": "includes",
+      "description": "システムIDの一種"
+    },
+    {
+      "from": "n005",
+      "to": "n006",
+      "relationship": "replaces",
+      "description": "gMSAが通常のサービスアカウントを代替（セキュリティ向上）"
+    },
+    {
+      "from": "n004",
+      "to": "n010",
+      "relationship": "includes",
+      "description": "クラウドネイティブなシステムID"
+    },
+    {
+      "from": "n010",
+      "to": "n011",
+      "relationship": "example_of",
+      "description": "Entra Managed IdentityはワークロードIDの実装例"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "ID主体分類の重要性",
+      "content": "ID管理ポリシーはID主体の種別によって大きく異なる。人間ユーザーにはMFA・棚卸しが必要だが、システムIDにはシークレット自動ローテーション・最小権限が重要。gMSAやManaged Identityはシークレット管理を自動化してセキュリティを向上させる。"
+    },
+    {
+      "category": "2029年問題とgMSA",
+      "content": "WS2019 EOLに向けてサービスアカウントのgMSA化を推進することが望ましい。gMSAは120文字ランダムパスワードを自動管理するため、パスワードスプレーやbrute-force攻撃を事実上無効化できる。"
+    },
+    {
+      "category": "ワークロードIDの台頭",
+      "content": "クラウドネイティブ環境ではAzure Managed IdentityやAWS IAM Roleなどのワークロード向けIDが重要。環境変数にシークレットを書かずにAPIアクセスが可能になる。"
+    }
+  ]
+}

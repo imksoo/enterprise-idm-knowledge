@@ -1,0 +1,67 @@
+{
+  "metadata": {
+    "id": "cso_cio_framework",
+    "title": "CISO/CIOのためのID管理ガバナンスフレームワーク",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "CISO",
+      "CIO",
+      "ガバナンス",
+      "リスク管理",
+      "戦略"
+    ]
+  },
+  "knowledge": [
+    {
+      "category": "ID管理の経営課題化",
+      "content": "ID管理はIT部門の運用課題から経営リスク課題になった。2021年のColonial Pipeline事件ではVPNアカウントのパスワード漏洩が起点となり、米国の燃料供給が停止した。2023年のMGM Resorts事件ではヘルプデスクへのソーシャルエンジニアリングでOkta管理者権限が乗っ取られ、100億円超の損失。ID管理を「ITインフラの一部」として軽視することは経営リスクそのものになっている。"
+    },
+    {
+      "category": "CISOのID管理ロードマップ",
+      "content": "Year 1: MFA全社展開・特権ID棚卸し・退職者ID自動無効化。Year 2: PAM導入・IGA導入・ゼロトラスト基盤整備。Year 3: SASE展開・AD縮小・グローバルID統合。各フェーズで経営層向けKPIダッシュボードを整備し、進捗を可視化することが重要。"
+    },
+    {
+      "category": "CIOのID基盤投資判断",
+      "content": "ID管理は「コストセンター」ではなく「ビジネスイネーブラー」として位置づけるべき。SaaSアプリのSSO化はIT部門の工数削減（各SaaSへの個別アカウント管理廃止）、Autopilotはキッティング工数削減、IGAはFISC対応工数削減、PAMはランサムウェアリスク低減という複数のビジネス価値がある。"
+    },
+    {
+      "category": "取締役会への説明フレーム",
+      "content": "Cyber Risk Quantification（CRQ）の手法を使い、ID管理投資のリスク低減効果を金額で示す。例：「現在のID管理成熟度では年間期待損失は5億円（ランサムウェア被害の5%確率×10億円）。PAM+IGA投資3000万円でこれを1億円に削減できる。」財務的なリスク言語で説明することで予算承認が通りやすくなる。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "ID管理ガバナンス",
+      "object_type": "concept",
+      "description": "経営層レベルのID管理意思決定と監督の仕組み"
+    },
+    {
+      "id": "n002",
+      "label": "Cyber Risk Quantification",
+      "object_type": "concept",
+      "description": "サイバーリスクを金額で定量化する手法（FAIR等）"
+    },
+    {
+      "id": "n003",
+      "label": "ID管理ロードマップ",
+      "object_type": "concept",
+      "description": "中長期のID管理近代化計画"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "drives",
+      "description": "ガバナンスフレームワークがロードマップを導く"
+    },
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "uses",
+      "description": "ガバナンスにCRQを活用してリスクを定量化"
+    }
+  ]
+}

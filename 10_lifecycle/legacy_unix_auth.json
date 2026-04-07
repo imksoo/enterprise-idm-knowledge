@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "id": "legacy_unix_auth",
+    "title": "レガシーUNIX認証とモダン化",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "UNIX",
+      "Solaris",
+      "AIX",
+      "HP-UX",
+      "NIS",
+      "LDAP",
+      "PAM"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "NIS/NIS+",
+      "object_type": "product",
+      "description": "Network Information Service。古いUNIX認証基盤。セキュリティが低く廃止推奨。多くの大手製造・金融に残存。"
+    },
+    {
+      "id": "n002",
+      "label": "PAM（Linux認証）",
+      "object_type": "protocol",
+      "description": "Pluggable Authentication Modules。Linux認証の仕組み。LDAP連携やKerberos連携のモジュールが利用可能。"
+    },
+    {
+      "id": "n003",
+      "label": "SSSD",
+      "object_type": "product",
+      "description": "System Security Services Daemon。RHEL/CentOSでAD/LDAP認証を提供する。AD参加の標準ツール。"
+    },
+    {
+      "id": "n004",
+      "label": "Kerberos for UNIX",
+      "object_type": "protocol",
+      "description": "LinuxのKerberosクライアント。ADのKerberosと統合してSSOを実現。"
+    },
+    {
+      "id": "n005",
+      "label": "Solaris認証",
+      "object_type": "product",
+      "description": "Solaris 11のLDAP+Kerberos認証。CIFS（Solaris SMB）でのKerberos。高炉制御等のクリティカルシステムに残存。"
+    },
+    {
+      "id": "n006",
+      "label": "AIX LDAP認証",
+      "object_type": "product",
+      "description": "IBM AIXのLDAP認証。金融・製造の基幹系に残存。ADへの統合はIBM Security Directory Integrator等で実現。"
+    },
+    {
+      "id": "n007",
+      "label": "sudo管理",
+      "object_type": "concept",
+      "description": "UNIX/Linux上での特権昇格管理。/etc/sudoersの一元管理（Ansible/Chef/Puppet）。PAMとの統合。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "replaced_by",
+      "description": "NISはPAM+SSSDに移行推奨"
+    },
+    {
+      "from": "n002",
+      "to": "n003",
+      "relationship": "implements",
+      "description": "SSSDがPAM経由でAD認証を提供"
+    },
+    {
+      "from": "n003",
+      "to": "n004",
+      "relationship": "uses",
+      "description": "SSSDがKerberosを使用"
+    },
+    {
+      "from": "n007",
+      "to": "n002",
+      "relationship": "complements",
+      "description": "sudoはPAMと組み合わせて特権管理"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "NIS廃止の難しさ",
+      "content": "NISは1990年代から存在する古い技術だが、SolarisやAIXを使う基幹系環境に残存していることが多い。NISからSSSD+LDAPへの移行は/etc/nsswitch.confと/etc/pam.d/以下の設定変更が必要で、本番稼働中のシステムへの適用はリスクが高い。変更凍結期間中の作業調整が必要。"
+    },
+    {
+      "category": "AIX認証のAD統合",
+      "content": "IBM AIXをActive Directoryに統合する場合、IBM Security Directory Integrator（旧TDI）またはPowerBroker Identity Services（BeyondTrust）を使用。AIX上でのAD参加はLinuxより複雑で、専門の技術者が必要。"
+    },
+    {
+      "category": "レガシーUNIX環境のPAM強化",
+      "content": "NISが廃止できない場合、NIS上でもPAM設定でパスワード複雑性・ログイン失敗試行上限等を追加適用することで最低限のセキュリティを確保できる。NIS廃止までの暫定対策として有効。"
+    }
+  ]
+}

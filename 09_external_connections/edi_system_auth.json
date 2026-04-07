@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "id": "edi_system_auth",
+    "title": "EDIシステム認証",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "EDI",
+      "AS2",
+      "SFTP",
+      "企業間",
+      "証明書認証"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "EDI認証",
+      "object_type": "concept",
+      "description": "企業間電子データ交換（EDI）での認証方式"
+    },
+    {
+      "id": "n002",
+      "label": "AS2",
+      "object_type": "protocol",
+      "description": "Applicability Statement 2。EDIのHTTPS転送標準。X.509証明書で相互認証。"
+    },
+    {
+      "id": "n003",
+      "label": "SFTP証明書認証",
+      "object_type": "protocol",
+      "description": "SSH公開鍵認証を使ったファイル転送。EDIでも一般的。"
+    },
+    {
+      "id": "n004",
+      "label": "VAN（付加価値通信網）",
+      "object_type": "product",
+      "description": "NTTデータ・JCAなどが提供する国内EDI通信網。流通BMS・JEDICOS等の規格。"
+    },
+    {
+      "id": "n005",
+      "label": "API型EDI",
+      "object_type": "concept",
+      "description": "従来の固定フォーマットEDIをAPIに置き換えたモダンEDI。OAuth 2.0認証が一般的。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "implements",
+      "description": "AS2でEDI認証"
+    },
+    {
+      "from": "n001",
+      "to": "n004",
+      "relationship": "uses",
+      "description": "国内ではVAN経由のEDIが多い"
+    },
+    {
+      "from": "n004",
+      "to": "n005",
+      "relationship": "replaced_by",
+      "description": "API型EDIへの移行が進行中"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "国内EDI認証の現状",
+      "content": "日本の製造・流通業では流通BMS（NTTデータ運営）や JEDICOS/JFACT（自動車）などのVAN（付加価値通信網）型EDIが主流。VAN接続には証明書またはID/PWが使われる。AS2はグローバル取引で多い。SFTPはレガシー環境に多い。"
+    },
+    {
+      "category": "EDIアカウントの管理課題",
+      "content": "EDIシステムのアカウントは専任担当者が異動・退職しても引き継がれずに残存することが多い。半年に1回の棚卸しを実施し、不要なEDI接続先のアカウントを廃止することが推奨。証明書の有効期限管理も重要（期限切れで接続停止インシデントが多発）。"
+    },
+    {
+      "category": "APIモダナイズとOAuth",
+      "content": "古いFTP型EDIをAPIに移行する場合、OAuth 2.0 Client Credentialsフローが推奨。EDIベンダー（OpenText/Cleo等）はOAuth対応を進めている。"
+    }
+  ]
+}

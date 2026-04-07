@@ -1,0 +1,73 @@
+{
+  "metadata": {
+    "id": "app_arch_identity",
+    "title": "アプリケーションアーキテクチャ別ID管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "SPA",
+      "Web",
+      "モバイル",
+      "レガシー",
+      "認証パターン"
+    ]
+  },
+  "knowledge": [
+    {
+      "category": "SPA（Single Page Application）の認証",
+      "content": "Authorization Code Flow + PKCE が推奨。ImplicitフローはOAuth 2.0 Security BCP（RFC 9700）で廃止推奨。トークンはHttpOnly CookieまたはSessionStorageに保存（LocalStorageはXSS脆弱性リスク）。BFF（Backend for Frontend）パターンでトークン管理をサーバーサイドに委ねるアーキテクチャも有力。"
+    },
+    {
+      "category": "モバイルアプリの認証",
+      "content": "Authorization Code Flow + PKCE（RFC 7636）。ネイティブブラウザ（Custom Tabs/SFSafariViewController）でOAuthを実装し、Webviewは使用しない（OAuth 2.0 Security BPCでWebviewは禁止）。リフレッシュトークンはSecure Enclaveまたはキーチェーンに保存。"
+    },
+    {
+      "category": "レガシーWebアプリ（JSP・ASP等）の認証近代化",
+      "content": "Azure AD App ProxyまたはOkta Access Gatewayを使うと、アプリ改修不要でMFA・CAを前段に追加できる。SSOの傘下に入れることでユーザー利便性も向上。アプリ内の認証コードは維持したまま外側にMFAゲートを設ける「フロントドア方式」が低リスク。"
+    },
+    {
+      "category": "クライアント・サーバーアプリ（デスクトップ）の認証",
+      "content": "WPF・VB.NET・Java Swingなどのデスクトップアプリは従来Windows認証（Kerberos）が多い。Entra IDに移行する場合はMSAL（Microsoft Authentication Library）を組み込む。MSAL.NETはデスクトップアプリのDevice Code Flowやシステムブラウザ連携をサポート。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "SPAアプリ認証",
+      "object_type": "pattern",
+      "description": "Single Page ApplicationのOAuth/OIDC認証パターン"
+    },
+    {
+      "id": "n002",
+      "label": "モバイルアプリ認証",
+      "object_type": "pattern",
+      "description": "ネイティブモバイルアプリのOAuth認証パターン"
+    },
+    {
+      "id": "n003",
+      "label": "レガシーWebアプリ",
+      "object_type": "pattern",
+      "description": "JSP/ASP等の古いWebアプリへのMFA/SSO追加パターン"
+    },
+    {
+      "id": "n004",
+      "label": "デスクトップアプリ認証",
+      "object_type": "pattern",
+      "description": "WPF/VB.NET等のWindowsアプリのEntra ID移行パターン"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "complements",
+      "description": "SPAとモバイルは類似の認証フロー"
+    },
+    {
+      "from": "n003",
+      "to": "n004",
+      "relationship": "complemented_by",
+      "description": "レガシーWebとデスクトップは並行して近代化"
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "metadata": {
+    "id": "api_integration_auth",
+    "title": "API連携認証設計",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "API",
+      "OAuth",
+      "OIDC",
+      "mTLS",
+      "PKCE"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "API認証",
+      "object_type": "concept",
+      "description": "システム間API呼び出しでの認証・認可"
+    },
+    {
+      "id": "n002",
+      "label": "OAuth 2.0 Client Credentials",
+      "object_type": "protocol",
+      "description": "サービス間（M2M）のAPI認証。システムIDによる認証。"
+    },
+    {
+      "id": "n003",
+      "label": "mTLS（相互TLS）",
+      "object_type": "protocol",
+      "description": "クライアント・サーバー双方向でX.509証明書を使う認証。金融API・EDI等の高セキュリティ要件に使用。"
+    },
+    {
+      "id": "n004",
+      "label": "APIキー",
+      "object_type": "concept",
+      "description": "シンプルなAPI認証。セキュリティが低く、企業システムでは非推奨。"
+    },
+    {
+      "id": "n005",
+      "label": "PKCE",
+      "object_type": "protocol",
+      "description": "Proof Key for Code Exchange。SPAやモバイルアプリ向けOAuth 2.0拡張。"
+    },
+    {
+      "id": "n006",
+      "label": "HashiCorp Vault",
+      "object_type": "product",
+      "description": "シークレット管理ツール。APIキー・証明書の集中管理・動的シークレット生成。"
+    },
+    {
+      "id": "n007",
+      "label": "Entra Workload ID",
+      "object_type": "product",
+      "description": "Azure上のワークロードID管理。Managed IdentityとFederated Credentialsを統合管理。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "implements",
+      "description": "サービス間はClient Credentialsフロー"
+    },
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "implements",
+      "description": "高セキュリティ要件はmTLS"
+    },
+    {
+      "from": "n002",
+      "to": "n006",
+      "relationship": "complements",
+      "description": "Vaultでクライアントシークレットを安全に管理"
+    },
+    {
+      "from": "n004",
+      "to": "n006",
+      "relationship": "managed_by",
+      "description": "APIキーはVaultで一元管理・ローテーション"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "Enterprise APIのセキュリティ設計",
+      "content": "APIキーをソースコードにハードコードすることは最も多いシークレット漏洩の原因。CI/CDパイプラインではGitHub Secretsや HashiCorp Vault Dynamic SecretsでAPIキーを環境変数として注入する。"
+    },
+    {
+      "category": "金融Open APIとmTLS",
+      "content": "Open Banking（銀行API）ではmTLSが必須要件。FAPI（Financial-grade API）仕様はmTLS+DPoP（Demonstration of Proof-of-Possession）を要求。銀行APIゲートウェイはApigee/Kongで実装される例が多い。"
+    },
+    {
+      "category": "Azure Managed Identityによるシークレットレス設計",
+      "content": "AzureのVM・Functions・App Serviceに割り当てたManaged Identityを使うと、Key Vault・Storage・SQLに対してシークレット不要でアクセスできる。シークレットのローテーション漏れによるインシデントを根絶できる。"
+    }
+  ]
+}

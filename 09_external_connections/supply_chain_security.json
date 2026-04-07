@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "id": "supply_chain_security",
+    "title": "サプライチェーンセキュリティとID管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "サプライチェーン",
+      "SBOM",
+      "ゼロトラスト",
+      "3PL",
+      "OT",
+      "ICS"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "サプライチェーンID",
+      "object_type": "concept",
+      "description": "サプライヤー・OEMパートナー・3PLなどサプライチェーン上の外部IDの管理"
+    },
+    {
+      "id": "n002",
+      "label": "サプライヤーポータル",
+      "object_type": "product",
+      "description": "取引先がPO・請求書・品質データ等を操作するWebポータル。ID管理の課題が集中する。"
+    },
+    {
+      "id": "n003",
+      "label": "SolarWinds攻撃（2020）",
+      "object_type": "risk",
+      "description": "SolarWindsのビルドパイプラインに悪意のあるコードが注入され、18,000以上の顧客組織に配布された。ソフトウェアサプライチェーン攻撃の代表例。"
+    },
+    {
+      "id": "n004",
+      "label": "SBOM",
+      "object_type": "concept",
+      "description": "Software Bill of Materials。使用しているソフトウェアコンポーネントの一覧。サプライチェーンセキュリティの基礎。"
+    },
+    {
+      "id": "n005",
+      "label": "EDI認証",
+      "object_type": "concept",
+      "description": "Electronic Data Interchange。企業間の商取引データ交換。AS2・FTP over TLS・API等で実装。証明書ベース認証が多い。"
+    },
+    {
+      "id": "n006",
+      "label": "ゼロトラストサプライチェーン",
+      "object_type": "concept",
+      "description": "サプライヤーを「信頼しない」前提で接続するアーキテクチャ。PAMプロキシ・最小権限・セッション録画で実現。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "manages",
+      "description": "サプライヤーポータルがサプライチェーンIDを管理"
+    },
+    {
+      "from": "n001",
+      "to": "n006",
+      "relationship": "secured_by",
+      "description": "ゼロトラストでサプライチェーンIDを保護"
+    },
+    {
+      "from": "n003",
+      "to": "n004",
+      "relationship": "motivated",
+      "description": "SolarWinds攻撃がSBOM普及を加速"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "製造業サプライヤーIDの実態",
+      "content": "大手製造業では1000社超のサプライヤーIDを管理している場合がある。EDIは証明書ベースが多いが、サプライヤーポータル（受発注・品質）はID/PWが多く管理が煩雑。サプライヤー担当者の退職・入れ替わりが多く、古いIDが残存することがリスク。"
+    },
+    {
+      "category": "OTシステムへのサプライヤーアクセス管理",
+      "content": "機器ベンダーが工場のOT機器にリモート保守でアクセスする際、VPNを直接与えることは危険。PAM Proxyを経由させ、保守セッションを全て録画・監視することが推奨。Fortinet・Claroty・Radiflowなど産業用セキュリティベンダーとの組み合わせも有効。"
+    },
+    {
+      "category": "SBOM×ID管理",
+      "content": "SBOMで使用ライブラリを一覧化することで、SolarWinds型の侵害（悪意ある依存関係注入）の早期検出が可能になる。GitHub Advanced SecurityやSnykでCI/CDに組み込むのが最新のアプローチ。"
+    }
+  ]
+}

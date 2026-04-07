@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "id": "device_management_integration",
+    "title": "デバイス管理統合（MDM・Intune・GPO代替）",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "MDM",
+      "Intune",
+      "デバイス管理",
+      "GPO代替",
+      "BYOD",
+      "Autopilot"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "Intune MDM",
+      "object_type": "product",
+      "description": "Microsoft Intuneによるデバイス管理。Windows/iOS/Android/macOS対応。M365 E3以上に含む。"
+    },
+    {
+      "id": "n002",
+      "label": "Windows Autopilot",
+      "object_type": "product",
+      "description": "PCのゼロタッチプロビジョニング。IT部門が触らずにユーザーの手元でEntra Join+Intuneポリシー適用が完了。"
+    },
+    {
+      "id": "n003",
+      "label": "GPO代替（Intune Policy）",
+      "object_type": "concept",
+      "description": "グループポリシーの設定をIntuneのConfiguration Profileで代替する取り組み"
+    },
+    {
+      "id": "n004",
+      "label": "BYOD（Bring Your Own Device）",
+      "object_type": "concept",
+      "description": "個人デバイスでの業務システムアクセス。MAM（Mobile Application Management）で端末管理なしにアプリ制御。"
+    },
+    {
+      "id": "n005",
+      "label": "Conditional Access（デバイスコンプライアンス）",
+      "object_type": "product",
+      "description": "Entra IDの条件付きアクセス。Intuneコンプライアンスポリシーに合格したデバイスのみ許可する設定。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "enables",
+      "description": "IntuneがGPO代替設定を提供"
+    },
+    {
+      "from": "n002",
+      "to": "n001",
+      "relationship": "complements",
+      "description": "AutopilotとIntuneの組み合わせでゼロタッチ展開"
+    },
+    {
+      "from": "n004",
+      "to": "n001",
+      "relationship": "managed_by",
+      "description": "BYODはMDM/MAMで管理"
+    },
+    {
+      "from": "n005",
+      "to": "n001",
+      "relationship": "integrated_with",
+      "description": "CAとIntuneが連携してデバイスコンプライアンスを強制"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "GPO→Intune移行の現実",
+      "content": "グループポリシーには3000以上の設定項目があり、その全てをIntuneで代替できるわけではない。移行難易度: 低（パスワードポリシー・Windows Update等）、中（証明書配布・ドライブマッピング）、高（カスタム管理テンプレート・複雑なスクリプト配布）。まずGPOのInventory（GPMC + LGPO等で自動化）を行い、移行優先度を決める。"
+    },
+    {
+      "category": "Windows Autopilotの効果",
+      "content": "従来PCのキッティング（IT部門での初期設定）に1台あたり1〜2時間かかっていたが、Autopilotでユーザーがサインインするだけで完了する。年間1000台導入の企業では1000〜2000時間/年の削減効果。DirectShipと組み合わせてメーカーから直接ユーザー宅に配送できる。"
+    },
+    {
+      "category": "BYODセキュリティ設計",
+      "content": "BYOD環境では個人デバイスにMDMをフルインストールすることはプライバシー問題から拒否されることが多い。Intune MAMを使ってOutlook・Teams等のアプリのみを管理する「MAM without enrollment」方式が現実的。アプリ内のデータを暗号化・リモートワイプ可能にしつつ、個人データには触れない設計にする。"
+    }
+  ]
+}

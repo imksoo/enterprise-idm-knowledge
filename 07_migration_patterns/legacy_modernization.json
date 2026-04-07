@@ -1,0 +1,88 @@
+{
+  "metadata": {
+    "id": "legacy_modernization",
+    "title": "レガシーアプリID近代化パターン",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "tags": [
+      "レガシー",
+      "近代化",
+      "LDAP",
+      "Kerberos",
+      "OIDC",
+      "マイグレーション"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "n001",
+      "label": "レガシーアプリID近代化",
+      "object_type": "concept",
+      "description": "古い認証方式（NTLM・Kerberos・LDAP直接等）から現代的な認証（OIDC・SAML・MFA対応）へ移行する取り組み"
+    },
+    {
+      "id": "n002",
+      "label": "Azure AD App Proxy",
+      "object_type": "product",
+      "description": "オンプレミスWebアプリをAzureで公開。ユーザーはEntra IDで認証後にApp Proxyがオンプレアプリにプロキシ。VPN不要。"
+    },
+    {
+      "id": "n003",
+      "label": "Strangler Fig Pattern",
+      "object_type": "pattern",
+      "description": "レガシーシステムを一度に置き換えるのではなく、新機能を新システムで提供しながら徐々に移行する設計パターン。認証近代化にも適用可能。"
+    },
+    {
+      "id": "n004",
+      "label": "NTLM Relay攻撃",
+      "object_type": "risk",
+      "description": "NTLMを使い続けることのリスク。NTLM認証を中継・リプレイする攻撃。Responder等のツールで実行可能。"
+    },
+    {
+      "id": "n005",
+      "label": "LDAP over TLS",
+      "object_type": "protocol",
+      "description": "LDAPにTLSを追加した安全な通信方式。平文LDAPからの移行ステップ。"
+    },
+    {
+      "id": "n006",
+      "label": "Kerberosのモダン化",
+      "object_type": "concept",
+      "description": "古いKerberos設定（DES暗号等）から新しい暗号スイート（AES-256等）への移行。アカウントの暗号化タイプ設定変更。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "n001",
+      "to": "n002",
+      "relationship": "implements",
+      "description": "App ProxyでVPNなしのレガシーアプリ公開"
+    },
+    {
+      "from": "n001",
+      "to": "n003",
+      "relationship": "uses",
+      "description": "Strangler Figパターンで段階移行"
+    },
+    {
+      "from": "n004",
+      "to": "n005",
+      "relationship": "mitigated_by",
+      "description": "LDAP TLSでNTLM中継攻撃のリスクを軽減"
+    }
+  ],
+  "knowledge": [
+    {
+      "category": "NTLM廃止の段階的アプローチ",
+      "content": "1)まず環境内でNTLM使用状況を調査（Security Event ID 4624 with Logon Type 3、Network Monitorでフィルタ）。2)NTLMをブロックせずに監査モードで30日間観察。3)新規PCはNTLM使用禁止設定を適用。4)既存アプリをKerberos/OIDCに移行。5)全移行後にGPOでNTLM完全無効化。"
+    },
+    {
+      "category": "Azure AD App Proxyの効果",
+      "content": "オンプレミスのWebベースアプリにAzure AD App Proxyを使うと、VPN接続なしにMFA+Entra条件付きアクセスを適用できる。既存アプリの改修不要でEntra SSOの傘下に入れられる。ただしRDP・SSH・独自プロトコルのアプリには適用不可（要Azure Bastion等）。"
+    },
+    {
+      "category": "Kerberosの暗号化アップグレード",
+      "content": "古いADではRC4（NTLM Hash）でKerberosチケットを発行する場合があり、Kerberoasting攻撃に脆弱。全アカウントのmsDS-SupportedEncryptionTypesをAES128/AES256のみに変更し、RC4を無効化する。ただし古いサービス（Windows XP/2003等）はAESに対応していないので事前確認が必要。"
+    }
+  ]
+}
