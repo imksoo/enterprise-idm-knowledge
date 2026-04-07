@@ -19,7 +19,7 @@
     },
     {
       "id": "nssol",
-      "name": "藤本（NSSol）",
+      "name": "藤本（NSSOL）",
       "role": "ゼロトラスト専門SE"
     }
   ],
@@ -33,7 +33,7 @@
           "text": "テレワーク率80%でVPNが限界です。バンド幅を増強し続けるのも限界で、SASEへの移行を検討しています。"
         },
         {
-          "speaker": "藤本（NSSol）",
+          "speaker": "藤本（NSSOL）",
           "text": "SASEの主要選択肢はZscaler、Netskope、Palo Alto Prismaの3社です。SIer環境では客先常駐が多いため、エージェントレスでも動作するブラウザアイソレーション機能の有無が重要です。"
         },
         {
@@ -41,7 +41,7 @@
           "text": "客先のPCにエージェントをインストールできない場合があります。"
         },
         {
-          "speaker": "藤本（NSSol）",
+          "speaker": "藤本（NSSOL）",
           "text": "Zscaler ZIA/ZPAはClientless Remote Access（ブラウザのみ）オプションがあります。客先PCからは社内Webアプリにブラウザ経由でアクセス可能です。ただしSSH/RDP等は制約があります。"
         },
         {
@@ -49,7 +49,7 @@
           "text": "SASEとID管理の連携はどう設計しますか？"
         },
         {
-          "speaker": "藤本（NSSol）",
+          "speaker": "藤本（NSSOL）",
           "text": "SASE製品とEntra IDをSAML/OAuth連携します。Entraの認証 → SASE側でConditionを評価（デバイスコンプライアンス・リスクスコア等）→ 接続許可という流れです。EntraのグループメンバーシップでSASEのアクセスポリシーが制御できます。"
         }
       ],

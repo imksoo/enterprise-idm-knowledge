@@ -18,7 +18,7 @@
       "concern": "GitHubにAPIキーがハードコードされているコードを発見した。影響範囲が不明"
     },
     {
-      "role": "コンサル営業（NSSol）",
+      "role": "コンサル営業（NSSOL）",
       "concern": "HashiCorp Vault + シークレット管理の提案をしたい"
     }
   ],

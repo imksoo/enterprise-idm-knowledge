@@ -8,7 +8,7 @@
   "personas": [
     {
       "id": "suzuki",
-      "name": "鈴木（NSSol PAMスペシャリスト）",
+      "name": "鈴木（NSSOL PAMスペシャリスト）",
       "role": "PAM製品提案担当"
     },
     {
@@ -32,7 +32,7 @@
           "text": "先月、東南アジアの子会社でランサムウェア被害がありました。侵入経路を調査したところ、Windowsのローカルadministratorアカウントが入口でした。"
         },
         {
-          "speaker": "鈴木（NSSol）",
+          "speaker": "鈴木（NSSOL）",
           "text": "ローカルadminのパスワードが各サーバーで共通だったのではないでしょうか？"
         },
         {
@@ -40,7 +40,7 @@
           "text": "その通りです。全サーバーで同じパスワードを使い回していて、一台が侵害されると横展開が容易だったようです。"
         },
         {
-          "speaker": "鈴木（NSSol）",
+          "speaker": "鈴木（NSSOL）",
           "text": "これはPAM（特権アクセス管理）が解決できる典型的な問題です。CyberArk DPAMのLocal Account Management機能を使えば、全サーバーのローカルadminパスワードをCyberArkがランダム生成・ローテーションし、使い回しを防げます。",
           "subtext": "LAPS（Local Administrator Password Solution）の企業版PAM適用。"
         },
@@ -49,7 +49,7 @@
           "text": "ただ、国内外合わせてサーバーが3,000台あります。全台にCyberArkエージェントを入れるのは大変では？"
         },
         {
-          "speaker": "鈴木（NSSol）",
+          "speaker": "鈴木（NSSOL）",
           "text": "エージェントレスのアプローチも取れます。CyberArkのRotational Account ManagementはWinRM/SSH経由でエージェントレスにパスワードローテーションが可能です。3,000台でも段階的に導入できます。"
         }
       ],
@@ -64,7 +64,7 @@
       "setting": "同日午後。サーバーへの日常的な作業フローの確認。",
       "dialogue": [
         {
-          "speaker": "鈴木（NSSol）",
+          "speaker": "鈴木（NSSOL）",
           "text": "現状、サーバーへの特権作業はどのように行っていますか？"
         },
         {
@@ -72,7 +72,7 @@
           "text": "各担当者がadmin権限のついたWindowsアカウントで直接RDPしています。ログは…特に取っていないです。"
         },
         {
-          "speaker": "鈴木（NSSol）",
+          "speaker": "鈴木（NSSOL）",
           "text": "これが一番のリスクです。常時admin権限の付与は、アカウント盗取時に即座に全権限を渡してしまいます。CyberArk DPAMのJust-In-Time Access（JIT）を使えば、作業が必要な時だけ特権を付与し、作業終了後に自動剥奪できます。"
         },
         {
@@ -80,7 +80,7 @@
           "text": "セッション録画機能はありますか？うちのISO27001審査で『特権作業の証跡』を要求されています。"
         },
         {
-          "speaker": "鈴木（NSSol）",
+          "speaker": "鈴木（NSSOL）",
           "text": "はい。CyberArk PSMはRDP/SSHセッションを全録画し、キーストロークログも取得します。録画は検索・再生可能で、特定のコマンドが実行された時刻を素早く特定できます。ISO27001はもちろん、FISC・PCI DSSにも対応します。"
         },
         {
@@ -88,7 +88,7 @@
           "text": "コストはどれくらいですか？"
         },
         {
-          "speaker": "鈴木（NSSol）",
+          "speaker": "鈴木（NSSOL）",
           "text": "3,000台規模のCyberArk PAMは年間ライセンスで5,000万〜1億円程度になることが多いです。ただ、今回のような被害の損失と比較すると、1回の事案でもROIが出ます。予算が厳しい場合はBeyondTrustやSecureCubeも選択肢です。"
         }
       ],

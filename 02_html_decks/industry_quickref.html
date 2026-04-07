@@ -47,7 +47,7 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 <div class="req-item"><span class="req-label">主要規制</span>FISC安全対策基準第11版、PCI DSS v4、金融庁検査、個人情報保護法（金融分野ガイドライン）</div>
 <div class="req-item"><span class="req-label">特有課題</span>FISC棚卸し工数（年30〜60人日）、代理店ID（損保: 数十万件）、SWIFT認証、証券会員ID</div>
 <div class="req-item"><span class="req-label">推奨製品</span>PAM: CyberArk（大手銀行）/ SecureCube（地銀）。IGA: One Identity Manager（FISC実績）。IdP: Entra ID + ADFS（段階移行）</div>
-<div class="req-item"><span class="req-label">NSSol商機</span>FISC棚卸し自動化、PAM更改（SecureCube EOL）、Entra移行支援、代理店IGA構築</div>
+<div class="req-item"><span class="req-label">NSSOL商機</span>FISC棚卸し自動化、PAM更改（SecureCube EOL）、Entra移行支援、代理店IGA構築</div>
 </div></div>
 
 <div class="ind-card mfg">
@@ -56,7 +56,7 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 <div class="req-item"><span class="req-label">主要規制</span>IEC 62443（OTセキュリティ）、ISMS ISO27001、CMMC（防衛関連）、TISAX（自動車）</div>
 <div class="req-item"><span class="req-label">特有課題</span>IT/OT分離（工場ネットワーク）、SAP SOD管理、Solaris/AIX残存、サプライヤーID（数百〜千社）</div>
 <div class="req-item"><span class="req-label">推奨製品</span>PAM: CyberArk（OT PAM対応）。IGA: One Identity/Saviynt（SAP SOD）。SASE: Zscaler（多拠点工場）</div>
-<div class="req-item"><span class="req-label">NSSol商機</span>OT-IT統合PAM、SAP S/4移行時のSOD設計、AD統合（Solaris/AIX含む）、マルチフォレスト統合</div>
+<div class="req-item"><span class="req-label">NSSOL商機</span>OT-IT統合PAM、SAP S/4移行時のSOD設計、AD統合（Solaris/AIX含む）、マルチフォレスト統合</div>
 </div></div>
 
 <div class="ind-card energy">
@@ -65,7 +65,7 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 <div class="req-item"><span class="req-label">主要規制</span>電気事業法、経済産業省 電力・ガスサイバーセキュリティ指針、NERC CIP（北米）、サイバーセキュリティ基本法</div>
 <div class="req-item"><span class="req-label">特有課題</span>発送電分離後の複数会社ID管理、変電所・制御システムの認証（古いOT）、重要インフラ規制</div>
 <div class="req-item"><span class="req-label">推奨製品</span>PAM: CyberArk（ICS/SCADA対応）。OT監視: Claroty/Dragos。ID統合: Entra（発送電会社間フェデレーション）</div>
-<div class="req-item"><span class="req-label">NSSol商機</span>発送電分離後ID統合設計、OTセキュリティ診断、重要インフラ向けゼロトラスト移行</div>
+<div class="req-item"><span class="req-label">NSSOL商機</span>発送電分離後ID統合設計、OTセキュリティ診断、重要インフラ向けゼロトラスト移行</div>
 </div></div>
 
 <div class="ind-card pharma">
@@ -74,7 +74,7 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 <div class="req-item"><span class="req-label">主要規制</span>FDA 21 CFR Part 11、EU Annex 11、厚生労働省ER/ES指針、PIC/S GMP、ICH Q10</div>
 <div class="req-item"><span class="req-label">特有課題</span>GxP環境のCSV（システムバリデーション）、電子署名の規制対応、研究者の特殊アクセス要件</div>
 <div class="req-item"><span class="req-label">推奨製品</span>IGA: Saviynt（製薬実績）/ One Identity。電子署名: Entra Verified ID / Adobe Sign（Part 11対応）</div>
-<div class="req-item"><span class="req-label">NSSol商機</span>GxP環境Entra移行支援（CSV実施含む）、電子署名基盤構築、監査ログImmutable Storage設計</div>
+<div class="req-item"><span class="req-label">NSSOL商機</span>GxP環境Entra移行支援（CSV実施含む）、電子署名基盤構築、監査ログImmutable Storage設計</div>
 </div></div>
 
 <div class="ind-card retail">
@@ -83,7 +83,7 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 <div class="req-item"><span class="req-label">主要規制</span>PCI DSS v4（カード決済）、個人情報保護法（大量顧客データ）、割賦販売法</div>
 <div class="req-item"><span class="req-label">特有課題</span>パート・アルバイトの大量ID（年間数十万件入退社）、店舗POSシステム、取引先EDI（数百〜千社）</div>
 <div class="req-item"><span class="req-label">推奨製品</span>IGA: One Identity（大量HR連携実績）。MFA: FIDO2キー（店舗向け）/ Entra SSPR。EDI: AS2証明書ベース</div>
-<div class="req-item"><span class="req-label">NSSol商機</span>HRIS連携ID自動化、PCI DSS対応PAM、店舗従業員MFA現実解、ECサイト顧客ID（B2C CIAM）</div>
+<div class="req-item"><span class="req-label">NSSOL商機</span>HRIS連携ID自動化、PCI DSS対応PAM、店舗従業員MFA現実解、ECサイト顧客ID（B2C CIAM）</div>
 </div></div>
 
 <div class="ind-card healthcare">
@@ -92,10 +92,10 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 <div class="req-item"><span class="req-label">主要規制</span>厚生労働省「医療情報安全管理ガイドライン」第6版、個人情報保護法（要配慮個人情報）、電子カルテ3原則</div>
 <div class="req-item"><span class="req-label">特有課題</span>電子カルテとのID連携、資格連動アクセス権（専門看護師等）、研修医ローテーション、Break-glass権限</div>
 <div class="req-item"><span class="req-label">推奨製品</span>IGA: One Identity（医療機関実績）。電子カルテ連携: SCIM/カスタムコネクタ。PAM: BeyondTrust（コスト重視）</div>
-<div class="req-item"><span class="req-label">NSSol商機</span>電子カルテID統合、資格連動プロビジョニング、Break-glass設計、医療情報ガイドライン対応診断</div>
+<div class="req-item"><span class="req-label">NSSOL商機</span>電子カルテID統合、資格連動プロビジョニング、Break-glass設計、医療情報ガイドライン対応診断</div>
 </div></div>
 
-<h2>NSSol 営業トーク Tips by 業種</h2>
+<h2>NSSOL 営業トーク Tips by 業種</h2>
 <div class="tbl-wrap"><table>
 <thead><tr><th>業種</th><th>最初の一言（アイスブレーク）</th><th>最も刺さる課題提示</th><th>Next Action</th></tr></thead>
 <tbody>
@@ -108,5 +108,5 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 </tbody>
 </table></div>
 
-<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+<footer>本資料はNSSOL社内参照用です。2026-04-07</footer>
 </div></body></html>

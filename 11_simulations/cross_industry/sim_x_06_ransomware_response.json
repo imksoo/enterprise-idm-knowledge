@@ -18,7 +18,7 @@
     },
     {
       "id": "nssol_se",
-      "name": "松本（NSSol）",
+      "name": "松本（NSSOL）",
       "role": "IDMセキュリティSE（支援者）"
     }
   ],
@@ -37,7 +37,7 @@
           "text": "Service01はバッチ処理用のサービスアカウントです。夜中にRDPするはずがありません。間違いなく侵害されています！"
         },
         {
-          "speaker": "松本（NSSol）",
+          "speaker": "松本（NSSOL）",
           "text": "今すぐService01を無効化してください。ただしその前に、Active Directory上でService01が他にどの権限グループに入っているか確認が必要です。Kerberos TGTがメモリにある可能性も。"
         },
         {
@@ -45,7 +45,7 @@
           "text": "確認します…Domain Admins、Enterprise Admins、両方に入っています。"
         },
         {
-          "speaker": "松本（NSSol）",
+          "speaker": "松本（NSSOL）",
           "text": "Enterprise Adminsは全フォレストに影響します。即刻グループから外してID無効化。さらにKRBTGTアカウントのパスワードを2回変更してください。これをしないとGolden Ticketが使われ続けます。",
           "subtext": "KRBTGT二重変更は24時間間隔推奨だが緊急時は間隔短縮も実施。"
         },
@@ -54,7 +54,7 @@
           "text": "Golden Ticket…それはどんな攻撃ですか？"
         },
         {
-          "speaker": "松本（NSSol）",
+          "speaker": "松本（NSSOL）",
           "text": "KRBTGTのハッシュを盗むと、攻撃者は任意の有効なKerberosチケットを作り続けられます。アカウント無効化をしても侵害が続く最悪のシナリオです。KRBTGT変更は最優先です。"
         }
       ],
@@ -73,7 +73,7 @@
           "text": "今回の侵入経路は判明しましたか？"
         },
         {
-          "speaker": "松本（NSSol）",
+          "speaker": "松本（NSSOL）",
           "text": "DCのログを分析した結果、侵入はVPN経由でした。パスワードスプレー攻撃でService01のパスワードが推測されたようです。パスワードが'Welcome1234'でした。"
         },
         {
@@ -81,7 +81,7 @@
           "text": "…それは恥ずかしい。設定した人が引き継ぎなく退職してしまって、パスワードが変えられていませんでした。"
         },
         {
-          "speaker": "松本（NSSol）",
+          "speaker": "松本（NSSOL）",
           "text": "サービスアカウントをgMSA（グループマネージドサービスアカウント）に移行してください。gMSAはWindowsが自動的に120文字のランダムパスワードを管理し、人間は絶対に知ることができません。パスワードスプレーが完全に無効化されます。"
         },
         {
@@ -89,7 +89,7 @@
           "text": "今回の一番の教訓は何ですか？"
         },
         {
-          "speaker": "松本（NSSol）",
+          "speaker": "松本（NSSOL）",
           "text": "バッチ用のService01がDomain Adminsに入っていたこと、これが全ての元凶です。最小権限の原則が守られていれば、侵害の範囲が格段に限定されていました。Tier 0/1/2のAD管理モデルの導入が急務です。"
         }
       ],

@@ -1333,7 +1333,232 @@ J-SOX改正対応・サプライチェーンリスク管理強化を機に中〜
 
 </section>
 
-</main>
+
+  <!-- ========================================================
+       棚卸し・プロビジョニング自動化・アクセスレビュー
+  ======================================================== -->
+  <section id="discovery-provisioning">
+    <h2>🔍 ID棚卸し・プロビジョニング自動化・アクセスレビュー</h2>
+    <p class="lead">IGA製品（SailPoint等）が包括的にカバーする領域だが、棚卸し・プロビジョニング・定期レビューをそれぞれ専門に扱うツールも存在する。用途・予算・既存環境によって使い分けが重要。</p>
+
+    <div class="phase-header">📦 カテゴリ整理：3つの機能領域</div>
+    <table class="wbs-table">
+      <thead>
+        <tr><th>機能領域</th><th>何をするか</th><th>代表ツール</th><th>いつ必要か</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>ID棚卸し（Discovery）</strong></td><td>誰がどこに何のIDを持つか把握。孤立アカウント・過剰権限発見</td><td>Varonis, Netwrix, Semperis, Cayosoft</td><td>現状診断・M&A前DD・コンプライアンス準備</td></tr>
+        <tr><td><strong>自動プロビジョニング</strong></td><td>入社/異動/退職に合わせてAD/Entra/SaaS等のIDを自動作成・変更・削除</td><td>Entra Lifecycle Workflows, Okta LCM, SailPoint, MIM</td><td>JML自動化・HR連携・大量テナント管理</td></tr>
+        <tr><td><strong>アクセスレビュー/証明（Certification）</strong></td><td>権限の定期棚卸し。管理者が「このアクセスは必要か」を承認/否認</td><td>Entra ID Governance, SailPoint, Saviynt, One Identity</td><td>監査対応・SOX/FISC/ISO27001・年次棚卸し</td></tr>
+      </tbody>
+    </table>
+
+    <div class="phase-header">🔍 ID棚卸し・ディスカバリーツール比較</div>
+    <p class="lead">ADやEntra ID内の全アカウント・権限・利用状況を可視化する専門ツール。IGA導入前のアセスメント、M&AのDD調査にも活用される。</p>
+    <table class="wbs-table">
+      <thead>
+        <tr><th>ツール</th><th>ベンダー</th><th>主な用途</th><th>AD対応</th><th>Entra ID対応</th><th>価格帯</th><th>日本語</th><th>推奨シーン</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Varonis Data Security Platform</strong></td>
+          <td>Varonis Systems</td>
+          <td>ファイル/AD/M365の過剰アクセス・孤立アカウント可視化</td>
+          <td class="good">◎</td><td class="good">◎</td>
+          <td>数百万円〜（規模依存）</td>
+          <td class="warn">部分対応</td>
+          <td>大手金融・製造。データアクセス分析と組み合わせ</td>
+        </tr>
+        <tr>
+          <td><strong>Netwrix Auditor</strong></td>
+          <td>Netwrix</td>
+          <td>AD変更追跡・権限レポート・コンプライアンス証跡</td>
+          <td class="good">◎</td><td class="good">○</td>
+          <td>数十万円〜</td>
+          <td class="warn">英語メイン</td>
+          <td>AD変更監査・移行前後の差分把握</td>
+        </tr>
+        <tr>
+          <td><strong>Semperis Directory Services Protector</strong></td>
+          <td>Semperis</td>
+          <td>AD/Entra IDのリアルタイム脅威検知・変更ロールバック</td>
+          <td class="good">◎</td><td class="good">◎</td>
+          <td>数百万円〜</td>
+          <td class="warn">英語メイン</td>
+          <td>セキュリティ重視・M&A移行中の監視</td>
+        </tr>
+        <tr>
+          <td><strong>Cayosoft Guardian</strong></td>
+          <td>Cayosoft</td>
+          <td>AD/M365の変更監査・即時ロールバック・レポート</td>
+          <td class="good">◎</td><td class="good">◎</td>
+          <td>数十万円〜</td>
+          <td class="warn">英語メイン</td>
+          <td>中堅規模。ADMTと併用してM&A移行監視</td>
+        </tr>
+        <tr>
+          <td><strong>Microsoft Entra ID Governance</strong><br><small>（Access Reviews機能）</small></td>
+          <td>Microsoft</td>
+          <td>Entra ID上のグループ・アプリ・特権ロールの定期棚卸し</td>
+          <td class="warn">△（Hybrid経由）</td><td class="good">◎</td>
+          <td>P2ライセンス込み（約1,300円/ユーザー/月〜）</td>
+          <td class="good">日本語対応</td>
+          <td>Entra ID移行済み企業。監査対応のアクセスレビュー</td>
+        </tr>
+        <tr>
+          <td><strong>Tenable.ad（旧Alsid）</strong></td>
+          <td>Tenable</td>
+          <td>AD設定ミス・脆弱性の継続スキャン・リスクスコアリング</td>
+          <td class="good">◎</td><td class="good">○</td>
+          <td>数百万円〜</td>
+          <td class="warn">英語メイン</td>
+          <td>金融・重要インフラ。AD健全性チェック</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="phase-header">⚙️ 自動プロビジョニング専用ツール・機能比較</div>
+    <p class="lead">HR→IT連携でIDを自動作成・変更・削除する仕組み（JML: Joiner/Mover/Leaver）。IGA製品の機能として提供される場合と、専用サービスとして提供される場合がある。</p>
+    <table class="wbs-table">
+      <thead>
+        <tr><th>ツール/機能</th><th>提供形態</th><th>HR連携</th><th>対象システム</th><th>SCIMサポート</th><th>価格帯</th><th>推奨シーン</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Entra ID Lifecycle Workflows</strong></td>
+          <td>Microsoft（P2/Governance）</td>
+          <td>Workday, SAP SF, API</td>
+          <td>AD, Entra ID, M365, SaaS</td>
+          <td class="good">◎ SCIM対応</td>
+          <td>P2ライセンス込み</td>
+          <td>Microsoft環境中心。新規Entra ID展開企業向け</td>
+        </tr>
+        <tr>
+          <td><strong>Okta Lifecycle Management</strong></td>
+          <td>Okta（追加オプション）</td>
+          <td>Workday, BambooHR, 奉行連携可</td>
+          <td>AD, Okta配下のSaaS全般</td>
+          <td class="good">◎ SCIM対応</td>
+          <td>数百円〜/ユーザー/月</td>
+          <td>Okta IdP採用企業。マルチSaaS管理</td>
+        </tr>
+        <tr>
+          <td><strong>SailPoint IdentityNow</strong><br><small>（ノンストッププロビジョニング）</small></td>
+          <td>SaaS型IGA</td>
+          <td>SAP, Workday, 独自API</td>
+          <td>AD/LDAP/SaaS/メインフレーム</td>
+          <td class="good">◎</td>
+          <td>数百万円〜/年</td>
+          <td>大手企業。複雑なプロビジョニングルール・多システム連携</td>
+        </tr>
+        <tr>
+          <td><strong>Microsoft Identity Manager（MIM）2016</strong></td>
+          <td>オンプレミス</td>
+          <td>SQL連携・カスタム開発</td>
+          <td>AD, Exchange, SharePoint</td>
+          <td class="warn">△ FIM Serviceベース</td>
+          <td>ライセンス込み（保守継続問題あり）</td>
+          <td>既存MIM環境の延命。2026年メインストリーム終了に注意</td>
+        </tr>
+        <tr>
+          <td><strong>HENNGE One（プロビジョニング機能）</strong></td>
+          <td>日本語SaaS</td>
+          <td>CSV取込み・API</td>
+          <td>M365, Google Workspace, SaaS</td>
+          <td class="good">○ SCIM対応</td>
+          <td>月額課金（既存HENNGE契約に追加）</td>
+          <td>中堅日本企業。HENNGEをすでに使っている場合</td>
+        </tr>
+        <tr>
+          <td><strong>SmartHR / COMPANY 連携</strong><br><small>（HR起点の自動化）</small></td>
+          <td>HR SaaS → Entra/AD連携</td>
+          <td>SmartHR, COMPANY（Works Applications）, 奉行シリーズ</td>
+          <td>Entra ID（SCIM）, AD（Entra Connect経由）</td>
+          <td class="good">○</td>
+          <td>HRシステム費用次第</td>
+          <td>HR側からドライブする形でIT側を自動化したい場合</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="phase-header">✅ アクセスレビュー（定期棚卸し・証明）ツール比較</div>
+    <p class="lead">SOX法・FISC安全対策基準・ISO 27001では「定期的なアクセス権の見直し」が要求される。年次〜四半期でのアクセス証明（Access Certification）を効率化するツール。</p>
+    <table class="wbs-table">
+      <thead>
+        <tr><th>ツール</th><th>レビューワークフロー</th><th>自動否認</th><th>レポート出力</th><th>AD連携</th><th>SaaS連携</th><th>価格帯</th><th>推奨</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Entra ID Governance Access Reviews</strong></td>
+          <td class="good">◎ メール承認・マネージャー委任</td>
+          <td class="good">◎ 自動無効化</td>
+          <td class="good">◎ CSV/PDF</td>
+          <td class="good">◎</td>
+          <td class="good">○（Entra接続済みアプリ）</td>
+          <td>P2ライセンス込み</td>
+          <td class="good">Entra移行済みなら第一選択</td>
+        </tr>
+        <tr>
+          <td><strong>SailPoint Access Certifications</strong></td>
+          <td class="good">◎ 高度なワークフロー・エスカレーション</td>
+          <td class="good">◎</td>
+          <td class="good">◎ 監査証跡</td>
+          <td class="good">◎</td>
+          <td class="good">◎（多数コネクタ）</td>
+          <td>数百万円〜/年</td>
+          <td class="good">大手・複雑環境の監査対応</td>
+        </tr>
+        <tr>
+          <td><strong>Saviynt Access Certification</strong></td>
+          <td class="good">◎ AIリスクスコアリング付き</td>
+          <td class="good">◎</td>
+          <td class="good">◎</td>
+          <td class="good">○</td>
+          <td class="good">◎</td>
+          <td>数百万円〜/年</td>
+          <td class="good">SOX/製薬GxP対応が必要な企業</td>
+        </tr>
+        <tr>
+          <td><strong>One Identity Manager Access Review</strong></td>
+          <td class="good">◎</td>
+          <td class="warn">△</td>
+          <td class="good">◎</td>
+          <td class="good">◎ AD深い統合</td>
+          <td class="warn">○</td>
+          <td>数百万円〜</td>
+          <td>AD主体でオンプレ資産が多い企業</td>
+        </tr>
+        <tr>
+          <td><strong>SecureCube / Access Check</strong></td>
+          <td class="warn">○ シンプルなワークフロー</td>
+          <td class="warn">△</td>
+          <td class="good">○ 日本語帳票</td>
+          <td class="good">◎ AD/LDAP</td>
+          <td class="warn">△</td>
+          <td>数十万円〜</td>
+          <td>国産・日本語監査帳票が必須な金融・公共</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="phase-header">💡 ツール選定の考え方</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:12px">
+      <div class="warn" style="padding:14px;border-radius:8px">
+        <strong>📋 まず棚卸しから始める</strong><br>
+        現状のIDを把握せずにプロビジョニングを自動化すると問題が拡大する。Netwrix/Varonis/Entra Insightsで現状可視化してから設計する。
+      </div>
+      <div class="good" style="padding:14px;border-radius:8px">
+        <strong>⚙️ Microsoft環境ならEntra優先</strong><br>
+        Entra ID P2以上があれば、Lifecycle Workflows・Access Reviewsが含まれる。追加コストゼロで自動プロビジョニング＋定期レビューが可能。
+      </div>
+      <div class="lead" style="padding:14px;border-radius:8px">
+        <strong>🏢 複雑な要件にはIGA</strong><br>
+        多数のシステム・複雑なプロビジョニングルール・SOX対応が必要な場合はSailPoint/Saviyntを選定。Entra単体では対応しきれない領域を補完する。
+      </div>
+    </div>
+  </section>
+
+  </main>
 <script>
 const sections = document.querySelectorAll('section[id]');
 const links = document.querySelectorAll('#toc a[href^="#"]');

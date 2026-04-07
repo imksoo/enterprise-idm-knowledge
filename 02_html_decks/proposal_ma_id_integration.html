@@ -38,7 +38,7 @@ footer{margin-top:40px;text-align:center;color:#94a3b8;font-size:.78em;padding-t
 </style></head>
 <body><div class="page">
 <h1>🤝 M&A後 ID統合 ディスカッションペーパー</h1>
-<p class="subtitle">合併・買収後のアイデンティティ統合戦略と実行計画 | 2026-04-07 | NSSol IDM参照資料</p>
+<p class="subtitle">合併・買収後のアイデンティティ統合戦略と実行計画 | 2026-04-07 | NSSOL IDM参照資料</p>
 
 <div class="note">
 <strong>なぜM&AでID統合が最優先課題か：</strong>
@@ -119,5 +119,221 @@ M&A Day1から「誰がどのシステムにアクセスできるか」を管理
 </tbody>
 </table></div>
 
-<footer>本資料はNSSol社内参照用です。2026-04-07</footer>
+<h2>M&A ID統合ツール比較</h2>
+
+<h3>ADフォレスト統合ツール比較</h3>
+<div class="tbl-wrap"><table>
+<thead><tr>
+  <th>ツール名</th><th>ベンダー</th><th>用途</th><th>対象規模</th><th>価格帯</th><th>日本語サポート</th><th>主な機能</th><th>M&A適合度</th><th>NSSOL扱い</th><th>推奨シーン</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td><strong>ADMT 3.2</strong></td><td>Microsoft</td><td>ADユーザー/グループ/PC移行</td><td>小〜中</td>
+  <td><span class="badge b-green">無償</span></td><td>○</td>
+  <td>SID History付与、パスワードエクスポートサービス(PES)、移行ウィザード</td>
+  <td><span class="badge b-blue">中</span></td><td>○（自社構築）</td>
+  <td>小規模・単純な親会社ドメイン吸収。無償だが大規模並列移行は不向き</td>
+</tr>
+<tr>
+  <td><strong>Microsoft Identity Manager 2016</strong></td><td>Microsoft</td><td>複雑なAD統合・プロビジョニング</td><td>大</td>
+  <td><span class="badge b-orange">数百万円〜</span></td><td>○</td>
+  <td>多フォレスト同期、HR連携、ロールベース管理、カスタムワークフロー</td>
+  <td><span class="badge b-orange">中</span></td><td>△（メインストリーム2026年終了）</td>
+  <td>複雑な統合要件があり既にMIM導入済みの場合のみ。新規はEntra Connect推奨</td>
+</tr>
+<tr>
+  <td><strong>Entra Connect Sync</strong></td><td>Microsoft</td><td>複数フォレスト→Entra ID同期</td><td>小〜大</td>
+  <td><span class="badge b-green">無償</span></td><td>○</td>
+  <td>複数ADフォレスト同期、フィルタリング、パスワードハッシュ同期、Pass-through認証</td>
+  <td><span class="badge b-blue">高</span></td><td>○</td>
+  <td>M&A直後の暫定統合。両フォレストをEntra IDに同期して共通SSOを実現</td>
+</tr>
+<tr>
+  <td><strong>Entra Cloud Sync</strong></td><td>Microsoft</td><td>軽量AD→Entra ID同期（クラウドエージェント）</td><td>小〜中</td>
+  <td><span class="badge b-green">無償</span></td><td>○</td>
+  <td>エージェントベース、複数ドメイン対応、Connect Syncより構成シンプル</td>
+  <td><span class="badge b-blue">高</span></td><td>○</td>
+  <td>買収先ADが小規模・シンプルな場合のDay1対応に最適</td>
+</tr>
+<tr>
+  <td><strong>Quest Migration Manager for AD</strong></td><td>Quest Software</td><td>大規模ADフォレスト統合・並列移行</td><td>大〜超大</td>
+  <td><span class="badge b-red">数百万〜数千万円</span></td><td>△（英語製品・パートナー経由）</td>
+  <td>段階的/並列移行、SID History、パスワード同期、共存期間管理、レポート</td>
+  <td><span class="badge b-blue">最高</span></td><td>△（パートナー経由要確認）</td>
+  <td>ユーザー5,000以上の大規模合併。共存期間が長く段階移行が必要な場合の業界標準</td>
+</tr>
+<tr>
+  <td><strong>Quest On Demand Migration</strong></td><td>Quest Software</td><td>AD/Microsoft 365/Entra ID移行SaaS</td><td>中〜大</td>
+  <td><span class="badge b-orange">要見積もり（SaaS従量）</span></td><td>△</td>
+  <td>クラウドポータル操作、AD+M365+Entra一括移行、進捗ダッシュボード</td>
+  <td><span class="badge b-blue">高</span></td><td>△</td>
+  <td>M365テナント統合と同時にAD移行も必要なケース。クラウドファーストな組織</td>
+</tr>
+<tr>
+  <td><strong>Recovery Manager for AD</strong></td><td>Quest Software</td><td>AD移行失敗時のロールバック・バックアップ</td><td>全規模</td>
+  <td><span class="badge b-orange">数十万〜数百万円</span></td><td>△</td>
+  <td>オブジェクトレベルのバックアップ・リストア、移行前スナップショット</td>
+  <td><span class="badge b-blue">高（保険として）</span></td><td>△</td>
+  <td>大規模移行時の保険。Migration Manager for ADとセット導入が推奨</td>
+</tr>
+<tr>
+  <td><strong>Semperis Directory Services Protector</strong></td><td>Semperis</td><td>AD移行中のセキュリティ監視・ロールバック</td><td>大</td>
+  <td><span class="badge b-red">数百万円〜</span></td><td>×（英語のみ）</td>
+  <td>ADの変更をリアルタイム検知、悪意ある変更の自動ロールバック、IoC検出</td>
+  <td><span class="badge b-blue">高（セキュリティ重視時）</span></td><td>×</td>
+  <td>統合期間中のAD不正変更を懸念するケース。ランサムウェア対策と兼用可</td>
+</tr>
+<tr>
+  <td><strong>Netwrix Auditor</strong></td><td>Netwrix</td><td>移行前後の変更監査・コンプライアンス記録</td><td>小〜大</td>
+  <td><span class="badge b-orange">数十万円〜</span></td><td>△</td>
+  <td>AD変更監査、ファイルサーバー監査、変更レポート、アラート</td>
+  <td><span class="badge b-blue">中</span></td><td>△</td>
+  <td>移行前の現状把握・監査証跡確保。DDフェーズの棚卸しにも使用可</td>
+</tr>
+</tbody>
+</table></div>
+
+<h3>Entra IDテナント統合ツール比較</h3>
+<div class="tbl-wrap"><table>
+<thead><tr>
+  <th>ツール名</th><th>ベンダー</th><th>対象</th><th>メール移行</th><th>SharePoint/Teams移行</th><th>Entra ID移行</th><th>価格帯</th><th>推奨シーン</th><th>注意点</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td><strong>Quest On Demand Migration for Email</strong></td><td>Quest Software</td><td>大〜中</td>
+  <td>○ Exchange/M365</td><td>△（別モジュール）</td><td>○</td>
+  <td><span class="badge b-orange">要見積もり</span></td>
+  <td>Exchange Online→Exchange Online大規模移行。共存・デュアルデリバリー対応</td>
+  <td>各モジュール別ライセンスでコスト積み上がりに注意</td>
+</tr>
+<tr>
+  <td><strong>BitTitan MigrationWiz</strong></td><td>BitTitan</td><td>中小〜中堅</td>
+  <td>○ M365/Gmail/Exchange</td><td>○ SharePoint/OneDrive</td><td>×（別途ADMT等）</td>
+  <td><span class="badge b-orange">数十万〜数百万円</span></td>
+  <td>中小M&Aでのメールボックス+OneDrive移行。UIが平易でSIerが扱いやすい</td>
+  <td>Entra IDユーザー移行は別途対応が必要。大規模では処理速度がボトルネック</td>
+</tr>
+<tr>
+  <td><strong>AvePoint Fly / Cloud Management</strong></td><td>AvePoint</td><td>中〜大</td>
+  <td>△（メインはSPO）</td><td>○ SharePoint/Teams/OneDrive</td><td>×</td>
+  <td><span class="badge b-orange">要見積もり</span></td>
+  <td>SharePoint/Teamsのコンテンツ・チャンネル・タブごとの粒度移行が必要な場合</td>
+  <td>SharePoint移行特化。メールはBitTitan等との組み合わせが必要</td>
+</tr>
+<tr>
+  <td><strong>Microsoft 365 Tenant-to-Tenant Migration（ODSP標準機能）</strong></td><td>Microsoft</td><td>小〜中</td>
+  <td>△（Exchange Migration API）</td><td>○ SPMT（無償）</td><td>○（Entra B2B/Cross-tenant Sync）</td>
+  <td><span class="badge b-green">無償〜M365ライセンス内</span></td>
+  <td>小規模M&Aでサードパーティツール予算が取れない場合。機能は限定的</td>
+  <td>SharePoint Migration Tool(SPMT)は無償だが、大量移行で速度・管理機能が不足</td>
+</tr>
+<tr>
+  <td><strong>Quadrotech Nova（現 Quest Nova）</strong></td><td>Quest Software</td><td>大</td>
+  <td>△（分析・計画向け）</td><td>△</td><td>○（分析）</td>
+  <td><span class="badge b-orange">要見積もり</span></td>
+  <td>移行前のM365テナント現状分析・リスク評価。DDフェーズで利用価値大</td>
+  <td>移行実行ツールではなく分析ツール。Migration Managerとセットで使う</td>
+</tr>
+<tr>
+  <td><strong>Entra Cross-tenant Synchronization</strong></td><td>Microsoft</td><td>全規模</td>
+  <td>×</td><td>×</td><td>○（B2B自動招待・同期）</td>
+  <td><span class="badge b-green">Entra P1以上</span></td>
+  <td>テナント統合の暫定策・Day1対応。ユーザーをB2Bゲストとして自動同期</td>
+  <td>あくまでB2Bゲスト同期。メンバーへの昇格・メールボックス統合には別途対応が必要</td>
+</tr>
+</tbody>
+</table></div>
+
+<h2>M&A段階別ツール選択マトリクス</h2>
+<div class="tbl-wrap"><table>
+<thead><tr>
+  <th>フェーズ</th><th>期間目安</th><th>AD統合ツール</th><th>M365/Entra統合</th><th>セキュリティ・監査</th><th>主目的</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td><strong>① Pre-deal / DD</strong></td><td>クロージング前</td>
+  <td>Netwrix Auditor（現状棚卸）<br>Quest Nova（分析）</td>
+  <td>Quest Nova（M365テナント分析）</td>
+  <td>Semperis DSP（IoC検査）</td>
+  <td>買収先のID管理成熟度評価・移行コスト概算・リスク把握</td>
+</tr>
+<tr>
+  <td><strong>② Day1対応</strong></td><td>クロージング〜1週間</td>
+  <td>ADフォレスト信頼（手動設定）<br>Entra Cloud Sync（暫定）</td>
+  <td>Entra Cross-tenant Sync（B2B招待）</td>
+  <td>Semperis DSP（変更監視起動）</td>
+  <td>最低限の認証接続。役員・管理者の緊急アクセス確保。退職者ID即時無効化</td>
+</tr>
+<tr>
+  <td><strong>③ 共存期間（6〜18ヶ月）</strong></td><td>Day1〜統合完了</td>
+  <td>Quest Migration Manager for AD<br>またはADMT（小規模）<br>Entra Connect Sync（継続）</td>
+  <td>BitTitan MigrationWiz（メール/OneDrive）<br>AvePoint Fly（SPO/Teams）<br>Quest On Demand（大規模）</td>
+  <td>Netwrix Auditor（変更記録）<br>Recovery Manager for AD（バックアップ）</td>
+  <td>段階移行・SID History管理・パスワード同期・メールボックス移行</td>
+</tr>
+<tr>
+  <td><strong>④ 統合完了</strong></td><td>移行完了〜3ヶ月</td>
+  <td>旧ドメイン廃止準備<br>ADMT（最終クリーンアップ）</td>
+  <td>旧テナントライセンス終了手続き</td>
+  <td>最終監査レポート（Netwrix）<br>SID History除去確認</td>
+  <td>旧ドメイン・テナントの廃止。SID Historyクリーンアップ。最終棚卸し</td>
+</tr>
+</tbody>
+</table></div>
+
+<h2>典型的なツール組み合わせパターン（3シナリオ）</h2>
+
+<div class="card purple">
+<h3>🏢 シナリオ1：大手企業×複雑ADフォレスト統合</h3>
+<p><strong>状況：</strong>親会社5,000ユーザー＋買収先3,000ユーザー、ADフォレスト複数、共存期間18ヶ月</p>
+<ul class="list">
+  <li><strong>DDフェーズ：</strong>Quest Nova（M365現状分析）＋ Netwrix Auditor（AD変更履歴収集）</li>
+  <li><strong>Day1：</strong>ADフォレスト選択的信頼（SID Filtering有効）＋ Entra Cross-tenant Sync（B2B暫定）</li>
+  <li><strong>共存期間：</strong>Quest Migration Manager for AD（段階移行・SID History）＋ Recovery Manager for AD（バックアップ）＋ Quest On Demand Migration（M365メール/OneDrive）</li>
+  <li><strong>完了：</strong>旧フォレスト廃止・SID History除去・最終監査</li>
+</ul>
+<p><strong>概算コスト：</strong>Quest製品ライセンス数百万〜数千万円＋SIer実装費3,000〜8,000万円</p>
+<p><strong>NSSOLとして：</strong>Quest Migration Managerはパートナー経由での扱いが前提。提案はMicrosoftネイティブ（ADMT＋Entra Connect）＋ Quest Questを組み合わせる形で。</p>
+</div>
+
+<div class="card green">
+<h3>🏬 シナリオ2：中堅企業×M365テナント統合</h3>
+<p><strong>状況：</strong>親会社・買収先ともにMicrosoft 365利用、ユーザー計1,000人未満、ADは親会社のみ</p>
+<ul class="list">
+  <li><strong>DDフェーズ：</strong>Microsoft 365 Admin Center（基本情報収集）＋ 手動AD棚卸し</li>
+  <li><strong>Day1：</strong>Entra Cross-tenant Sync（B2B招待で即日アクセス）</li>
+  <li><strong>移行：</strong>BitTitan MigrationWiz（メールボックス＋OneDrive）＋ ADMT（ユーザーアカウント移行）＋ SPMT（SharePointサイト）</li>
+  <li><strong>完了：</strong>旧テナント解約・買収先社員を正メンバーに昇格</li>
+</ul>
+<p><strong>概算コスト：</strong>BitTitan数十万円＋SIer実装費500〜2,000万円。M365ライセンス二重払い期間を短縮するのがコスト最適化のポイント。</p>
+<p><strong>NSSOLとして：</strong>BitTitan MigrationWizは代理店経由で扱いやすい。ADMT＋SPMTは無償なので工数込みで提案可。</p>
+</div>
+
+<div class="card yellow">
+<h3>⚡ シナリオ3：小規模×緊急Day1対応（統合は後工程）</h3>
+<p><strong>状況：</strong>スタートアップ買収、ユーザー100人未満、クロージングまで2週間、完全統合は半年後</p>
+<ul class="list">
+  <li><strong>Day1（2週間で実施）：</strong>Entra B2B招待（手動または一括CSV）＋ Entra Cross-tenant Sync設定</li>
+  <li><strong>暫定運用（〜6ヶ月）：</strong>買収先社員はB2BゲストとしてM365利用。ADは別フォレストのまま維持。</li>
+  <li><strong>後工程統合：</strong>ADMT（ユーザー移行）＋ BitTitan（メール）＋ Entraメンバー昇格</li>
+</ul>
+<p><strong>概算コスト：</strong>ツールコストはほぼゼロ（Entra P1内）＋ SIer設定費100〜300万円。Day1対応としては最安。</p>
+<p><strong>注意点：</strong>B2BゲストのEntraライセンス消費に注意。ゲストが増えすぎるとP2機能の追加コスト発生。半年を超える放置は「ゾンビB2Bアカウント」問題を起こす。</p>
+<p><strong>NSSOLとして：</strong>Entraネイティブ機能のみで対応可能。追加製品ライセンス不要のため提案しやすい。</p>
+</div>
+
+<h2>日本市場の実情</h2>
+<div class="tbl-wrap"><table>
+<thead><tr><th>観点</th><th>実情・留意点</th></tr></thead>
+<tbody>
+<tr><td><strong>Quest製品扱いSIer</strong></td><td>日本では一部の大手SIer（NTTデータ、富士通、日立など）がQuest Softwareのパートナー契約を持つ。NSSOLとして直接販売は現時点で要確認。パートナー経由での転売・SES形式での提案が現実的。</td></tr>
+<tr><td><strong>ADMT利用の現状</strong></td><td>無償・Microsoft純正のため、中小規模案件では依然多用。ただし並列移行・進捗管理機能の弱さから大規模案件では補助ツール（スクリプト等）との組み合わせが必要。</td></tr>
+<tr><td><strong>典型的なツール選択パターン</strong></td><td>大手：Quest Migration Manager＋MIM（既存）またはEntra Connect。中堅：ADMT＋Entra Connect＋BitTitan。小規模：Entraネイティブ機能のみ。</td></tr>
+<tr><td><strong>M&A案件のコスト感</strong></td><td>ツールライセンス：無償〜数千万円。SIer実装費：小規模300万円〜、中堅1,000〜3,000万円、大規模3,000〜1億円超。ツール費よりも移行設計・テスト・ユーザーサポートの工数が支配的。</td></tr>
+<tr><td><strong>日本語サポートの壁</strong></td><td>Quest製品・Semperis等は基本英語。日本語マニュアルや国内サポート窓口が弱い。Microsoft純正ツール（ADMT・Entra Connect）は日本語ドキュメントが充実しており、NSSOLが自力対応しやすい。</td></tr>
+<tr><td><strong>NSSOLとして提案できるツール</strong></td><td>○提案可：ADMT、Entra Connect Sync、Entra Cloud Sync、Entra Cross-tenant Sync、BitTitan（代理店経由）、SPMT。△要確認：Quest製品（パートナー体制要確認）。×現状困難：Semperis（国内サポートなし）。</td></tr>
+</tbody>
+</table></div>
+
+<footer>本資料はNSSOL社内参照用です。2026-04-07</footer>
 </div></body></html>

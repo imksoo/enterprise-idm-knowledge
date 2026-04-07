@@ -28,7 +28,7 @@
     },
     {
       "id": "nssol",
-      "name": "長谷川（NSSol）",
+      "name": "長谷川（NSSOL）",
       "role": "M&A統合専門コンサルタント",
       "background": "M&A後ID統合プロジェクト8件。"
     }
@@ -43,7 +43,7 @@
           "text": "今グループのM365テナントが7つあります。親会社・子会社A・B・買収先C・D…管理がバラバラで、グループ全体のIDが見えていません。長谷川さん、どこから手をつけますか？"
         },
         {
-          "speaker": "長谷川（NSSol）",
+          "speaker": "長谷川（NSSOL）",
           "text": "まず全テナントのID資産棚卸から始めます。Microsoft Entra ID Governanceの『Connected Organizations』機能を使って、7テナントのユーザーリスト、ゲストID、外部コラボレーション設定を一覧化します。テナント統合の前に現状把握が必須です。"
         },
         {
@@ -51,7 +51,7 @@
           "text": "テナントを統合すべき会社と、独立させたままにすべき会社をどう判断しますか？"
         },
         {
-          "speaker": "長谷川（NSSol）",
+          "speaker": "長谷川（NSSOL）",
           "text": "判断軸は4つです。①法規制（現地のデータ主権・プライバシー法）、②セキュリティリスク（統合することで攻撃範囲が広がるか）、③コンプライアンス（SOX連結対象かどうか）、④将来の売却可能性。規制上分離必須な国（中国・インドネシア等）と、統合すべきグループコア会社を分けて整理します。"
         },
         {
@@ -59,7 +59,7 @@
           "text": "我々はGoogle Workspaceで動いています。Entraに統合されると、使い慣れたツールが使えなくなりますか？"
         },
         {
-          "speaker": "長谷川（NSSol）",
+          "speaker": "長谷川（NSSOL）",
           "text": "Google WorkspaceとEntraはフェデレーションできます。Google Workspaceを認証ソースとして残しつつ、Entraゲストとして招待することで、Google IDでMicrosoft TeamsやSharePointにアクセスできます。完全統合を強制せず、フェデレーションで段階的に親会社ポリシーを適用する方が現実的です。"
         }
       ],
@@ -79,7 +79,7 @@
           "text": "グループ全体でMFAの適用率が59%です。本体は90%ですが、買収先は40%以下のところもあります。どう統一しますか？"
         },
         {
-          "speaker": "長谷川（NSSol）",
+          "speaker": "長谷川（NSSOL）",
           "text": "Entra Conditional Accessのグループポリシーを段階的に適用していきます。まず外部アクセス（親会社システムへのアクセス）にMFA必須を適用。次に管理者アカウント。最後に全ユーザー。強制は現地IT担当との調整が必要ですが、Conditional Accessのレポートモードで影響を事前シミュレーションしてから有効化する手順が標準です。"
         },
         {
@@ -87,7 +87,7 @@
           "text": "Azureを使っていない子会社（Google Workspace）にも同じポリシーを適用できますか？"
         },
         {
-          "speaker": "長谷川（NSSol）",
+          "speaker": "長谷川（NSSOL）",
           "text": "Google WorkspaceのIdPとEntraをSAML連携することでEntraのConditionを適用できます。ただしGoogle独自のセキュリティ設定（Google Context-Aware Access）との二重管理になるため、ポリシーの設計を事前に統一しておく必要があります。長期的にはEntraをグループIdPに統一するロードマップを設定することをお勧めします。"
         }
       ],

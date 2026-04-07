@@ -20,7 +20,7 @@
     },
     {
       "id": "nssol",
-      "name": "宮下（NSSol）",
+      "name": "宮下（NSSOL）",
       "role": "中小企業向けSMBSE。コストを最優先に提案する必要がある。"
     }
   ],
@@ -34,7 +34,7 @@
           "text": "退職者のIDを止めるのが本当に大変で。30個のSaaSに連絡を回さないといけない。先月なんか3ヶ月間AWSのIAMユーザーが残っていて焦りました。"
         },
         {
-          "speaker": "宮下（NSSol）",
+          "speaker": "宮下（NSSOL）",
           "text": "SSOを導入すると、1つのIDを止めるだけで30個全部止まります。Microsoft 365かGoogle Workspaceをすでに使っていれば、追加費用ほぼゼロから始められます。"
         },
         {
@@ -42,7 +42,7 @@
           "text": "Google Workspaceなら使っています。SSOってどうやるんですか？"
         },
         {
-          "speaker": "宮下（NSSol）",
+          "speaker": "宮下（NSSOL）",
           "text": "まずはSlack・GitHub・Zoomなど主要SaaSにGoogle WorkspaceのSSOを設定します。SAMLというオープンな技術で、SaaSの設定画面から「Googleでサインイン」を有効にするだけです。多くのSaaSは無料または最低プランで対応しています。退職者のGoogleアカウントを停止すれば、SAML連携している全SaaSも自動で使えなくなります。"
         },
         {
@@ -50,7 +50,7 @@
           "text": "開発者のGitHubアカウントはどうするんですか？個人アカウントのケースが多いんですが。"
         },
         {
-          "speaker": "宮下（NSSol）",
+          "speaker": "宮下（NSSOL）",
           "text": "GitHubはOrganizationのSSO設定で会社のGoogleアカウントでの認証を強制できます。個人アカウントのGitHub IDを使っていても、OrganizationリポジトリへのアクセスはSSOを通すので退職と同時にアクセス不可になります。まず3つ設定するだけで体感が変わります。Slack・GitHub・AWSがすぐ設定できます。"
         }
       ],

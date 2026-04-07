@@ -8,7 +8,7 @@
   "personas": [
     {
       "id": "tanaka_se",
-      "name": "田中（NSSol クラウドSE）",
+      "name": "田中（NSSOL クラウドSE）",
       "role": "Entra ID設計担当"
     },
     {
@@ -32,7 +32,7 @@
           "text": "今全員がテレワークに移行しています。でもVPN経由じゃないとADの認証ができなくて、VPNが遅いと苦情が続いています。"
         },
         {
-          "speaker": "田中（NSSol）",
+          "speaker": "田中（NSSOL）",
           "text": "ADはオンプレミスを前提に設計されているので、テレワークと相性が悪いんです。VPNでオフィスに引き込まないとKerberosが動かないので必然的にVPNが必要になります。"
         },
         {
@@ -40,7 +40,7 @@
           "text": "Entra IDに全部移行すれば解決しますか？"
         },
         {
-          "speaker": "田中（NSSol）",
+          "speaker": "田中（NSSOL）",
           "text": "クラウドのみにすると、今のオンプレサーバー（Windowsファイルサーバー、社内のLinux）にはどうやって認証しますか？EntraはKerberosを直接サポートしていません。"
         },
         {
@@ -48,7 +48,7 @@
           "text": "あ、社内に基幹システムがあります。それはオンプレに残ります。"
         },
         {
-          "speaker": "田中（NSSol）",
+          "speaker": "田中（NSSOL）",
           "text": "であれば、Entra Hybrid Joinが現実的です。ADを残しつつ、デバイスをEntra IDに登録し、クラウドサービスはEntra IDで認証、オンプレはKerberosで認証という二つを使い分けます。VPNはZero Trust Network Access（ZTNA）に段階的に置き換えられます。"
         }
       ],
@@ -63,7 +63,7 @@
       "setting": "設計詳細セッション。",
       "dialogue": [
         {
-          "speaker": "田中（NSSol）",
+          "speaker": "田中（NSSOL）",
           "text": "Hybrid Joinの設計で最初に決めることは、『AD ConnectのSyncスコープ』です。全ADユーザーをEntraに同期するか、特定OUのみにするか。"
         },
         {
@@ -71,7 +71,7 @@
           "text": "サービスアカウントもEntraに同期するとまずいですか？"
         },
         {
-          "speaker": "田中（NSSol）",
+          "speaker": "田中（NSSOL）",
           "text": "サービスアカウントを同期すると、EntraのMFAポリシーが適用されてバッチ処理が止まります。必ずフィルタリングしてください。OU分けをするか、AD Connectの除外フィルターを使います。",
           "subtext": "AD ConnectのSynchronization Rules Editorでサービスアカウントを除外。"
         },
@@ -80,7 +80,7 @@
           "text": "Conditional Accessはどう設定しますか？"
         },
         {
-          "speaker": "田中（NSSol）",
+          "speaker": "田中（NSSOL）",
           "text": "まずは『管理者は必ずMFA』から始めましょう。全ユーザーMFAはリスクが高いので段階的に。デバイスコンプライアンス（Intune管理デバイスのみ）を条件にするのも有効です。最初から完璧を目指さず、段階的に強化するのが成功のコツです。"
         }
       ],

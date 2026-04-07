@@ -8,7 +8,7 @@
   "personas": [
     {
       "id": "yamada",
-      "name": "山田（NSSol上級SE）",
+      "name": "山田（NSSOL上級SE）",
       "role": "IGA提案担当"
     },
     {
@@ -28,7 +28,7 @@
       "setting": "地方銀行IT部門の会議室。FISC検査の指摘を受けた翌週。",
       "dialogue": [
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "田中課長、今年のFISC検査での指摘内容について教えていただけますか？"
         },
         {
@@ -36,7 +36,7 @@
           "text": "はい…恥ずかしながら、退職者のIDが3名分残っていたと指摘を受けまして。"
         },
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "退職後どれくらいで発覚したのでしょうか？"
         },
         {
@@ -45,7 +45,7 @@
           "subtext": "退職者リストとシステムIDのExcel突合が主な手法。半期に1回。"
         },
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "つまり、HR（人事）システムからの退職通知とIT部門への連絡に時間差があった、と。"
         },
         {
@@ -53,7 +53,7 @@
           "text": "そうなんです。人事部から『退職しました』という連絡が来るのが月末まとめて、しかも書面で…。最近は在宅勤務でFAXも遅れがちで。"
         },
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "典型的な課題ですね。FISCは翌営業日以内の無効化を求めていますが、月末バッチでは構造的に達成困難です。HRISとのリアルタイム連携が必要です。"
         }
       ],
@@ -68,7 +68,7 @@
       "setting": "同日午後、システム構成図を広げながら。",
       "dialogue": [
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "現在どんなシステムのIDを管理されていますか？"
         },
         {
@@ -76,7 +76,7 @@
           "text": "えーと、Active Directory、銀行勘定系（NTTデータのBankVision）、インターネットバンキング基盤、あとSalesforceですね。"
         },
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "勘定系はAPIを持っていますか？"
         },
         {
@@ -84,7 +84,7 @@
           "text": "BankVisionは…ないと思います。CSVインポートのみです。"
         },
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "わかりました。その場合でも、IGA（Identity Governance）製品がCSVコネクタでBankVisionに連携し、ADの無効化イベントをトリガーに自動でBankVisionのIDも無効化できます。",
           "subtext": "SecureCube/One Identity等のCSVファイル連携コネクタが有効。"
         },
@@ -93,7 +93,7 @@
           "text": "それ、どれくらいのコストと工期になりますか？"
         },
         {
-          "speaker": "山田（NSSol）",
+          "speaker": "山田（NSSOL）",
           "text": "地銀規模であれば、SecureCubeまたはOne Identity Managerでシステム5〜8本の連携、6ヶ月〜1年、初期投資2000万〜5000万円が目安です。FISC対応効果でROIは明確に出ます。"
         }
       ],

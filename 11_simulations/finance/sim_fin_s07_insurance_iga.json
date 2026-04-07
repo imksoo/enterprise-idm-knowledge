@@ -24,7 +24,7 @@
     },
     {
       "id": "nssol",
-      "name": "西川（NSSol）",
+      "name": "西川（NSSOL）",
       "role": "IGA専門SE"
     }
   ],
@@ -38,7 +38,7 @@
           "text": "現行IDMが2028年EOLです。IGA製品への移行を検討しています。代理店IDが30万件あるのでスケールが重要です。"
         },
         {
-          "speaker": "西川（NSSol）",
+          "speaker": "西川（NSSOL）",
           "text": "30万件は大規模です。SailPoint Identity Security Cloud（SaaS版）はマルチテナントで100万ユーザー超の実績があります。One Identity ManagerはオンプレとSaaSのハイブリッドが得意で大量コネクタが強みです。"
         },
         {
@@ -46,7 +46,7 @@
           "text": "代理店担当者の入れ替わりが激しい。離職者のIDが残ることが最大の問題です。代理店側で自分たちのIDを管理できるといい。"
         },
         {
-          "speaker": "西川（NSSol）",
+          "speaker": "西川（NSSOL）",
           "text": "SailPointのEntitlement Managementで代理店側にID管理を委譲できます。代理店管理者が自社スタッフのIDを追加・削除し、御社はポリシーと審査権限のみ持つ構造です。代理店セルフサービスと御社ガバナンスを両立できます。"
         },
         {
@@ -54,7 +54,7 @@
           "text": "FISC対応の棚卸レポートはIGA製品から自動生成できますか？"
         },
         {
-          "speaker": "西川（NSSol）",
+          "speaker": "西川（NSSOL）",
           "text": "SailPoint・One Identity共にFISC用のレポートテンプレートは標準では用意していませんが、レポートエンジンのカスタマイズでFISC第11版の要求項目に合わせたレポート出力が可能です。過去導入事例で作成したFISCテンプレートをご提供できます。"
         }
       ],

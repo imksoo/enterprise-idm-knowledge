@@ -18,7 +18,7 @@
       "concern": "現行のFTP+CSV方式からWeb APIへの移行で認証方式をどうするか"
     },
     {
-      "role": "コンサル営業（NSSol）",
+      "role": "コンサル営業（NSSOL）",
       "concern": "B2B IdPとしてEntra External ID Customerを提案したい"
     }
   ],
@@ -27,7 +27,7 @@
     "課題: パスワード使い回し横行・不正アクセス検知ゼロ・MFA未対応・退場した取引先のIDが残存",
     "提案方向: Entra External ID（旧Azure AD B2B/B2C）でB2B認証基盤を構築。MFA必須・招待フロー",
     "障壁: 2000社への移行連絡コスト・中小取引先のITリテラシー問題",
-    "NSSol提案: 移行ガイドを作成・大手取引先50社から先行移行・小規模取引先向けに管理者代行オプション"
+    "NSSOL提案: 移行ガイドを作成・大手取引先50社から先行移行・小規模取引先向けに管理者代行オプション"
   ],
   "html_needs_identified": [
     "b2b_external_id_guide.html（B2B取引先ID管理ガイド）"

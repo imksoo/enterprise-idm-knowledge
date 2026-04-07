@@ -19,7 +19,7 @@
     },
     {
       "id": "nssol",
-      "name": "斉藤（NSSol）",
+      "name": "斉藤（NSSOL）",
       "role": "製薬業界SE"
     }
   ],
@@ -37,7 +37,7 @@
           "text": "GxP環境のシステムは21 CFR Part 11対応の『バリデーション済みシステム』です。認証基盤の変更はCSV（Computer System Validation）の再実施が必要になります。FDA査察でID管理の変更記録を求められます。"
         },
         {
-          "speaker": "斉藤（NSSol）",
+          "speaker": "斉藤（NSSOL）",
           "text": "Entra IDはFDA 21 CFR Part 11に対応した監査ログ（Audit Trail）をサポートしています。MicrosoftはFDA向けのコンプライアンスドキュメント（Compliance Manager）を提供しており、CSVのIQフェーズをサポートする資料があります。ただしOQの実施は御社側の責任です。"
         },
         {
@@ -45,7 +45,7 @@
           "text": "電子署名機能はどうですか？Part 11では電子署名の一意性・非否認性が求められます。"
         },
         {
-          "speaker": "斉藤（NSSol）",
+          "speaker": "斉藤（NSSOL）",
           "text": "Entra ID + Microsoft Entra Verified IDを組み合わせると、デジタル証明書ベースの電子署名が実現できます。証明書の発行・失効・監査証跡をEntraで一元管理できます。"
         }
       ],

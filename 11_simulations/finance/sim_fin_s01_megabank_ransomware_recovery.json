@@ -72,7 +72,7 @@
     },
     {
       "id": "nssol",
-      "name": "松田（NSSol）",
+      "name": "松田（NSSOL）",
       "role": "シニアコンサルタント",
       "background": "IDM・PAM専門。金融機関導入実績12社。",
       "priorities": [
@@ -98,7 +98,7 @@
           "text": "金融庁から『ADのガバナンス改善計画を3ヶ月以内に提出せよ』と言われています。松田さん、今回の侵害の根本原因をどう整理しますか？"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "根本原因は3層あります。第一層：svc_backup01がDomain Adminグループに入っていた最小権限違反。第二層：ADの特権アカウント管理が人手で行われており、Tier分離が未実装。第三層：PAMがなかったため攻撃者の横移動を検知・遮断できなかった。",
           "subtext": "AD Tier Model（Tier 0/1/2）の不在が致命的。これは一社だけの問題ではなく、日本のほぼ全金融機関に共通する。"
         },
@@ -115,7 +115,7 @@
           "text": "それが問題の本質ですね。松田さん、3ヶ月でできる対策と、1年でやるべきことを分けて整理してもらえますか？"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "はい。3ヶ月の緊急対策は5点です。①全Domain AdminとEnterprise Adminの棚卸・削減、②KRBTGTパスワード変更（二重変更）、③PAMの緊急導入（まず高リスク500アカウント）、④AD Connectの同期スコープ見直し（サービスアカウントのEntraへの誤同期排除）、⑤VPNにMFA追加。1年では、AD Tier Model導入とIGA統合、そして2029年のMIM/WS2019 EOLに向けたEntra移行ロードマップ策定です。"
         },
         {
@@ -123,7 +123,7 @@
           "text": "PAMはCyberArkが業界標準ですよね？ただコストが心配です。"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "4万名規模でCyberArk PAMを全適用すると年間ライセンスで2〜3億円前後になります。ただし、PCI DSS非準拠の場合の制裁（カード取扱停止）と比較すると十分なROIが出ます。また段階導入として、まず特権IDのみ（500〜1000アカウント）から始める方法もあります。"
         }
       ],
@@ -143,7 +143,7 @@
           "text": "PAMの選定で悩んでいます。CyberArk、BeyondTrust、SecureCubeと、どれも営業から連絡が来ていて。"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "3製品の特徴を整理しましょう。CyberArkはグローバルでシェア1位ですが高価。BeyondTrustはコスト面で少し有利、機能は遜色ない。SecureCubeは日本製で地銀・保険の実績多数、UIが日本語で運用しやすい。御行の規模（4万名・12フォレスト・海外拠点）ではCyberArk一択に近いです。"
         },
         {
@@ -151,7 +151,7 @@
           "text": "PCI DSSのCDE環境の特権IDはどう扱いますか？"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "CDEへの特権アクセスはCyberArk PSMでセッション録画を取り、QRadarに証跡を転送する構成が標準です。これでPCI DSS Req 10.2（監査ログ）とReq 8.6（共有アカウント管理）を同時対応できます。"
         },
         {
@@ -159,7 +159,7 @@
           "text": "Azureとの統合はどうですか？我々は今Azure推進中なので。"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "CyberArk Cloud Entitlements ManagerとAzure PIM（Privileged Identity Management）を組み合わせる構成が最新のアーキテクチャです。オンプレはCyberArk PAMで、Azureリソースの特権はEntra PIMで管理し、両者をCyberArk経由で統合ダッシュボード化できます。2029年以降の完全クラウド移行を見据えても整合性が取れます。"
         }
       ],
@@ -179,7 +179,7 @@
           "text": "2029年1月にMIM 2016とWS2019のサポートが切れます。今からロードマップを引かないと間に合いません。"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "2029年問題はID管理の重大課題です。対応ルートは3つあります。ルートA：MIM→Entra ID Governanceへの完全移行（理想形）。ルートB：AD Connect + Entra ID Governanceのハイブリッド継続。ルートC：SailPoint等のIGAでAD/Entra両方を管理する中立化。"
         },
         {
@@ -187,7 +187,7 @@
           "text": "ルートAは夢物語ですよね。12フォレストをEntraだけにはできない。"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "おっしゃる通りです。現実解はルートBかCです。勘定系・コアバンキングシステムがオンプレに残る以上、ADは残ります。2029年に向けてWS2022への移行（5年延長）を今すぐ実施し、その間にEntra ID Governanceの適用範囲を段階拡大するのが現実的です。"
         },
         {
@@ -195,7 +195,7 @@
           "text": "CISRTへの報告も踏まえると、今回のインシデントを教訓に『ADのTier 0環境』を明確に定義して、そこへのアクセスをPAMで必ず通すようにしたい。"
         },
         {
-          "speaker": "松田（NSSol）",
+          "speaker": "松田（NSSOL）",
           "text": "それがAD Tiered Administration Modelです。ESAE（Enhanced Security Admin Environment）とも呼ばれます。Tier 0にはドメインコントローラー・Schema Masters等のAD基盤のみを置き、Tier 0管理者はTier 0専用の端末・アカウントのみを使います。今回の侵害はTier 1の一般サーバーからTier 0への到達を許したことが本質的な問題です。"
         }
       ],

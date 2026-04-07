@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build detail.html - comprehensive HTML reference for NSSol SEs and sales staff."""
+"""Build detail.html - comprehensive HTML reference for NSSOL SEs and sales staff."""
 
 import json
 import html
@@ -203,7 +203,7 @@ def build_sidebar():
     parts = ['<div id="sidebar">']
     parts.append('<div style="padding:16px;border-bottom:1px solid #334155">'
                  '<h1 style="color:#fff;margin:0;font-size:.95rem;font-weight:700">IDM参照ドキュメント</h1>'
-                 '<p style="color:#94a3b8;margin:4px 0 0;font-size:.72rem">NSSol SE・営業向け</p>'
+                 '<p style="color:#94a3b8;margin:4px 0 0;font-size:.72rem">NSSOL SE・営業向け</p>'
                  '</div>')
     for grp_name, links in NAV_GROUPS:
         parts.append(f'<h2>{e(grp_name)}</h2>')
@@ -1085,8 +1085,8 @@ def build_scenarios():
             persona_map = {p["id"]: p for p in personas}
 
             # Determine "right-aligned" roles (SE/consultant side)
-            right_roles = {"SIer提案SE", "SIer営業部長", "NSSol SE", "コンサルタント",
-                           "提案SE", "SE", "営業", "NSSolコンサルタント"}
+            right_roles = {"SIer提案SE", "SIer営業部長", "NSSOL SE", "コンサルタント",
+                           "提案SE", "SE", "営業", "NSSOLコンサルタント"}
 
             # Persona chips
             chip_html = " ".join(
@@ -1553,7 +1553,7 @@ def main():
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>IDM参照ドキュメント — NSSol SE・営業向け</title>
+<title>IDM参照ドキュメント — NSSOL SE・営業向け</title>
 <style>{CSS}</style>
 </head>
 <body>

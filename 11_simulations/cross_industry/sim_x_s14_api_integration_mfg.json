@@ -14,7 +14,7 @@
     },
     {
       "id": "nssol",
-      "name": "中田（NSSol）",
+      "name": "中田（NSSOL）",
       "role": "APIセキュリティ専門SE"
     }
   ],
@@ -28,7 +28,7 @@
           "text": "グループ内APIが15社でバラバラです。BasicなどHTTP基本認証もまだ残っています。"
         },
         {
-          "speaker": "中田（NSSol）",
+          "speaker": "中田（NSSOL）",
           "text": "Basic認証はHTTPS前提でも推奨しません。APIキーも管理が属人的になりやすい。グループ共通OAuth 2.0 Authorization ServerをEntra IDまたはAPIゲートウェイ（Apigee/Kong）上に設置し、全グループ会社がClient Credentialsフローで統一するのが最も保守コストが低い設計です。"
         },
         {
@@ -36,7 +36,7 @@
           "text": "証明書ベースも検討しています。"
         },
         {
-          "speaker": "中田（NSSol）",
+          "speaker": "中田（NSSOL）",
           "text": "mTLS＋OAuth 2.0の組み合わせが高セキュリティ要件に最適です。特に財務系・個人情報系APIはmTLSを追加することでAPIキー漏洩リスクをゼロにできます。HashiCorp VaultでグループのPKIを一元管理し、各社に証明書を動的発行するアーキテクチャを推奨します。"
         }
       ],
