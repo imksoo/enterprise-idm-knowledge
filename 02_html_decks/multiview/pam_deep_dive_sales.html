@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特権アクセス管理（PAM）完全ガイド | 営業・提案担当向け</title>
+<style>
+  :root {
+    --primary: #451a03;
+    --accent: #f59e0b;
+    --bg: #fffbf0;
+    --card: #fef3c7;
+    --text: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header p { opacity: 0.85; font-size: 0.95rem; }
+  .siblings {
+    background: #1a1a1a;
+    padding: 0.6rem 2rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .siblings span { color: #666; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  code {
+    background: #f0f0f0;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 0.8rem;
+    border-top: 1px solid #e0e0e0;
+  }
+</style>
+</head>
+<body>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;padding:1rem 2rem;background:#1a1a1a;"><a href="pam_deep_dive_exec.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">役員</a><a href="pam_deep_dive_technical.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">技術者</a><a href="pam_deep_dive_compliance.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">コンプライアンス</a><a href="pam_deep_dive_sales.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#451a03;color:#f59e0b;font-weight:bold;">営業</a></div>
+<header>
+  <div class="view-badge">営業・提案担当向け</div>
+  <h1>特権アクセス管理（PAM）完全ガイド</h1>
+  <p>サーバー管理者アカウントのセキュリティ設計</p>
+</header>
+<div class="siblings">
+  <span>他のビューで読む：</span>
+  <a href="pam_deep_dive_exec.html" style="color:#f4a261;text-decoration:underline;">役員・経営層向け</a>　|　<a href="pam_deep_dive_technical.html" style="color:#40c9a2;text-decoration:underline;">技術者・SE向け</a>　|　<a href="pam_deep_dive_compliance.html" style="color:#c77dff;text-decoration:underline;">コンプライアンス・内部監査向け</a>
+</div>
+<div class="container">
+
+<section>
+  <div class="sec-header">💡 顧客課題別 提案切り口</div>
+  <div class="sec-body">
+    <div class="highlight-box">
+      <h3>「管理者パスワードが共有されている」← 最多課題</h3>
+      <p><strong>営業トーク</strong>：「退職した外部SE のパスワードが今も使えるかもしれません。PAMのVault機能で全パスワードを管理すれば、退職と同時に自動失効できます。次の外部委託に渡すパスワードは使い捨てにできます。」</p>
+    </div>
+    <div class="highlight-box">
+      <h3>「セキュリティ監査でログが足りないと指摘された」</h3>
+      <p><strong>営業トーク</strong>：「セッション録画は監査証跡の最終兵器です。『誰が何をした』を動画で残せます。FISCや内部監査の要求も一括で対応できます。」</p>
+    </div>
+    <div class="highlight-box">
+      <h3>「ランサムウェア対策を強化したい」</h3>
+      <p><strong>営業トーク</strong>：「ランサムウェアの感染後、全社に広がるのは管理者権限の悪用が原因です。PAMのJIT機能で"管理者権限は使う時だけ"にすれば、感染しても被害を1台に封じ込めやすくなります。」</p>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="sec-header">🏆 競合製品比較（顧客への説明用）</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>製品</th><th>強み</th><th>弱み</th><th>向いている顧客</th></tr>
+      <tr><td>CyberArk</td><td>機能最多・グローバル実績</td><td>高価・導入複雑</td><td>金融・大手製造（セキュリティ最優先）</td></tr>
+      <tr><td>BeyondTrust</td><td>リモートサポートとの統合</td><td>ライセンス体系複雑</td><td>ヘルプデスク＋PAM統合ニーズ</td></tr>
+      <tr><td>Delinea</td><td>導入しやすさ・コスパ</td><td>CyberArk比で機能少</td><td>中堅企業・PAM初導入</td></tr>
+      <tr><td>SecureCube</td><td>日本語サポート・国産</td><td>グローバル機能弱い</td><td>国内規制優先・予算中程度</td></tr>
+      <tr><td>Teleport</td><td>クラウドネイティブ・低コスト</td><td>エンプラ機能弱い</td><td>クラウド中心・エンジニア文化</td></tr>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="sec-header">📅 標準提案ステップ（90日）</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>フェーズ</th><th>期間</th><th>アウトプット</th><th>NSSol関与</th></tr>
+      <tr><td>現状診断</td><td>2〜4週</td><td>特権アカウント棚卸・リスク評価</td><td>アセスメントサービス</td></tr>
+      <tr><td>製品選定</td><td>2〜4週</td><td>PoC・RFP支援</td><td>製品選定コンサル</td></tr>
+      <tr><td>設計・構築</td><td>2〜4ヶ月</td><td>PAM基盤・Vault構築</td><td>SI/インテグレーション</td></tr>
+      <tr><td>運用移行</td><td>1〜2ヶ月</td><td>既存パスワード移行・教育</td><td>PMO支援</td></tr>
+      <tr><td>継続運用</td><td>継続</td><td>監査対応・製品更新</td><td>保守・マネージドサービス</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 特権アクセス管理（PAM）完全ガイド (営業・提案担当向け)</p>
+  <p>このドキュメントは社内検討・提案用途向けです。</p>
+</footer>
+</body>
+</html>

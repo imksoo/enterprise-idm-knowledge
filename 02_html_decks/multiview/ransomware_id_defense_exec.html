@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ランサムウェア×ID統合防御ガイド | 役員・経営層向け</title>
+<style>
+  :root {
+    --primary: #1a1a2e;
+    --accent: #f4a261;
+    --bg: #f8f4ee;
+    --card: #fff8f0;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">👔 役員・経営層向け</div>
+  <h1>ランサムウェア×ID統合防御ガイド</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: ランサムウェア対策と ID 観点の防御 / 特権アクセス管理 / ランサムウェア侵害シナリオと ID 管理の根幹性
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">ransomware</span> <span class="tag">lateral movement</span> <span class="tag">Credential Guard</span> <span class="tag">Protected Users</span> <span class="tag">LSA Protection</span> <span class="tag">NTLM</span> <span class="tag">SMB</span> <span class="tag">microsegmentation</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> 役員・経営層向け</div>
+    <div class="item"><strong>所要時間:</strong> 5分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 経営判断に必要なリスク・投資・決断ポイントが分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="ransomware_id_defense_technical.html" style="color:var(--accent)">⚙️ IT技術者・SE向け</a> | <a href="ransomware_id_defense_sales.html" style="color:var(--accent)">💼 営業・プリセールス向け</a></div>
+  </div>
+<section><div class="sec-header">🎯 今日決めてほしいこと（3点）</div><div class="sec-body">
+        <div class="highlight-box">
+          <h3>決断 1: 日本企業での対策優先順位</h3>
+          <p>現実的な優先順位は、まず管理者分離、PAW、バックアップ ID 分離、Credential Guard、基本的なファイアウォール制御である。その次に NTLM 依存解消、マイクロセグメンテーション、Recovery Forest、分析自動化へ進む構成が実行しやすい。</p>
+        </div>
+        <div class="highlight-box">
+          <h3>決断 2: Windows LAPS と旧 Microsoft LAPS の違い</h3>
+          <p>Windows LAPS は OS 標準機能として統合され、AD と Entra ID の両保存先、パスフレーズ、ポスト認証アクション、旧ポリシー互換性を備える。一方で旧 Microsoft LAPS は AD 中心の追加導入型であり、今から新規採用する優先度は低い。</p>
+        </div>
+        <div class="highlight-box">
+          <h3>決断 3: Entra ID PIM の使いどころ</h3>
+          <p>クラウド管理ロール、Privileged Access Group、Azure リソース管理の常時権限を避ける中核機能として用いる。MFA、承認、理由入力、時間制限、通知を標準化し、恒久的な active assignment を例外化するべきである。</p>
+        </div></div></section><section><div class="sec-header">⚠️ 経営に直結するリスク</div><div class="sec-body"><table><thead><tr><th>リスク</th><th>事業への影響</th><th>対応の緊急度</th></tr></thead><tbody><tr><td><strong>Pass-the-Hash</strong></td><td>パスワードそのものではなくハッシュを再利用して横展開する代表的な攻撃手法。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr><tr><td><strong>Kerberoasting</strong></td><td>サービスチケットをオフライン解析してサービスアカウント秘密情報を狙う攻撃手法。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr><tr><td><strong>DCSync</strong></td><td>ドメインコントローラーになりすましてディレクトリ秘密情報を取得する攻撃手法。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr><tr><td><strong>Single Admin Compromise Scenario</strong></td><td>1 つの管理者アカウント侵害から DC、ファイルサーバー、バックアップ、仮想基盤まで同時に失陥する典型パターン。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr></tbody></table>
+    <div style="background:#fff5f5;border-left:4px solid #e53e3e;border-radius:0 8px 8px 0;padding:1rem;margin-top:1rem">
+      <strong>💡 経営層への補足:</strong>
+      ID管理の不備は「内部不正」「ランサムウェア」「情報漏洩」の全てに関連します。
+      一つの脆弱なアカウントが侵害されるだけで、システム全体への横展開が起きるリスクがあります。
+    </div></div></section><section><div class="sec-header">💰 投資対効果の考え方</div><div class="sec-body">
+        <div class="highlight-box">
+          <h3>日本企業での対策優先順位</h3>
+          <p>現実的な優先順位は、まず管理者分離、PAW、バックアップ ID 分離、Credential Guard、基本的なファイアウォール制御である。その次に NTLM 依存解消、マイクロセグメンテーション、Recovery Forest、分析自動化へ進む構成が実行しやすい。</p>
+        </div>
+    <div style="overflow-x:auto;margin-top:1rem"><table>
+      <thead><tr><th>シナリオ</th><th>コスト/損失規模</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>ランサムウェアインシデント（中規模企業）</td><td><strong>5,000万〜3億円</strong></td><td>身代金+復旧費+機会損失</td></tr>
+        <tr><td>情報漏洩（個人情報）</td><td><strong>1件あたり最大1,000万円</strong></td><td>課徴金+被害者対応+信頼毀損</td></tr>
+        <tr><td>内部不正による不正送金</td><td><strong>数百万〜数億円</strong></td><td>SOD未設定が主因</td></tr>
+        <tr><td>ID管理自動化による削減効果</td><td><strong>年間500〜2,000万円</strong></td><td>IT工数削減+ヘルプデスク削減</td></tr>
+        <tr><td>PAM導入による特権管理改善</td><td><strong>ROI 200〜400%（3年）</strong></td><td>Forrester Research 試算</td></tr>
+      </tbody>
+    </table></div>
+    <div style="background:#fff3cd;border-radius:8px;padding:1rem;margin-top:1rem;border-left:4px solid #f59e0b">
+      <strong>📌 経営判断のポイント:</strong>
+      セキュリティインシデント1件あたりの平均対応コストは数億円規模に達します。
+      ID管理基盤への先行投資は、インシデント発生時の損失額と比較すると合理的な選択です。
+      「予防コスト」は「復旧コスト」の平均10分の1以下です。
+    </div></div></section><section><div class="sec-header">📊 現状分析と対応方針</div><div class="sec-body">
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">Ransomware Defense</h3>
+          <p style="font-size:0.92rem">ランサムウェア侵害に対して、ID、認証、ネットワーク、バックアップ、監視を統合して防御する考え方。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">Lateral Movement</h3>
+          <p style="font-size:0.92rem">侵害者が 1 台の端末やサーバーから他の資産へ認証情報や管理プロトコルを使って移動する行為。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">SMB Signing</h3>
+          <p style="font-size:0.92rem">SMB 通信の完全性を検証し、中間者攻撃や改ざんを抑止する制御。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">NTLM Restriction</h3>
+          <p style="font-size:0.92rem">NTLM の利用を段階的に無効化または制限し、Kerberos 優先へ移行する制御。</p>
+        </div></div></section><section><div class="sec-header">🗺️ 推奨対応ロードマップ</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>フェーズ</th><th>期間目安</th><th>主な取組み</th><th>期待効果</th></tr></thead><tbody><tr>
+          <td><strong>フェーズ1: 現状把握・リスク評価</strong></td>
+          <td style="white-space:nowrap">1〜2ヶ月</td>
+          <td style="font-size:0.88rem">既存ID棚卸し・特権アカウント調査・セキュリティギャップ分析</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">優先対応箇所の特定・リスク可視化</td>
+        </tr><tr>
+          <td><strong>フェーズ2: 緊急対応</strong></td>
+          <td style="white-space:nowrap">2〜4ヶ月</td>
+          <td style="font-size:0.88rem">MFA全適用・特権アカウント統制・退職者アカウント即時無効化</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">高リスクの即時低減・インシデント発生確率の大幅削減</td>
+        </tr><tr>
+          <td><strong>フェーズ3: 基盤整備</strong></td>
+          <td style="white-space:nowrap">4〜12ヶ月</td>
+          <td style="font-size:0.88rem">ID管理ツール導入・自動プロビジョニング・クラウド移行計画策定</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">運用効率化・コンプライアンス対応基盤の確立</td>
+        </tr><tr>
+          <td><strong>フェーズ4: 高度化・自動化</strong></td>
+          <td style="white-space:nowrap">12〜24ヶ月</td>
+          <td style="font-size:0.88rem">IGA導入・ゼロトラスト移行・AI活用によるリスク検知強化</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">継続的なセキュリティ改善・先進的ID統治体制の確立</td>
+        </tr></tbody></table></div></div></section><section><div class="sec-header">🔑 このテーマの重要ポイント（技術詳細なし）</div><div class="sec-body">
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">横展開阻止の基本原則</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">ランサムウェア被害の深刻度は侵入そのものより横展開速度で決まる。SMB、RDP、WinRM、管理共有、共通管理者資格情報の同時対策が必要であり、単一制御だけでは止まりにくい。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">SMB 署名の位置づけ</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">SMB 署名は万能ではないが、通信完全性の確保により古い中間者的手口やセッション改ざんの余地を狭める。ファイルサーバー、管理共有、レプリケーション経路を含めて段階的に強制する価値がある。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">NTLM 無効化と制限</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">NTLM を一括停止するとレガシー業務が止まる場合があるため、監査から始めて依存先を洗い出し、管理者系アカウント、サーバー間通信、外部委託接続の順で縮退させるのが現実的である。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">管理共有の扱い</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">管理共有 `C$` や `ADMIN$` は完全無効化が難しい環境もある。その場合でも接続元を踏み台や管理セグメントに限定し、一般端末からの到達性を断つことが重要である。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">Credential Guard と LSA Protection</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">Credential Guard と LSA Protection はどちらも資格情報窃取耐性を高めるが、役割は異なる。前者は VBS による秘密情報分離、後者は `lsass.exe` の保護強化であり、併用することで防御層が厚くなる。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">Protected Users の適用先</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">Protected Users は高権限者へ先行適用する価値が高いが、古いプロトコル依存を抱えるサービスアカウントには不向きである。ドメイン管理者、バックアップ管理者、認証基盤管理者から段階導入するのがよい。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">DPAPI の実務上の注意</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">DPAPI 自体だけではなく、その前提となるユーザー資格情報やバックアップキー管理が重要である。侵害端末に保存されたブラウザ秘密情報やアプリ秘密情報の回収経路として見直す必要がある。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">ネットワーク分離と検疫</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">検疫はインシデント時に初めて考えると失敗する。事前に管理系、バックアップ系、業務系の許可通信を整理し、EDR 連携でサーバー単位の遮断や限定通信モードへ切り替えられるようにしておくべきである。</p>
+            </div></div></section><section><div class="sec-header">🧩 主要コンセプト概要</div><div class="sec-body"><div class="node-grid">
+            <div class="node-card">
+              <h4>Ransomware Defense</h4>
+              <p>ランサムウェア侵害に対して、ID、認証、ネットワーク、バックアップ、監視を統合して防御する考え方。</p>
+            </div>
+            <div class="node-card">
+              <h4>Lateral Movement</h4>
+              <p>侵害者が 1 台の端末やサーバーから他の資産へ認証情報や管理プロトコルを使って移動する行為。</p>
+            </div>
+            <div class="node-card">
+              <h4>SMB Signing</h4>
+              <p>SMB 通信の完全性を検証し、中間者攻撃や改ざんを抑止する制御。</p>
+            </div>
+            <div class="node-card">
+              <h4>NTLM Restriction</h4>
+              <p>NTLM の利用を段階的に無効化または制限し、Kerberos 優先へ移行する制御。</p>
+            </div>
+            <div class="node-card">
+              <h4>Administrative Share Disablement</h4>
+              <p>不要な管理共有 `C$` や `ADMIN$` を無効化または厳格制限して横展開経路を減らす設計。</p>
+            </div>
+            <div class="node-card">
+              <h4>Protected Users</h4>
+              <p>高権限ユーザーに対し、古い認証方式や長寿命チケットを制限する Active Directory セキュリティグループ。</p>
+            </div></div></div></section><section><div class="sec-header">❓ 経営層からよくある質問 Q&amp;A</div><div class="sec-body">
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「なぜ今このタイミングで？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">Windows Server 2012/2016のサポート終了（2023〜2027年）と2029年問題が重なる「移行の最終機会」です。放置するほどリスクと移行コストが増大します。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「クラウドに移行すれば安全になるのか？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">クラウドは手段であり、ID管理の設計が不適切なら従来と同じリスクが残ります。重要なのは「誰が何にアクセスできるか」を正しく制御することです。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「既存ベンダーに任せればよいのでは？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">ID管理は全システムの「鍵管理」です。特定ベンダー依存は長期リスクになります。オープン標準ベースの設計で依存度を下げることが重要です。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「何から始めればよいか？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">まず「特権アカウントの棚卸し」と「退職者アカウントの確認」から着手できます。コストゼロで高リスクを即座に可視化できます。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「セキュリティ投資は費用対効果が見えにくいのでは？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">インシデント発生時のコスト（復旧・賠償・信頼毀損）と比較すれば定量化できます。保険料と同じ発想で、「発生確率×損失額」で評価することを推奨します。</div>
+        </div></div></section>
+  <div class="sources">
+    ソースデータ: ランサムウェア対策と ID 観点の防御、特権アクセス管理、ランサムウェア侵害シナリオと ID 管理の根幹性<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "マルチビューHTML生成マニフェスト。1つのトピックを複数の読者視点で記述するための定義。",
+    "updated": "2026-04-07"
+  },
+  "views": {
+    "exec": {
+      "label": "役員・経営層向け",
+      "emoji": "👔",
+      "color_theme": {"primary": "#7c2d00", "accent": "#f4a261"},
+      "reading_time": "5分",
+      "focus": ["リスク（事業影響）", "費用対効果", "決断ポイント"],
+      "rules": ["技術用語を使わない", "数字・金額でリスクを表現", "意思決定を1点に絞る"]
+    },
+    "technical": {
+      "label": "IT技術者・SE向け",
+      "emoji": "⚙️",
+      "color_theme": {"primary": "#1b4332", "accent": "#40c9a2"},
+      "reading_time": "30分",
+      "focus": ["設計・アーキテクチャ", "製品機能比較", "実装手順"],
+      "rules": ["製品名・仕様番号を明記", "コマンド例・設定例を含む", "トラブルシューティングを含む"]
+    },
+    "compliance": {
+      "label": "監査・コンプライアンス向け",
+      "emoji": "📋",
+      "color_theme": {"primary": "#3d0066", "accent": "#c77dff"},
+      "reading_time": "15分",
+      "focus": ["規制名 × 要件の対応表", "証跡・ログ要件", "定期棚卸し手順"],
+      "rules": ["規制名と条文番号を明記", "チェックリスト形式を多用", "監査人が証拠として使える記述"]
+    },
+    "sales": {
+      "label": "営業・プリセールス向け",
+      "emoji": "💼",
+      "color_theme": {"primary": "#451a03", "accent": "#f59e0b"},
+      "reading_time": "20分",
+      "focus": ["顧客課題ヒアリング項目", "提案の論理構造", "製品ポジション・競合対比"],
+      "rules": ["顧客の言葉で語る", "NOの切り返し方を含む", "商談フェーズ別の使い方を明示"]
+    },
+    "beginner": {
+      "label": "非専門家・新任担当者向け",
+      "emoji": "📚",
+      "color_theme": {"primary": "#1e3a5f", "accent": "#60a5fa"},
+      "reading_time": "10分",
+      "focus": ["なぜ重要か（業務インパクト）", "基本概念の平易解説", "最初のアクション"],
+      "rules": ["専門用語ゼロ", "身近な例え（保険・鍵など）", "今週やることを具体的に"]
+    }
+  },
+  "topics": [
+    {
+      "id": "ransomware_id_defense",
+      "title": "ランサムウェアとID管理：統合防御ガイド",
+      "icon": "🦠",
+      "summary": "ランサムウェア攻撃の9割はID管理の弱点を突く。PAMとADセキュリティの統合防御設計。",
+      "tags": ["ランサムウェア", "PAM", "特権管理", "インシデント対応"],
+      "source_jsons": [
+        "06_security_hardening/ransomware_defense.json",
+        "06_security_hardening/privileged_access_management.json",
+        "06_security_hardening/ransomware_id_attack_scenarios.json"
+      ],
+      "views": ["exec", "technical", "sales"],
+      "related_scenarios": ["sim_x_s18_ransomware_postmortem", "sim_fin_s01_megabank_ransomware_recovery"]
+    },
+    {
+      "id": "iga_complete",
+      "title": "IGA完全ガイド：選定から運用まで",
+      "icon": "📊",
+      "summary": "IGA概念・製品選定・JML連携・運用KPIを一冊で理解する。",
+      "tags": ["IGA", "JML", "アクセス権棚卸し", "HR連携", "SailPoint", "Saviynt"],
+      "source_jsons": [
+        "09_iga/iga_framework.json",
+        "09_iga/jml_process.json",
+        "03_identity_architecture/iga_tool_comparison.json",
+        "10_lifecycle/hr_jml_integration.json"
+      ],
+      "views": ["exec", "technical", "compliance"],
+      "related_scenarios": ["sim_fin_s07_insurance_iga", "sim_fin_s23_insurance_agency_id"]
+    },
+    {
+      "id": "ad_modernization_2029",
+      "title": "ADモダナイゼーション × 2029年問題",
+      "icon": "🏛️",
+      "summary": "2029年WS2019/MIM EOLを契機に、ADからEntra IDへ段階的移行を設計する。",
+      "tags": ["Active Directory", "Entra ID", "2029年問題", "MIM EOL", "Hybrid Join"],
+      "source_jsons": [
+        "03_identity_architecture/identity_landscape.json",
+        "05_hybrid_scenarios/entra_hybrid_join.json",
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "07_migration_patterns/legacy_modernization.json"
+      ],
+      "views": ["exec", "technical", "sales"],
+      "related_scenarios": ["sim_x_s21_2029_problem", "sim_mfg_s09_nsc_ad_solaris"]
+    },
+    {
+      "id": "external_id_total",
+      "title": "外部ID管理トータルガイド",
+      "icon": "🌐",
+      "summary": "外部ID（代理店・協力会社・業務委託）の種類ごとの設計と、ランサムウェアリスクも含む統合ガイド。",
+      "tags": ["外部ID", "代理店", "協力会社", "B2B連携", "ゼロトラスト"],
+      "source_jsons": [
+        "09_external_connections/b2b_federation.json",
+        "09_external_connections/supply_chain_security.json",
+        "09_external_connections/b2b_partner_id.json",
+        "06_security_hardening/privileged_access_management.json"
+      ],
+      "views": ["technical", "compliance", "sales"],
+      "related_scenarios": ["sim_con_s11_genecon_external", "sim_x_s30_contractor_access"]
+    },
+    {
+      "id": "ma_id_playbook",
+      "title": "M&A後ID統合プレイブック",
+      "icon": "🤝",
+      "summary": "M&A後のID統合はDay1対応・テナント統合・AD統合の3段階。法的・技術・組織的障壁を超えるプレイブック。",
+      "tags": ["M&A", "テナント統合", "AD統合", "合併", "Day1対応"],
+      "source_jsons": [
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "03_identity_architecture/multi_forest_consolidation.json",
+        "10_lifecycle/id_ops_framework.json"
+      ],
+      "views": ["exec", "technical"],
+      "related_scenarios": ["sim_x_s04_trading_ma_integration", "sim_fin_s17_regional_bank_merger"]
+    },
+    {
+      "id": "pam_deep_dive",
+      "title": "PAM（特権アクセス管理）徹底解説",
+      "icon": "🔐",
+      "summary": "踏み台サーバーから特権ID管理まで。SecureCube・CyberArk・BeyondTrustの製品比較と実装ガイド。",
+      "tags": ["PAM", "特権管理", "踏み台", "SecureCube", "CyberArk", "セッション録画"],
+      "source_jsons": [
+        "06_security_hardening/privileged_access_management.json",
+        "03_identity_architecture/pam_tool_comparison.json",
+        "06_security_hardening/audit_log_operations.json"
+      ],
+      "views": ["exec", "technical", "compliance", "sales"],
+      "related_scenarios": ["sim_x_s18_ransomware_postmortem", "sim_fin_s10_regional_bank_group"]
+    },
+    {
+      "id": "zerotrust_architecture",
+      "title": "ゼロトラストアーキテクチャとID管理",
+      "icon": "🛡️",
+      "summary": "境界型セキュリティからゼロトラストへ。IDが中心となるセキュリティ設計の全体像。",
+      "tags": ["ゼロトラスト", "SASE", "条件付きアクセス", "継続的検証"],
+      "source_jsons": [
+        "05_hybrid_scenarios/vpn_sase_comparison.json",
+        "06_security_hardening/privileged_access_management.json",
+        "03_identity_architecture/identity_landscape.json"
+      ],
+      "views": ["exec", "technical", "sales"],
+      "related_scenarios": ["sim_x_s06_nttdata_zerotrust"]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M&amp;A後ID統合プレイブック | 役員・経営層向け</title>
+<style>
+  :root {
+    --primary: #1a1a2e;
+    --accent: #f4a261;
+    --bg: #f8f4ee;
+    --card: #fff8f0;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">👔 役員・経営層向け</div>
+  <h1>M&amp;A後ID統合プレイブック</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: Active Directory から Entra ID への移行パターン / マルチADフォレスト統合アーキテクチャガイド / ID運用管理フレームワーク
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">Active Directory</span> <span class="tag">Entra ID</span> <span class="tag">移行</span> <span class="tag">ハイブリッド</span> <span class="tag">日本企業</span> <span class="tag">レガシーシステム</span> <span class="tag">SIer</span> <span class="tag">運用</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> 役員・経営層向け</div>
+    <div class="item"><strong>所要時間:</strong> 5分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 経営判断に必要なリスク・投資・決断ポイントが分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="ma_id_playbook_technical.html" style="color:var(--accent)">⚙️ IT技術者・SE向け</a></div>
+  </div>
+<section><div class="sec-header">🎯 今日決めてほしいこと（3点）</div><div class="sec-body">
+        <div class="highlight-box">
+          <h3>決断 1: Kerberos依存アプリ棚卸し</h3>
+          <p>Kerberos依存アプリ棚卸しは、単なる資産管理ではなく、どのアプリが最後まで Active Directory を必要とするかを決める判断材料になる。</p>
+        </div>
+        <div class="highlight-box">
+          <h3>決断 2: SIer依存構造への対処</h3>
+          <p>SIer委託が前提でも、認証方式選定、例外承認、責任分界は社内が保持しないと、例外対応のたびに移行が後退する。</p>
+        </div></div></section><section><div class="sec-header">⚠️ 経営に直結するリスク</div><div class="sec-body"><table><thead><tr><th>リスク</th><th>事業への影響</th><th>対応の緊急度</th></tr></thead><tbody><tr><td><strong>NTLMとKerberosのレガシー依存</strong></td><td>認証改修が難しい業務アプリやファイル共有が残り、Entra ID 単独化を妨げる代表的な障壁。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr><tr><td><strong>SIer責任分界の曖昧化</strong></td><td>設計責任、運用責任、障害切り分けが分散し、移行判断が遅延する日本企業で典型的な障壁。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr><tr><td><strong>利用者教育不足</strong></td><td>Authenticator 登録、認証方式変更、端末再登録に対する理解不足が展開速度を落とすリスク。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr><tr><td><strong>フォールバック未設計</strong></td><td>同期停止、誤ポリシー適用、MFA 障害時の退避経路が定義されていないため業務停止につながるリスク。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr><tr><td><strong>オンプレミス基幹システム残存</strong></td><td>日本企業では基幹システムが最後まで Kerberos やドメイン参加を要求し、完全移行の最終障壁になりやすい。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr></tbody></table>
+    <div style="background:#fff5f5;border-left:4px solid #e53e3e;border-radius:0 8px 8px 0;padding:1rem;margin-top:1rem">
+      <strong>💡 経営層への補足:</strong>
+      ID管理の不備は「内部不正」「ランサムウェア」「情報漏洩」の全てに関連します。
+      一つの脆弱なアカウントが侵害されるだけで、システム全体への横展開が起きるリスクがあります。
+    </div></div></section><section><div class="sec-header">💰 投資対効果の考え方</div><div class="sec-body">
+        <div class="highlight-box">
+          <h3>移行パターン分類</h3>
+          <p>日本企業では Full Cloud よりも Hybrid Coexistence が現実的な主流になる。理由は、オンプレミス基幹システム、ベンダー保守、サーバー管理者運用が長く残るためである。</p>
+        </div>
+        <div class="highlight-box">
+          <h3>Lift &amp; Shift の位置づけ</h3>
+          <p>Lift &amp; Shift は移行の到達点ではなく、データセンター更改や期限対応のための延命策として使うべきである。Active Directory の設計問題をそのまま持ち込むため、将来の整理計画が必要になる。</p>
+        </div>
+        <div class="highlight-box">
+          <h3>Entra Domain Services の使い方</h3>
+          <p>Entra Domain Services は一部のレガシー依存を支える補完技術であり、既存 Active Directory の完全代替として期待しすぎないことが重要である。</p>
+        </div>
+    <div style="overflow-x:auto;margin-top:1rem"><table>
+      <thead><tr><th>シナリオ</th><th>コスト/損失規模</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>ランサムウェアインシデント（中規模企業）</td><td><strong>5,000万〜3億円</strong></td><td>身代金+復旧費+機会損失</td></tr>
+        <tr><td>情報漏洩（個人情報）</td><td><strong>1件あたり最大1,000万円</strong></td><td>課徴金+被害者対応+信頼毀損</td></tr>
+        <tr><td>内部不正による不正送金</td><td><strong>数百万〜数億円</strong></td><td>SOD未設定が主因</td></tr>
+        <tr><td>ID管理自動化による削減効果</td><td><strong>年間500〜2,000万円</strong></td><td>IT工数削減+ヘルプデスク削減</td></tr>
+        <tr><td>PAM導入による特権管理改善</td><td><strong>ROI 200〜400%（3年）</strong></td><td>Forrester Research 試算</td></tr>
+      </tbody>
+    </table></div>
+    <div style="background:#fff3cd;border-radius:8px;padding:1rem;margin-top:1rem;border-left:4px solid #f59e0b">
+      <strong>📌 経営判断のポイント:</strong>
+      セキュリティインシデント1件あたりの平均対応コストは数億円規模に達します。
+      ID管理基盤への先行投資は、インシデント発生時の損失額と比較すると合理的な選択です。
+      「予防コスト」は「復旧コスト」の平均10分の1以下です。
+    </div></div></section><section><div class="sec-header">📊 現状分析と対応方針</div><div class="sec-body">
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">Lift &amp; Shift</h3>
+          <p style="font-size:0.92rem">既存の Active Directory 依存を大きく変えずに Azure VM 上へ移す、または Entra Domain Services を補完利用して延命する移行パターン。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">Hybrid Coexistence</h3>
+          <p style="font-size:0.92rem">Active Directory と Entra ID を長期間併存させ、ユーザー・端末・アプリを段階的に移行する現実的な主流パターン。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">Full Cloud</h3>
+          <p style="font-size:0.92rem">新設組織やスタートアップのように Active Directory を持ち込まず、Entra ID を中心に端末・認証・運用を設計するパターン。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">Application-first</h3>
+          <p style="font-size:0.92rem">アプリケーションごとに認証基盤を切り替え、SAML や OpenID Connect 対応可能な領域から Entra ID に寄せるパターン。</p>
+        </div></div></section><section><div class="sec-header">🗺️ 推奨対応ロードマップ</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>フェーズ</th><th>期間目安</th><th>主な取組み</th><th>期待効果</th></tr></thead><tbody><tr>
+          <td><strong>フェーズ1: 現状把握・リスク評価</strong></td>
+          <td style="white-space:nowrap">1〜2ヶ月</td>
+          <td style="font-size:0.88rem">既存ID棚卸し・特権アカウント調査・セキュリティギャップ分析</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">優先対応箇所の特定・リスク可視化</td>
+        </tr><tr>
+          <td><strong>フェーズ2: 緊急対応</strong></td>
+          <td style="white-space:nowrap">2〜4ヶ月</td>
+          <td style="font-size:0.88rem">MFA全適用・特権アカウント統制・退職者アカウント即時無効化</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">高リスクの即時低減・インシデント発生確率の大幅削減</td>
+        </tr><tr>
+          <td><strong>フェーズ3: 基盤整備</strong></td>
+          <td style="white-space:nowrap">4〜12ヶ月</td>
+          <td style="font-size:0.88rem">ID管理ツール導入・自動プロビジョニング・クラウド移行計画策定</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">運用効率化・コンプライアンス対応基盤の確立</td>
+        </tr><tr>
+          <td><strong>フェーズ4: 高度化・自動化</strong></td>
+          <td style="white-space:nowrap">12〜24ヶ月</td>
+          <td style="font-size:0.88rem">IGA導入・ゼロトラスト移行・AI活用によるリスク検知強化</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">継続的なセキュリティ改善・先進的ID統治体制の確立</td>
+        </tr></tbody></table></div></div></section><section><div class="sec-header">🔑 このテーマの重要ポイント（技術詳細なし）</div><div class="sec-body">
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">Day 0 で失敗しやすい論点</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">孤立 OU、未使用アカウント、サービスアカウント、グループポリシー依存を放置すると、後続フェーズで例外運用が急増し、移行計画が止まりやすい。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">フェーズ1の基本方針</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">フェーズ1は大規模な認証改革ではなく、Entra Connect、Password Hash Synchronization、Entra Hybrid Join によりハイブリッド運用の安定基盤をつくる段階である。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">フェーズ2の展開順序</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">Conditional Access と Multi-Factor Authentication は技術設定よりも対象整理と利用者教育の成否が大きく、例外条件を先に設計する必要がある。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">フェーズ3の狙い</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">LAPS と Just-in-Time の導入は、侵害後の横展開を抑え、ベンダー保守や共有管理者 ID への依存を減らすことに意味がある。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">フェーズ4の現実</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">AD フリー化は 24 ヶ月以上の長期テーマになりやすく、端末を Entra Join に移せてもオンプレミス基幹システムや一部サーバー認証は残ることがある。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">障害時フォールバック</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">同期停止、誤ポリシー配布、MFA 利用不能に備えて、緊急除外アカウント、退避手順、ヘルプデスク導線を事前に定義するべきである。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">規模別の概算目安</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">小規模は 3 から 9 ヶ月、中規模は 9 から 18 ヶ月、大規模は 18 から 36 ヶ月以上を見込むべきであり、オンプレミス残存率と例外アプリ数で工期が大きく伸縮する。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">実行モデル比較</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">内製主導は標準化に強く、SIer委託は初速に強く、MSP活用は運用平準化に強い。多くの日本企業では三者を役割分担させる混成型が現実的である。</p>
+            </div></div></section><section><div class="sec-header">🧩 主要コンセプト概要</div><div class="sec-body"><div class="node-grid">
+            <div class="node-card">
+              <h4>Lift &amp; Shift</h4>
+              <p>既存の Active Directory 依存を大きく変えずに Azure VM 上へ移す、または Entra Domain Services を補完利用して延命する移行パターン。</p>
+            </div>
+            <div class="node-card">
+              <h4>Hybrid Coexistence</h4>
+              <p>Active Directory と Entra ID を長期間併存させ、ユーザー・端末・アプリを段階的に移行する現実的な主流パターン。</p>
+            </div>
+            <div class="node-card">
+              <h4>Full Cloud</h4>
+              <p>新設組織やスタートアップのように Active Directory を持ち込まず、Entra ID を中心に端末・認証・運用を設計するパターン。</p>
+            </div>
+            <div class="node-card">
+              <h4>Application-first</h4>
+              <p>アプリケーションごとに認証基盤を切り替え、SAML や OpenID Connect 対応可能な領域から Entra ID に寄せるパターン。</p>
+            </div>
+            <div class="node-card">
+              <h4>Password Hash Synchronization</h4>
+              <p>Active Directory のパスワード情報を Entra ID 側へ同期し、クラウド認証の足場を整える方式。</p>
+            </div>
+            <div class="node-card">
+              <h4>Entra Hybrid Join</h4>
+              <p>既存のドメイン参加端末を維持しつつ Entra ID 管理対象として登録する中間ステップ。</p>
+            </div></div></div></section><section><div class="sec-header">❓ 経営層からよくある質問 Q&amp;A</div><div class="sec-body">
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「なぜ今このタイミングで？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">Windows Server 2012/2016のサポート終了（2023〜2027年）と2029年問題が重なる「移行の最終機会」です。放置するほどリスクと移行コストが増大します。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「クラウドに移行すれば安全になるのか？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">クラウドは手段であり、ID管理の設計が不適切なら従来と同じリスクが残ります。重要なのは「誰が何にアクセスできるか」を正しく制御することです。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「既存ベンダーに任せればよいのでは？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">ID管理は全システムの「鍵管理」です。特定ベンダー依存は長期リスクになります。オープン標準ベースの設計で依存度を下げることが重要です。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「何から始めればよいか？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">まず「特権アカウントの棚卸し」と「退職者アカウントの確認」から着手できます。コストゼロで高リスクを即座に可視化できます。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「セキュリティ投資は費用対効果が見えにくいのでは？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">インシデント発生時のコスト（復旧・賠償・信頼毀損）と比較すれば定量化できます。保険料と同じ発想で、「発生確率×損失額」で評価することを推奨します。</div>
+        </div></div></section>
+  <div class="sources">
+    ソースデータ: Active Directory から Entra ID への移行パターン、マルチADフォレスト統合アーキテクチャガイド、ID運用管理フレームワーク<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

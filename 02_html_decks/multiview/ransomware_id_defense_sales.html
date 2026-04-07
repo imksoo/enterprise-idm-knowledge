@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ランサムウェア×ID統合防御ガイド | 営業・プリセールス向け</title>
+<style>
+  :root {
+    --primary: #7c2d00;
+    --accent: #f59e0b;
+    --bg: #fffbf0;
+    --card: #fff3cd;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">💼 営業・プリセールス向け</div>
+  <h1>ランサムウェア×ID統合防御ガイド</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: ランサムウェア対策と ID 観点の防御 / 特権アクセス管理 / ランサムウェア侵害シナリオと ID 管理の根幹性
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">ransomware</span> <span class="tag">lateral movement</span> <span class="tag">Credential Guard</span> <span class="tag">Protected Users</span> <span class="tag">LSA Protection</span> <span class="tag">NTLM</span> <span class="tag">SMB</span> <span class="tag">microsegmentation</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> 営業・プリセールス向け</div>
+    <div class="item"><strong>所要時間:</strong> 15分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 顧客提案に使える課題整理・競合比較・提案構成が分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="ransomware_id_defense_exec.html" style="color:var(--accent)">👔 役員・経営層向け</a> | <a href="ransomware_id_defense_technical.html" style="color:var(--accent)">⚙️ IT技術者・SE向け</a></div>
+  </div>
+<section><div class="sec-header">🎤 顧客ヒアリングチェックリスト（現状把握）</div><div class="sec-body"><h3 style="margin:1rem 0 0.5rem;color:var(--primary)">インフラ現状</h3><ul class="checklist"><li>Active Directory（AD）のドメイン数・サイト数は？</li><li>Windows Server / Linux サーバーの台数・バージョンは？</li><li>クラウドサービス（Azure / M365 / AWS）の利用状況は？</li><li>現在のID管理ツール（MIM/IDM製品など）は何を使用中？</li></ul><h3 style="margin:1rem 0 0.5rem;color:var(--primary)">セキュリティ現状</h3><ul class="checklist"><li>特権アカウントの管理方法（PAMツール導入済みか？）</li><li>MFA（多要素認証）の適用範囲は？</li><li>最近のセキュリティインシデント（ヒヤリハット含む）はあるか？</li><li>ランサムウェア対策・EDRの導入状況は？</li></ul><h3 style="margin:1rem 0 0.5rem;color:var(--primary)">課題・懸念</h3><ul class="checklist"><li>2029年Windows Server EOLへの対応計画は？</li><li>退職者・異動者のアカウント棚卸しはどう行っているか？</li><li>監査・コンプライアンス対応で困っていることは？</li><li>ID管理の運用工数・人員配置は？</li></ul><h3 style="margin:1rem 0 0.5rem;color:var(--primary)">予算・意思決定</h3><ul class="checklist"><li>セキュリティ・ID管理の年間予算規模は？</li><li>意思決定者は誰か（CISO/CIO/情シス部長）？</li><li>導入検討のタイムラインは？</li><li>既存ベンダー・SIerとの契約状況は？</li></ul><h3 style="margin:1rem 0 0.5rem;color:var(--primary)">このテーマ固有の確認事項</h3><ul class="checklist"><li>横展開阻止の基本原則 に関する現状・課題は？</li><li>SMB 署名の位置づけ に関する現状・課題は？</li><li>NTLM 無効化と制限 に関する現状・課題は？</li><li>管理共有の扱い に関する現状・課題は？</li><li>Credential Guard と LSA Protection に関する現状・課題は？</li></ul></div></section><section><div class="sec-header">🔄 よくある「NO」と切り返しトーク</div><div class="sec-body">
+        <div class="highlight-box" style="margin-bottom:1rem">
+          <h3 style="color:#7c2d00">顧客の声: 「今すぐ変える必要はない」</h3>
+          <p><strong>切り返し:</strong> 2029年のWindows Server EOLまでに移行しなければ、サポート終了後のセキュリティリスクが急増します。計画的に始めるほど移行コストを抑えられます。</p>
+        </div>
+        <div class="highlight-box" style="margin-bottom:1rem">
+          <h3 style="color:#7c2d00">顧客の声: 「予算がない」</h3>
+          <p><strong>切り返し:</strong> インシデント1件の対応コストは数千万〜数億円。予防投資との比較で経営層に提案できます。補助金・SECURITY ACTION制度も活用可能です。</p>
+        </div>
+        <div class="highlight-box" style="margin-bottom:1rem">
+          <h3 style="color:#7c2d00">顧客の声: 「既存システムで十分」</h3>
+          <p><strong>切り返し:</strong> 攻撃者は認証の弱点を狙います。現在の設定が最新の攻撃手法（Pass-the-Hash等）に対して有効かどうか、無料アセスメントで確認できます。</p>
+        </div>
+        <div class="highlight-box" style="margin-bottom:1rem">
+          <h3 style="color:#7c2d00">顧客の声: 「人手が足りない」</h3>
+          <p><strong>切り返し:</strong> むしろ、ID管理の自動化・クラウド移行で運用工数を削減できます。現状の手動対応の工数を計算し、ROIを示すことが効果的です。</p>
+        </div>
+        <div class="highlight-box" style="margin-bottom:1rem">
+          <h3 style="color:#7c2d00">顧客の声: 「ベンダーロックインが心配」</h3>
+          <p><strong>切り返し:</strong> オープン標準（SAML/OIDC/SCIM）ベースの設計を採用することで、ロックインリスクを最小化できます。</p>
+        </div></div></section><section><div class="sec-header">📄 提案書構成テンプレート</div><div class="sec-body"><ol style="padding-left:1.5rem"><li style="margin-bottom:0.8rem"><strong>エグゼクティブサマリー（1枚）</strong><br><span style="font-size:0.9rem;color:#666">現状の課題・推奨対応・投資対効果の概要</span></li><li style="margin-bottom:0.8rem"><strong>現状分析（2〜3枚）</strong><br><span style="font-size:0.9rem;color:#666">ヒアリング結果に基づく課題整理・リスクマップ</span></li><li style="margin-bottom:0.8rem"><strong>ソリューション概要（3〜4枚）</strong><br><span style="font-size:0.9rem;color:#666">提案するソリューション・アーキテクチャ図・主要機能</span></li><li style="margin-bottom:0.8rem"><strong>製品比較・選定理由（1〜2枚）</strong><br><span style="font-size:0.9rem;color:#666">競合との比較表・推奨理由・PoC結果</span></li><li style="margin-bottom:0.8rem"><strong>実装ロードマップ（2枚）</strong><br><span style="font-size:0.9rem;color:#666">フェーズ計画・マイルストーン・リソース要件</span></li><li style="margin-bottom:0.8rem"><strong>費用・投資対効果（1〜2枚）</strong><br><span style="font-size:0.9rem;color:#666">初期費用・ランニングコスト・ROI試算</span></li><li style="margin-bottom:0.8rem"><strong>リスクと緩和策（1枚）</strong><br><span style="font-size:0.9rem;color:#666">導入リスク・依存関係・移行時の注意点</span></li><li style="margin-bottom:0.8rem"><strong>サポート・保守体制（1枚）</strong><br><span style="font-size:0.9rem;color:#666">実装支援・運用支援・SLA</span></li><li style="margin-bottom:0.8rem"><strong>次のステップ（1枚）</strong><br><span style="font-size:0.9rem;color:#666">PoC提案・契約条件・スケジュール確認</span></li></ol></div></section><section><div class="sec-header">🏆 競合ポジション・差別化ポイント</div><div class="sec-body"><div class="node-grid">
+        <div class="node-card">
+          <h4>Credential Guard</h4>
+          <p>Windows の仮想化ベースセキュリティを利用し、資格情報の抽出を困難にする保護機能。</p>
+        </div>
+        <div class="node-card">
+          <h4>Entra ID Protection</h4>
+          <p>Entra ID のリスクベース検知と条件付きアクセス連携により、侵害済み ID の利用を抑制する機能。</p>
+        </div>
+        <div class="node-card">
+          <h4>Microsoft Sentinel</h4>
+          <p>クラウドネイティブ SIEM/SOAR として、AD や Entra ID に対する攻撃検知と対応自動化を担う。</p>
+        </div>
+        <div class="node-card">
+          <h4>Windows LAPS</h4>
+          <p>Windows 標準機能として提供されるローカル管理者パスワード管理。AD と Entra ID の両方に対応する。</p>
+        </div>
+        <div class="node-card">
+          <h4>Microsoft LAPS (Legacy)</h4>
+          <p>旧来の Microsoft LAPS。AD にローカル管理者パスワードを保管する追加導入型ソリューション。</p>
+        </div>
+        <div class="node-card">
+          <h4>Privileged Identity Management</h4>
+          <p>Entra ID 上で管理ロールやグループの昇格を時間制限付きで制御する機能。</p>
+        </div></div></div></section>
+  <div class="sources">
+    ソースデータ: ランサムウェア対策と ID 観点の防御、特権アクセス管理、ランサムウェア侵害シナリオと ID 管理の根幹性<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

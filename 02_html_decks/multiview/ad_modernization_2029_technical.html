@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADモダナイゼーション × 2029年問題対応ガイド | IT技術者・SE向け</title>
+<style>
+  :root {
+    --primary: #1b4332;
+    --accent: #40c9a2;
+    --bg: #f0faf5;
+    --card: #e8f5ee;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">⚙️ IT技術者・SE向け</div>
+  <h1>ADモダナイゼーション × 2029年問題対応ガイド</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: エンタープライズIDM全体地図 / Entra Hybrid Join とハイブリッド ID シナリオ / Active Directory から Entra ID への移行パターン / レガシーアプリID近代化パターン
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">overview</span> <span class="tag">architecture</span> <span class="tag">japan-context</span> <span class="tag">identity-management</span> <span class="tag">hybrid</span> <span class="tag">Entra ID</span> <span class="tag">Active Directory</span> <span class="tag">Entra Hybrid Join</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> IT技術者・SE向け</div>
+    <div class="item"><strong>所要時間:</strong> 30分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 設計・実装・製品選定に必要な技術詳細が分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="ad_modernization_2029_exec.html" style="color:var(--accent)">👔 役員・経営層向け</a> | <a href="ad_modernization_2029_sales.html" style="color:var(--accent)">💼 営業・プリセールス向け</a></div>
+  </div>
+<section><div class="sec-header">🏗️ アーキテクチャ概要・コンポーネント</div><div class="sec-body"><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">製品・ソリューション</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Active Directory</h4>
+              <p>Microsoftのオンプレミスディレクトリサービスで、日本企業のサーバー認証と端末管理の中核に残存しやすい。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> Microsoft</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> on-premises</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> legacy-but-dominant</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Microsoft Entra ID</h4>
+              <p>クラウド中心のID基盤。SaaS連携、条件付きアクセス、モダン認証の中心となる。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> Microsoft</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> cloud</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> strategic-target</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra Domain Services</h4>
+              <p>マネージドなドメイン機能を提供し、レガシーLDAPやKerberos依存の一部をクラウド寄りに収容する。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> Microsoft</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> managed-service</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> niche-bridge</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Okta Workforce Identity</h4>
+              <p>SaaS SSOとライフサイクル管理を中心に据えるクラウドID基盤。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> Okta</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> cloud</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> alternative-target</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Ping Identity</h4>
+              <p>大規模認証連携やポリシー制御に強いエンタープライズID製品群。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> Ping Identity</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> hybrid</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> specialized-alternative</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>ForgeRock</h4>
+              <p>高度な認証フローとアイデンティティオーケストレーションを扱えるID基盤。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> ForgeRock</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> hybrid</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> specialized-alternative</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>OneLogin</h4>
+              <p>SSOとIDライフサイクルを提供するクラウド型IDサービス。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> OneLogin</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> cloud</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> alternative-target</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>RHEL Identity Management (IdM)</h4>
+              <p>RHEL系サーバー向けの統合ID管理基盤で、Linux側の認証統制を担う。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>vendor:</strong> Red Hat</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deployment:</strong> on-premises</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> linux-control-plane</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">設計パターン</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Entra Hybrid Join</h4>
+              <p>Active DirectoryとMicrosoft Entra IDを併用して端末とユーザーを段階移行するハイブリッド構成。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>migration_role:</strong> bridge</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>device_scope:</strong> windows-endpoints</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> common-transition-pattern</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Domain Join</h4>
+              <p>サーバーや端末をActive Directoryに参加させて統合認証とポリシー適用を行う方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>identity_scope:</strong> machine-and-user</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>status:</strong> dominant-pattern</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Windows Integrated Authentication</h4>
+              <p>SQL ServerなどでKerberosやNTLMを使ってWindows資格情報で認証する方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>auth_style:</strong> integrated</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>preferred_for:</strong> managed-admin-access</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>SQL Authentication</h4>
+              <p>SQL Serverが独自に保持するID/パスワードで認証する方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>auth_style:</strong> database-local</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> medium-to-high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Kerberos Delegation</h4>
+              <p>フロントエンドからバックエンドへユーザー権限を委譲するためのKerberos構成。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>auth_style:</strong> delegated</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high-if-misconfigured</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Active Directory Domain Join</h4>
+              <p>Windows デバイスをオンプレミス Active Directory ドメインに参加させる従来方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>device_dependency:</strong> on-premises</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>cloud_readiness:</strong> low</div>
+              <span style="font-size:0.75rem;color:#aaa">[Entra Hybrid Join とハ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra Hybrid Join</h4>
+              <p>Active Directory Domain Join と Entra ID デバイス登録を同時に成立させるハイブリッド方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>device_dependency:</strong> hybrid</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>cloud_readiness:</strong> medium</div>
+              <span style="font-size:0.75rem;color:#aaa">[Entra Hybrid Join とハ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra Join</h4>
+              <p>デバイスを Entra ID のみへ参加させ、オンプレミス Active Directory ドメインに依存しない方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>device_dependency:</strong> cloud</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>cloud_readiness:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[Entra Hybrid Join とハ]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">概念・設計原則</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Local Administrator Account</h4>
+              <p>Windows Server上のローカル管理者権限アカウント。横展開の踏み台になりやすい。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> host-local</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Application Pool Identity</h4>
+              <p>IISアプリケーションプールが利用する実行ID。過剰権限だと侵害面が広がる。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> process-identity</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high-if-shared</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>pg_hba.conf</h4>
+              <p>PostgreSQLの接続元、DB、ユーザー、認証方式を制御する設定ファイル。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> database-access-control</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>platform:</strong> postgresql</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>SPN</h4>
+              <p>サービスとKerberos主体を結びつける識別子。重複や誤登録が認証障害と委任事故を招く。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> service-binding</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>criticality:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Service Account</h4>
+              <p>サービスやバッチが利用する非対話型アカウント。固定パスワード運用が多い。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> non-human-identity</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high-if-static</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Shared Account</h4>
+              <p>複数人で共有されるアカウント。責任追跡を阻害し、退職や委託終了時の棚卸し漏れを招く。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> human-identity</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Server Direct Login Operator</h4>
+              <p>サーバーへ直接ログインして保守作業を行う運用者。日本企業では恒常的に残存しやすい。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> human-admin</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>japan_common:</strong> True</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Japan Enterprise IT Environment</h4>
+              <p>オンプレミス残存、レガシー業務、SIer依存が混在する日本企業のIT運用環境。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> organizational-context</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>legacy_burden:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">プロトコル・標準</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>PAM</h4>
+              <p>Linux/Unixで認証方式を抽象化するプラガブル認証基盤。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>platform:</strong> linux</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> auth-framework</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Kerberos</h4>
+              <p>チケットベースの認証プロトコル。サーバー間認証とシングルサインオンの中核。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> ticket-based-authentication</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>sso_capable:</strong> True</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>LDAP</h4>
+              <p>ディレクトリ参照と認証連携に使われる標準プロトコル。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> directory-query</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>usage_scope:</strong> identity-lookup</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>CIFS/SMB</h4>
+              <p>Windowsファイル共有の中核プロトコルで、Kerberosと組み合わせた認証が重要になる。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> file-sharing</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>auth_dependency:</strong> kerberos</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Kerberos</h4>
+              <p>オンプレミス Windows 認証とサービスチケット発行の中心プロトコル。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>dependency_scope:</strong> legacy_and_core_systems</div>
+              <span style="font-size:0.75rem;color:#aaa">[Entra Hybrid Join とハ]</span>
+            </div>
+            <div class="node-card">
+              <h4>LDAP over TLS</h4>
+              <p>LDAPにTLSを追加した安全な通信方式。平文LDAPからの移行ステップ。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[レガシーアプリID近代化パターン]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">リスク・脅威</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>SIer Dependency</h4>
+              <p>運用委託先にID作成や削除を依存し、内部統制が形骸化する日本型ITの構造リスク。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>context:</strong> japan-enterprise</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Orphaned Account</h4>
+              <p>退職者や契約終了者に紐づく利用実態のない残存アカウント。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> identity-lifecycle</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Pass-the-Hash</h4>
+              <p>NTLMハッシュを再利用して認証を突破する横展開攻撃。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>attack_stage:</strong> post-compromise</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Pass-the-Ticket</h4>
+              <p>Kerberosチケットを窃取・再利用して権限を偽装する攻撃。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>attack_stage:</strong> post-compromise</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Golden Ticket Attack</h4>
+              <p>KRBTGT情報を悪用して任意のKerberosチケットを生成するドメイン支配級の攻撃。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>attack_stage:</strong> domain-compromise</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> critical</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Silver Ticket Attack</h4>
+              <p>特定サービスの資格情報からサービスチケットを偽造する攻撃。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>attack_stage:</strong> service-compromise</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Lateral Movement</h4>
+              <p>侵害後にサーバー間・管理系統間で権限を拡大する横展開。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>attack_stage:</strong> post-compromise</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> critical</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div>
+            <div class="node-card">
+              <h4>Domain Admin Compromise</h4>
+              <p>単一の高権限管理者侵害がドメイン全体の制御喪失につながる状態。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>attack_stage:</strong> full-compromise</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>risk_level:</strong> critical</div>
+              <span style="font-size:0.75rem;color:#aaa">[エンタープライズIDM全体地図]</span>
+            </div></div></div></section><section><div class="sec-header">📊 製品・ソリューション一覧</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>製品名</th><th>概要</th><th>ソース</th></tr></thead><tbody><tr>
+                  <td><strong>Active Directory</strong></td>
+                  <td>Microsoftのオンプレミスディレクトリサービスで、日本企業のサーバー認証と端末管理の中核に残存しやすい。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>Microsoft Entra ID</strong></td>
+                  <td>クラウド中心のID基盤。SaaS連携、条件付きアクセス、モダン認証の中心となる。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>Entra Domain Services</strong></td>
+                  <td>マネージドなドメイン機能を提供し、レガシーLDAPやKerberos依存の一部をクラウド寄りに収容する。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>Okta Workforce Identity</strong></td>
+                  <td>SaaS SSOとライフサイクル管理を中心に据えるクラウドID基盤。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>Ping Identity</strong></td>
+                  <td>大規模認証連携やポリシー制御に強いエンタープライズID製品群。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>ForgeRock</strong></td>
+                  <td>高度な認証フローとアイデンティティオーケストレーションを扱えるID基盤。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>OneLogin</strong></td>
+                  <td>SSOとIDライフサイクルを提供するクラウド型IDサービス。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>RHEL Identity Management (IdM)</strong></td>
+                  <td>RHEL系サーバー向けの統合ID管理基盤で、Linux側の認証統制を担う。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>FreeIPA</strong></td>
+                  <td>Linux/Unix中心のディレクトリ、Kerberos、証明書管理を統合するOSS基盤。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>Windows Server</strong></td>
+                  <td>日本企業の業務サーバーで広く残存するWindows系サーバープラットフォーム。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>RHEL / Linux</strong></td>
+                  <td>基幹系、ミドルウェア、OSSスタックのホストとなるLinux系サーバー。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>Windows LAPS</strong></td>
+                  <td>Windowsのローカル管理者パスワードを個別化・ローテーションする仕組み。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>SSSD</strong></td>
+                  <td>Linuxで外部ディレクトリと認証情報を連携するデーモン。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>gMSA</strong></td>
+                  <td>WindowsサービスやIISアプリケーションプール向けのグループ管理サービスアカウント。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr><tr>
+                  <td><strong>SQL Server</strong></td>
+                  <td>Windows統合認証と独自認証を併用しやすいデータベース製品。</td>
+                  <td style="font-size:0.8rem;color:#888">エンタープライズIDM全体地図</td>
+                </tr></tbody></table></div></div></section><section><div class="sec-header">📚 技術知識・設計ポイント</div><div class="sec-body">
+        <div class="knowledge-item">
+          <h4>日本企業のAD依存実態</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>サーバー直接ログイン運用の残存</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>共有アカウント乱用の問題</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>サービスアカウント固定パスワードの危険</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>SIer依存とライフサイクル統制不備</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>クラウドID導入後もADは消えにくい</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra Hybrid Joinの位置づけ</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra Domain Servicesの適用境界</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Linux系統合認証の設計要点</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>gMSAの価値</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>SQL Server認証方式の使い分け</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>IIS委任とSPN管理</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>PostgreSQLの外部認証統制</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>CIFS/SMBとKerberos</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Pass-the-Hashから全落ちまでの連鎖</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>単一高権限侵害の破壊力</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>デバイス参加モデル比較</h4>
+          <p>Active Directory Domain Join はグループポリシーや Kerberos 互換性で有利だが、クラウド条件付きアクセスとの直接連携は弱い。Entra Hybrid Join は既存端末を活かしながらクラウド管理へ橋渡しできる。Entra Join は最終形として望ましいが、オンプレミス依存アプリが多い段階では拙速に適用しない。Entra Registered は BYOD や外部協力会社端末向けであり、標準企業端末の置換ではない。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra Hybrid Join の位置づけ</h4>
+          <p>Entra Hybrid Join は完成形というより移行の中継地点である。既存の Active Directory Domain Join を壊さずに Entra ID 側のデバイス認識を与え、Conditional Access や Intune の適用対象を広げる役割が大きい。長期固定化すると運用二重化が残るため、出口戦略を持って導入する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>前提条件とアーキテクチャ</h4>
+          <p>Entra Hybrid Join では、Active Directory のコンピューターオブジェクト整備、Entra Connect Sync の健全性、クライアントの到達性、時刻同期、証明書や SCP 設定などの前提が崩れると登録不整合が起きやすい。設計段階で OU 構成、プロキシ、インターネット出口、端末更新方式を確認する必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra Connect Sync の役割</h4>
+          <p>Entra Connect Sync はユーザー同期だけでなく、ハイブリッド構成ではデバイス属性と認証方式の一貫性維持にも影響する中核部品である。同期ルールの複雑化や委託運用の属人化は障害時の切り分けを難しくするため、変更管理と監視を厳格にする。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Seamless SSO の使いどころ</h4>
+          <p>Seamless SSO は社内ネットワークやドメイン参加端末を前提にユーザー体験を改善するが、ゼロトラストそのものではない。PHS と組み合わせて SaaS サインインの摩擦を減らす用途には有効だが、認証強化の主役は Conditional Access と MFA である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Device Writeback の扱い</h4>
+          <p>Device Writeback は一部シナリオでは有用だが、全社標準として必須ではない。目的が曖昧なまま有効化すると、Active Directory 側の設計複雑性だけが増える。必要機能を明示し、不要なら採用しない判断が妥当である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>PHS の評価</h4>
+          <p>Password Hash Synchronization は運用単純性、可用性、障害時の独立性で優れる。日本企業では AD FS の複雑運用を避けたいケースが多く、まず PHS を既定値として評価するのが現実的である。セキュリティ統制は MFA と Conditional Access で補強する前提で考える。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>PTA の評価</h4>
+          <p>Pass-through Authentication は認証判定をオンプレミスに残せるため、一部統制要件には適合しやすい。一方で、エージェント可用性、ネットワーク経路、障害時の依存関係が増える。明確な要件がない限り、PHS より優先する理由は弱い。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Federation の評価</h4>
+          <p>Federation は高度な制御や既存投資活用を理由に残ることがあるが、Active Directory Federation Services の可用性設計、証明書、プロキシ、障害時対応は重い。新規導入の第一選択にはしにくく、既存運用がある場合も縮退計画を持つべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Okta との共存</h4>
+          <p>Okta AD Agent と Okta Universal Directory を使う環境では、Okta をアプリ統合ハブ、Entra ID を Microsoft 系管理プレーンとして役割分担する設計があり得る。二重マスター化を避けるため、属性の正本、認証の責任境界、MFA 実施点を明文化する必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ1の狙い</h4>
+          <p>フェーズ1では端末更改や業務アプリ改修を待たずに、Entra Connect Sync と PHS でクラウド SSO を先に始める。早期の成功体験を作り、以後の MFA 展開やデバイス統合に必要な組織的支持を確保しやすくする。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ2の狙い</h4>
+          <p>フェーズ2では既存のドメイン参加 PC を生かしながら Entra Hybrid Join と Intune 連携を広げ、端末可視化とポリシー移行の土台を作る。グループポリシーを即時廃止するのではなく、競合を避けつつ新旧ポリシーを整理する進め方が重要である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ3の狙い</h4>
+          <p>フェーズ3で初めてセキュリティ水準が実質的に引き上がる。全社 MFA、管理者への強化ポリシー、非準拠端末制限、国外アクセス制御などを段階的に適用し、ID を境界とする防御へ転換する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ4の狙い</h4>
+          <p>完全 Entra Join への移行は、Windows 管理の主軸をクラウドへ移す最終段階である。新規配備端末から切り替え、既存端末は更改タイミングで置換するほうが現実的である。AD 依存アプリの残存分は隔離・限定運用で縮退させる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>日本企業の課題</h4>
+          <p>日本企業では、SIer が運用する Active Directory の変更に契約調整が必要で、技術的に可能でも意思決定が遅れることが多い。また、基幹システムや共有ファイル基盤が Kerberos 前提のため、認証モダナイズとアプリ刷新を切り離して段階設計する必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>レガシーアプリ共存期間の考え方</h4>
+          <p>レガシーアプリケーションが Active Directory 認証に依存する期間は避けにくい。そのため、ユーザー認証のクラウド化と、サーバーサイドの Kerberos 依存解消は別トラックで管理する。端末参加方式だけを先に変えても、バックエンド認証が残れば Active Directory は直ちには消えない。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>日本での推奨</h4>
+          <p>日本での推奨は、まず PHS でクラウド認証基盤を安定化し、既存 Windows 端末には期間限定で Entra Hybrid Join を適用し、Conditional Access と MFA を定着させた後に Entra Join へ移る流れである。PTA や Federation は明確な要件がある場合に限定し、標準アーキテクチャにはしない。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>移行パターン分類</h4>
+          <p>日本企業では Full Cloud よりも Hybrid Coexistence が現実的な主流になる。理由は、オンプレミス基幹システム、ベンダー保守、サーバー管理者運用が長く残るためである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Lift &amp; Shift の位置づけ</h4>
+          <p>Lift &amp; Shift は移行の到達点ではなく、データセンター更改や期限対応のための延命策として使うべきである。Active Directory の設計問題をそのまま持ち込むため、将来の整理計画が必要になる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra Domain Services の使い方</h4>
+          <p>Entra Domain Services は一部のレガシー依存を支える補完技術であり、既存 Active Directory の完全代替として期待しすぎないことが重要である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Day 0 で失敗しやすい論点</h4>
+          <p>孤立 OU、未使用アカウント、サービスアカウント、グループポリシー依存を放置すると、後続フェーズで例外運用が急増し、移行計画が止まりやすい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Kerberos依存アプリ棚卸し</h4>
+          <p>Kerberos依存アプリ棚卸しは、単なる資産管理ではなく、どのアプリが最後まで Active Directory を必要とするかを決める判断材料になる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ1の基本方針</h4>
+          <p>フェーズ1は大規模な認証改革ではなく、Entra Connect、Password Hash Synchronization、Entra Hybrid Join によりハイブリッド運用の安定基盤をつくる段階である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ2の展開順序</h4>
+          <p>Conditional Access と Multi-Factor Authentication は技術設定よりも対象整理と利用者教育の成否が大きく、例外条件を先に設計する必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ3の狙い</h4>
+          <p>LAPS と Just-in-Time の導入は、侵害後の横展開を抑え、ベンダー保守や共有管理者 ID への依存を減らすことに意味がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ4の現実</h4>
+          <p>AD フリー化は 24 ヶ月以上の長期テーマになりやすく、端末を Entra Join に移せてもオンプレミス基幹システムや一部サーバー認証は残ることがある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>障害時フォールバック</h4>
+          <p>同期停止、誤ポリシー配布、MFA 利用不能に備えて、緊急除外アカウント、退避手順、ヘルプデスク導線を事前に定義するべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>SIer依存構造への対処</h4>
+          <p>SIer委託が前提でも、認証方式選定、例外承認、責任分界は社内が保持しないと、例外対応のたびに移行が後退する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>規模別の概算目安</h4>
+          <p>小規模は 3 から 9 ヶ月、中規模は 9 から 18 ヶ月、大規模は 18 から 36 ヶ月以上を見込むべきであり、オンプレミス残存率と例外アプリ数で工期が大きく伸縮する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>実行モデル比較</h4>
+          <p>内製主導は標準化に強く、SIer委託は初速に強く、MSP活用は運用平準化に強い。多くの日本企業では三者を役割分担させる混成型が現実的である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>ベンダー管理アカウントの扱い</h4>
+          <p>保守契約に紐づく共有 ID を放置すると、Multi-Factor Authentication と Just-in-Time の統制が崩れるため、アカウント棚卸しと契約改定を同時に進める必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>日本固有の業務要件</h4>
+          <p>年号・元号、帳票、旧式クライアントの制約は技術負債として残りやすく、Application-first で対象業務ごとに改修順序を切る方が失敗しにくい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>モダンセキュリティ観点の結論</h4>
+          <p>Active Directory から Entra ID への移行は、ディレクトリの置換ではなく、認証強度、特権統制、端末管理、運用責任の再設計として扱うべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div></div></section><section><div class="sec-header">🔧 実装・設定ステップ</div><div class="sec-body"><ol style="padding-left:1.5rem">
+        <li style="margin-bottom:1rem">
+          <strong>Linux系統合認証の設計要点</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem"></p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Entra Hybrid Join の位置づけ</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Entra Hybrid Join は完成形というより移行の中継地点である。既存の Active Directory Domain Join を壊さずに Entra ID 側のデバイス認識を与え、Conditional Access や Intune の適用対象を広げる役割が大きい。長期固定化すると運用二重化が残るため、出口戦略を持って導入する。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>前提条件とアーキテクチャ</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Entra Hybrid Join では、Active Directory のコンピューターオブジェクト整備、Entra Connect Sync の健全性、クライアントの到達性、時刻同期、証明書や SCP 設定などの前提が崩れると登録不整合が起きやすい。設計段階で OU 構成、プロキシ、インターネット出口、端末更新方式を確認する必要がある。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Entra Connect Sync の役割</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Entra Connect Sync はユーザー同期だけでなく、ハイブリッド構成ではデバイス属性と認証方式の一貫性維持にも影響する中核部品である。同期ルールの複雑化や委託運用の属人化は障害時の切り分けを難しくするため、変更管理と監視を厳格にする。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Device Writeback の扱い</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Device Writeback は一部シナリオでは有用だが、全社標準として必須ではない。目的が曖昧なまま有効化すると、Active Directory 側の設計複雑性だけが増える。必要機能を明示し、不要なら採用しない判断が妥当である。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Federation の評価</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Federation は高度な制御や既存投資活用を理由に残ることがあるが、Active Directory Federation Services の可用性設計、証明書、プロキシ、障害時対応は重い。新規導入の第一選択にはしにくく、既存運用がある場合も縮退計画を持つべきである。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Okta との共存</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Okta AD Agent と Okta Universal Directory を使う環境では、Okta をアプリ統合ハブ、Entra ID を Microsoft 系管理プレーンとして役割分担する設計があり得る。二重マスター化を避けるため、属性の正本、認証の責任境界、MFA 実施点を明文化する必要がある。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>フェーズ2の狙い</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">フェーズ2では既存のドメイン参加 PC を生かしながら Entra Hybrid Join と Intune 連携を広げ、端末可視化とポリシー移行の土台を作る。グループポリシーを即時廃止するのではなく、競合を避けつつ新旧ポリシーを整理する進め方が重要である。</p>
+        </li></ol>
+    <div style="background:#1a1a2e;color:#40c9a2;padding:1.2rem;border-radius:8px;margin-top:1.5rem;font-family:monospace;font-size:0.88rem">
+      <div style="color:#f4a261;margin-bottom:0.5rem"># PowerShell / Entra CLI コマンド例</div>
+      <div># Entra ID 条件付きアクセスポリシー確認</div>
+      <div>Get-MgIdentityConditionalAccessPolicy | Format-Table DisplayName, State</div>
+      <div style="margin-top:0.5rem"># Azure AD Connect 同期状態確認</div>
+      <div>Get-ADSyncScheduler</div>
+      <div style="margin-top:0.5rem"># 特権ロール割り当て一覧</div>
+      <div>Get-MgRoleManagementDirectoryRoleAssignment | Where-Object {$_.PrincipalId -ne $null}</div>
+      <div style="margin-top:0.5rem"># PAM セッション一覧（CyberArk CLI 例）</div>
+      <div>Get-PVSession -safe "Windows_Domain_Admins"</div>
+    </div></div></section><section><div class="sec-header">🔗 コンポーネント依存関係・連携</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>From</th><th>関係</th><th>To</th><th>説明</th></tr></thead><tbody><tr>
+              <td>node_042</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">日本企業の既存環境ではActive Directoryが認証基盤として残存しやすい。</td>
+            </tr><tr>
+              <td>node_042</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_033</td>
+              <td style="font-size:0.85rem">日本型IT環境ではSIer依存がID管理上の構造課題として併存する。</td>
+            </tr><tr>
+              <td>node_042</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_041</td>
+              <td style="font-size:0.85rem">運用実務上、サーバー直接ログイン運用者が一定数残りやすい。</td>
+            </tr><tr>
+              <td>node_001</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_014</td>
+              <td style="font-size:0.85rem">Active Directoryはドメイン参加を前提に統合認証を提供する。</td>
+            </tr><tr>
+              <td>node_014</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_011</td>
+              <td style="font-size:0.85rem">Windows Serverはドメイン参加により統合管理しやすくなる。</td>
+            </tr><tr>
+              <td>node_014</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_012</td>
+              <td style="font-size:0.85rem">RHEL / LinuxもSSSDやKerberos連携を通じてドメイン統合される場合がある。</td>
+            </tr><tr>
+              <td>node_011</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_013</td>
+              <td style="font-size:0.85rem">Windows Serverにはローカル管理者アカウントが標準的に存在する。</td>
+            </tr><tr>
+              <td>node_015</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_013</td>
+              <td style="font-size:0.85rem">Windows LAPSはローカル管理者の共通パスワード運用を抑止する。</td>
+            </tr><tr>
+              <td>node_015</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_035</td>
+              <td style="font-size:0.85rem">各端末・各サーバーで異なるローカル管理者資格情報によりPass-the-Hashの踏み台化を抑える。</td>
+            </tr><tr>
+              <td>node_012</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_016</td>
+              <td style="font-size:0.85rem">RHEL / LinuxではPAMが認証制御の基本層となる。</td>
+            </tr><tr>
+              <td>node_012</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_017</td>
+              <td style="font-size:0.85rem">LinuxサーバーはSSSDで外部ディレクトリと連携しやすい。</td>
+            </tr><tr>
+              <td>node_017</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_016</td>
+              <td style="font-size:0.85rem">SSSDはPAMと組み合わせてログイン認証を成立させる。</td>
+            </tr><tr>
+              <td>node_017</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_018</td>
+              <td style="font-size:0.85rem">SSSDはKerberos連携を通じてチケットベース認証を利用することが多い。</td>
+            </tr><tr>
+              <td>node_017</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_019</td>
+              <td style="font-size:0.85rem">SSSDはLDAPでディレクトリ属性参照を行う構成が一般的である。</td>
+            </tr><tr>
+              <td>node_009</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_010</td>
+              <td style="font-size:0.85rem">RHEL Identity ManagementはFreeIPA系アーキテクチャに近い実装として捉えられる。</td>
+            </tr><tr>
+              <td>node_009</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_012</td>
+              <td style="font-size:0.85rem">RHEL Identity ManagementはLinuxサーバー群の統合ID管理に適する。</td>
+            </tr><tr>
+              <td>node_010</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_018</td>
+              <td style="font-size:0.85rem">FreeIPAはKerberosを中核認証機構として利用する。</td>
+            </tr><tr>
+              <td>node_010</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_019</td>
+              <td style="font-size:0.85rem">FreeIPAはLDAPディレクトリを構成要素として持つ。</td>
+            </tr><tr>
+              <td>node_002</td>
+              <td><span class="tag">replaces</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">Microsoft Entra IDはクラウド中心領域でActive Directoryを段階的に代替する。</td>
+            </tr><tr>
+              <td>node_003</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">Entra Hybrid Joinは既存のActive Directory資産を前提とする。</td>
+            </tr></tbody></table></div></div></section><section><div class="sec-header">🔧 トラブルシューティング・設計上の注意点</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>症状・問題</th><th>原因・背景</th><th>対応方法</th></tr></thead><tbody><tr>
+          <td><strong>共有アカウント乱用の問題</strong></td>
+          <td style="font-size:0.85rem"></td>
+          <td style="font-size:0.85rem"></td>
+        </tr><tr>
+          <td><strong>フェーズ3の狙い</strong></td>
+          <td style="font-size:0.85rem">フェーズ3で初めてセキュリティ水準が実質的に引き上がる。全社 MFA、管理者への強化ポリシ</td>
+          <td style="font-size:0.85rem">ー、非準拠端末制限、国外アクセス制御などを段階的に適用し、ID を境界とする防御へ転換する。</td>
+        </tr><tr>
+          <td><strong>日本企業の課題</strong></td>
+          <td style="font-size:0.85rem">日本企業では、SIer が運用する Active Directory の変更に契約調整が必要で、技術的に可能でも意思決定が遅れることが多</td>
+          <td style="font-size:0.85rem">い。また、基幹システムや共有ファイル基盤が Kerberos 前提のため、認証モダナイズとアプリ刷新を切り離して段階設計する必要がある。</td>
+        </tr><tr>
+          <td><strong>Lift &amp; Shift の位置づけ</strong></td>
+          <td style="font-size:0.85rem">Lift &amp; Shift は移行の到達点ではなく、データセンター更改や期限対応のための延命策として使うべ</td>
+          <td style="font-size:0.85rem">きである。Active Directory の設計問題をそのまま持ち込むため、将来の整理計画が必要になる。</td>
+        </tr><tr>
+          <td><strong>Day 0 で失敗しやすい論点</strong></td>
+          <td style="font-size:0.85rem">孤立 OU、未使用アカウント、サービスアカウント、グループポリシー依存</td>
+          <td style="font-size:0.85rem">を放置すると、後続フェーズで例外運用が急増し、移行計画が止まりやすい。</td>
+        </tr></tbody></table></div></div></section>
+  <div class="sources">
+    ソースデータ: エンタープライズIDM全体地図、Entra Hybrid Join とハイブリッド ID シナリオ、Active Directory から Entra ID への移行パターン、レガシーアプリID近代化パターン<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

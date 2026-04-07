@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特権アクセス管理（PAM）完全ガイド | 技術者・SE向け</title>
+<style>
+  :root {
+    --primary: #1b4332;
+    --accent: #40c9a2;
+    --bg: #f0faf5;
+    --card: #e8f8f0;
+    --text: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header p { opacity: 0.85; font-size: 0.95rem; }
+  .siblings {
+    background: #1a1a1a;
+    padding: 0.6rem 2rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .siblings span { color: #666; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  code {
+    background: #f0f0f0;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 0.8rem;
+    border-top: 1px solid #e0e0e0;
+  }
+</style>
+</head>
+<body>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;padding:1rem 2rem;background:#1a1a1a;"><a href="pam_deep_dive_exec.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">役員</a><a href="pam_deep_dive_technical.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#1b4332;color:#40c9a2;font-weight:bold;">技術者</a><a href="pam_deep_dive_compliance.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">コンプライアンス</a><a href="pam_deep_dive_sales.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">営業</a></div>
+<header>
+  <div class="view-badge">技術者・SE向け</div>
+  <h1>特権アクセス管理（PAM）完全ガイド</h1>
+  <p>サーバー管理者アカウントのセキュリティ設計</p>
+</header>
+<div class="siblings">
+  <span>他のビューで読む：</span>
+  <a href="pam_deep_dive_exec.html" style="color:#f4a261;text-decoration:underline;">役員・経営層向け</a>　|　<a href="pam_deep_dive_compliance.html" style="color:#c77dff;text-decoration:underline;">コンプライアンス・内部監査向け</a>　|　<a href="pam_deep_dive_sales.html" style="color:#f59e0b;text-decoration:underline;">営業・提案担当向け</a>
+</div>
+<div class="container">
+
+<section>
+  <div class="sec-header">🏗️ PAMアーキテクチャ概要</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>コンポーネント</th><th>役割</th><th>実装例</th></tr>
+      <tr><td>Vault（パスワード金庫）</td><td>全特権アカウントのパスワードを自動生成・管理</td><td>CyberArk Vault, BeyondTrust Password Safe</td></tr>
+      <tr><td>Proxy/Jump Server</td><td>管理者操作の中継・監査ログ記録</td><td>CyberArk PSM, Delinea Secret Server</td></tr>
+      <tr><td>Session Recording</td><td>RDP/SSH操作の動画・テキスト録画</td><td>全主要PAM製品に搭載</td></tr>
+      <tr><td>JIT（Just-in-Time）</td><td>必要な時だけ一時的に権限付与</td><td>Entra PIM, CyberArk Conjur</td></tr>
+      <tr><td>LAPS</td><td>Windowsローカル管理者パスワードを自動ローテーション</td><td>Windows LAPS（無償）</td></tr>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="sec-header">🔧 Tierモデルによる特権分離設計</div>
+  <div class="sec-body">
+    <div class="highlight-box">
+      <h3>Tier 0 — ドメインコントローラ・Entra ID（最高権限）</h3>
+      <p>AD/Entra ID管理者、Schema Admin、DCのローカル管理者。PAW（特権アクセスワークステーション）からのみアクセス可。MFA必須。緊急時のBreak Glass Accountを別途管理。</p>
+    </div>
+    <div class="highlight-box">
+      <h3>Tier 1 — サーバーOS管理者</h3>
+      <p>Windows Server / RHEL の管理者アカウント。PAM経由必須。JEA（Just Enough Administration）でコマンド制限。セッション録画必須。</p>
+    </div>
+    <div class="highlight-box">
+      <h3>Tier 2 — エンドユーザーワークステーション</h3>
+      <p>PC管理者。LAPSで自動パスワードローテーション。標準ユーザーへの権限最小化（UAC標準）。</p>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="sec-header">📦 製品別技術比較</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>製品</th><th>Vault</th><th>セッション録画</th><th>JIT</th><th>RHEL対応</th><th>価格帯</th></tr>
+      <tr><td>CyberArk PAM</td><td>◎</td><td>◎</td><td>◎</td><td>◎</td><td>高（エンプラ）</td></tr>
+      <tr><td>BeyondTrust PRA</td><td>◎</td><td>◎</td><td>○</td><td>○</td><td>中〜高</td></tr>
+      <tr><td>Delinea Secret Server</td><td>◎</td><td>◎</td><td>○</td><td>○</td><td>中</td></tr>
+      <tr><td>Entra PIM（Microsoft）</td><td>△（Entra限定）</td><td>△</td><td>◎</td><td>×</td><td>低（M365付帯）</td></tr>
+      <tr><td>SecureCube（NRI）</td><td>○</td><td>◎</td><td>△</td><td>○</td><td>中（国産）</td></tr>
+      <tr><td>Teleport（OSS）</td><td>△</td><td>○</td><td>○</td><td>◎</td><td>低〜中</td></tr>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="sec-header">🐧 Linux/UNIX環境のPAM設計</div>
+  <div class="sec-body">
+    <ul style="line-height:2.2;padding-left:1.5rem;">
+      <li><strong>sudoers管理</strong>：Ansibleで一元配布、変更をGit管理</li>
+      <li><strong>sudo I/Oログ</strong>：<code>/var/log/sudo-io/</code> + SIEMへ転送</li>
+      <li><strong>SSHキー管理</strong>：PAMシステムでユーザーごとに動的鍵発行（HashiCorp Vault等）</li>
+      <li><strong>RHEL SSSD + AD統合</strong>：AD認証をLinuxに拡張（realm join）</li>
+      <li><strong>Oracle DBの特権管理</strong>：SYSDBAパスワードをPAM Vaultで管理・ローテーション</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 特権アクセス管理（PAM）完全ガイド (技術者・SE向け)</p>
+  <p>このドキュメントは社内検討・提案用途向けです。</p>
+</footer>
+</body>
+</html>

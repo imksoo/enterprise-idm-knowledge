@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ランサムウェア×ID統合防御ガイド | IT技術者・SE向け</title>
+<style>
+  :root {
+    --primary: #1b4332;
+    --accent: #40c9a2;
+    --bg: #f0faf5;
+    --card: #e8f5ee;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">⚙️ IT技術者・SE向け</div>
+  <h1>ランサムウェア×ID統合防御ガイド</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: ランサムウェア対策と ID 観点の防御 / 特権アクセス管理 / ランサムウェア侵害シナリオと ID 管理の根幹性
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">ransomware</span> <span class="tag">lateral movement</span> <span class="tag">Credential Guard</span> <span class="tag">Protected Users</span> <span class="tag">LSA Protection</span> <span class="tag">NTLM</span> <span class="tag">SMB</span> <span class="tag">microsegmentation</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> IT技術者・SE向け</div>
+    <div class="item"><strong>所要時間:</strong> 30分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 設計・実装・製品選定に必要な技術詳細が分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="ransomware_id_defense_exec.html" style="color:var(--accent)">👔 役員・経営層向け</a> | <a href="ransomware_id_defense_sales.html" style="color:var(--accent)">💼 営業・プリセールス向け</a></div>
+  </div>
+<section><div class="sec-header">🏗️ アーキテクチャ概要・コンポーネント</div><div class="sec-body"><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">概念・設計原則</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Ransomware Defense</h4>
+              <p>ランサムウェア侵害に対して、ID、認証、ネットワーク、バックアップ、監視を統合して防御する考え方。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>focus:</strong> 横展開阻止, 資格情報保護, 復旧性, 早期検知</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Lateral Movement</h4>
+              <p>侵害者が 1 台の端末やサーバーから他の資産へ認証情報や管理プロトコルを使って移動する行為。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>paths:</strong> SMB, RDP, WinRM, PsExec, SSH</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Backup Admin Tier</h4>
+              <p>本番ドメイン管理者とは別に設けるバックアップ専用の管理階層。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>goal:</strong> 本番侵害時でも復旧権限を温存</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Japan Enterprise Reality</h4>
+              <p>日本企業で見られる、兼務管理者、単一 AD 依存、SIer 常駐運用、古い認証方式残存といった実態。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>characteristics:</strong> 一人管理者依存, レガシーサーバー残存, 運用委託の広い権限</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Privileged Access Management</h4>
+              <p>特権アカウント、昇格操作、管理端末、監査を統合的に制御する管理領域。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>goal:</strong> 常時特権の排除</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> Windows Server, Linux, Entra ID, 運用端末, 踏み台</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>Just Enough Administration</h4>
+              <p>PowerShell のロール機能を用いて必要最小限のコマンドレットと操作だけを委任する方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>technology:</strong> PowerShell Remoting</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>granularity:</strong> コマンド単位</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>Tier Model</h4>
+              <p>管理対象の重要度に応じて管理者、端末、資格情報を分離する運用モデル。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>tiers:</strong> Tier 0, Tier 1, Tier 2</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>Tier 0</h4>
+              <p>AD DS、Entra Connect、PKI、特権管理基盤など認証基盤そのものを扱う階層。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>assets:</strong> Domain Controller, Entra Connect, PAM 基盤</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">設計パターン</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>SMB Signing</h4>
+              <p>SMB 通信の完全性を検証し、中間者攻撃や改ざんを抑止する制御。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>scope:</strong> clients, servers</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>effect:</strong> セッション改ざんの抑止</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>NTLM Restriction</h4>
+              <p>NTLM の利用を段階的に無効化または制限し、Kerberos 優先へ移行する制御。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>modes:</strong> audit, deny domain accounts, deny all</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Administrative Share Disablement</h4>
+              <p>不要な管理共有 `C$` や `ADMIN$` を無効化または厳格制限して横展開経路を減らす設計。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>targets:</strong> workstations, non-managed servers</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Protected Users</h4>
+              <p>高権限ユーザーに対し、古い認証方式や長寿命チケットを制限する Active Directory セキュリティグループ。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>restrictions:</strong> NTLM 無効, DES/RC4 抑止, キャッシュ資格情報制限</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>LSA Protection</h4>
+              <p>`lsass.exe` を保護プロセスとして動作させ、資格情報ダンプ耐性を高める制御。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>registry_policy:</strong> RunAsPPL</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>goal:</strong> LSASS への不正アクセス抑止</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>DPAPI Protection</h4>
+              <p>DPAPI に依存する秘密情報の保護を強化し、バックアップキー管理や端末保護を見直す設計。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>targets:</strong> saved credentials, application secrets, browser secrets</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Microsegmentation</h4>
+              <p>業務系、管理系、バックアップ系を細かく分離し、サーバー間通信を必要最小限へ絞る設計。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>enforcement:</strong> host firewall, network firewall, SDN controls</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Server Quarantine</h4>
+              <p>侵害兆候が出たサーバーを業務停止と引き換えに速やかに隔離する運用設計。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>triggers:</strong> EDR high severity, credential theft indicators, mass encrypt</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">製品・ソリューション</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Credential Guard</h4>
+              <p>Windows の仮想化ベースセキュリティを利用し、資格情報の抽出を困難にする保護機能。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>platform:</strong> Windows Enterprise / Server</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>protects:</strong> NTLM hashes, Kerberos TGT-related secrets</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra ID Protection</h4>
+              <p>Entra ID のリスクベース検知と条件付きアクセス連携により、侵害済み ID の利用を抑制する機能。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>detections:</strong> risk users, risk sign-ins</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Microsoft Sentinel</h4>
+              <p>クラウドネイティブ SIEM/SOAR として、AD や Entra ID に対する攻撃検知と対応自動化を担う。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>capabilities:</strong> analytics rules, UEBA, playbooks</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Windows LAPS</h4>
+              <p>Windows 標準機能として提供されるローカル管理者パスワード管理。AD と Entra ID の両方に対応する。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>platform:</strong> Windows 10/11, Windows Server 2019 以降の更新適用環境</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>storage_targets:</strong> Active Directory, Entra ID</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>supports_passphrase:</strong> True</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>Microsoft LAPS (Legacy)</h4>
+              <p>旧来の Microsoft LAPS。AD にローカル管理者パスワードを保管する追加導入型ソリューション。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>platform:</strong> Active Directory 中心</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>storage_targets:</strong> Active Directory</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>supports_passphrase:</strong> False</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>Privileged Identity Management</h4>
+              <p>Entra ID 上で管理ロールやグループの昇格を時間制限付きで制御する機能。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>platform:</strong> Entra ID</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>controls:</strong> 承認, MFA, 理由入力, 時間制限</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>Linux sudo</h4>
+              <p>UNIX/Linux で昇格権限を細粒度に委任する標準的な仕組み。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>config_files:</strong> /etc/sudoers, /etc/sudoers.d/</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>best_practices:</strong> NOPASSWD の最小化, コマンド単位の許可, ログ転送</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>CyberArk</h4>
+              <p>パスワード保管、セッション管理、JIT、アプリケーション資格情報管理を提供する PAM 製品。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> third-party PAM</div>
+              <span style="font-size:0.75rem;color:#aaa">[特権アクセス管理]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">リスク・脅威</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Pass-the-Hash</h4>
+              <p>パスワードそのものではなくハッシュを再利用して横展開する代表的な攻撃手法。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>depends_on:</strong> hash theft, NTLM</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Kerberoasting</h4>
+              <p>サービスチケットをオフライン解析してサービスアカウント秘密情報を狙う攻撃手法。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>targets:</strong> SPN accounts</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>DCSync</h4>
+              <p>ドメインコントローラーになりすましてディレクトリ秘密情報を取得する攻撃手法。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>required_rights:</strong> Replicating Directory Changes</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div>
+            <div class="node-card">
+              <h4>Single Admin Compromise Scenario</h4>
+              <p>1 つの管理者アカウント侵害から DC、ファイルサーバー、バックアップ、仮想基盤まで同時に失陥する典型パターン。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>blast_radius:</strong> enterprise-wide</div>
+              <span style="font-size:0.75rem;color:#aaa">[ランサムウェア対策と ID 観点の防御]</span>
+            </div></div></div></section><section><div class="sec-header">📊 製品・ソリューション一覧</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>製品名</th><th>概要</th><th>ソース</th></tr></thead><tbody><tr>
+                  <td><strong>Credential Guard</strong></td>
+                  <td>Windows の仮想化ベースセキュリティを利用し、資格情報の抽出を困難にする保護機能。</td>
+                  <td style="font-size:0.8rem;color:#888">ランサムウェア対策と ID 観点の防御</td>
+                </tr><tr>
+                  <td><strong>Entra ID Protection</strong></td>
+                  <td>Entra ID のリスクベース検知と条件付きアクセス連携により、侵害済み ID の利用を抑制する機能。</td>
+                  <td style="font-size:0.8rem;color:#888">ランサムウェア対策と ID 観点の防御</td>
+                </tr><tr>
+                  <td><strong>Microsoft Sentinel</strong></td>
+                  <td>クラウドネイティブ SIEM/SOAR として、AD や Entra ID に対する攻撃検知と対応自動化を担う。</td>
+                  <td style="font-size:0.8rem;color:#888">ランサムウェア対策と ID 観点の防御</td>
+                </tr><tr>
+                  <td><strong>Windows LAPS</strong></td>
+                  <td>Windows 標準機能として提供されるローカル管理者パスワード管理。AD と Entra ID の両方に対応する。</td>
+                  <td style="font-size:0.8rem;color:#888">特権アクセス管理</td>
+                </tr><tr>
+                  <td><strong>Microsoft LAPS (Legacy)</strong></td>
+                  <td>旧来の Microsoft LAPS。AD にローカル管理者パスワードを保管する追加導入型ソリューション。</td>
+                  <td style="font-size:0.8rem;color:#888">特権アクセス管理</td>
+                </tr><tr>
+                  <td><strong>Privileged Identity Management</strong></td>
+                  <td>Entra ID 上で管理ロールやグループの昇格を時間制限付きで制御する機能。</td>
+                  <td style="font-size:0.8rem;color:#888">特権アクセス管理</td>
+                </tr><tr>
+                  <td><strong>Linux sudo</strong></td>
+                  <td>UNIX/Linux で昇格権限を細粒度に委任する標準的な仕組み。</td>
+                  <td style="font-size:0.8rem;color:#888">特権アクセス管理</td>
+                </tr><tr>
+                  <td><strong>CyberArk</strong></td>
+                  <td>パスワード保管、セッション管理、JIT、アプリケーション資格情報管理を提供する PAM 製品。</td>
+                  <td style="font-size:0.8rem;color:#888">特権アクセス管理</td>
+                </tr><tr>
+                  <td><strong>BeyondTrust</strong></td>
+                  <td>特権パスワード管理、リモートサポート、エンドポイント権限制御を統合する PAM 製品。</td>
+                  <td style="font-size:0.8rem;color:#888">特権アクセス管理</td>
+                </tr><tr>
+                  <td><strong>Delinea</strong></td>
+                  <td>旧 Thycotic 系を含む PAM 製品群。シークレット管理、昇格、セッション管理を提供する。</td>
+                  <td style="font-size:0.8rem;color:#888">特権アクセス管理</td>
+                </tr></tbody></table></div></div></section><section><div class="sec-header">📚 技術知識・設計ポイント</div><div class="sec-body">
+        <div class="knowledge-item">
+          <h4>横展開阻止の基本原則</h4>
+          <p>ランサムウェア被害の深刻度は侵入そのものより横展開速度で決まる。SMB、RDP、WinRM、管理共有、共通管理者資格情報の同時対策が必要であり、単一制御だけでは止まりにくい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>SMB 署名の位置づけ</h4>
+          <p>SMB 署名は万能ではないが、通信完全性の確保により古い中間者的手口やセッション改ざんの余地を狭める。ファイルサーバー、管理共有、レプリケーション経路を含めて段階的に強制する価値がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>NTLM 無効化と制限</h4>
+          <p>NTLM を一括停止するとレガシー業務が止まる場合があるため、監査から始めて依存先を洗い出し、管理者系アカウント、サーバー間通信、外部委託接続の順で縮退させるのが現実的である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>管理共有の扱い</h4>
+          <p>管理共有 `C$` や `ADMIN$` は完全無効化が難しい環境もある。その場合でも接続元を踏み台や管理セグメントに限定し、一般端末からの到達性を断つことが重要である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Credential Guard と LSA Protection</h4>
+          <p>Credential Guard と LSA Protection はどちらも資格情報窃取耐性を高めるが、役割は異なる。前者は VBS による秘密情報分離、後者は `lsass.exe` の保護強化であり、併用することで防御層が厚くなる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Protected Users の適用先</h4>
+          <p>Protected Users は高権限者へ先行適用する価値が高いが、古いプロトコル依存を抱えるサービスアカウントには不向きである。ドメイン管理者、バックアップ管理者、認証基盤管理者から段階導入するのがよい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>DPAPI の実務上の注意</h4>
+          <p>DPAPI 自体だけではなく、その前提となるユーザー資格情報やバックアップキー管理が重要である。侵害端末に保存されたブラウザ秘密情報やアプリ秘密情報の回収経路として見直す必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>ネットワーク分離と検疫</h4>
+          <p>検疫はインシデント時に初めて考えると失敗する。事前に管理系、バックアップ系、業務系の許可通信を整理し、EDR 連携でサーバー単位の遮断や限定通信モードへ切り替えられるようにしておくべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>バックアップの ID 分離</h4>
+          <p>バックアップ製品の管理者を本番ドメイン管理者と兼務させると、1 つの資格情報侵害でバックアップ削除まで到達される。管理者、認証基盤、保管先、運用端末を分離しておくことが復旧性を左右する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>不変バックアップの意味</h4>
+          <p>オフラインや WORM 保護のないバックアップは、侵害者にとって次の暗号化対象になりやすい。不変性、別認証系、復元演習の 3 点がそろって初めて実効的な復旧策になる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Sentinel による AD 攻撃検知</h4>
+          <p>Microsoft Sentinel では DC のセキュリティイベント、Sysmon、Defender 系シグナル、Entra ログを組み合わせることで DCSync、異常な認証失敗、管理者グループ変更、疑わしいチケット発行を相関できる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra ID Protection の役割</h4>
+          <p>オンプレミス侵害の文脈でも Entra ID Protection は重要である。侵害済み資格情報のクラウド側悪用や、ハイブリッド管理者の異常サインインを早期に把握し、条件付きアクセスと連動させられる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>日本企業でよくある全落ちパターン</h4>
+          <p>単一の管理者アカウントがメール端末、運用端末、仮想基盤、バックアップ、AD 管理を兼務していると、フィッシング 1 回から全システム停止へ直結する。実被害ではこの資格情報集中が被害拡大の主要因になりやすい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>日本企業での対策優先順位</h4>
+          <p>現実的な優先順位は、まず管理者分離、PAW、バックアップ ID 分離、Credential Guard、基本的なファイアウォール制御である。その次に NTLM 依存解消、マイクロセグメンテーション、Recovery Forest、分析自動化へ進む構成が実行しやすい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Windows LAPS と旧 Microsoft LAPS の違い</h4>
+          <p>Windows LAPS は OS 標準機能として統合され、AD と Entra ID の両保存先、パスフレーズ、ポスト認証アクション、旧ポリシー互換性を備える。一方で旧 Microsoft LAPS は AD 中心の追加導入型であり、今から新規採用する優先度は低い。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>LAPS の設計要点</h4>
+          <p>共有ローカル管理者パスワードを残すと端末 1 台侵害から全域横展開につながる。LAPS では端末ごとに異なる秘密情報、短めのローテーション、閲覧権限の最小化、回収後の利用停止確認を組み合わせるべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>JEA の価値</h4>
+          <p>フル管理者権限を配らず、特定業務に必要な PowerShell コマンドだけを許可できる。日本企業でよくある運用委託先への広い管理者権限付与を縮小するうえで有効である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>JEA 導入時の落とし穴</h4>
+          <p>ロール設計が曖昧だと結局フル PowerShell を許可しやすい。許可コマンド、引数、外部実行、モジュール更新影響を明示し、トランスクリプションと SIEM 連携まで設計して初めて監査可能な最小権限になる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra ID PIM の使いどころ</h4>
+          <p>クラウド管理ロール、Privileged Access Group、Azure リソース管理の常時権限を避ける中核機能として用いる。MFA、承認、理由入力、時間制限、通知を標準化し、恒久的な active assignment を例外化するべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>JIT アクセスパターン</h4>
+          <p>JIT は単に時間制限を付けるだけでは不十分である。チケット番号、対象システム、作業窓、承認者、操作ログ、作業後レビューを一連でつなぐと、内部不正と侵害後の権限悪用の両方を抑制できる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>PAW の実務的な位置づけ</h4>
+          <p>PAW は上級管理者だけの専用端末ではなく、Tier 0 管理と一般業務を混在させないための基本制御である。メール添付や一般 Web 閲覧を行う端末から Tier 0 へ接続させないことが侵害耐性を大きく左右する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Tier 0/1/2 分離の考え方</h4>
+          <p>Tier 0 は認証基盤そのもの、Tier 1 はサーバー群、Tier 2 はクライアント管理であり、資格情報と管理端末を跨いで共有しないことが要点である。小規模組織でも論理分離は可能で、必ずしも人員を完全分離する必要はない。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>踏み台サーバーの現代化</h4>
+          <p>単なる RDP 中継では不十分で、接続元制限、多要素認証、セッション録画、SSH/RDP 双方の統合監査、ファイル転送制御が必要である。可能ならパスワード開示ではなくセッションプロキシ方式を採用する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Linux sudo の適切な設計</h4>
+          <p>Linux では `ALL=(ALL) ALL` の乱用が最も典型的な失敗である。`sudoers.d` に役割別ポリシーを分離し、コマンド許可を明示し、`NOPASSWD` を例外化し、I/O ログを中央送信する構成が望ましい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>特権監査ログ設計</h4>
+          <p>監査ログは接続ログ、昇格ログ、コマンドログ、変更結果ログが別系統でも相関できるように `requester`、`target`、`session_id`、`ticket_id` を揃えるべきである。後から SIEM で結びつけられない設計は運用上の価値が低い。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>サードパーティ PAM 製品の選定軸</h4>
+          <p>CyberArk、BeyondTrust、Delinea はいずれも保管庫、セッション制御、昇格管理を持つが、強みは異なる。評価では Windows だけでなく Linux、ネットワーク機器、クラウドロール、API シークレット、運用委託先接続の扱いまで確認する必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>サービスアカウント管理</h4>
+          <p>人間の管理者よりも長寿命なサービスアカウントが侵害の温床になりやすい。保管庫によるローテーション、利用先棚卸し、Kerberos 連携やマネージド ID への移行計画を併せて進めるべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Break Glass Account の扱い</h4>
+          <p>緊急用アカウントは必要だが、通常の例外口として残すと統制が崩れる。除外対象は最小限にし、利用時は即時通知、事後レビュー、パスワード変更、保管方法の再確認を実施するべきである。</p>
+          
+        </div></div></section><section><div class="sec-header">🔧 実装・設定ステップ</div><div class="sec-body"><ol style="padding-left:1.5rem">
+        <li style="margin-bottom:1rem">
+          <strong>日本企業での対策優先順位</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">現実的な優先順位は、まず管理者分離、PAW、バックアップ ID 分離、Credential Guard、基本的なファイアウォール制御である。その次に NTLM 依存解消、マイクロセグメンテーション、Recovery Forest、分析自動化へ進む構成が実行しやすい。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>LAPS の設計要点</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">共有ローカル管理者パスワードを残すと端末 1 台侵害から全域横展開につながる。LAPS では端末ごとに異なる秘密情報、短めのローテーション、閲覧権限の最小化、回収後の利用停止確認を組み合わせるべきである。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>JEA 導入時の落とし穴</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">ロール設計が曖昧だと結局フル PowerShell を許可しやすい。許可コマンド、引数、外部実行、モジュール更新影響を明示し、トランスクリプションと SIEM 連携まで設計して初めて監査可能な最小権限になる。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Linux sudo の適切な設計</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Linux では `ALL=(ALL) ALL` の乱用が最も典型的な失敗である。`sudoers.d` に役割別ポリシーを分離し、コマンド許可を明示し、`NOPASSWD` を例外化し、I/O ログを中央送信する構成が望ましい。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>特権監査ログ設計</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">監査ログは接続ログ、昇格ログ、コマンドログ、変更結果ログが別系統でも相関できるように `requester`、`target`、`session_id`、`ticket_id` を揃えるべきである。後から SIEM で結びつけられない設計は運用上の価値が低い。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>サービスアカウント管理</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">人間の管理者よりも長寿命なサービスアカウントが侵害の温床になりやすい。保管庫によるローテーション、利用先棚卸し、Kerberos 連携やマネージド ID への移行計画を併せて進めるべきである。</p>
+        </li></ol>
+    <div style="background:#1a1a2e;color:#40c9a2;padding:1.2rem;border-radius:8px;margin-top:1.5rem;font-family:monospace;font-size:0.88rem">
+      <div style="color:#f4a261;margin-bottom:0.5rem"># PowerShell / Entra CLI コマンド例</div>
+      <div># Entra ID 条件付きアクセスポリシー確認</div>
+      <div>Get-MgIdentityConditionalAccessPolicy | Format-Table DisplayName, State</div>
+      <div style="margin-top:0.5rem"># Azure AD Connect 同期状態確認</div>
+      <div>Get-ADSyncScheduler</div>
+      <div style="margin-top:0.5rem"># 特権ロール割り当て一覧</div>
+      <div>Get-MgRoleManagementDirectoryRoleAssignment | Where-Object {$_.PrincipalId -ne $null}</div>
+      <div style="margin-top:0.5rem"># PAM セッション一覧（CyberArk CLI 例）</div>
+      <div>Get-PVSession -safe "Windows_Domain_Admins"</div>
+    </div></div></section><section><div class="sec-header">🔗 コンポーネント依存関係・連携</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>From</th><th>関係</th><th>To</th><th>説明</th></tr></thead><tbody><tr>
+              <td>node_001</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_002</td>
+              <td style="font-size:0.85rem">ランサムウェア対策では横展開阻止が中核となる。</td>
+            </tr><tr>
+              <td>node_003</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_002</td>
+              <td style="font-size:0.85rem">SMB 署名は SMB 経路の改ざんやなりすましを抑え、横展開耐性を高める。</td>
+            </tr><tr>
+              <td>node_004</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_020</td>
+              <td style="font-size:0.85rem">NTLM 制限は Pass-the-Hash の成立条件を縮小する。</td>
+            </tr><tr>
+              <td>node_005</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_002</td>
+              <td style="font-size:0.85rem">管理共有の無効化や制限は不必要な横展開経路を減らす。</td>
+            </tr><tr>
+              <td>node_006</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_020</td>
+              <td style="font-size:0.85rem">Credential Guard は資格情報窃取を難しくし、ハッシュ再利用リスクを減らす。</td>
+            </tr><tr>
+              <td>node_007</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_004</td>
+              <td style="font-size:0.85rem">Protected Users は NTLM 制限を高権限ユーザーに対して先行適用する足場になる。</td>
+            </tr><tr>
+              <td>node_008</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_020</td>
+              <td style="font-size:0.85rem">LSA Protection は LSASS からの秘密情報ダンプを困難にする。</td>
+            </tr><tr>
+              <td>node_009</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">DPAPI 保護は端末上の保存済み秘密情報流出を抑え、侵害後の悪用を減らす。</td>
+            </tr><tr>
+              <td>node_010</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_002</td>
+              <td style="font-size:0.85rem">マイクロセグメンテーションは横移動可能な到達範囲を減らす。</td>
+            </tr><tr>
+              <td>node_011</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_010</td>
+              <td style="font-size:0.85rem">サーバー検疫を成立させるには事前の通信分離設計が必要である。</td>
+            </tr><tr>
+              <td>node_012</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_010</td>
+              <td style="font-size:0.85rem">ファイアウォール要件はマイクロセグメンテーションを具体化する。</td>
+            </tr><tr>
+              <td>node_013</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_025</td>
+              <td style="font-size:0.85rem">バックアップ ID 分離はバックアップ専用管理階層を実装する。</td>
+            </tr><tr>
+              <td>node_014</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">不変バックアップは暗号化被害後の復旧不能化を抑止する。</td>
+            </tr><tr>
+              <td>node_015</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_013</td>
+              <td style="font-size:0.85rem">Recovery Forest は ID 基盤破壊時の最終復旧手段としてバックアップ分離を補完する。</td>
+            </tr><tr>
+              <td>node_016</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_018</td>
+              <td style="font-size:0.85rem">SIEM 連携の代表実装として Microsoft Sentinel を利用できる。</td>
+            </tr><tr>
+              <td>node_018</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_019</td>
+              <td style="font-size:0.85rem">Sentinel は AD 攻撃検知ルールを実装する基盤となる。</td>
+            </tr><tr>
+              <td>node_017</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_016</td>
+              <td style="font-size:0.85rem">Entra ID Protection のリスク検知は SIEM 側の相関分析を補完する。</td>
+            </tr><tr>
+              <td>node_019</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_021</td>
+              <td style="font-size:0.85rem">AD 攻撃検知は Kerberoasting の兆候把握に役立つ。</td>
+            </tr><tr>
+              <td>node_019</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_022</td>
+              <td style="font-size:0.85rem">AD 攻撃検知は DCSync の異常なレプリケーション要求を検知対象に含める。</td>
+            </tr><tr>
+              <td>node_023</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>node_002</td>
+              <td style="font-size:0.85rem">PAW は高権限資格情報を一般端末から切り離し、横展開起点を減らす。</td>
+            </tr></tbody></table></div></div></section><section><div class="sec-header">🔧 トラブルシューティング・設計上の注意点</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>症状・問題</th><th>原因・背景</th><th>対応方法</th></tr></thead><tbody><tr>
+          <td><strong>NTLM 無効化と制限</strong></td>
+          <td style="font-size:0.85rem">NTLM を一括停止するとレガシー業務が止まる場合があるため、監査から始めて依存先を洗い</td>
+          <td style="font-size:0.85rem">出し、管理者系アカウント、サーバー間通信、外部委託接続の順で縮退させるのが現実的である。</td>
+        </tr><tr>
+          <td><strong>DPAPI の実務上の注意</strong></td>
+          <td style="font-size:0.85rem">DPAPI 自体だけではなく、その前提となるユーザー資格情報やバックアップキー管理が重要で</td>
+          <td style="font-size:0.85rem">ある。侵害端末に保存されたブラウザ秘密情報やアプリ秘密情報の回収経路として見直す必要がある。</td>
+        </tr><tr>
+          <td><strong>ネットワーク分離と検疫</strong></td>
+          <td style="font-size:0.85rem">検疫はインシデント時に初めて考えると失敗する。事前に管理系、バックアップ系、業務系の許可通信を整</td>
+          <td style="font-size:0.85rem">理し、EDR 連携でサーバー単位の遮断や限定通信モードへ切り替えられるようにしておくべきである。</td>
+        </tr><tr>
+          <td><strong>Sentinel による AD 攻撃検知</strong></td>
+          <td style="font-size:0.85rem">Microsoft Sentinel では DC のセキュリティイベント、Sysmon、Defender 系シグナル、E</td>
+          <td style="font-size:0.85rem">ntra ログを組み合わせることで DCSync、異常な認証失敗、管理者グループ変更、疑わしいチケット発行を相関できる。</td>
+        </tr><tr>
+          <td><strong>日本企業でよくある全落ちパターン</strong></td>
+          <td style="font-size:0.85rem">単一の管理者アカウントがメール端末、運用端末、仮想基盤、バックアップ、AD 管理を兼務していると、フィ</td>
+          <td style="font-size:0.85rem">ッシング 1 回から全システム停止へ直結する。実被害ではこの資格情報集中が被害拡大の主要因になりやすい。</td>
+        </tr></tbody></table></div></div></section>
+  <div class="sources">
+    ソースデータ: ランサムウェア対策と ID 観点の防御、特権アクセス管理、ランサムウェア侵害シナリオと ID 管理の根幹性<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

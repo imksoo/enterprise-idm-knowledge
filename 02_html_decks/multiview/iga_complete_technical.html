@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGA（Identity Governance &amp; Administration）完全ガイド | IT技術者・SE向け</title>
+<style>
+  :root {
+    --primary: #1b4332;
+    --accent: #40c9a2;
+    --bg: #f0faf5;
+    --card: #e8f5ee;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">⚙️ IT技術者・SE向け</div>
+  <h1>IGA（Identity Governance &amp; Administration）完全ガイド</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド / JML（Joiner-Mover-Leaver）プロセス設計ガイド / IGA製品比較 / HR連携・組織変更ID管理
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">IGA</span> <span class="tag">Identity Governance and Administration</span> <span class="tag">職務分離</span> <span class="tag">定期アクセスレビュー</span> <span class="tag">証券会社</span> <span class="tag">JSDA</span> <span class="tag">FISC</span> <span class="tag">比較</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> IT技術者・SE向け</div>
+    <div class="item"><strong>所要時間:</strong> 30分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 設計・実装・製品選定に必要な技術詳細が分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="iga_complete_exec.html" style="color:var(--accent)">👔 役員・経営層向け</a> | <a href="iga_complete_compliance.html" style="color:var(--accent)">📋 監査・コンプライアンス担当者向け</a></div>
+  </div>
+<section><div class="sec-header">🏗️ アーキテクチャ概要・コンポーネント</div><div class="sec-body"><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">概念・設計原則</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</h4>
+              <p>IGA（Identity Governance &amp; Administration）は、ID管理（プロビジョニング・デプロビジョニング）とID統治（アクセス認証・SOD・棚卸）を統合したアプローチ。従来のIDMの進化形として、特に規制業種で必</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA（Identity Governa]</span>
+            </div>
+            <div class="node-card">
+              <h4>JML（Joiner-Mover-Leaver）プロセス設計ガイド</h4>
+              <p>JML（Joiner: 入社、Mover: 異動、Leaver: 退職）はID管理の根幹プロセス。HR部門とIT部門の連携が鍵であり、自動化の成熟度によって組織のIDセキュリティ水準が決まる。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[JML（Joiner-Mover-Lea]</span>
+            </div>
+            <div class="node-card">
+              <h4>IGA</h4>
+              <p>アクセス申請、承認、プロビジョニング、定期棚卸、職務分離、監査証跡を統合的に扱う管理領域。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>full_name:</strong> Identity Governance and Administration</div>
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>職務分離</h4>
+              <p>相反する業務権限を同一人物へ同時付与しない統制原則。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>定期アクセスレビュー</h4>
+              <p>権限の妥当性を継続的に確認し、不要権限を失効させる棚卸運用。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>証券会社ID管理</h4>
+              <p>証券会社における職務分離、監査証跡、特権統制、外部委託統制を重視したID管理テーマ。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>file:</strong> 06_security_hardening/industry_securities_auth.json</div>
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>Joiner（入社）</h4>
+              <p>採用決定からID発行・システムアクセス付与までのプロセス</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[HR連携・組織変更ID管理]</span>
+            </div>
+            <div class="node-card">
+              <h4>Mover（異動）</h4>
+              <p>部署変更・昇格・役職変更に伴う権限変更プロセス。旧権限削除が最重要。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[HR連携・組織変更ID管理]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">設計パターン</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv1 手動管理</h4>
+              <p>申請書ベース。IT担当者が手作業でID作成・削除。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA（Identity Governa]</span>
+            </div>
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv2 半自動</h4>
+              <p>HR連携スクリプト。退職イベントのみ自動無効化。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA（Identity Governa]</span>
+            </div>
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv3 完全自動</h4>
+              <p>IGA製品のHRコネクタで全ライフサイクルイベントをリアルタイム処理。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA（Identity Governa]</span>
+            </div>
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv4 AI補助</h4>
+              <p>ロールマイニング・異常検知でプロビジョニングを最適化。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA（Identity Governa]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">製品・ソリューション</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>SailPoint IdentityNow / IdentityIQ</h4>
+              <p>SaaSとオンプレミスの両輪で大規模統制に対応しやすいIGA製品群。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>Saviynt Enterprise Identity Cloud</h4>
+              <p>SoDとアプリケーションガバナンスを強く打ち出すSaaS型IGA。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>One Identity Manager</h4>
+              <p>IT Shopと柔軟な承認モデルを持つハイブリッド向けIGA。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>IBM Security Verify Governance</h4>
+              <p>統制重視で既存SI体制と組み合わせやすいIGA。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>Omada Identity</h4>
+              <p>ロール管理、棚卸、Identity Analyticsに強みを持つIGA。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>Avatier Identity Anywhere</h4>
+              <p>セルフサービス重視のIGA。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra ID Governance</h4>
+              <p>Microsoft中心のガバナンス機能群。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[IGA製品比較]</span>
+            </div>
+            <div class="node-card">
+              <h4>HRISシステム</h4>
+              <p>HR情報の真正性ソース（Source of Truth）。SAP SuccessFactors、Workday、国内製品（COMPANY、POSITIVE等）</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[HR連携・組織変更ID管理]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">プロトコル・標準</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>SCIM</h4>
+              <p>System for Cross-domain Identity Management。HR→IDMへの標準プロビジョニングプロトコル（RFC 7643/7644）</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[HR連携・組織変更ID管理]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">リスク・脅威</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>権限累積問題</h4>
+              <p>Moverで旧権限が削除されず累積し続ける問題。FISC/PCI監査で最頻出指摘事項。</p>
+              
+              <span style="font-size:0.75rem;color:#aaa">[HR連携・組織変更ID管理]</span>
+            </div></div></div></section><section><div class="sec-header">📊 製品・ソリューション比較</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>製品名</th><th>_source</th><th>axes</th><th>best_fit</th><th>commercial</th><th>components</th><th>deployment_models</th></tr></thead><tbody><tr><td><strong>SailPoint Identity Security Cloud</strong></td><td>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td><strong>Saviynt Security Manager</strong></td><td>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td><strong>One Identity Manager</strong></td><td>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td><strong>Microsoft Entra ID Governance</strong></td><td>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td><strong>Omada Identity</strong></td><td>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td><strong>ISID OpenIAM</strong></td><td>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td><strong>prod_001</strong></td><td>—</td><td>{&#x27;axis_01&#x27;: {&#x27;assessment&#x27;: &#x27;strong&#x27;, &#x27;note&#x27;: &#x27;申請カタログ、多段承認、例外経路の成熟度が高い。IdentityIQ</td><td>大手証券<br>複雑な承認規程<br>ハイブリッド環境</td><td>{&#x27;price_band&#x27;: &#x27;high&#x27;, &#x27;license_model&#x27;: &#x27;SaaSサブスクリプションまたはオンプレミス個別見積&#x27;, &#x27;pricing_t</td><td>—</td><td>SaaS<br>on-premises</td></tr><tr><td><strong>prod_002</strong></td><td>—</td><td>{&#x27;axis_01&#x27;: {&#x27;assessment&#x27;: &#x27;strong&#x27;, &#x27;note&#x27;: &#x27;申請、承認、条件分岐をSaaSで標準化しやすい。&#x27;}, &#x27;axis_</td><td>ERP中心の統制<br>SoD重視の証券会社<br>クラウド標準化を進めたい案件</td><td>{&#x27;price_band&#x27;: &#x27;high&#x27;, &#x27;license_model&#x27;: &#x27;SaaSサブスクリプションの個別見積&#x27;, &#x27;pricing_transpare</td><td>—</td><td>SaaS</td></tr><tr><td><strong>prod_003</strong></td><td>—</td><td>{&#x27;axis_01&#x27;: {&#x27;assessment&#x27;: &#x27;strong&#x27;, &#x27;note&#x27;: &#x27;IT Shopで申請カタログと複雑承認を構成しやすい。&#x27;}, &#x27;ax</td><td>オンプレミス基幹が多い証券会社<br>例外承認が多い日本企業<br>細かいロールモデルを作りたい案件</td><td>{&#x27;price_band&#x27;: &#x27;high&#x27;, &#x27;license_model&#x27;: &#x27;個別見積中心&#x27;, &#x27;pricing_transparency&#x27;: &#x27;low&#x27;}</td><td>—</td><td>on-premises<br>hosted</td></tr><tr><td><strong>prod_004</strong></td><td>—</td><td>{&#x27;axis_01&#x27;: {&#x27;assessment&#x27;: &#x27;medium&#x27;, &#x27;note&#x27;: &#x27;標準的な申請と承認フローは十分で、SIで補強しやすい。&#x27;}, &#x27;ax</td><td>IBM基盤が多い金融機関<br>国内SI体制を重視する案件<br>監査レポート重視</td><td>{&#x27;price_band&#x27;: &#x27;high&#x27;, &#x27;license_model&#x27;: &#x27;個別見積中心&#x27;, &#x27;pricing_transparency&#x27;: &#x27;low&#x27;}</td><td>—</td><td>on-premises<br>hosted<br>hybrid</td></tr><tr><td><strong>prod_005</strong></td><td>—</td><td>{&#x27;axis_01&#x27;: {&#x27;assessment&#x27;: &#x27;medium&#x27;, &#x27;note&#x27;: &#x27;申請承認フローは十分で、ロール主導運用と相性がよい。&#x27;}, &#x27;axi</td><td>棚卸重視<br>ロール主導の統治<br>SAPを含む権限整流化</td><td>{&#x27;price_band&#x27;: &#x27;medium_high&#x27;, &#x27;license_model&#x27;: &#x27;SaaS中心の個別見積&#x27;, &#x27;pricing_transpare</td><td>—</td><td>SaaS<br>hybrid</td></tr><tr><td><strong>prod_006</strong></td><td>—</td><td>{&#x27;axis_01&#x27;: {&#x27;assessment&#x27;: &#x27;medium&#x27;, &#x27;note&#x27;: &#x27;セルフサービス申請は扱いやすい。&#x27;}, &#x27;axis_02&#x27;: {&#x27;a</td><td>中堅規模の統制強化<br>セルフサービス重視<br>コストを抑えたい案件</td><td>{&#x27;price_band&#x27;: &#x27;medium&#x27;, &#x27;license_model&#x27;: &#x27;個別見積中心&#x27;, &#x27;pricing_transparency&#x27;: &#x27;low</td><td>—</td><td>SaaS<br>on-premises</td></tr></tbody></table></div></div></section><section><div class="sec-header">📚 技術知識・設計ポイント</div><div class="sec-body">
+        <div class="knowledge-item">
+          <h4>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</h4>
+          <p>IGA（Identity Governance &amp; Administration）は、ID管理（プロビジョニング・デプロビジョニング）とID統治（アクセス認証・SOD・棚卸）を統合したアプローチ。従来のIDMの進化形として、特に規制業種で必須化している。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>ユーザーライフサイクル管理（JML）</h4>
+          <p>入社（Joiner）・異動（Mover）・退職（Leaver）のイベントに連動した自動プロビジョニング。HRシステムとの連携が鍵。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>アクセス認証・棚卸（Access Certification）</h4>
+          <p>定期的に管理者・業務責任者がアクセス権の妥当性を確認・承認するプロセス。J-SOXやFISCで必須。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>アクセス認証・棚卸（Access Certification） — よくある問題</h4>
+          <p>年1回のExcel棚卸で形骸化 / 承認者が内容を理解せず全承認 / 承認されたのに是正アクションが未実施</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>SOD（職務分離）管理</h4>
+          <p>不正を防ぐためリスクのある権限の組み合わせを検出・防止。SAPのGRC Access Controlが代表。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>ロールマイニング・RBAC設計</h4>
+          <p>既存のアクセス権実態を分析し、最適なロール定義を半自動で提案。手作業では数ヶ月かかる作業をAIで短縮。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>リスクベースアクセス制御（RBAC→ABAC移行）</h4>
+          <p>静的ロールだけでなく、コンテキスト（場所・デバイス・時刻・行動）を考慮した動的アクセス制御へ移行するトレンド。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>サービスアカウント・非人間ID管理</h4>
+          <p>ITPA・RPA・システム間連携のサービスアカウントのライフサイクル・棚卸管理。人間IDより多い組織も存在。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>監査・レポーティング</h4>
+          <p>コンプライアンス証跡の自動生成。ISO/FISC/SOX向けレポートをワンクリックで出力。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>IDM / IAM / IGA の違い</h4>
+          <p>IDM（Identity Management）: IDのライフサイクル管理（作成・変更・削除） (弱い) | IAM（Identity &amp; Access Management）: IDとアクセス権の管理 (中程度) | IGA（Identity Governance &amp; Administration）: IDガバナンス＋ライフサイクル管理 (強い) — 規制強化（SOX/FISC/PCI DSS）と大規模インシデントへの反省から、IT部門だけでなく経営・内部監査まで巻き込む「ガバナンス」が重視されるようになった。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>実装フェーズ 1: 現状把握・要件定義</h4>
+          <p> 期間: </p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>実装フェーズ 2: IGA製品選定・PoC</h4>
+          <p> 期間: </p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>実装フェーズ 3: コアシステム実装</h4>
+          <p> 期間: </p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>実装フェーズ 4: 拡張・最適化</h4>
+          <p> 期間: </p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>主要 KPI（Key Performance Indicators）</h4>
+          <p>棚卸完了率: 100% () / 孤立ID（オーファンアカウント）数: 0件 (四半期棚卸で計測) / 退職者ID無効化時間: 4時間以内（FISCは翌営業日） () / SOD違反件数: 0件（または例外管理件数） (月次レポートで追跡) / プロビジョニングリードタイム: 0日（入社日即日） ()</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>JML（Joiner-Mover-Leaver）プロセス設計ガイド</h4>
+          <p>JML（Joiner: 入社、Mover: 異動、Leaver: 退職）はID管理の根幹プロセス。HR部門とIT部門の連携が鍵であり、自動化の成熟度によって組織のIDセキュリティ水準が決まる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>証券会社で差が出る論点</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>有力候補の見方</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>IBMの位置付け</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Avatierの位置付け</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra ID Governanceの現実的な使いどころ</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>価格評価の注意点</h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div></div></section><section><div class="sec-header">🔧 実装・設定ステップ</div><div class="sec-body"><ol style="padding-left:1.5rem">
+        <li style="margin-bottom:1rem">
+          <strong>ロールマイニング・RBAC設計</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">既存のアクセス権実態を分析し、最適なロール定義を半自動で提案。手作業では数ヶ月かかる作業をAIで短縮。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>リスクベースアクセス制御（RBAC→ABAC移行）</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">静的ロールだけでなく、コンテキスト（場所・デバイス・時刻・行動）を考慮した動的アクセス制御へ移行するトレンド。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>実装フェーズ 1: 現状把握・要件定義</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem"> 期間: </p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>実装フェーズ 2: IGA製品選定・PoC</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem"> 期間: </p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>実装フェーズ 3: コアシステム実装</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem"> 期間: </p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>実装フェーズ 4: 拡張・最適化</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem"> 期間: </p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>JML（Joiner-Mover-Leaver）プロセス設計ガイド</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">JML（Joiner: 入社、Mover: 異動、Leaver: 退職）はID管理の根幹プロセス。HR部門とIT部門の連携が鍵であり、自動化の成熟度によって組織のIDセキュリティ水準が決まる。</p>
+        </li></ol>
+    <div style="background:#1a1a2e;color:#40c9a2;padding:1.2rem;border-radius:8px;margin-top:1.5rem;font-family:monospace;font-size:0.88rem">
+      <div style="color:#f4a261;margin-bottom:0.5rem"># PowerShell / Entra CLI コマンド例</div>
+      <div># Entra ID 条件付きアクセスポリシー確認</div>
+      <div>Get-MgIdentityConditionalAccessPolicy | Format-Table DisplayName, State</div>
+      <div style="margin-top:0.5rem"># Azure AD Connect 同期状態確認</div>
+      <div>Get-ADSyncScheduler</div>
+      <div style="margin-top:0.5rem"># 特権ロール割り当て一覧</div>
+      <div>Get-MgRoleManagementDirectoryRoleAssignment | Where-Object {$_.PrincipalId -ne $null}</div>
+      <div style="margin-top:0.5rem"># PAM セッション一覧（CyberArk CLI 例）</div>
+      <div>Get-PVSession -safe "Windows_Domain_Admins"</div>
+    </div></div></section><section><div class="sec-header">📐 評価軸 × 製品 詳細比較マトリクス</div><div class="sec-body"><div style="overflow-x:auto"><table style="min-width:900px"><thead><tr><th style="min-width:200px">評価軸</th><th style="min-width:120px">SailPoint IdentityNow / Identi</th><th style="min-width:120px">Saviynt Enterprise Identity Cl</th><th style="min-width:120px">One Identity Manager</th><th style="min-width:120px">IBM Security Verify Governance</th><th style="min-width:120px">Omada Identity</th><th style="min-width:120px">Avatier Identity Anywhere</th></tr></thead><tbody><tr><td><strong>アクセス申請ワークフロー</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">多段承認、代理承認、業務責任者承認、緊急申請、証跡保持の成熟度。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">申請カタログ、多段承認、例外経路の成熟度が高い。IdentityIQは複雑な例外承認を吸収しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">申請、承認、条件分岐をSaaSで標準化しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">IT Shopで申請カタログと複雑承認を構成しやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">標準的な申請と承認フローは十分で、SIで補強しやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">申請承認フローは十分で、ロール主導運用と相性がよい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">セルフサービス申請は扱いやすい。</div></td></tr><tr><td><strong>定期アクセスレビュー</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">Certification Campaign、督促、失効、例外記録、レビュー責任分担の設計容易性。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Certification Campaignの完成度が高く、部門長、データオーナー、監査部門で役割分担しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">アプリ単位、権限単位、オーナー単位のレビューを組みやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Attestation機能が成熟しており、部門、アプリ、ロール単位の棚卸を設計しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Certification運用は成熟しており、監査向け運用に向く。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Attestation運用と監査証跡の整備が得意である。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">標準的な棚卸運用は構成できる。</div></td></tr><tr><td><strong>SOD（職務分離）ポリシーと違反検知</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">予防的統制、検知的統制、申請時ブロック、例外承認、違反レポートの粒度。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SoD統制は強いが、ERPネイティブSoDの前面訴求ではSaviyntが優位になる場面がある。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">ERP系SoD分析の訴求が強く、申請時統制と違反検知を組み合わせやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">コンプライアンスルール設計は強いが、ERP専用SoDの訴求ではSaviyntほど前面ではない。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SoD統制は可能で、規制業種で必要な説明粒度を満たしやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SoDポリシーをロール管理と結び付けやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SoD機能はあるが、証券業の厳格なルールセットは事前検証が必要である。</div></td></tr><tr><td><strong>ロールマイニング</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">既存権限や利用実績から業務ロール候補を抽出する機能の成熟度。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Role Miningとロール分析の成熟度が高く、既存ADグループや業務権限からロール候補を引き出しやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Role Miningは実装できるが、ロール分析のわかりやすさではSailPointやOmadaが優位な場面がある。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">ロール分析は可能で、既存運用からの再整理に向く。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">ロールマイニングはあるが、最新の分析機能ではSailPointやOmadaが優位になりやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Identity AnalyticsでMLベースのRole Miningを強化している。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">ロール分析は可能だが、上位群ほどの深さは見込みにくい。</div></td></tr><tr><td><strong>ロール管理</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">ビジネスロール、ITロール、権限束、継承、廃止管理の扱いやすさ。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">ビジネスロール、ITロール、ポリシーベース付与を整理しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">エンタープライズロール管理とSoDポリシーを結び付けやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">組織、部門、職責、IT権限の階層設計がしやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">伝統的なロール管理と承認統制に向く。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">業務ロール中心の統治を組みやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">標準的なロール管理は可能である。</div></td></tr><tr><td><strong>人事システム連携: SAP HCM</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">SAP HCMまたは近接人事モデルをマスタとしてJoiner-Mover-Leaver運用へつなぐ適合性。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SAP HCM連携の実績が多く、Joiner-Mover-Leaverを設計しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SAP系の権限統制と説明責任に強い。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SAP HCMを含む大企業人事連携の柔軟性が高い。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SAP HCM連携はSI力と組み合わせて実装しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SAP文脈との親和性が高い。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SAP HCM連携は可能でも、実案件では個別確認が必要になりやすい。</div></td></tr><tr><td><strong>人事システム連携: Workday</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">Workdayを人事マスタにした属性同期、異動反映、退職者失効の成熟度。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Workday連携の実績が豊富で、属性ベース付与に向く。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Workdayを含む主要HRとの連携訴求がある。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Workday連携は可能だが、SaaS専業ほど前面訴求ではない。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Workday連携は可能だが、クラウドネイティブ製品ほど前面には出ていない。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">主要クラウドHRとの連携は可能である。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Workday連携は可能だが、強みとして前面には出ない。</div></td></tr><tr><td><strong>人事システム連携: 日本型人事パッケージ</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">COMPANY、POSITIVE、GeneralistなどをCSV、DB、APIで吸収する現実性。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">日本型人事は標準コネクタよりCSV、DB、API吸収になるが、IdentityIQは柔軟性が高い。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">日本型人事はAPI、CSV、個別実装前提で考えるべきである。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">DB、CSV、APIを使った吸収力が高く、日本型人事パッケージと相性がよい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">日本IBMや国内SIの実装力を前提に、日本型人事を吸収しやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">日本独自人事の標準化は弱く、アダプタや個別連携前提になる。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">日本型人事はAPIやファイル連携前提で考えるべきである。</div></td></tr><tr><td><strong>プロビジョニング先カバレッジ</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">Active Directory、Entra ID、Salesforce、SAP、SCIM、LDAP、DBなど主要対象へ</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Active Directory、Entra ID、Salesforce、SAP、SCIMなど主要先を広くカバーする。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Active Directory、ERP、SaaS、SCIM対象の接続範囲が広い。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">Active Directory、Entra ID、SAP、Salesforce、SCIMなどの主要対象を広く扱える。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">主要ディレクトリや業務システムに広く対応できる。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">標準コネクタとSCIM、REST、LDAP、PowerShell、CSV吸収の幅が広い。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">主要対象には対応するが、深い業務権限制御は事前評価が必要である。</div></td></tr><tr><td><strong>アナリティクス・リスクスコアリング</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">過剰権限、異常権限、違反候補、利用傾向、承認リスクを可視化する能力。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">アクセス分析は強いが、初期データ品質が低いと効果が出にくい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">アクセスリスク可視化と違反分析が強く、監査部門への説明資料を作りやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">統制分析は十分だが、最新SaaS型の分析演出よりは地に足が付いた実装寄りである。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">統制レポートは強いが、先進的なアクセス分析では専業SaaSより控えめである。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">ロール分析と可視化の訴求が強い。</div></td><td><span style="color:#842029;font-weight:bold;font-size:0.85rem">× 限定</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">先進的なリスクスコアリングでは差がつきやすい。</div></td></tr><tr><td><strong>監査証跡とレポート</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">誰が申請し、誰が承認し、いつ付与し、いつ棚卸したかを説明しやすいか。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">申請、承認、付与、棚卸の時系列証跡を監査に説明しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">統制イベントの証跡は取りやすいが、レポート品質は導入体制の影響を受けやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">承認経路と棚卸結果を監査向けに整理しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">監査向けレポート整備には向く。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">監査向けの証跡を作りやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">標準レベルの監査証跡は確保できる。</div></td></tr><tr><td><strong>証券会社コンプライアンス適合性</strong><div style="font-size:0.78rem;color:#888;margin-top:0.2rem">JSDA、FISC、J-SOXで問われる最小権限、職務分離、棚卸、特権申請説明への適合度。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">職務分離、棚卸、承認責任を重く見る証券会社で本命候補に入りやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">SoDを監査の中心に置く証券会社と相性がよい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">オンプレミス基幹や細かな承認規程が強い証券会社に適合しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">既存IBM系の運用、監査、SI体制がある証券会社では説明責任を実装しやすい。</div></td><td><span style="color:#2d6a4f;font-weight:bold;font-size:0.85rem">◎ 強</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">棚卸中心、監査重視、SAP権限整理を行う証券会社で評価しやすい。</div></td><td><span style="color:#555;font-weight:bold;font-size:0.85rem">medium</span><div style="font-size:0.75rem;color:#666;margin-top:0.2rem">標準統制には使えるが、大手証券の複雑SoDでは慎重評価が必要である。</div></td></tr></tbody></table></div></div></section><section><div class="sec-header">🔗 コンポーネント依存関係・連携</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>From</th><th>関係</th><th>To</th><th>説明</th></tr></thead><tbody><tr>
+              <td>node_005</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">SailPoint製品群はIGA機能を実装する。</td>
+            </tr><tr>
+              <td>node_006</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">SaviyntはSaaS型IGAを実装する。</td>
+            </tr><tr>
+              <td>node_007</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">One Identity Managerはハイブリッド向けIGAを実装する。</td>
+            </tr><tr>
+              <td>node_008</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">IBM Security Verify Governanceは統制重視のIGAを実装する。</td>
+            </tr><tr>
+              <td>node_009</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">Omada Identityはロール主導のIGAを実装する。</td>
+            </tr><tr>
+              <td>node_010</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">Avatier Identity Anywhereはセルフサービス中心のIGAを実装する。</td>
+            </tr><tr>
+              <td>node_011</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_001</td>
+              <td style="font-size:0.85rem">Entra ID GovernanceはMicrosoft中心のIGA機能を提供する。</td>
+            </tr><tr>
+              <td>node_004</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_002</td>
+              <td style="font-size:0.85rem">証券会社ID管理では職務分離が必須になる。</td>
+            </tr><tr>
+              <td>node_004</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_003</td>
+              <td style="font-size:0.85rem">証券会社ID管理では定期アクセスレビューが必須になる。</td>
+            </tr><tr>
+              <td>node_001</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_004</td>
+              <td style="font-size:0.85rem">IGAは証券会社ID管理における申請、棚卸、監査証跡を補完する。</td>
+            </tr><tr>
+              <td>n001</td>
+              <td><span class="tag">implements</span></td>
+              <td>n002</td>
+              <td style="font-size:0.85rem">HRISがSCIMでIDMにデータを送信</td>
+            </tr><tr>
+              <td>n002</td>
+              <td><span class="tag">enables</span></td>
+              <td>n003</td>
+              <td style="font-size:0.85rem">SCIMがJoinerプロビジョニングを自動化</td>
+            </tr><tr>
+              <td>n004</td>
+              <td><span class="tag">mitigates</span></td>
+              <td>n006</td>
+              <td style="font-size:0.85rem">Moverプロセスの適切な実装が権限累積を防ぐ</td>
+            </tr></tbody></table></div></div></section><section><div class="sec-header">🔧 トラブルシューティング・設計上の注意点</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>症状・問題</th><th>原因・背景</th><th>対応方法</th></tr></thead><tbody><tr>
+          <td><strong>アクセス認証・棚卸（Access Certification） — よくある問題</strong></td>
+          <td style="font-size:0.85rem">年1回のExcel棚卸で形骸化 / 承認者が内容を理</td>
+          <td style="font-size:0.85rem">解せず全承認 / 承認されたのに是正アクションが未実施</td>
+        </tr><tr>
+          <td><strong>SOD（職務分離）管理</strong></td>
+          <td style="font-size:0.85rem">不正を防ぐためリスクのある権限の組み合わせを検出・防止</td>
+          <td style="font-size:0.85rem">。SAPのGRC Access Controlが代表。</td>
+        </tr><tr>
+          <td><strong>リスクベースアクセス制御（RBAC→ABAC移行）</strong></td>
+          <td style="font-size:0.85rem">静的ロールだけでなく、コンテキスト（場所・デバイス・時</td>
+          <td style="font-size:0.85rem">刻・行動）を考慮した動的アクセス制御へ移行するトレンド。</td>
+        </tr><tr>
+          <td><strong>価格評価の注意点</strong></td>
+          <td style="font-size:0.85rem"></td>
+          <td style="font-size:0.85rem"></td>
+        </tr></tbody></table></div></div></section>
+  <div class="sources">
+    ソースデータ: IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド、JML（Joiner-Mover-Leaver）プロセス設計ガイド、IGA製品比較、HR連携・組織変更ID管理<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

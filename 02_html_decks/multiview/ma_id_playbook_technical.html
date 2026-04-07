@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M&amp;A後ID統合プレイブック | IT技術者・SE向け</title>
+<style>
+  :root {
+    --primary: #1b4332;
+    --accent: #40c9a2;
+    --bg: #f0faf5;
+    --card: #e8f5ee;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">⚙️ IT技術者・SE向け</div>
+  <h1>M&amp;A後ID統合プレイブック</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: Active Directory から Entra ID への移行パターン / マルチADフォレスト統合アーキテクチャガイド / ID運用管理フレームワーク
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">Active Directory</span> <span class="tag">Entra ID</span> <span class="tag">移行</span> <span class="tag">ハイブリッド</span> <span class="tag">日本企業</span> <span class="tag">レガシーシステム</span> <span class="tag">SIer</span> <span class="tag">運用</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> IT技術者・SE向け</div>
+    <div class="item"><strong>所要時間:</strong> 30分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 設計・実装・製品選定に必要な技術詳細が分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="ma_id_playbook_exec.html" style="color:var(--accent)">👔 役員・経営層向け</a></div>
+  </div>
+<section><div class="sec-header">🏗️ アーキテクチャ概要・コンポーネント</div><div class="sec-body"><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">製品・ソリューション</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Active Directory</h4>
+              <p>日本企業で現在も多くの Windows Server、業務システム、オンプレミス認証基盤の中心となっているディレクトリサービス。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> source_identity_platform</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>typical_residual_scope:</strong> オンプレミス サーバー管理者認証, レガシーアプリの Kerberos, ベンダー保守アカウント</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra ID</h4>
+              <p>クラウド中心の認証、条件付きアクセス、多要素認証、デバイス管理連携を担う移行先の中核基盤。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> target_identity_platform</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>strategic_value:</strong> ゼロトラスト強化, クラウドSaaS統合, 運用標準化</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Azure VM</h4>
+              <p>Active Directory ドメインコントローラーをクラウド上へ再配置する際の実行基盤。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> infrastructure</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>considerations:</strong> 可用性設計, バックアップ, ネットワーク分離</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra Domain Services</h4>
+              <p>ドメイン参加や LDAP、Kerberos を一部代替できるが、既存 Active Directory の完全代替ではないマネージドドメインサービス。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> managed_domain_service</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>caution:</strong> 複雑な GPO や一部のドメイン管理要件をそのまま移植できない</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra Connect</h4>
+              <p>Active Directory から Entra ID へユーザーやグループを同期する基盤コンポーネント。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> directory_sync</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_1</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">設計パターン</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Lift &amp; Shift</h4>
+              <p>既存の Active Directory 依存を大きく変えずに Azure VM 上へ移す、または Entra Domain Services を補完利用して延命する移行パターン。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>primary_use_case:</strong> 短期的なデータセンター閉鎖やサーバー更改</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>fit_for_japan:</strong> レガシー依存が強く、設計責任を SIer と分担したい組織</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Hybrid Coexistence</h4>
+              <p>Active Directory と Entra ID を長期間併存させ、ユーザー・端末・アプリを段階的に移行する現実的な主流パターン。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>primary_use_case:</strong> 中堅から大企業の現実解</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>fit_for_japan:</strong> オンプレミス残存環境と基幹系を維持しながら統制を進める組織</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Full Cloud</h4>
+              <p>新設組織やスタートアップのように Active Directory を持ち込まず、Entra ID を中心に端末・認証・運用を設計するパターン。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>primary_use_case:</strong> 新設法人、分社、ゼロベース刷新</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>constraints:</strong> 既存オンプレミス依存が少ないこと, 業務アプリのモダナイズが進んでいること</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Application-first</h4>
+              <p>アプリケーションごとに認証基盤を切り替え、SAML や OpenID Connect 対応可能な領域から Entra ID に寄せるパターン。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>primary_use_case:</strong> 認証方式が混在する企業</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>benefit:</strong> ビジネス優先度に沿った移行順序を定義しやすい</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Day 0</h4>
+              <p>アセスメント、方針決定、責任分界、テナント設計、影響分析を固める準備フェーズ。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>timeframe:</strong> 0-3ヶ月</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>deliverables:</strong> 現状評価, 移行方針, 優先順位</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>フェーズ1</h4>
+              <p>Entra Connect、Password Hash Synchronization、Entra Hybrid Join を導入し、基本的なハイブリッド基盤を構築する段階。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>timeframe:</strong> 3-6ヶ月</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>focus:</strong> 同期と端末登録</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>フェーズ2</h4>
+              <p>Conditional Access と Multi-Factor Authentication を全社展開し、クラウド側の認証強度を標準化する段階。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>timeframe:</strong> 6-12ヶ月</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>focus:</strong> 利用者認証強化</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>フェーズ3</h4>
+              <p>Local Administrator Password Solution と Just-in-Time 特権管理を進め、特権横展開リスクを下げる段階。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>timeframe:</strong> 12-24ヶ月</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>focus:</strong> 特権最小化</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">概念・設計原則</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>Password Hash Synchronization</h4>
+              <p>Active Directory のパスワード情報を Entra ID 側へ同期し、クラウド認証の足場を整える方式。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> cloud_auth_bootstrap</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_1</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra Hybrid Join</h4>
+              <p>既存のドメイン参加端末を維持しつつ Entra ID 管理対象として登録する中間ステップ。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> device_transition</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_1</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Conditional Access</h4>
+              <p>ユーザー、端末状態、場所、リスクに応じてアクセス条件を制御するクラウド側ポリシー。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> zero_trust_control</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_2</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Multi-Factor Authentication</h4>
+              <p>パスワード依存を減らし、侵害時の横展開を抑止するための基本対策。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> identity_protection</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_2</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Local Administrator Password Solution</h4>
+              <p>端末ごとのローカル管理者パスワードを個別管理し、共通パスワード運用を排除する対策。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> endpoint_privilege_control</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_3</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Just-in-Time</h4>
+              <p>管理者権限を常時付与せず、必要な時だけ昇格させる特権管理の考え方。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> privileged_access_control</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_3</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>Entra Join</h4>
+              <p>端末を Active Directory 非依存で Entra ID に直接参加させるクラウドネイティブな管理形態。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>role:</strong> ad_free_endpoint_state</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>phase:</strong> phase_4</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>AD健全性チェック</h4>
+              <p>孤立 OU、未使用アカウント、過剰権限、重複グループ、古い信頼関係を洗い出し、移行の前提を整える評価作業。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> assessment</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>day:</strong> day_0</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div></div><h3 style="margin:1rem 0 0.5rem;color:var(--primary);font-size:1rem">リスク・脅威</h3><div class="node-grid">
+            <div class="node-card">
+              <h4>NTLMとKerberosのレガシー依存</h4>
+              <p>認証改修が難しい業務アプリやファイル共有が残り、Entra ID 単独化を妨げる代表的な障壁。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> technical_barrier</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>severity:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>SIer責任分界の曖昧化</h4>
+              <p>設計責任、運用責任、障害切り分けが分散し、移行判断が遅延する日本企業で典型的な障壁。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> governance_barrier</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>severity:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>利用者教育不足</h4>
+              <p>Authenticator 登録、認証方式変更、端末再登録に対する理解不足が展開速度を落とすリスク。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> adoption_barrier</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>severity:</strong> medium</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>フォールバック未設計</h4>
+              <p>同期停止、誤ポリシー適用、MFA 障害時の退避経路が定義されていないため業務停止につながるリスク。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> operational_barrier</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>severity:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>オンプレミス基幹システム残存</h4>
+              <p>日本企業では基幹システムが最後まで Kerberos やドメイン参加を要求し、完全移行の最終障壁になりやすい。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> japan_specific_risk</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>severity:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>ベンダー管理アカウント整理不足</h4>
+              <p>保守契約に紐づく共有 ID や固定パスワードが残り、移行後の統制を崩すリスク。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> japan_specific_risk</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>severity:</strong> high</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div>
+            <div class="node-card">
+              <h4>日本固有の業務要件</h4>
+              <p>年号・元号、帳票、旧式クライアントなど日本固有の業務要件が端末更新やアプリ刷新を遅らせるリスク。</p>
+              <div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>category:</strong> japan_specific_risk</div><div style="font-size:0.8rem;color:#888;margin-top:0.2rem"><strong>severity:</strong> medium</div>
+              <span style="font-size:0.75rem;color:#aaa">[Active Directory から ]</span>
+            </div></div></div></section><section><div class="sec-header">📊 製品・ソリューション一覧</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>製品名</th><th>概要</th><th>ソース</th></tr></thead><tbody><tr>
+                  <td><strong>Active Directory</strong></td>
+                  <td>日本企業で現在も多くの Windows Server、業務システム、オンプレミス認証基盤の中心となっているディレクトリサービス。</td>
+                  <td style="font-size:0.8rem;color:#888">Active Directory から Entra ID への移行パターン</td>
+                </tr><tr>
+                  <td><strong>Entra ID</strong></td>
+                  <td>クラウド中心の認証、条件付きアクセス、多要素認証、デバイス管理連携を担う移行先の中核基盤。</td>
+                  <td style="font-size:0.8rem;color:#888">Active Directory から Entra ID への移行パターン</td>
+                </tr><tr>
+                  <td><strong>Azure VM</strong></td>
+                  <td>Active Directory ドメインコントローラーをクラウド上へ再配置する際の実行基盤。</td>
+                  <td style="font-size:0.8rem;color:#888">Active Directory から Entra ID への移行パターン</td>
+                </tr><tr>
+                  <td><strong>Entra Domain Services</strong></td>
+                  <td>ドメイン参加や LDAP、Kerberos を一部代替できるが、既存 Active Directory の完全代替ではないマネージドドメインサービス。</td>
+                  <td style="font-size:0.8rem;color:#888">Active Directory から Entra ID への移行パターン</td>
+                </tr><tr>
+                  <td><strong>Entra Connect</strong></td>
+                  <td>Active Directory から Entra ID へユーザーやグループを同期する基盤コンポーネント。</td>
+                  <td style="font-size:0.8rem;color:#888">Active Directory から Entra ID への移行パターン</td>
+                </tr></tbody></table></div></div></section><section><div class="sec-header">📚 技術知識・設計ポイント</div><div class="sec-body">
+        <div class="knowledge-item">
+          <h4>移行パターン分類</h4>
+          <p>日本企業では Full Cloud よりも Hybrid Coexistence が現実的な主流になる。理由は、オンプレミス基幹システム、ベンダー保守、サーバー管理者運用が長く残るためである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Lift &amp; Shift の位置づけ</h4>
+          <p>Lift &amp; Shift は移行の到達点ではなく、データセンター更改や期限対応のための延命策として使うべきである。Active Directory の設計問題をそのまま持ち込むため、将来の整理計画が必要になる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Entra Domain Services の使い方</h4>
+          <p>Entra Domain Services は一部のレガシー依存を支える補完技術であり、既存 Active Directory の完全代替として期待しすぎないことが重要である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Day 0 で失敗しやすい論点</h4>
+          <p>孤立 OU、未使用アカウント、サービスアカウント、グループポリシー依存を放置すると、後続フェーズで例外運用が急増し、移行計画が止まりやすい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>Kerberos依存アプリ棚卸し</h4>
+          <p>Kerberos依存アプリ棚卸しは、単なる資産管理ではなく、どのアプリが最後まで Active Directory を必要とするかを決める判断材料になる。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ1の基本方針</h4>
+          <p>フェーズ1は大規模な認証改革ではなく、Entra Connect、Password Hash Synchronization、Entra Hybrid Join によりハイブリッド運用の安定基盤をつくる段階である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ2の展開順序</h4>
+          <p>Conditional Access と Multi-Factor Authentication は技術設定よりも対象整理と利用者教育の成否が大きく、例外条件を先に設計する必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ3の狙い</h4>
+          <p>LAPS と Just-in-Time の導入は、侵害後の横展開を抑え、ベンダー保守や共有管理者 ID への依存を減らすことに意味がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>フェーズ4の現実</h4>
+          <p>AD フリー化は 24 ヶ月以上の長期テーマになりやすく、端末を Entra Join に移せてもオンプレミス基幹システムや一部サーバー認証は残ることがある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>障害時フォールバック</h4>
+          <p>同期停止、誤ポリシー配布、MFA 利用不能に備えて、緊急除外アカウント、退避手順、ヘルプデスク導線を事前に定義するべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>SIer依存構造への対処</h4>
+          <p>SIer委託が前提でも、認証方式選定、例外承認、責任分界は社内が保持しないと、例外対応のたびに移行が後退する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>規模別の概算目安</h4>
+          <p>小規模は 3 から 9 ヶ月、中規模は 9 から 18 ヶ月、大規模は 18 から 36 ヶ月以上を見込むべきであり、オンプレミス残存率と例外アプリ数で工期が大きく伸縮する。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>実行モデル比較</h4>
+          <p>内製主導は標準化に強く、SIer委託は初速に強く、MSP活用は運用平準化に強い。多くの日本企業では三者を役割分担させる混成型が現実的である。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>ベンダー管理アカウントの扱い</h4>
+          <p>保守契約に紐づく共有 ID を放置すると、Multi-Factor Authentication と Just-in-Time の統制が崩れるため、アカウント棚卸しと契約改定を同時に進める必要がある。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>日本固有の業務要件</h4>
+          <p>年号・元号、帳票、旧式クライアントの制約は技術負債として残りやすく、Application-first で対象業務ごとに改修順序を切る方が失敗しにくい。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>モダンセキュリティ観点の結論</h4>
+          <p>Active Directory から Entra ID への移行は、ディレクトリの置換ではなく、認証強度、特権統制、端末管理、運用責任の再設計として扱うべきである。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4>マルチADフォレスト統合アーキテクチャガイド</h4>
+          <p>日本の大企業では、M&amp;A・組織分割・セキュリティ分離目的でADフォレストが複数存在する構成が多い。これらを統合・集約するアーキテクチャ設計は、ID管理プロジェクトの中でも最難関の一つ。</p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div>
+        <div class="knowledge-item">
+          <h4></h4>
+          <p></p>
+          
+        </div></div></section><section><div class="sec-header">🔧 実装・設定ステップ</div><div class="sec-body"><ol style="padding-left:1.5rem">
+        <li style="margin-bottom:1rem">
+          <strong>移行パターン分類</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">日本企業では Full Cloud よりも Hybrid Coexistence が現実的な主流になる。理由は、オンプレミス基幹システム、ベンダー保守、サーバー管理者運用が長く残るためである。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Lift &amp; Shift の位置づけ</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Lift &amp; Shift は移行の到達点ではなく、データセンター更改や期限対応のための延命策として使うべきである。Active Directory の設計問題をそのまま持ち込むため、将来の整理計画が必要になる。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>Day 0 で失敗しやすい論点</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">孤立 OU、未使用アカウント、サービスアカウント、グループポリシー依存を放置すると、後続フェーズで例外運用が急増し、移行計画が止まりやすい。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>フェーズ2の展開順序</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Conditional Access と Multi-Factor Authentication は技術設定よりも対象整理と利用者教育の成否が大きく、例外条件を先に設計する必要がある。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>障害時フォールバック</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">同期停止、誤ポリシー配布、MFA 利用不能に備えて、緊急除外アカウント、退避手順、ヘルプデスク導線を事前に定義するべきである。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>SIer依存構造への対処</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">SIer委託が前提でも、認証方式選定、例外承認、責任分界は社内が保持しないと、例外対応のたびに移行が後退する。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>モダンセキュリティ観点の結論</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">Active Directory から Entra ID への移行は、ディレクトリの置換ではなく、認証強度、特権統制、端末管理、運用責任の再設計として扱うべきである。</p>
+        </li>
+        <li style="margin-bottom:1rem">
+          <strong>マルチADフォレスト統合アーキテクチャガイド</strong>
+          <p style="font-size:0.9rem;margin-top:0.3rem">日本の大企業では、M&amp;A・組織分割・セキュリティ分離目的でADフォレストが複数存在する構成が多い。これらを統合・集約するアーキテクチャ設計は、ID管理プロジェクトの中でも最難関の一つ。</p>
+        </li></ol>
+    <div style="background:#1a1a2e;color:#40c9a2;padding:1.2rem;border-radius:8px;margin-top:1.5rem;font-family:monospace;font-size:0.88rem">
+      <div style="color:#f4a261;margin-bottom:0.5rem"># PowerShell / Entra CLI コマンド例</div>
+      <div># Entra ID 条件付きアクセスポリシー確認</div>
+      <div>Get-MgIdentityConditionalAccessPolicy | Format-Table DisplayName, State</div>
+      <div style="margin-top:0.5rem"># Azure AD Connect 同期状態確認</div>
+      <div>Get-ADSyncScheduler</div>
+      <div style="margin-top:0.5rem"># 特権ロール割り当て一覧</div>
+      <div>Get-MgRoleManagementDirectoryRoleAssignment | Where-Object {$_.PrincipalId -ne $null}</div>
+      <div style="margin-top:0.5rem"># PAM セッション一覧（CyberArk CLI 例）</div>
+      <div>Get-PVSession -safe "Windows_Domain_Admins"</div>
+    </div></div></section><section><div class="sec-header">🔗 コンポーネント依存関係・連携</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>From</th><th>関係</th><th>To</th><th>説明</th></tr></thead><tbody><tr>
+              <td>node_pattern_lift_shift</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_ad_source</td>
+              <td style="font-size:0.85rem">既存の Active Directory 設計を大きく変えずに延命するため、元の Active Directory 依存を前提とする。</td>
+            </tr><tr>
+              <td>node_pattern_lift_shift</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_azure_vm_ad</td>
+              <td style="font-size:0.85rem">ドメインコントローラーを Azure VM 上に再配置してクラウド移送する。</td>
+            </tr><tr>
+              <td>node_pattern_lift_shift</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_entra_ds</td>
+              <td style="font-size:0.85rem">一部のドメイン参加や LDAP 需要に対して Entra Domain Services を補完的に用いる。</td>
+            </tr><tr>
+              <td>node_pattern_hybrid</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_entra_connect</td>
+              <td style="font-size:0.85rem">長期並行運用では Entra Connect によるディレクトリ同期が基盤になる。</td>
+            </tr><tr>
+              <td>node_pattern_hybrid</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_phs</td>
+              <td style="font-size:0.85rem">クラウド認証の普及には Password Hash Synchronization が実務上の標準になる。</td>
+            </tr><tr>
+              <td>node_pattern_hybrid</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_hybrid_join</td>
+              <td style="font-size:0.85rem">既存端末の管理継続には Entra Hybrid Join が現実的な橋渡しになる。</td>
+            </tr><tr>
+              <td>node_pattern_full_cloud</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_entra_target</td>
+              <td style="font-size:0.85rem">Entra ID を単独の主要認証基盤として用いる。</td>
+            </tr><tr>
+              <td>node_pattern_full_cloud</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_entra_join</td>
+              <td style="font-size:0.85rem">端末を Entra Join 中心で管理することが前提になる。</td>
+            </tr><tr>
+              <td>node_pattern_app_first</td>
+              <td><span class="tag">complements</span></td>
+              <td>node_entra_target</td>
+              <td style="font-size:0.85rem">SaaS や改修容易なアプリから先行して Entra ID へ寄せる。</td>
+            </tr><tr>
+              <td>node_day0</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_assess_ad_health</td>
+              <td style="font-size:0.85rem">Day 0 では AD健全性チェックが必須である。</td>
+            </tr><tr>
+              <td>node_day0</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_assess_kerberos</td>
+              <td style="font-size:0.85rem">Day 0 では Kerberos 依存の把握が必須である。</td>
+            </tr><tr>
+              <td>node_day0</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_assess_service_accounts</td>
+              <td style="font-size:0.85rem">Day 0 ではサービスアカウント把握が必須である。</td>
+            </tr><tr>
+              <td>node_day0</td>
+              <td><span class="tag">requires</span></td>
+              <td>node_assess_gpo</td>
+              <td style="font-size:0.85rem">Day 0 ではグループポリシー依存分析が必須である。</td>
+            </tr><tr>
+              <td>node_phase1</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_entra_connect</td>
+              <td style="font-size:0.85rem">フェーズ1で Entra Connect を導入する。</td>
+            </tr><tr>
+              <td>node_phase1</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_phs</td>
+              <td style="font-size:0.85rem">フェーズ1で Password Hash Synchronization を有効化する。</td>
+            </tr><tr>
+              <td>node_phase1</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_hybrid_join</td>
+              <td style="font-size:0.85rem">フェーズ1で Entra Hybrid Join を展開する。</td>
+            </tr><tr>
+              <td>node_phase2</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_ca</td>
+              <td style="font-size:0.85rem">フェーズ2で Conditional Access を全社適用へ拡大する。</td>
+            </tr><tr>
+              <td>node_phase2</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_mfa</td>
+              <td style="font-size:0.85rem">フェーズ2で Multi-Factor Authentication を標準化する。</td>
+            </tr><tr>
+              <td>node_phase3</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_laps</td>
+              <td style="font-size:0.85rem">フェーズ3で Local Administrator Password Solution を導入する。</td>
+            </tr><tr>
+              <td>node_phase3</td>
+              <td><span class="tag">implements</span></td>
+              <td>node_jit</td>
+              <td style="font-size:0.85rem">フェーズ3で Just-in-Time 特権管理を定着させる。</td>
+            </tr></tbody></table></div></div></section><section><div class="sec-header">🔧 トラブルシューティング・設計上の注意点</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>症状・問題</th><th>原因・背景</th><th>対応方法</th></tr></thead><tbody><tr>
+          <td><strong>Lift &amp; Shift の位置づけ</strong></td>
+          <td style="font-size:0.85rem">Lift &amp; Shift は移行の到達点ではなく、データセンター更改や期限対応のための延命策として使うべ</td>
+          <td style="font-size:0.85rem">きである。Active Directory の設計問題をそのまま持ち込むため、将来の整理計画が必要になる。</td>
+        </tr><tr>
+          <td><strong>Day 0 で失敗しやすい論点</strong></td>
+          <td style="font-size:0.85rem">孤立 OU、未使用アカウント、サービスアカウント、グループポリシー依存</td>
+          <td style="font-size:0.85rem">を放置すると、後続フェーズで例外運用が急増し、移行計画が止まりやすい。</td>
+        </tr><tr>
+          <td><strong>日本固有の業務要件</strong></td>
+          <td style="font-size:0.85rem">年号・元号、帳票、旧式クライアントの制約は技術負債として残りやすく、Appl</td>
+          <td style="font-size:0.85rem">ication-first で対象業務ごとに改修順序を切る方が失敗しにくい。</td>
+        </tr></tbody></table></div></div></section>
+  <div class="sources">
+    ソースデータ: Active Directory から Entra ID への移行パターン、マルチADフォレスト統合アーキテクチャガイド、ID運用管理フレームワーク<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

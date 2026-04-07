@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IGA（Identity Governance &amp; Administration）完全ガイド | 役員・経営層向け</title>
+<style>
+  :root {
+    --primary: #1a1a2e;
+    --accent: #f4a261;
+    --bg: #f8f4ee;
+    --card: #fff8f0;
+    --text: #1a1a1a;
+    --muted: #666;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .about-banner {
+    background: var(--card);
+    border-left: 5px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem 2rem;
+  }
+  .about-banner h2 { grid-column: 1/-1; color: var(--primary); font-size: 1rem; margin-bottom: 0.5rem; }
+  .about-banner .item { font-size: 0.9rem; }
+  .about-banner .item strong { color: var(--primary); }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    margin: 0.1rem;
+    font-weight: bold;
+  }
+  .node-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .node-card {
+    background: var(--card);
+    border-radius: 8px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .node-card h4 { color: var(--primary); margin-bottom: 0.4rem; font-size: 0.95rem; }
+  .node-card p { font-size: 0.88rem; color: var(--muted); }
+  .knowledge-item {
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+  }
+  .knowledge-item:last-child { border-bottom: none; }
+  .knowledge-item h4 { color: var(--primary); margin-bottom: 0.3rem; }
+  .knowledge-item p { font-size: 0.9rem; }
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    position: relative;
+    border-bottom: 1px solid #eee;
+    font-size: 0.92rem;
+  }
+  .checklist li::before {
+    content: "☐";
+    position: absolute;
+    left: 0.3rem;
+    color: var(--accent);
+    font-size: 1.1rem;
+  }
+  .sources {
+    font-size: 0.8rem;
+    color: var(--muted);
+    border-top: 1px solid #ddd;
+    padding-top: 1rem;
+    margin-top: 2rem;
+  }
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+    border-top: 1px solid #ddd;
+    margin-top: 2rem;
+  }
+  @media (max-width: 600px) {
+    .about-banner { grid-template-columns: 1fr; }
+    .node-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="view-badge">👔 役員・経営層向け</div>
+  <h1>IGA（Identity Governance &amp; Administration）完全ガイド</h1>
+  <div style="margin-top:0.5rem;font-size:0.85rem;opacity:0.8">
+    データソース: IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド / JML（Joiner-Mover-Leaver）プロセス設計ガイド / IGA製品比較 / HR連携・組織変更ID管理
+  </div>
+  <div style="margin-top:0.5rem"><span class="tag">IGA</span> <span class="tag">Identity Governance and Administration</span> <span class="tag">職務分離</span> <span class="tag">定期アクセスレビュー</span> <span class="tag">証券会社</span> <span class="tag">JSDA</span> <span class="tag">FISC</span> <span class="tag">比較</span></div>
+</header>
+
+<div class="container">
+  <div class="about-banner">
+    <h2>📄 このドキュメントについて</h2>
+    <div class="item"><strong>対象読者:</strong> 役員・経営層向け</div>
+    <div class="item"><strong>所要時間:</strong> 5分</div>
+    <div class="item"><strong>このドキュメントで分かること:</strong> 経営判断に必要なリスク・投資・決断ポイントが分かる</div>
+    <div class="item"><strong>関連ビュー:</strong> <a href="iga_complete_technical.html" style="color:var(--accent)">⚙️ IT技術者・SE向け</a> | <a href="iga_complete_compliance.html" style="color:var(--accent)">📋 監査・コンプライアンス担当者向け</a></div>
+  </div>
+<section><div class="sec-header">🎯 今日決めてほしいこと（3点）</div><div class="sec-body">
+        <div class="highlight-box">
+          <h3>決断 1: アクセス認証・棚卸（Access Certification）</h3>
+          <p>定期的に管理者・業務責任者がアクセス権の妥当性を確認・承認するプロセス。J-SOXやFISCで必須。</p>
+        </div>
+        <div class="highlight-box">
+          <h3>決断 2: アクセス認証・棚卸（Access Certification） — よくある問題</h3>
+          <p>年1回のExcel棚卸で形骸化 / 承認者が内容を理解せず全承認 / 承認されたのに是正アクションが未実施</p>
+        </div>
+        <div class="highlight-box">
+          <h3>決断 3: SOD（職務分離）管理</h3>
+          <p>不正を防ぐためリスクのある権限の組み合わせを検出・防止。SAPのGRC Access Controlが代表。</p>
+        </div></div></section><section><div class="sec-header">⚠️ 経営に直結するリスク</div><div class="sec-body"><table><thead><tr><th>リスク</th><th>事業への影響</th><th>対応の緊急度</th></tr></thead><tbody><tr><td><strong>権限累積問題</strong></td><td>Moverで旧権限が削除されず累積し続ける問題。FISC/PCI監査で最頻出指摘事項。</td><td><span style="color:#e53e3e;font-weight:bold">高</span></td></tr></tbody></table>
+    <div style="background:#fff5f5;border-left:4px solid #e53e3e;border-radius:0 8px 8px 0;padding:1rem;margin-top:1rem">
+      <strong>💡 経営層への補足:</strong>
+      ID管理の不備は「内部不正」「ランサムウェア」「情報漏洩」の全てに関連します。
+      一つの脆弱なアカウントが侵害されるだけで、システム全体への横展開が起きるリスクがあります。
+    </div></div></section><section><div class="sec-header">💰 投資対効果の考え方</div><div class="sec-body">
+        <div class="highlight-box">
+          <h3>JML（Joiner-Mover-Leaver）プロセス設計ガイド</h3>
+          <p>JML（Joiner: 入社、Mover: 異動、Leaver: 退職）はID管理の根幹プロセス。HR部門とIT部門の連携が鍵であり、自動化の成熟度によって組織のIDセキュリティ水準が決まる。</p>
+        </div>
+    <div style="overflow-x:auto;margin-top:1rem"><table>
+      <thead><tr><th>シナリオ</th><th>コスト/損失規模</th><th>備考</th></tr></thead>
+      <tbody>
+        <tr><td>ランサムウェアインシデント（中規模企業）</td><td><strong>5,000万〜3億円</strong></td><td>身代金+復旧費+機会損失</td></tr>
+        <tr><td>情報漏洩（個人情報）</td><td><strong>1件あたり最大1,000万円</strong></td><td>課徴金+被害者対応+信頼毀損</td></tr>
+        <tr><td>内部不正による不正送金</td><td><strong>数百万〜数億円</strong></td><td>SOD未設定が主因</td></tr>
+        <tr><td>ID管理自動化による削減効果</td><td><strong>年間500〜2,000万円</strong></td><td>IT工数削減+ヘルプデスク削減</td></tr>
+        <tr><td>PAM導入による特権管理改善</td><td><strong>ROI 200〜400%（3年）</strong></td><td>Forrester Research 試算</td></tr>
+      </tbody>
+    </table></div>
+    <div style="background:#fff3cd;border-radius:8px;padding:1rem;margin-top:1rem;border-left:4px solid #f59e0b">
+      <strong>📌 経営判断のポイント:</strong>
+      セキュリティインシデント1件あたりの平均対応コストは数億円規模に達します。
+      ID管理基盤への先行投資は、インシデント発生時の損失額と比較すると合理的な選択です。
+      「予防コスト」は「復旧コスト」の平均10分の1以下です。
+    </div></div></section><section><div class="sec-header">📊 現状分析と対応方針</div><div class="sec-body">
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</h3>
+          <p style="font-size:0.92rem">IGA（Identity Governance &amp; Administration）は、ID管理（プロビジョニング・デプロビジョニング）とID統治（アクセス認証・SOD・棚卸）を統合したアプローチ。従来のIDMの進化形として、特に規制業種で必須化している。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">ユーザーライフサイクル管理（JML） - Lv1 手動管理</h3>
+          <p style="font-size:0.92rem">申請書ベース。IT担当者が手作業でID作成・削除。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">ユーザーライフサイクル管理（JML） - Lv2 半自動</h3>
+          <p style="font-size:0.92rem">HR連携スクリプト。退職イベントのみ自動無効化。</p>
+        </div>
+        <div style="margin-bottom:1.2rem;padding:1rem;border-radius:8px;background:var(--card)">
+          <h3 style="color:var(--primary);margin-bottom:0.4rem">ユーザーライフサイクル管理（JML） - Lv3 完全自動</h3>
+          <p style="font-size:0.92rem">IGA製品のHRコネクタで全ライフサイクルイベントをリアルタイム処理。</p>
+        </div></div></section><section><div class="sec-header">🗺️ 推奨対応ロードマップ</div><div class="sec-body"><div style="overflow-x:auto"><table><thead><tr><th>フェーズ</th><th>期間目安</th><th>主な取組み</th><th>期待効果</th></tr></thead><tbody><tr>
+          <td><strong>フェーズ1: 現状把握・リスク評価</strong></td>
+          <td style="white-space:nowrap">1〜2ヶ月</td>
+          <td style="font-size:0.88rem">既存ID棚卸し・特権アカウント調査・セキュリティギャップ分析</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">優先対応箇所の特定・リスク可視化</td>
+        </tr><tr>
+          <td><strong>フェーズ2: 緊急対応</strong></td>
+          <td style="white-space:nowrap">2〜4ヶ月</td>
+          <td style="font-size:0.88rem">MFA全適用・特権アカウント統制・退職者アカウント即時無効化</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">高リスクの即時低減・インシデント発生確率の大幅削減</td>
+        </tr><tr>
+          <td><strong>フェーズ3: 基盤整備</strong></td>
+          <td style="white-space:nowrap">4〜12ヶ月</td>
+          <td style="font-size:0.88rem">ID管理ツール導入・自動プロビジョニング・クラウド移行計画策定</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">運用効率化・コンプライアンス対応基盤の確立</td>
+        </tr><tr>
+          <td><strong>フェーズ4: 高度化・自動化</strong></td>
+          <td style="white-space:nowrap">12〜24ヶ月</td>
+          <td style="font-size:0.88rem">IGA導入・ゼロトラスト移行・AI活用によるリスク検知強化</td>
+          <td style="font-size:0.88rem;color:#2d6a4f">継続的なセキュリティ改善・先進的ID統治体制の確立</td>
+        </tr></tbody></table></div></div></section><section><div class="sec-header">🔑 このテーマの重要ポイント（技術詳細なし）</div><div class="sec-body">
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">IGA（Identity Governance &amp; Administration）は、ID管理（プロビジョニング・デプロビジョニング）とID統治（アクセス認証・SOD・棚卸）を統合したアプローチ。従来のIDMの進化形として、特に規制業種で必須化している。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">ユーザーライフサイクル管理（JML）</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">入社（Joiner）・異動（Mover）・退職（Leaver）のイベントに連動した自動プロビジョニング。HRシステムとの連携が鍵。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">ロールマイニング・RBAC設計</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">既存のアクセス権実態を分析し、最適なロール定義を半自動で提案。手作業では数ヶ月かかる作業をAIで短縮。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">リスクベースアクセス制御（RBAC→ABAC移行）</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">静的ロールだけでなく、コンテキスト（場所・デバイス・時刻・行動）を考慮した動的アクセス制御へ移行するトレンド。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">サービスアカウント・非人間ID管理</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">ITPA・RPA・システム間連携のサービスアカウントのライフサイクル・棚卸管理。人間IDより多い組織も存在。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">監査・レポーティング</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">コンプライアンス証跡の自動生成。ISO/FISC/SOX向けレポートをワンクリックで出力。</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">IDM / IAM / IGA の違い</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem">IDM（Identity Management）: IDのライフサイクル管理（作成・変更・削除） (弱い) | IAM（Identity &amp; Access Management）: IDとアクセス権の管理 (中程度) | IGA（Identity Governance &amp; Administration）: IDガバナンス＋ライフサイクル管理 (強い) — 規制強化（SOX/FISC/PCI DSS…（詳細は技術者向けビューを参照）</p>
+            </div>
+            <div style="border-bottom:1px solid #eee;padding:0.8rem 0">
+              <strong style="color:var(--primary)">実装フェーズ 1: 現状把握・要件定義</strong>
+              <p style="font-size:0.9rem;margin-top:0.3rem"> 期間: </p>
+            </div></div></section><section><div class="sec-header">🧩 主要コンセプト概要</div><div class="sec-body"><div class="node-grid">
+            <div class="node-card">
+              <h4>IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド</h4>
+              <p>IGA（Identity Governance &amp; Administration）は、ID管理（プロビジョニング・デプロビジョニング）とID統治（アクセス認証・SOD・棚卸）を統合したアプローチ。従来</p>
+            </div>
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv1 手動管理</h4>
+              <p>申請書ベース。IT担当者が手作業でID作成・削除。</p>
+            </div>
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv2 半自動</h4>
+              <p>HR連携スクリプト。退職イベントのみ自動無効化。</p>
+            </div>
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv3 完全自動</h4>
+              <p>IGA製品のHRコネクタで全ライフサイクルイベントをリアルタイム処理。</p>
+            </div>
+            <div class="node-card">
+              <h4>ユーザーライフサイクル管理（JML） - Lv4 AI補助</h4>
+              <p>ロールマイニング・異常検知でプロビジョニングを最適化。</p>
+            </div>
+            <div class="node-card">
+              <h4>JML（Joiner-Mover-Leaver）プロセス設計ガイド</h4>
+              <p>JML（Joiner: 入社、Mover: 異動、Leaver: 退職）はID管理の根幹プロセス。HR部門とIT部門の連携が鍵であり、自動化の成熟度によって組織のIDセキュリティ水準が決まる。</p>
+            </div></div></div></section><section><div class="sec-header">❓ 経営層からよくある質問 Q&amp;A</div><div class="sec-body">
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「なぜ今このタイミングで？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">Windows Server 2012/2016のサポート終了（2023〜2027年）と2029年問題が重なる「移行の最終機会」です。放置するほどリスクと移行コストが増大します。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「クラウドに移行すれば安全になるのか？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">クラウドは手段であり、ID管理の設計が不適切なら従来と同じリスクが残ります。重要なのは「誰が何にアクセスできるか」を正しく制御することです。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「既存ベンダーに任せればよいのでは？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">ID管理は全システムの「鍵管理」です。特定ベンダー依存は長期リスクになります。オープン標準ベースの設計で依存度を下げることが重要です。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「何から始めればよいか？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">まず「特権アカウントの棚卸し」と「退職者アカウントの確認」から着手できます。コストゼロで高リスクを即座に可視化できます。</div>
+        </div>
+        <div style="margin-bottom:1.2rem">
+          <div style="font-weight:bold;color:var(--primary);padding:0.5rem;background:var(--card);border-radius:6px 6px 0 0">「セキュリティ投資は費用対効果が見えにくいのでは？」</div>
+          <div style="padding:0.8rem;border:1px solid #e0e0e0;border-top:none;border-radius:0 0 6px 6px;font-size:0.92rem">インシデント発生時のコスト（復旧・賠償・信頼毀損）と比較すれば定量化できます。保険料と同じ発想で、「発生確率×損失額」で評価することを推奨します。</div>
+        </div></div></section>
+  <div class="sources">
+    ソースデータ: IGA（Identity Governance &amp; Administration）フレームワーク完全ガイド、JML（Joiner-Mover-Leaver）プロセス設計ガイド、IGA製品比較、HR連携・組織変更ID管理<br>
+    生成日: 2026-04-07 | ナレッジベース自動生成
+  </div>
+</div>
+<footer>
+  Enterprise IDM Knowledge Base — 本ドキュメントはナレッジベースから自動生成されています。最新情報は各製品公式ドキュメントを参照してください。
+</footer>
+</body>
+</html>

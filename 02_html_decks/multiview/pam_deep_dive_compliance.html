@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特権アクセス管理（PAM）完全ガイド | コンプライアンス・内部監査向け</title>
+<style>
+  :root {
+    --primary: #3d0066;
+    --accent: #c77dff;
+    --bg: #faf5ff;
+    --card: #f3e8ff;
+    --text: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header p { opacity: 0.85; font-size: 0.95rem; }
+  .siblings {
+    background: #1a1a1a;
+    padding: 0.6rem 2rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .siblings span { color: #666; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  code {
+    background: #f0f0f0;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 0.8rem;
+    border-top: 1px solid #e0e0e0;
+  }
+</style>
+</head>
+<body>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;padding:1rem 2rem;background:#1a1a1a;"><a href="pam_deep_dive_exec.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">役員</a><a href="pam_deep_dive_technical.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">技術者</a><a href="pam_deep_dive_compliance.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#3d0066;color:#c77dff;font-weight:bold;">コンプライアンス</a><a href="pam_deep_dive_sales.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">営業</a></div>
+<header>
+  <div class="view-badge">コンプライアンス・内部監査向け</div>
+  <h1>特権アクセス管理（PAM）完全ガイド</h1>
+  <p>サーバー管理者アカウントのセキュリティ設計</p>
+</header>
+<div class="siblings">
+  <span>他のビューで読む：</span>
+  <a href="pam_deep_dive_exec.html" style="color:#f4a261;text-decoration:underline;">役員・経営層向け</a>　|　<a href="pam_deep_dive_technical.html" style="color:#40c9a2;text-decoration:underline;">技術者・SE向け</a>　|　<a href="pam_deep_dive_sales.html" style="color:#f59e0b;text-decoration:underline;">営業・提案担当向け</a>
+</div>
+<div class="container">
+
+<section>
+  <div class="sec-header">📜 規制・ガイドライン要件マッピング</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>規制・ガイドライン</th><th>特権管理に関する主要要件</th><th>PAM対応ポイント</th></tr>
+      <tr><td>FISC安全対策基準（金融）</td><td>特権ユーザーの監視、操作ログ6年保存</td><td>セッション録画+ログ長期保存</td></tr>
+      <tr><td>PCI DSS v4.0</td><td>Req 7/8: 最小権限・共有アカウント禁止・ログ監査</td><td>個人アカウント化+Vault</td></tr>
+      <tr><td>ISO 27001:2022</td><td>A.8.18: 特権アクセス権の使用・A.8.15: ログ</td><td>JIT+セッション録画</td></tr>
+      <tr><td>NIST SP800-53 Rev.5</td><td>AC-6最小権限、AU-2監査イベント定義</td><td>Tier分離+SIEM連携</td></tr>
+      <tr><td>サイバーセキュリティ経営ガイドライン</td><td>取締役会への報告・インシデント対応</td><td>ダッシュボード+アラート</td></tr>
+      <tr><td>個人情報保護法（改正）</td><td>漏洩時の報告義務・安全管理措置</td><td>アクセスログ証跡保全</td></tr>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="sec-header">📋 内部監査チェックリスト（PAM）</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>監査項目</th><th>確認方法</th><th>合否基準</th></tr>
+      <tr><td>特権アカウント棚卸</td><td>AD・PAMのアカウントリスト照合</td><td>承認外アカウント0件</td></tr>
+      <tr><td>共有アカウント使用状況</td><td>ログ分析（同時ログイン確認）</td><td>共有アカウント使用率0%</td></tr>
+      <tr><td>退職者アカウント削除</td><td>HR連携記録×ADアカウント</td><td>退職翌営業日内削除100%</td></tr>
+      <tr><td>セッション録画保存</td><td>録画ストレージ容量・期間確認</td><td>規定保存期間100%達成</td></tr>
+      <tr><td>定期パスワードローテーション</td><td>PAM Vault最終変更日</td><td>90日以内100%</td></tr>
+      <tr><td>不審アクセス検知</td><td>SIEMアラートレビュー</td><td>未検討アラート0件</td></tr>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="sec-header">🔍 証跡管理設計（SOC/内部監査対応）</div>
+  <div class="sec-body">
+    <div class="highlight-box">
+      <h3>保存すべきログ種別と保存期間</h3>
+      <table>
+        <tr><th>ログ種別</th><th>推奨保存期間</th><th>格納先</th></tr>
+        <tr><td>特権セッション録画（動画）</td><td>1年以上</td><td>PAM専用ストレージ（改ざん防止）</td></tr>
+        <tr><td>コマンド実行テキストログ</td><td>3〜7年</td><td>SIEM / WORM対応ストレージ</td></tr>
+        <tr><td>パスワードチェックアウトログ</td><td>3〜7年</td><td>PAM DB+バックアップ</td></tr>
+        <tr><td>JIT申請・承認記録</td><td>3年</td><td>PAM + チケットシステム連携</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 特権アクセス管理（PAM）完全ガイド (コンプライアンス・内部監査向け)</p>
+  <p>このドキュメントは社内検討・提案用途向けです。</p>
+</footer>
+</body>
+</html>

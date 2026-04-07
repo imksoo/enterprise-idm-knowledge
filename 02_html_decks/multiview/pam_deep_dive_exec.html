@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>特権アクセス管理（PAM）完全ガイド | 役員・経営層向け</title>
+<style>
+  :root {
+    --primary: #7c2d00;
+    --accent: #f4a261;
+    --bg: #fef9f5;
+    --card: #fff3eb;
+    --text: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header p { opacity: 0.85; font-size: 0.95rem; }
+  .siblings {
+    background: #1a1a1a;
+    padding: 0.6rem 2rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .siblings span { color: #666; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  code {
+    background: #f0f0f0;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 0.8rem;
+    border-top: 1px solid #e0e0e0;
+  }
+</style>
+</head>
+<body>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;padding:1rem 2rem;background:#1a1a1a;"><a href="pam_deep_dive_exec.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#7c2d00;color:#f4a261;font-weight:bold;">役員</a><a href="pam_deep_dive_technical.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">技術者</a><a href="pam_deep_dive_compliance.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">コンプライアンス</a><a href="pam_deep_dive_sales.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">営業</a></div>
+<header>
+  <div class="view-badge">役員・経営層向け</div>
+  <h1>特権アクセス管理（PAM）完全ガイド</h1>
+  <p>サーバー管理者アカウントのセキュリティ設計</p>
+</header>
+<div class="siblings">
+  <span>他のビューで読む：</span>
+  <a href="pam_deep_dive_technical.html" style="color:#40c9a2;text-decoration:underline;">技術者・SE向け</a>　|　<a href="pam_deep_dive_compliance.html" style="color:#c77dff;text-decoration:underline;">コンプライアンス・内部監査向け</a>　|　<a href="pam_deep_dive_sales.html" style="color:#f59e0b;text-decoration:underline;">営業・提案担当向け</a>
+</div>
+<div class="container">
+
+<section>
+  <div class="sec-header">📊 経営層が知るべき3つの事実</div>
+  <div class="sec-body">
+    <div class="highlight-box">
+      <h3>① 管理者アカウント1つで会社全体が乗っ取られる</h3>
+      <p>ランサムウェア被害の<strong>78%</strong>は、IT管理者の権限アカウントを経由して全社に広がります。「IT部門のパスワードが漏れた」だけで、基幹システム・財務データ・顧客情報が同時に暗号化されるリスクがあります。</p>
+    </div>
+    <div class="highlight-box">
+      <h3>② PAMは「踏み台+録画」のセキュリティシステム</h3>
+      <p>特権アクセス管理（PAM）とは、IT管理者がサーバーを操作する際に必ず「検問所（踏み台サーバー）」を経由させ、<strong>誰が何を操作したかを録画・記録</strong>する仕組みです。万が一の侵害後に「誰がやったか」「何が被害を受けたか」を特定できます。</p>
+    </div>
+    <div class="highlight-box">
+      <h3>③ 導入コストより「未対策のリスク」が大きい</h3>
+      <p>大手製造業のランサムウェア被害：復旧費用<strong>数十億円</strong>、操業停止<strong>数週間</strong>。PAMシステムの年間費用は被害額の1/100以下が一般的です。</p>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="sec-header">🎯 経営判断が必要なポイント</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>判断事項</th><th>推奨</th><th>理由</th></tr>
+      <tr><td>PAM優先対象</td><td>サーバー管理者・DB管理者から</td><td>被害が最大になる権限から先に管理</td></tr>
+      <tr><td>外部委託業者のアクセス</td><td>即座にPAM経由に変更</td><td>委託先経由の侵害が増加中</td></tr>
+      <tr><td>予算規模感</td><td>500万〜3000万円（規模による）</td><td>国産・海外製品でレンジが広い</td></tr>
+      <tr><td>導入期間</td><td>3〜9ヶ月（段階的移行）</td><td>一括切り替えは業務停止リスク</td></tr>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="sec-header">📋 今すぐできる3アクション</div>
+  <div class="sec-body">
+    <ol style="padding-left:1.5rem;line-height:2.5;">
+      <li><strong>特権アカウントの棚卸し</strong> — 今「誰が管理者権限を持っているか」をIT部門にリスト提出させる（1週間）</li>
+      <li><strong>退職者・委託先のアカウント確認</strong> — 退職後もアカウントが残っていないか確認（最重要）</li>
+      <li><strong>PAM導入可否の予算審議</strong> — 次回予算サイクルに盛り込む</li>
+    </ol>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 特権アクセス管理（PAM）完全ガイド (役員・経営層向け)</p>
+  <p>このドキュメントは社内検討・提案用途向けです。</p>
+</footer>
+</body>
+</html>

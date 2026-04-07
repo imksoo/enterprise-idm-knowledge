@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ゼロトラストアーキテクチャ実装ガイド | 技術者・SE向け</title>
+<style>
+  :root {
+    --primary: #1b4332;
+    --accent: #40c9a2;
+    --bg: #f0faf5;
+    --card: #e8f8f0;
+    --text: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Kaku Gothic ProN", "Meiryo", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+  }
+  header {
+    background: var(--primary);
+    color: #fff;
+    padding: 2rem;
+    border-bottom: 4px solid var(--accent);
+  }
+  header .view-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--primary);
+    font-weight: bold;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  header p { opacity: 0.85; font-size: 0.95rem; }
+  .siblings {
+    background: #1a1a1a;
+    padding: 0.6rem 2rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .siblings span { color: #666; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  section {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  section .sec-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  section .sec-body { padding: 1.5rem; }
+  .highlight-box {
+    background: var(--card);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .highlight-box h3 { color: var(--primary); margin-bottom: 0.5rem; font-size: 1rem; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+  }
+  td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--bg); }
+  code {
+    background: #f0f0f0;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: #999;
+    font-size: 0.8rem;
+    border-top: 1px solid #e0e0e0;
+  }
+</style>
+</head>
+<body>
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;padding:1rem 2rem;background:#1a1a1a;"><a href="zerotrust_architecture_exec.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">役員</a><a href="zerotrust_architecture_technical.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#1b4332;color:#40c9a2;font-weight:bold;">技術者</a><a href="zerotrust_architecture_sales.html" style="text-decoration:none;padding:0.4rem 1rem;border-radius:6px;font-size:0.85rem;background:#f0f0f0;color:#333;">営業</a></div>
+<header>
+  <div class="view-badge">技術者・SE向け</div>
+  <h1>ゼロトラストアーキテクチャ実装ガイド</h1>
+  <p>境界防御から「決して信頼せず、常に検証」へ</p>
+</header>
+<div class="siblings">
+  <span>他のビューで読む：</span>
+  <a href="zerotrust_architecture_exec.html" style="color:#f4a261;text-decoration:underline;">役員・経営層向け</a>　|　<a href="zerotrust_architecture_sales.html" style="color:#f59e0b;text-decoration:underline;">営業・提案担当向け</a>
+</div>
+<div class="container">
+
+<section>
+  <div class="sec-header">🏗️ ゼロトラストアーキテクチャ構成要素</div>
+  <div class="sec-body">
+    <table>
+      <tr><th>コンポーネント</th><th>役割</th><th>主要製品</th></tr>
+      <tr><td>IdP（Identity Provider）</td><td>認証・認可の起点。全アクセスはここを通す</td><td>Entra ID, Okta, Ping Identity</td></tr>
+      <tr><td>条件付きアクセス（CA）</td><td>ユーザー・デバイス・場所・リスクスコアで動的にアクセス制御</td><td>Entra CA, Okta Policy Engine</td></tr>
+      <tr><td>MDM/EDR</td><td>デバイスの健全性をアクセス条件に組み込む</td><td>Intune, CrowdStrike, SentinelOne</td></tr>
+      <tr><td>SASE/SSE</td><td>クラウドエッジでのネットワークセキュリティ統合</td><td>Zscaler, Netskope, Prisma Access</td></tr>
+      <tr><td>マイクロセグメンテーション</td><td>東西通信の制御（サーバー間の不正移動防止）</td><td>Illumio, Guardicore</td></tr>
+      <tr><td>PAM</td><td>特権アクセスのゼロトラスト化（JIT+記録）</td><td>CyberArk, BeyondTrust</td></tr>
+      <tr><td>SIEM/SOAR</td><td>全ログ統合分析・自動対応</td><td>Microsoft Sentinel, Splunk, IBM QRadar</td></tr>
+    </table>
+  </div>
+</section>
+<section>
+  <div class="sec-header">⚙️ 日本企業でよくある実装パターン</div>
+  <div class="sec-body">
+    <div class="highlight-box">
+      <h3>パターンA: Microsoft中心（M365導入済み企業向け）</h3>
+      <p>Entra ID P2 → 条件付きアクセス → Intune → Microsoft Defender for Endpoint → Microsoft Sentinel。追加費用を最小化しつつゼロトラストを段階導入。<strong>M365 E5</strong>で大部分をカバー可能。</p>
+    </div>
+    <div class="highlight-box">
+      <h3>パターンB: マルチベンダー（セキュリティ最優先）</h3>
+      <p>Okta（IdP） + CrowdStrike（EDR） + Zscaler（SASE） + CyberArk（PAM） + Splunk（SIEM）。Best-of-breed構成。金融・製薬など高セキュリティ要件の企業向け。統合コストが高い。</p>
+    </div>
+    <div class="highlight-box">
+      <h3>パターンC: ハイブリッド移行期（オンプレ残存）</h3>
+      <p>Entra Hybrid Join + ADFS → 段階的にEntra ID直接認証へ移行。オンプレサーバーはPAM経由アクセス。Azure VPN/ExpressRoute経由でオンプレ接続を維持しながら段階移行。</p>
+    </div>
+  </div>
+</section>
+<section>
+  <div class="sec-header">🔗 ID管理との統合ポイント（ZT × IDM）</div>
+  <div class="sec-body">
+    <ul style="line-height:2.2;padding-left:1.5rem;">
+      <li><strong>条件付きアクセスにIGA連携</strong>：IGA（SailPoint等）で承認されたロールのみCA許可</li>
+      <li><strong>リスクベース認証</strong>：Entra ID Protectionのリスクスコアで自動的にMFAを要求</li>
+      <li><strong>デバイスコンプライアンス確認</strong>：Intuneパッチ未適用デバイスはアクセス拒否</li>
+      <li><strong>継続的アクセス評価（CAE）</strong>：セッション中でもリスク上昇を検知し即座に再認証</li>
+      <li><strong>SIEMへの全ログ統合</strong>：IdP・MDM・PAM・SASE全ての認証ログをSIEMに集約</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — ゼロトラストアーキテクチャ実装ガイド (技術者・SE向け)</p>
+  <p>このドキュメントは社内検討・提案用途向けです。</p>
+</footer>
+</body>
+</html>
