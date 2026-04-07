@@ -1,0 +1,285 @@
+{
+  "metadata": {
+    "id": "industry_manufacturing_auth",
+    "title": "製造業ID管理特論",
+    "industry": "manufacturing",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "manufacturing",
+      "japan",
+      "SAP",
+      "OT",
+      "PLC",
+      "SCADA",
+      "MES",
+      "特権アクセス管理",
+      "サプライチェーン",
+      "IEC 62443",
+      "ISO/IEC 27001",
+      "IoT"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../01_entry/thesaurus_controlled_vocabulary.json",
+      "../05_hybrid_scenarios/hybrid_os_combinations.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../08_identity_subjects/identity_subject_master.json",
+      "../09_external_connections/value_chain_id_patterns.json"
+    ]
+  },
+  "industry_context": {
+    "key_systems": [
+      {
+        "system": "SAP ECC / SAP S/4HANA",
+        "role": "会計、購買、生産管理、品質、保全、物流の基幹システム。",
+        "identity_implications": [
+          "日本の製造業では 2026-04 時点でも SAP ECC と SAP S/4HANA が併存しやすい。",
+          "SAP GUI の Kerberos ベース SSO と SAP BTP や周辺 SaaS の SAML ベース SSO を分離設計する必要がある。",
+          "SU01 による個別ユーザー管理が残ると人事イベント連携と職務分離の自動化が止まりやすい。"
+        ]
+      },
+      {
+        "system": "SAP BTP",
+        "role": "拡張アプリケーション、ワークフロー、自動化、分析、周辺クラウド連携の基盤。",
+        "identity_implications": [
+          "SAP Cloud Identity Services を介した SSO 設計が中心になる。",
+          "Entra ID など企業標準 IdP と信頼関係を結ぶ一方、SAP 側のロールとグループの責任分界を明確化する必要がある。"
+        ]
+      },
+      {
+        "system": "MES / SCADA / HMI",
+        "role": "現場の製造実行、監視、指示、品質記録、ライン停止制御を担う工場システム。",
+        "identity_implications": [
+          "停止許容度が低く、Windows ドメイン統合や多要素認証を一律適用できない。",
+          "共有アカウントやローカルIDが残りやすく、境界分離と作業証跡が主要統制になる。"
+        ]
+      },
+      {
+        "system": "PLC（プログラマブルロジックコントローラー） / DCS",
+        "role": "設備制御と安全運転に直結する OT 資産。",
+        "identity_implications": [
+          "Active Directory 統合不可または限定対応の機器が多い。",
+          "ベンダー保守用のローカル認証、証明書、専用ツール認証が混在しやすい。",
+          "人間IDより先に資産台帳、デバイスID、ネットワーク zone/conduit の定義が必要になる。"
+        ]
+      },
+      {
+        "system": "SCM / EDI / サプライヤーポータル",
+        "role": "受発注、納入指示、ASN、在庫連携、図面・仕様共有を担う外部接続基盤。",
+        "identity_implications": [
+          "EDI 型では証明書ベース認証や固定 IP 許可が残りやすい。",
+          "サプライヤーポータルでは多要素認証、契約終了連動、競合排他、NDA 単位の権限制御が重要になる。"
+        ]
+      }
+    ],
+    "unique_challenges": [
+      "本社 IT と工場 OT の責任分界が分かれ、単一の ID 管理基盤で一括統制しにくい。",
+      "自動車、電機、化学、食品では 24 時間稼働や停止コストの制約により、認証強化より可用性維持が優先されやすい。",
+      "グローバル子会社、合弁会社、海外工場ごとに別 Active Directory や別 SAP クライアントが残りやすい。",
+      "出向、派遣、構内常駐、設備ベンダー、物流会社など外部主体が多く、ID 主体の境界が曖昧になりやすい。",
+      "研究開発、量産準備、品質不具合、リコール対応で、通常の職務分離では表現しにくい例外アクセスが頻発する。",
+      "図面、配合、工程条件、歩留まり情報など特定製品情報の機密性が高く、競合関係やNDA条件で閲覧範囲を細かく分ける必要がある。"
+    ]
+  },
+  "sap_authentication": {
+    "sap_auth_mechanisms": [
+      {
+        "name": "SAP SU01",
+        "summary": "SAP 内部のユーザー、ロック、パスワード、ロール割当を管理する基本機能。",
+        "design_notes": [
+          "日本の製造業では SU01 手運用が長く残り、人事イベントや SAP 以外の IdP との整合が崩れやすい。",
+          "SU01 を最終記録系としつつ、申請・承認・棚卸しは外部 IGA や SAP GRC Access Control に寄せる方が統制しやすい。"
+        ]
+      },
+      {
+        "name": "SNC",
+        "summary": "Secure Network Communications により SAP GUI や RFC 通信の保護と SSO を実現する仕組み。",
+        "design_notes": [
+          "Active Directory と Kerberos を利用する場合、SPN、鍵配布、時刻同期、暗号設定を SAP Basis と Windows 管理の共同責任にする必要がある。",
+          "SNC 障害は利用者全体へ波及しやすいため、パイロット系、工場系、本社系で切り戻し手順を分けるべきである。"
+        ]
+      },
+      {
+        "name": "Kerberos 統合",
+        "summary": "SAP GUI 利用者のシングルサインオンを Active Directory ベースで実現する代表的方式。",
+        "design_notes": [
+          "SAP GUI の Kerberos SSO と Web 系の SAML / OpenID Connect を同一ポリシーで処理しない。",
+          "RFC、バッチ、インターフェース用サービスIDを個人IDへ寄せない。"
+        ]
+      },
+      {
+        "name": "SAML / OpenID Connect",
+        "summary": "SAP BTP、SAP SuccessFactors、サプライヤーポータル等のブラウザ系認証で用いるモダン連携。",
+        "design_notes": [
+          "企業標準 IdP は Entra ID などへ集約しやすいが、SAP 側ロールとグループ属性の変換責任を定義する必要がある。",
+          "外部サプライヤーや子会社はフェデレーション認証とローカルIDの混在が前提になる。"
+        ]
+      }
+    ],
+    "privileged_user_management": {
+      "fire_fighter_id": "FireFighter ID は緊急保守や障害復旧時に一時的に高権限を使うための仕組みであり、Basis 管理者の恒常特権を正当化するものではない。製造業では月末締め、生産停止、品質事故、輸出入障害などの緊急時に使われやすいため、利用理由、開始・終了時刻、承認者、対象システム、後追いレビューを必須にする。工場夜間作業では代理承認や翌営業日レビューの例外手順も定義する。",
+      "grc_access_control": "SAP GRC Access Control は Emergency Access Management、Access Risk Analysis、Business Role Management を通じて SAP 内の緊急アクセスと職務分離を統制する。日本の製造業では SAP 単体統制では不十分であり、Active Directory、Entra ID、ITSM、PAM セッション記録と突合して Basis 作業、OS 作業、DB 作業を一連の証跡として残す必要がある。",
+      "sod_matrix": "SoD（職務分離）マトリクスでは購買依頼、発注、検収、支払、在庫調整、生産指図、品質判定、原価計算、マスター変更を分離する。製造業では試作、量産立上げ、緊急代替部品採用、品質不良封じ込めなど例外処理が多いため、通常ロールと例外ロールを分け、期間限定付与と事後レビューを前提に設計する。"
+    },
+    "sap_idm_features": [
+      "SAP Identity Management はオンプレミス中心の大量プロビジョニングやワークフローを組めるが、クラウド中心の新規基盤としては採用判断を慎重に行う必要がある。",
+      "日本の製造業では SAP IdM 単独よりも、人事システム、IGA、SAP GRC Access Control、Entra ID、既存 Active Directory を接続する中継レイヤーとして評価されやすい。",
+      "SAP ロール設計、組織変更、出向・派遣終了、海外子会社の例外処理を自動化するには、人事マスター品質と組織属性の正規化が前提となる。",
+      "SAP BTP とクラウド SaaS の拡大後は、SAP IdM だけでなく SAP Cloud Identity Services や外部 IGA との役割分担を見直す必要がある。"
+    ]
+  },
+  "ot_factory_auth": {
+    "plc_access": "PLC は Active Directory 統合不可または限定対応の機器が多く、工場管理 PC、エンジニアリング端末、ベンダーノート PC 経由でローカル認証や証明書を使う構成が残りやすい。したがって『PLC を直接統合する』より、『PLC へ到達できる人間 ID と端末と経路を統制する』設計が現実的である。IEC 62443 の zone/conduit に沿って、OT 専用 Active Directory、踏み台、ジャンプサーバー、作業録画、ワンタイム資格情報を組み合わせる。",
+    "mes_scada": "MES / SCADA は Windows Server、旧クライアント、専用ミドルウェアが混在しやすく、Kerberos 統合できる範囲とローカルIDしか使えない範囲を切り分ける必要がある。本社 IT の条件付きアクセスや多要素認証をそのまま持ち込まず、運転継続性を優先した代替統制として、管理端末固定、時間帯制限、作業許可票連動、監査ログ保全、設定変更の四眼原則を採用する。",
+    "contractor_access": "協力会社作業員、設備ベンダー、保全会社には恒久アカウントを渡さず、サプライヤーIDを契約単位、工場単位、作業期間単位で発行する。本人確認、現地責任者承認、持込端末審査、作業時間制限、ネットワーク分離、セッション記録、作業後即時失効を最低要件にする。複数工場横断で同一ベンダーを使う場合も、工場ごとの責任者と権限境界を分ける。"
+  },
+  "organizational_patterns": [
+    {
+      "pattern": "グローバル子会社統合",
+      "description": "国内本社が親 IdP を持っていても、海外工場や販売子会社は別 Active Directory、別 SAP クライアント、別人事マスターを維持しやすい。統合は単一フォレスト化より、共通識別子、最低限の属性標準、フェデレーション認証、集中監査から始める方が現実的である。"
+    },
+    {
+      "pattern": "出向・派遣・構内作業員管理",
+      "description": "雇用主と受入部門が異なる主体が多いため、ID 発行条件、承認責任、棚卸し責任、離任トリガーを明文化する必要がある。特に工場は夜勤、短期増員、定修、棚卸し作業で一時IDが増えやすい。"
+    },
+    {
+      "pattern": "特定製品情報アクセス統制",
+      "description": "図面、配合、工程条件、試験データ、原価情報は製品系列、顧客案件、共同開発先、競合関係、輸出管理区分で閲覧を分ける。組織ロールだけでなく、案件属性、工場属性、NDA 区分を組み合わせた属性ベース制御が必要になる。"
+    },
+    {
+      "pattern": "研究開発と量産の分離",
+      "description": "試作部門、研究所、量産工場では扱う情報と変更権限が異なる。研究開発の柔軟性を理由に広権限を許すと、量産系マスターや品質判定へ不正影響が及びやすい。"
+    },
+    {
+      "pattern": "日本型 SIer 依存運用",
+      "description": "SAP Basis、インフラ、MES、OT ベンダーが別会社で分担され、障害時だけ権限が横断的に使われやすい。恒久的な共有アカウントを残さず、申請単位、作業単位、録画単位でアクセスを束ねる必要がある。"
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "manufacturing_knowledge_001",
+      "title": "SAP S/4HANA 移行は認証刷新の自然発生点である",
+      "content": "2026-04 時点で SAP は SAP ERP 6.0 を含む SAP Business Suite 7 のメインストリーム保守を 2027 年まで、延長保守オプションを 2030 年末まで提示している。日本の製造業では会計だけでなく生産、品質、保全、物流、周辺アドオンが複雑に絡むため、SAP S/4HANA 移行は単なる ERP 更改ではなく、SU01 手運用、Kerberos SSO、ロール設計、サービスID、監査証跡を整理し直す好機になる。",
+      "tags": [
+        "SAP",
+        "SAP S/4HANA",
+        "移行",
+        "Kerberos",
+        "監査"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_002",
+      "title": "SAP_ALL 権限は Basis 以外にも例外経路を生みやすい",
+      "content": "SAP_ALL は一見すると緊急保守用の万能権限だが、実際には本番障害、マスター修正、監査対応を理由に恒常運用へ流れやすい。製造業では月末原価、棚卸し、生産停止、品質事故対応で例外利用が常態化しやすいため、SAP_ALL の恒常付与は禁止し、FireFighter ID、時間制限、セッション記録、翌営業日レビューを前提にする必要がある。",
+      "tags": [
+        "SAP_ALL",
+        "FireFighter ID",
+        "Basis",
+        "特権アクセス管理"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_003",
+      "title": "SoD は本社業務だけでなく工場業務まで拡張して定義する",
+      "content": "製造業の SoD は購買と支払の分離だけでは不十分である。生産指図作成、BOM 変更、工程条件変更、品質判定、在庫調整、廃棄処理、出荷判定が同一人物に集中すると、品質事故や不正出荷の検知が遅れる。SAP GRC Access Control で標準 SoD を使うだけでなく、工場固有のマスター変更権限を追加したローカルルールが必要になる。",
+      "tags": [
+        "SoD",
+        "SAP GRC Access Control",
+        "品質",
+        "生産管理"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_004",
+      "title": "OT 統合の主対象は PLC ではなく到達経路である",
+      "content": "PLC や一部 SCADA は Active Directory 統合できないことが多いため、ID 管理の焦点は機器そのものではなく、誰が、どの端末から、どの踏み台を経由し、どの時間帯に、どの作業票に基づいて到達したかへ移る。共有IDを直接なくせない場合でも、個人単位の入口認証と作業証跡を確保すれば、監査可能性を大きく改善できる。",
+      "tags": [
+        "PLC",
+        "SCADA",
+        "OT",
+        "監査証跡"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_005",
+      "title": "工場 Wi-Fi と Network Access Control は人間IDとデバイスIDを分けて考える",
+      "content": "製造現場の無線ネットワークでは、作業員、保全ベンダー、ハンディ端末、AGV、IoT センサーが同一無線基盤を共有しやすい。認証は 802.1X、証明書ベース認証、RADIUS を基本にしつつ、人間IDの本人性とデバイスIDの健全性を分離評価し、OT セグメントへ入れる端末種別を厳格に制御するべきである。",
+      "tags": [
+        "Network Access Control",
+        "RADIUS",
+        "証明書ベース認証",
+        "IoT"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_006",
+      "title": "サプライヤーIDは会社単位ではなく契約と作業で分ける",
+      "content": "同じ取引先企業でも、設備保守、物流、品質検査、共同開発では必要権限が大きく異なる。サプライヤーIDを会社代表でまとめると、競合案件や NDA 制約を破りやすい。実装では契約番号、工場、対象装置、案件、期限を属性化し、ポータル権限と現場入域権限を分離管理する必要がある。",
+      "tags": [
+        "サプライヤー",
+        "NDA",
+        "外部接続",
+        "属性ベースアクセス制御"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_007",
+      "title": "グローバル子会社統合では完全統一より責任分界の可視化が先行する",
+      "content": "自動車や電機では地域ごとに別 SAP、別 Active Directory、別人事が長く残る。これを短期に単一基盤へ寄せるより、共通人ID、最小属性セット、相互フェデレーション、集中ログ保全、退職・契約終了トリガーの標準化を先行させる方が失敗しにくい。",
+      "tags": [
+        "グローバル子会社",
+        "フェデレーション認証",
+        "人事連携",
+        "監査"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_008",
+      "title": "SAP BTP の SSO は SAP Cloud Identity Services と企業標準 IdP の二層設計になる",
+      "content": "SAP BTP では SAP Cloud Identity Services の Authentication を中継点にし、企業標準 IdP と SAML などで信頼連携する構成が一般的である。したがって製造業では、オンプレミス SAP GUI の Kerberos SSO と、BTP 拡張や外部ポータルの SSO を別レーンで設計し、属性連携、ロール変換、監査ログ突合を定義する必要がある。",
+      "tags": [
+        "SAP BTP",
+        "SSO",
+        "SAML",
+        "Entra ID"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_009",
+      "title": "IEC 62443 実装は製造業の認証境界を説明する共通言語になる",
+      "content": "IEC 62443 は IT の一律標準を OT に持ち込むための規格ではなく、zone/conduit、資産オーナー責任、継続改善型のセキュリティプログラムを定義する枠組みとして有効である。ID 管理では、どこまでを企業標準 IdP で統制し、どこから先を OT ローカル統制とするかを説明する共通言語として使える。",
+      "tags": [
+        "IEC 62443",
+        "OT",
+        "zone/conduit",
+        "セキュリティプログラム"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_010",
+      "title": "ISO/IEC 27001 と工場運用を接続するには ID ライフサイクルの現場適用が必要である",
+      "content": "ISO/IEC 27001 のアクセス制御は方針文書だけでは足りず、派遣、出向、構内作業員、夜勤要員、定修ベンダー、短期応援者まで含めた Joiner、Mover、Leaver を現場で回せる必要がある。製造業では人事システム外の主体が多いため、総務、工場管理、保全、購買、情報システムの責任分界を明文化しないと実装が崩れる。",
+      "tags": [
+        "ISO/IEC 27001",
+        "Joiner/Mover/Leaver",
+        "派遣",
+        "出向"
+      ]
+    },
+    {
+      "id": "manufacturing_knowledge_011",
+      "title": "スマートファクトリーでは IoT デバイスIDが新しい統制対象になる",
+      "content": "IoT センサー、AGV、ロボット、カメラ、エッジゲートウェイが増えると、人間IDより多い数のデバイスIDを扱うことになる。パスワード共有では運用不能になるため、証明書ベース認証、デバイスライフサイクル、失効、棚卸し、ファームウェア更新と連動した ID 管理が必要である。",
+      "tags": [
+        "IoT",
+        "デバイスID",
+        "証明書ベース認証",
+        "スマートファクトリー"
+      ]
+    }
+  ]
+}

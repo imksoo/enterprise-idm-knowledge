@@ -1,0 +1,1061 @@
+{
+  "metadata": {
+    "id": "machine_identity_modern",
+    "title": "2025-2026年時点のマシンID / ワークロードID モダン管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "非人間ID",
+      "マシンID",
+      "ワークロードID",
+      "シークレット管理",
+      "ゼロシークレット",
+      "グループ管理サービスアカウント",
+      "Managed Identity",
+      "Kubernetes",
+      "RPA",
+      "AIエージェント",
+      "PKI",
+      "DevSecOps"
+    ],
+    "related_files": [
+      "../08_identity_subjects/non_human_identity.json",
+      "../08_identity_subjects/identity_subject_master.json",
+      "../03_identity_architecture/app_architecture_id_design.json",
+      "../03_identity_architecture/pam_tool_comparison.json",
+      "../04_server_auth/os_auth_methods.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json"
+    ],
+    "source_notes": [
+      "2025-2026年時点の一次情報を優先し、製品公式ドキュメントとベンダー公開レポートを併用した。",
+      "日本企業の実務論点は既存ナレッジベースの文脈と組み合わせて記述した。"
+    ],
+    "sources": [
+      {
+        "title": "About Azure Key Vault",
+        "url": "https://learn.microsoft.com/en-us/azure/key-vault/general/overview",
+        "publisher": "Microsoft Learn",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Use a Microsoft Entra Workload ID on Azure Kubernetes Service (AKS)",
+        "url": "https://learn.microsoft.com/en-us/azure/aks/workload-identity-overview",
+        "publisher": "Microsoft Learn",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Managed identities for Azure resources",
+        "url": "https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview",
+        "publisher": "Microsoft Learn",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Group Managed Service Accounts Overview",
+        "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts/group-managed-service-accounts-overview",
+        "publisher": "Microsoft Learn",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Learn how EKS Pod Identity grants pods access to AWS services",
+        "url": "https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html",
+        "publisher": "AWS Documentation",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Defining Lambda function permissions with an execution role",
+        "url": "https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html",
+        "publisher": "AWS Documentation",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "AWS Secrets Manager",
+        "url": "https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html",
+        "publisher": "AWS Documentation",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Workload Identity Federation",
+        "url": "https://cloud.google.com/iam/docs/workload-identity-federation",
+        "publisher": "Google Cloud Documentation",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Secret Manager overview",
+        "url": "https://cloud.google.com/secret-manager/docs/overview",
+        "publisher": "Google Cloud Documentation",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Introduction to service identity",
+        "url": "https://cloud.google.com/run/docs/securing/service-identity",
+        "publisher": "Google Cloud Documentation",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Configure Service Accounts for Pods",
+        "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/",
+        "publisher": "Kubernetes Documentation",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Overview - External Secrets Operator",
+        "url": "https://external-secrets.io/latest/introduction/overview/",
+        "publisher": "External Secrets Operator",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "Use JWT/OIDC authentication",
+        "url": "https://developer.hashicorp.com/vault/docs/auth/jwt",
+        "publisher": "HashiCorp Developer",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "ACME - cert-manager Documentation",
+        "url": "https://cert-manager.io/docs/configuration/acme/",
+        "publisher": "cert-manager",
+        "accessed": "2026-04-07"
+      },
+      {
+        "title": "The State of Secrets Sprawl Report 2026",
+        "url": "https://www.gitguardian.com/state-of-secrets-sprawl-report-2026",
+        "publisher": "GitGuardian",
+        "accessed": "2026-04-07"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "非人間ID",
+      "object_type": "concept",
+      "description": "機械、サービス、アプリケーション、ワークロード、RPA、AIエージェントが利用する非対話型 ID の総称。",
+      "properties": {
+        "scope": [
+          "OS サービス",
+          "CI/CD",
+          "Kubernetes",
+          "クラウド",
+          "RPA",
+          "AIエージェント",
+          "サーバーレス"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "増加要因",
+      "object_type": "concept",
+      "description": "クラウドネイティブ化、API 分割、CI/CD 自動化、RPA 普及、AIエージェント導入により非人間IDが急増する構造要因。",
+      "properties": {
+        "drivers": [
+          "マイクロサービス",
+          "Infrastructure as Code",
+          "RPA",
+          "AIエージェント",
+          "ハイブリッドクラウド"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "サービスアカウント",
+      "object_type": "concept",
+      "description": "Windows Server や Linux サーバーでサービス、ジョブ、バッチが実行時に使う非対話型アカウント。",
+      "properties": {
+        "platforms": [
+          "Windows Server",
+          "Linux サーバー"
+        ]
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "グループ管理サービスアカウント",
+      "object_type": "product",
+      "description": "Active Directory がパスワードを自動管理する Windows サービス向けアカウント。一般に gMSA と呼ばれる。",
+      "properties": {
+        "vendor": "Microsoft",
+        "platform": "Windows Server",
+        "password_rotation_days_default": 120
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Linux サービスアカウント",
+      "object_type": "concept",
+      "description": "systemd、バッチ、アプリケーション実行に使う Linux 側の専用実行主体。",
+      "properties": {
+        "controls": [
+          "nologin",
+          "sudo最小化",
+          "秘密情報の外出し"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "APIキー・シークレット",
+      "object_type": "concept",
+      "description": "外部 API、SaaS、データベース、SFTP、Webhook が利用する共有秘密情報。",
+      "properties": {
+        "risk": "コピー容易、監査困難、長寿命化しやすい"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "長寿命 API キー",
+      "object_type": "risk",
+      "description": "期限が長く、利用主体や失効手順が不明確な API キー。",
+      "properties": {
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "RPA Bot ID",
+      "object_type": "concept",
+      "description": "UiPath、Automation Anywhere、WinActor などの unattended 実行で使うロボット主体の ID。",
+      "properties": {
+        "products": [
+          "UiPath",
+          "Automation Anywhere",
+          "WinActor"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "Kubernetes ServiceAccount",
+      "object_type": "product",
+      "description": "Kubernetes Pod やコントローラーがクラスタ API および外部権限連携に使うワークロード主体。",
+      "properties": {
+        "platform": "Kubernetes"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "Projected ServiceAccountToken",
+      "object_type": "pattern",
+      "description": "TokenRequest API に基づく短命トークンを Pod に投影する方式。",
+      "properties": {
+        "token_style": "short-lived",
+        "rotation": "kubelet refresh"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "OIDC / Workload Identity Federation",
+      "object_type": "protocol",
+      "description": "外部ワークロードや CI/CD に対し、静的秘密情報ではなく信頼連鎖に基づく短命トークンで権限を委譲する方式。",
+      "properties": {
+        "protocols": [
+          "OpenID Connect",
+          "OAuth 2.0"
+        ]
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Microsoft Entra Workload ID",
+      "object_type": "product",
+      "description": "AKS 上の Kubernetes ServiceAccount を Entra ID のフェデレーション資格情報に接続する方式。",
+      "properties": {
+        "vendor": "Microsoft",
+        "platform": "AKS"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "EKS Pod Identity",
+      "object_type": "product",
+      "description": "Amazon EKS で Kubernetes ServiceAccount を AWS IAM Role に結び付ける方式。",
+      "properties": {
+        "vendor": "AWS",
+        "platform": "Amazon EKS"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "GCP Workload Identity Federation",
+      "object_type": "product",
+      "description": "外部ワークロードや他クラウドから Google Cloud へ、サービスアカウント鍵を配らずにアクセスさせる方式。",
+      "properties": {
+        "vendor": "Google Cloud"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "Azure Managed Identity",
+      "object_type": "product",
+      "description": "Azure リソースに対してプラットフォームが ID とトークン発行を担うワークロード主体。",
+      "properties": {
+        "vendor": "Microsoft",
+        "credential_style": "platform-managed"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "クラウド関数 ID",
+      "object_type": "concept",
+      "description": "AWS Lambda、Azure Functions、Cloud Run / Cloud Functions などのサーバーレス実行主体。",
+      "properties": {
+        "examples": [
+          "Lambda execution role",
+          "Functions Managed Identity",
+          "Cloud Run service identity"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "AIエージェント ID",
+      "object_type": "concept",
+      "description": "LLM ベースの自律処理、半自律処理、MCP 連携、業務オーケストレーションで使う非人間ID。",
+      "properties": {
+        "rise_period": "2025-2026",
+        "controls": [
+          "最小権限",
+          "人間承認",
+          "短命トークン",
+          "監査証跡"
+        ]
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "HashiCorp Vault",
+      "object_type": "product",
+      "description": "マルチクラウドおよびオンプレミス混在環境で、動的資格情報、認証、証明書発行を扱えるシークレット基盤。",
+      "properties": {
+        "vendor": "HashiCorp",
+        "editions": [
+          "OSS",
+          "Enterprise"
+        ]
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "Azure Key Vault",
+      "object_type": "product",
+      "description": "シークレット、鍵、証明書を集中管理し、Entra ID と Azure RBAC に統合できる保管基盤。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "AWS Secrets Manager",
+      "object_type": "product",
+      "description": "AWS ワークロード向けのシークレット保管、取得、ローテーション基盤。",
+      "properties": {
+        "vendor": "AWS"
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "Google Cloud Secret Manager",
+      "object_type": "product",
+      "description": "Google Cloud のシークレットとそのバージョンを集中管理する保管基盤。",
+      "properties": {
+        "vendor": "Google Cloud"
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "CyberArk Conjur",
+      "object_type": "product",
+      "description": "Kubernetes や DevSecOps を意識したポリシーベースのマシンシークレット管理基盤。",
+      "properties": {
+        "vendor": "CyberArk"
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "Delinea Secret Server",
+      "object_type": "product",
+      "description": "運用系パスワード保管、ローテーション、アクセス制御に強いシークレット管理基盤。",
+      "properties": {
+        "vendor": "Delinea"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "SPIFFE",
+      "object_type": "protocol",
+      "description": "ワークロード ID を標準化する仕様群。サービス間相互認証の基盤として使われる。",
+      "properties": {
+        "id_style": "workload identity standard"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "SPIRE",
+      "object_type": "product",
+      "description": "SPIFFE ベースのワークロード ID 発行、証明、更新を実装する基盤。",
+      "properties": {
+        "role": "workload identity implementation"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "External Secrets Operator",
+      "object_type": "product",
+      "description": "外部シークレットストアの値を Kubernetes 側へ同期するコントローラー。",
+      "properties": {
+        "category": "secret_sync"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "ハードコードされたシークレット",
+      "object_type": "risk",
+      "description": "ソースコード、設定ファイル、CI/CD 変数定義、MCP 設定にパスワードや API キーを埋め込む状態。",
+      "properties": {
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "GitHubへのシークレット流出",
+      "object_type": "risk",
+      "description": "GitHub リポジトリや関連コミットへ API キー、トークン、接続文字列が露出する状態。",
+      "properties": {
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "日本企業のRPA属人化",
+      "object_type": "risk",
+      "description": "RPA Bot ID の所有者、棚卸し、ローテーション、停止手順が担当者依存で管理される状態。",
+      "properties": {
+        "japan_specific": true
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "gMSA 未導入残存",
+      "object_type": "risk",
+      "description": "Windows サービスの固定パスワード サービスアカウントが大量に残り続ける状態。",
+      "properties": {
+        "japan_specific": true
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "証明書ライフサイクル管理",
+      "object_type": "concept",
+      "description": "マシン証明書の発行、配布、更新、失効、棚卸しを自動化して扱う管理領域。",
+      "properties": {
+        "scope": [
+          "TLS",
+          "mTLS",
+          "デバイス証明書",
+          "サービス証明書"
+        ]
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "ACME",
+      "object_type": "protocol",
+      "description": "公開鍵証明書の自動発行と更新を行う標準プロトコル。",
+      "properties": {
+        "automation": true
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "OCSP / CRL",
+      "object_type": "protocol",
+      "description": "証明書失効状態を配布し検証する代表的方式。",
+      "properties": {
+        "usage": [
+          "失効確認",
+          "侵害時封じ込め"
+        ]
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "CyberArk Identity Security Platform",
+      "object_type": "product",
+      "description": "人、特権、マシン、証明書を統合して扱う CyberArk のプラットフォーム。",
+      "properties": {
+        "vendor": "CyberArk"
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "Venafi",
+      "object_type": "product",
+      "description": "大規模証明書ライフサイクル管理と Machine Identity 保護で広く参照される製品群。",
+      "properties": {
+        "vendor": "CyberArk"
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "最小権限",
+      "object_type": "concept",
+      "description": "非人間IDにも必要最小限の権限だけを付与する原則。",
+      "properties": {}
+    },
+    {
+      "id": "node_037",
+      "label": "監査証跡",
+      "object_type": "pattern",
+      "description": "発行元、利用主体、実行環境、承認者、対象リソースを結び付ける追跡基盤。",
+      "properties": {
+        "requirements": [
+          "相関 ID",
+          "利用履歴",
+          "所有者",
+          "承認履歴"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "deepens",
+      "description": "増加要因は非人間IDの爆発的増加の背景を説明する。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_003",
+      "relationship": "replaces",
+      "description": "グループ管理サービスアカウントは一部の固定パスワード サービスアカウントを置き換える。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_009",
+      "relationship": "complements",
+      "description": "Projected ServiceAccountToken は Kubernetes ServiceAccount を短命トークン化して利用する。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_006",
+      "relationship": "replaces",
+      "description": "OIDC / Workload Identity Federation は長寿命 API キーや固定シークレットの一部を置き換える。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "Microsoft Entra Workload ID は AKS 上でフェデレーションを実装する。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "EKS Pod Identity は Amazon EKS 上で短命な権限委譲を実装する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "GCP Workload Identity Federation はサービスアカウント鍵なしの信頼連携を実装する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_006",
+      "relationship": "replaces",
+      "description": "Azure Managed Identity は接続先が対応する限りアプリ内シークレット保持を減らす。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "クラウド関数 ID はフェデレーションやプラットフォーム管理 ID と組み合わせて使われる。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_001",
+      "relationship": "example_of",
+      "description": "AIエージェントは2025年以降に急増した非人間IDの新カテゴリである。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_027",
+      "relationship": "mitigates",
+      "description": "HashiCorp Vault はハードコードされたシークレットを外出しする。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_027",
+      "relationship": "mitigates",
+      "description": "Azure Key Vault はアプリケーション内の秘密情報埋め込みを減らす。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_027",
+      "relationship": "mitigates",
+      "description": "AWS Secrets Manager は AWS ワークロードの静的シークレット露出を減らす。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_027",
+      "relationship": "mitigates",
+      "description": "Google Cloud Secret Manager は Google Cloud 上のシークレット露出を減らす。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_027",
+      "relationship": "mitigates",
+      "description": "CyberArk Conjur は DevSecOps と Kubernetes を含むマシンシークレット管理を強化する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_003",
+      "relationship": "mitigates",
+      "description": "Delinea Secret Server は運用系サービスアカウントの保管とローテーションを支える。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_024",
+      "relationship": "implements",
+      "description": "SPIRE は SPIFFE ベースのワークロード ID を実装する。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "External Secrets Operator は Vault やクラウドシークレットストアの値を Kubernetes へ同期する。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_027",
+      "relationship": "example_of",
+      "description": "GitHub へのシークレット流出はハードコードされたシークレットの典型的被害形態である。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_008",
+      "relationship": "deepens",
+      "description": "日本企業では RPA Bot ID の運用が担当者依存になりやすい。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "gMSA 未導入残存は置換計画の必要性を示す。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_032",
+      "relationship": "requires",
+      "description": "証明書ライフサイクル管理では ACME などの自動化手段が重要になる。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_033",
+      "relationship": "requires",
+      "description": "証明書ライフサイクル管理には失効確認の運用も含まれる。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_031",
+      "relationship": "complements",
+      "description": "CyberArk Identity Security Platform はマシン証明書とシークレット統制を補完する。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_031",
+      "relationship": "implements",
+      "description": "Venafi は大規模証明書自動化の代表的実装である。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "AIエージェントには最小権限が必須である。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "AIエージェントの実運用には利用証跡の追跡が必要である。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "RPA Bot ID の事故調査には詳細な監査証跡が必要である。"
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "knowledge_001",
+      "topic": "非人間IDは人間IDより速く増える",
+      "content": "2025-2026年の増加要因は、マイクロサービス化、CI/CD 自動化、Kubernetes 普及、RPA 常態化、AIエージェント導入である。1人の開発者や業務担当者に対して複数のワークロード主体が増殖するため、非人間IDの件数は人間IDを大きく上回りやすい。",
+      "related_nodes": [
+        "node_001",
+        "node_002"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "分類軸は実行場所と認証方式で分ける",
+      "content": "非人間IDは、OS サービス型、共有シークレット型、フェデレーション型、プラットフォーム管理型、証明書型、RPA 型、AIエージェント型に分けると設計判断がしやすい。製品名で分類するより、資格情報の保持者と寿命で分けた方が統制に直結する。",
+      "related_nodes": [
+        "node_001",
+        "node_003",
+        "node_006",
+        "node_011",
+        "node_031"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "サービスアカウントは依然として最大の技術的負債である",
+      "content": "Windows Server と Linux サーバーのサービスアカウントは、オンプレミス残存、バッチ、ジョブ管理、ファイル転送、アプリ連携で残り続ける。モダン化が進んでも、基幹系や運用系の停止リスクを恐れて置換が遅れやすい。",
+      "related_nodes": [
+        "node_003",
+        "node_005"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "グループ管理サービスアカウントは Windows の第一候補である",
+      "content": "Windows Server 上のサービスで Active Directory 連携が前提なら、固定パスワードのサービスアカウントよりグループ管理サービスアカウントを優先すべきである。Microsoft Learn では既定のパスワード変更周期を 120 日としており、運用者が平文パスワードを保持しない点が大きい。",
+      "related_nodes": [
+        "node_003",
+        "node_004",
+        "node_030"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Linux はアカウント最適化とシークレット外出しの組み合わせが現実解である",
+      "content": "Linux サービスアカウントは nologin、sudo 最小化、systemd 単位の権限制約に加え、接続先シークレットを Vault やクラウド保管基盤へ外出しする設計が基本になる。OS アカウント自体の存在をゼロにはできないが、秘密情報の保有量は減らせる。",
+      "related_nodes": [
+        "node_003",
+        "node_005",
+        "node_018",
+        "node_019",
+        "node_020",
+        "node_021"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "APIキーは最後の手段である",
+      "content": "共有 API キーは利用主体の識別、権限分離、失効タイミング、監査の面で弱い。接続先が対応するなら OIDC / Workload Identity Federation、Managed Identity、実行ロール、サービス ID を優先し、API キーはどうしても避けられない外部 API のみへ限定する方がよい。",
+      "related_nodes": [
+        "node_006",
+        "node_007",
+        "node_011",
+        "node_015",
+        "node_016"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "GitHub へのシークレット流出は AI 時代に悪化した",
+      "content": "GitGuardian の 2026 年レポートでは、2025 年の public GitHub commits で新規検出された secrets は 28,649,024 件、AI-assisted commits では漏えい率が約 2 倍とされる。AIエージェントや生成コードの普及により、誤って貼り付けられる秘密情報の母数が増えたとみるべきである。",
+      "related_nodes": [
+        "node_017",
+        "node_027",
+        "node_028"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "長寿命シークレットは検出後も長く残る",
+      "content": "GitGuardian は 2022 年に露出した valid secrets の 64% が 4 年後も有効と報告している。問題は検出不足だけではなく、停止リスクを理由にローテーションできない運用負債である。",
+      "related_nodes": [
+        "node_007",
+        "node_027",
+        "node_028"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "RPA Bot ID は業務特権 ID と見なすべきである",
+      "content": "UiPath、Automation Anywhere、WinActor の unattended Bot は、実質的に入力代行ではなく業務更新主体である。ERP、会計、銀行接続、基幹データ更新まで行う場合、特権アクセス管理に近い厳しさで所有者、用途、稼働時間、承認者を定義する必要がある。",
+      "related_nodes": [
+        "node_008",
+        "node_029",
+        "node_037"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "日本企業では RPA の資格情報管理が属人化しやすい",
+      "content": "RPA Bot ID は業務部門主導で導入されやすく、情報システム部門が棚卸し対象として把握できていないことが多い。Orchestrator 側の資格情報保管だけでは足りず、Bot ごとの所有部門、停止連絡先、接続先一覧、緊急失効手順まで整える必要がある。",
+      "related_nodes": [
+        "node_008",
+        "node_029",
+        "node_037"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "Kubernetes は長寿命 Secret より短命トークンが基本である",
+      "content": "Kubernetes Documentation では kubelet が TokenRequest API を使って ServiceAccountToken を取得し、expirationSeconds と audience を指定した投影ファイルとして更新できる。長寿命 Secret として固定トークンを配る設計は、2025-2026 時点では推奨しにくい。",
+      "related_nodes": [
+        "node_009",
+        "node_010"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "AKS では Microsoft Entra Workload ID が標準軸である",
+      "content": "Microsoft Learn では AKS の Workload ID を、federated identity credential と Azure Identity client library によって利用する形で説明している。旧来の Pod 管理型 ID より、OpenID Connect ベースの短命認証へ寄せる流れが明確である。",
+      "related_nodes": [
+        "node_011",
+        "node_012",
+        "node_015"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "Amazon EKS は EKS Pod Identity に収れんしている",
+      "content": "AWS Documentation では EKS Pod Identity で Kubernetes ServiceAccount と IAM Role を関連付け、1 クラスタ当たり最大 5,000 associations を扱えるとしている。IRSA の知識は依然有用だが、新規設計では EKS Pod Identity を優先候補に置く方が自然である。",
+      "related_nodes": [
+        "node_009",
+        "node_011",
+        "node_013"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "Google Cloud はサービスアカウント鍵を避ける方向が明確である",
+      "content": "Google Cloud の Workload Identity Federation は、外部ワークロードがサービスアカウント鍵なしで Google Cloud にアクセスするための方式である。GCP ではサービスアカウント鍵を配る設計より、信頼フェデレーションまたは Cloud Run などのサービス ID 利用を優先すべきである。",
+      "related_nodes": [
+        "node_011",
+        "node_014",
+        "node_016"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "Azure Managed Identity は Key Vault と組み合わせて価値が高い",
+      "content": "Azure Managed Identity はアプリケーションが資格情報を管理せずに Entra ID トークンを取得できるため、Azure Key Vault や各種 PaaS への接続で強い。接続文字列やクライアントシークレットをアプリ設定へ残さないことが狙いである。",
+      "related_nodes": [
+        "node_015",
+        "node_019"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "サーバーレスでも専用 ID 設計は必要である",
+      "content": "AWS Lambda は execution role、Cloud Run は service identity、Azure Functions は Managed Identity を軸に設計する。サーバーレスだから秘密情報管理が不要になるのではなく、どの関数がどの API やデータに触れるかを関数単位で絞る必要がある。",
+      "related_nodes": [
+        "node_015",
+        "node_016",
+        "node_036"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "AIエージェントは新しい高リスク非人間IDである",
+      "content": "2025 年以降は、AIエージェントがリポジトリ、チケット、検索、SaaS、データベース、運用 API を横断して呼び出す構成が増えた。単なる API キー保管ではなく、エージェント単位の所有者、権限境界、操作目的、人間承認、証跡を設計しないと権限が拡散する。",
+      "related_nodes": [
+        "node_017",
+        "node_036",
+        "node_037"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "ゼロシークレット化は秘密情報ゼロではなく長期保有ゼロである",
+      "content": "Secretless の実務的意味は、アプリケーションや Bot が長寿命シークレットを保持しないことにある。起動時または実行時に短命トークンや短命証明書を取得し、失効や再発行を運用に組み込める状態が目標である。",
+      "related_nodes": [
+        "node_011",
+        "node_015",
+        "node_024",
+        "node_025"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "SPIFFE / SPIRE はマルチクラウドのワークロード相互認証に向く",
+      "content": "Kubernetes だけでなく VM、ベアメタル、複数クラスタ、サービスメッシュをまたぐ場合、クラウド固有 ID だけでは統一しにくい。SPIFFE / SPIRE はサービス間 mTLS とワークロード証明を標準化するため、ゼロトラストの東西トラフィック制御に相性がよい。",
+      "related_nodes": [
+        "node_024",
+        "node_025",
+        "node_031"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "External Secrets Operator は便利だが Secretless そのものではない",
+      "content": "External Secrets Operator は外部ストアの値を Kubernetes に同期するため、アプリ改修を抑えやすい。一方で Kubernetes Secret に複製する構成では秘密情報のコピーが増えるため、真の Secretless ではなく移行過渡期の実装として位置付けるのが妥当である。",
+      "related_nodes": [
+        "node_018",
+        "node_019",
+        "node_020",
+        "node_021",
+        "node_026"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "HashiCorp Vault はマルチクラウドと動的資格情報で優位である",
+      "content": "HashiCorp Vault は OSS と Enterprise の両系統があり、JWT/OIDC、Kubernetes、クラウド IAM 連携、動的資格情報、PKI を横断して扱える。クラウド単一ではなく、オンプレミス、複数クラウド、レガシー DB を混在運用する企業に向く。",
+      "related_nodes": [
+        "node_018",
+        "node_011",
+        "node_031"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "Azure Key Vault は Azure 統合が強い",
+      "content": "Azure Key Vault は secrets、keys、certificates をまとめて扱い、Entra ID、Azure RBAC、Managed Identity と連動できる。Azure 中心企業では導入障壁が低く、アプリ別に vault を分離しやすい点も運用上有利である。",
+      "related_nodes": [
+        "node_015",
+        "node_019"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_023",
+      "topic": "AWS Secrets Manager は AWS ネイティブ運用に向く",
+      "content": "AWS Secrets Manager は Lambda、RDS、IAM と組み合わせやすく、AWS 内での取得、ローテーション、自動化に適する。EKS Pod Identity や execution role と合わせると、アプリにアクセスキーを持たせない設計へ移行しやすい。",
+      "related_nodes": [
+        "node_013",
+        "node_016",
+        "node_020"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_024",
+      "topic": "Google Cloud Secret Manager はバージョン管理と Google Cloud 統合が強い",
+      "content": "Google Cloud Secret Manager は secret versions を標準で扱い、Cloud Run などのサービス ID と組み合わせやすい。Google Cloud 中心のワークロードでは、外部 vault を持ち込まなくても基本要件を満たしやすい。",
+      "related_nodes": [
+        "node_014",
+        "node_016",
+        "node_021"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_025",
+      "topic": "CyberArk Conjur は Kubernetes / DevSecOps 寄りである",
+      "content": "CyberArk Conjur はポリシーベースでアプリケーションやコンテナにシークレットを供給する設計と相性がよい。人の特権統制を主戦場とする PAM 製品とは役割が異なるため、プラットフォーム選定ではマシンシークレット要件を別軸で評価する必要がある。",
+      "related_nodes": [
+        "node_022",
+        "node_026",
+        "node_034"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_026",
+      "topic": "Delinea Secret Server は運用系の現実に強い",
+      "content": "Delinea Secret Server は運用アカウント保管、SSH 鍵やパスワード変更、アクセス承認などに強く、クラウドネイティブな Secretless というより運用系サービスアカウントの整理に向く。Windows、Linux、ネットワーク機器が混在する日本企業では現実的な改善手段になりやすい。",
+      "related_nodes": [
+        "node_003",
+        "node_023"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_027",
+      "topic": "PKI 自動化はマシンID管理の中核になった",
+      "content": "mTLS、API ゲートウェイ、サービスメッシュ、ゼロトラスト、デバイス認証の広がりにより、証明書は人手更新では追いつかない。ACME、cert-manager、Venafi、CyberArk Identity Security Platform などを使い、発行から更新まで自動化する設計が前提になっている。",
+      "related_nodes": [
+        "node_031",
+        "node_032",
+        "node_034",
+        "node_035"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_028",
+      "topic": "OCSP / CRL は依然必要だが短命証明書で依存を減らせる",
+      "content": "侵害時の証明書無効化には OCSP / CRL が必要だが、配布遅延や検証失敗の運用負荷がある。近年は失効基盤を維持しつつ、証明書寿命そのものを短くして被害時間を減らす設計が重視される。",
+      "related_nodes": [
+        "node_031",
+        "node_033"
+      ],
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "knowledge_029",
+      "topic": "日本企業は gMSA と Secretless の二段構えで進めるべきである",
+      "content": "Windows 系レガシー資産では、まず固定パスワード サービスアカウントをグループ管理サービスアカウントへ置換する。並行して、新規クラウドや Kubernetes では OIDC Federation、Managed Identity、短命トークン、短命証明書へ寄せる二段構えが現実的である。",
+      "related_nodes": [
+        "node_004",
+        "node_011",
+        "node_015",
+        "node_030"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_030",
+      "topic": "AIエージェントの ID 設計が日本企業では追いついていない",
+      "content": "AIエージェントは PoC 主導で導入されやすく、共有 API キー、共有 SaaS トークン、個人アカウント権限の流用で始まりやすい。2026 年時点では、エージェント専用 ID、承認ガードレール、環境別分離、本番書き込み禁止を標準化する必要がある。",
+      "related_nodes": [
+        "node_017",
+        "node_027",
+        "node_036",
+        "node_037"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    }
+  ]
+}

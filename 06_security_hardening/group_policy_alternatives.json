@@ -1,0 +1,834 @@
+{
+  "metadata": {
+    "id": "topic_group_policy_alternatives",
+    "title": "グループポリシー代替手段",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "グループポリシー",
+      "Microsoft Intune",
+      "Desired State Configuration",
+      "Microsoft Configuration Manager",
+      "Windows Autopilot",
+      "Ansible",
+      "Chef Infra",
+      "Cinc",
+      "Puppet",
+      "Salt",
+      "Red Hat Satellite",
+      "Red Hat Ansible Automation Platform",
+      "CIS Benchmark",
+      "Microsoft Security Baseline",
+      "SCAP"
+    ],
+    "related_files": [
+      "03_identity_architecture/identity_landscape.json",
+      "04_server_auth/os_auth_methods.json",
+      "05_hybrid_scenarios/entra_hybrid_join.json",
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/ransomware_defense.json",
+      "07_migration_patterns/ad_to_entra_migration.json"
+    ],
+    "references": [
+      {
+        "title": "Use Microsoft Intune to import and analyze group policies",
+        "url": "https://learn.microsoft.com/mem/intune/configuration/group-policy-analytics"
+      },
+      {
+        "title": "Create a policy using settings catalog in Microsoft Intune",
+        "url": "https://learn.microsoft.com/en-us/mem/intune/configuration/settings-catalog"
+      },
+      {
+        "title": "Use security baselines to help secure Windows devices you manage with Microsoft Intune",
+        "url": "https://learn.microsoft.com/en-us/mem/intune/protect/security-baselines"
+      },
+      {
+        "title": "Windows security baselines",
+        "url": "https://learn.microsoft.com/en-us/windows/security/operating-system-security/device-management/windows-security-configuration-framework/windows-security-baselines"
+      },
+      {
+        "title": "Windows Autopilot device preparation requirements",
+        "url": "https://learn.microsoft.com/en-us/autopilot/device-preparation/requirements"
+      },
+      {
+        "title": "Windows Autopilot device preparation FAQ",
+        "url": "https://learn.microsoft.com/en-us/autopilot/device-preparation/faq"
+      },
+      {
+        "title": "Co-management overview",
+        "url": "https://learn.microsoft.com/en-us/intune/configmgr/comanage/overview"
+      },
+      {
+        "title": "Creating a playbook",
+        "url": "https://docs.ansible.com/projects/ansible-core/devel/getting_started/get_started_playbook.html"
+      },
+      {
+        "title": "Chef Infra Overview",
+        "url": "https://docs.chef.io/chef_overview/"
+      },
+      {
+        "title": "Open source Puppet",
+        "url": "https://help.puppet.com/core/current/Content/PuppetCore/"
+      },
+      {
+        "title": "Salt Project Documentation",
+        "url": "https://docs.saltproject.io/"
+      },
+      {
+        "title": "Managing configurations by using Ansible integration in Red Hat Satellite",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_satellite/6.17/html/managing_configurations_by_using_ansible_integration/Getting_Started_with_Ansible_in_satellite_ansible"
+      },
+      {
+        "title": "Red Hat の自動化ソリューション Ansible Automation Platform",
+        "url": "https://www.redhat.com/ja/topics/automation/why-choose-red-hat-for-automation"
+      },
+      {
+        "title": "Security Content Automation Protocol",
+        "url": "https://www.nist.gov/programs-projects/security-content-automation-protocol"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "グループポリシー",
+      "object_type": "concept",
+      "description": "Active Directory とドメイン参加を前提に Windows 端末やサーバーへ設定を集中配布する従来の管理方式。",
+      "properties": {
+        "scope": [
+          "Windows クライアント",
+          "Windows Server"
+        ],
+        "strengths": [
+          "管理テンプレートとの親和性",
+          "OU ベースの段階配布",
+          "長年の運用知見"
+        ],
+        "limitations": [
+          "クラウドネイティブ運用に不向き",
+          "Linux や SaaS を直接統制しにくい",
+          "ゼロタッチ展開と相性が弱い"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Microsoft Intune",
+      "object_type": "product",
+      "description": "Microsoft Entra ID と組み合わせて MDM ベースで Windows を中心に端末設定とセキュリティポリシーを配布するクラウド管理基盤。",
+      "properties": {
+        "agent_model": "Windows では OS 標準 MDM チャネルを活用し追加エージェント依存を抑えやすい",
+        "platform_support": [
+          "Windows",
+          "macOS",
+          "iOS",
+          "Android"
+        ],
+        "gpo_migration_ease": "高い",
+        "japan_support": "高い",
+        "cost_structure": "Microsoft 365 / Intune ライセンスに連動"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "MDM",
+      "object_type": "concept",
+      "description": "モバイルデバイス管理の枠組み。Windows では Policy CSP などを通じて設定を適用する。"
+    },
+    {
+      "id": "node_004",
+      "label": "Configuration Service Provider",
+      "object_type": "concept",
+      "description": "Windows の MDM 設定項目を提供する仕組み。Intune からの設定適用で中核となる。"
+    },
+    {
+      "id": "node_005",
+      "label": "Settings Catalog",
+      "object_type": "concept",
+      "description": "Microsoft Intune の詳細設定カタログ。GPO 的に粒度の細かい設定をクラウド経由で配布しやすい。"
+    },
+    {
+      "id": "node_006",
+      "label": "Group Policy analytics",
+      "object_type": "concept",
+      "description": "既存 GPO を取り込み、Microsoft Intune への移行可能性と未対応設定を可視化する評価機能。"
+    },
+    {
+      "id": "node_007",
+      "label": "Desired State Configuration",
+      "object_type": "concept",
+      "description": "PowerShell を基盤とした Windows 中心の宣言的構成管理方式。細かな OS 設定やサーバー役割の一貫化に向く。"
+    },
+    {
+      "id": "node_008",
+      "label": "PowerShell Desired State Configuration",
+      "object_type": "product",
+      "description": "Desired State Configuration の実装。Windows Server や一部アプリケーション設定のコード化に使う。",
+      "properties": {
+        "agent_model": "Local Configuration Manager を利用",
+        "platform_support": [
+          "Windows",
+          "一部 Linux"
+        ],
+        "gpo_migration_ease": "中程度",
+        "japan_support": "中程度",
+        "cost_structure": "PowerShell 資産を流用しやすく追加製品費用は小さい"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "Microsoft Configuration Manager",
+      "object_type": "product",
+      "description": "旧来のクライアント管理と配布を担う Microsoft 製品。従来 SCCM と呼ばれた運用資産を含む。",
+      "properties": {
+        "alias": [
+          "MECM",
+          "SCCM"
+        ],
+        "agent_model": "管理エージェントあり",
+        "platform_support": [
+          "Windows 中心"
+        ],
+        "gpo_migration_ease": "中程度",
+        "japan_support": "高い",
+        "cost_structure": "サーバー構成と管理基盤運用コストが必要"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "共同管理",
+      "object_type": "pattern",
+      "description": "Microsoft Configuration Manager と Microsoft Intune を併用し、ワークロードごとにクラウド移管する段階移行パターン。"
+    },
+    {
+      "id": "node_011",
+      "label": "Windows Autopilot",
+      "object_type": "product",
+      "description": "Windows デバイスの初期配備を簡素化する仕組み。Microsoft Intune と組み合わせてゼロタッチ展開を実現する。",
+      "properties": {
+        "agent_model": "OS 組み込み機能",
+        "platform_support": [
+          "Windows"
+        ],
+        "gpo_migration_ease": "直接代替ではなく配備方式の刷新",
+        "japan_support": "高い",
+        "cost_structure": "Microsoft Intune / Windows ライセンスに依存"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "ゼロタッチ展開",
+      "object_type": "pattern",
+      "description": "キッティングを極小化し、端末初回起動時に自動登録と設定配布を行う運用方式。"
+    },
+    {
+      "id": "node_013",
+      "label": "Microsoft Entra Hybrid Join",
+      "object_type": "pattern",
+      "description": "Active Directory と Microsoft Entra ID を併用するハイブリッド参加方式。GPO と Microsoft Intune の並行運用で頻出する。"
+    },
+    {
+      "id": "node_014",
+      "label": "Microsoft Entra joined",
+      "object_type": "pattern",
+      "description": "端末が Microsoft Entra ID に直接参加するクラウド中心の参加モデル。GPO フリー運用の前提になりやすい。"
+    },
+    {
+      "id": "node_015",
+      "label": "Ansible",
+      "object_type": "product",
+      "description": "エージェントレスで SSH や WinRM を使って設定適用する自動化ツール。YAML Playbook で管理できる。",
+      "properties": {
+        "agent_model": "エージェントレス",
+        "platform_support": [
+          "Windows",
+          "Linux",
+          "ネットワーク機器"
+        ],
+        "gpo_migration_ease": "Windows 単体では中程度、Linux 混在では高い",
+        "japan_support": "高い",
+        "cost_structure": "コミュニティ版は低コスト、商用化は Red Hat 製品で拡張"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "YAML Playbook",
+      "object_type": "concept",
+      "description": "Ansible の構成定義形式。人間が読める記述で差分レビューしやすい。"
+    },
+    {
+      "id": "node_017",
+      "label": "Chef Infra",
+      "object_type": "product",
+      "description": "Ruby ベースで構成をコード化する構成管理ツール。クックブック単位で再利用しやすい。",
+      "properties": {
+        "agent_model": "chef-client エージェントが一般的",
+        "platform_support": [
+          "Windows",
+          "Linux"
+        ],
+        "gpo_migration_ease": "中程度",
+        "japan_support": "限定的",
+        "cost_structure": "OSS と商用支援の組み合わせ"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "クックブック",
+      "object_type": "concept",
+      "description": "Chef Infra の再利用可能な構成単位。レシピ、属性、テンプレートをまとめる。"
+    },
+    {
+      "id": "node_019",
+      "label": "Cinc",
+      "object_type": "product",
+      "description": "Chef Infra 系のオープンソース派生。商用依存を抑えたい場合の選択肢。",
+      "properties": {
+        "agent_model": "Chef 系エージェントモデルを継承",
+        "platform_support": [
+          "Windows",
+          "Linux"
+        ],
+        "gpo_migration_ease": "中程度",
+        "japan_support": "低い",
+        "cost_structure": "ライセンス費用は抑えやすいが内製運用負荷が高い"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "Puppet",
+      "object_type": "product",
+      "description": "宣言的マニフェストと Hiera を用いて設定とデータを分離しやすい構成管理ツール。",
+      "properties": {
+        "agent_model": "puppet-agent が一般的",
+        "platform_support": [
+          "Windows",
+          "Linux"
+        ],
+        "gpo_migration_ease": "中程度",
+        "japan_support": "限定的",
+        "cost_structure": "商用支援と OSS 運用の選択肢がある"
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "マニフェスト",
+      "object_type": "concept",
+      "description": "Puppet でリソースの望ましい状態を記述する定義ファイル。"
+    },
+    {
+      "id": "node_022",
+      "label": "Hiera",
+      "object_type": "concept",
+      "description": "Puppet で設定値や環境差分を外部データとして分離する仕組み。"
+    },
+    {
+      "id": "node_023",
+      "label": "Salt",
+      "object_type": "product",
+      "description": "高速なリモート実行とイベント駆動性を備える構成管理ツール。States と Pillars で構成を表現する。",
+      "properties": {
+        "agent_model": "minion エージェント中心、SSH ベース運用も可能",
+        "platform_support": [
+          "Windows",
+          "Linux"
+        ],
+        "gpo_migration_ease": "中程度",
+        "japan_support": "低い",
+        "cost_structure": "コミュニティ利用は低コストだが商用サポート選択肢が読みにくい"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "Pillars",
+      "object_type": "concept",
+      "description": "Salt でホストごとの機密値や設定値を保持するデータ層。"
+    },
+    {
+      "id": "node_025",
+      "label": "States",
+      "object_type": "concept",
+      "description": "Salt で望ましい構成状態を定義する仕組み。"
+    },
+    {
+      "id": "node_026",
+      "label": "Red Hat Satellite",
+      "object_type": "product",
+      "description": "RHEL ライフサイクル管理と構成管理を統合する Red Hat 製品。Ansible 連携を前提に Linux 運用の統制を強める。",
+      "properties": {
+        "agent_model": "コンテンツ管理は Satellite、構成適用はリモート実行や Ansible を併用",
+        "platform_support": [
+          "Linux 中心"
+        ],
+        "gpo_migration_ease": "Windows GPO 代替としては低いが Linux 標準化には高い",
+        "japan_support": "高い",
+        "cost_structure": "Red Hat サブスクリプション連動"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "Red Hat Ansible Automation Platform",
+      "object_type": "product",
+      "description": "Ansible を企業運用向けに統制・可視化・認定コンテンツ管理まで拡張した Red Hat の商用基盤。",
+      "properties": {
+        "agent_model": "基本はエージェントレス",
+        "platform_support": [
+          "Windows",
+          "Linux",
+          "ネットワーク",
+          "クラウド"
+        ],
+        "gpo_migration_ease": "Windows GPO の直接代替では中程度、全社自動化基盤としては高い",
+        "japan_support": "高い",
+        "cost_structure": "サブスクリプション型"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "CIS Benchmark",
+      "object_type": "concept",
+      "description": "構成管理の到達目標として使われる代表的なセキュリティ設定基準。"
+    },
+    {
+      "id": "node_029",
+      "label": "Microsoft Security Baseline",
+      "object_type": "concept",
+      "description": "Microsoft が提供する推奨セキュリティ設定群。Microsoft Intune での展開と相性が良い。"
+    },
+    {
+      "id": "node_030",
+      "label": "SCAP",
+      "object_type": "protocol",
+      "description": "Security Content Automation Protocol。セキュリティ構成評価やコンプライアンス自動化に使う標準群。"
+    },
+    {
+      "id": "node_031",
+      "label": "OpenSCAP",
+      "object_type": "product",
+      "description": "SCAP コンテンツを用いて Linux 構成の評価や修復を支援する実装。"
+    },
+    {
+      "id": "node_032",
+      "label": "ポリシー競合",
+      "object_type": "risk",
+      "description": "GPO と Microsoft Intune、または複数構成管理ツールが同一設定を上書きし合うリスク。"
+    },
+    {
+      "id": "node_033",
+      "label": "エージェントスプロール",
+      "object_type": "risk",
+      "description": "複数の管理エージェントを積み増すことで運用負荷と障害面積が拡大するリスク。"
+    },
+    {
+      "id": "node_034",
+      "label": "段階的移行",
+      "object_type": "pattern",
+      "description": "GPO を一括廃止せず、端末参加形態とワークロードに応じて管理プレーンを切り替える移行戦略。"
+    },
+    {
+      "id": "node_035",
+      "label": "セキュリティベースラインのコード化",
+      "object_type": "pattern",
+      "description": "推奨値を文書ではなく再適用可能なポリシーや Playbook として保持する実装方針。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "replaces",
+      "description": "Microsoft Intune は Windows 端末管理におけるグループポリシーの主要なクラウド代替となる。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_003",
+      "relationship": "implements",
+      "description": "Microsoft Intune は MDM モデルで設定を配布する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "Windows の MDM 設定は Configuration Service Provider に依存する。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_005",
+      "relationship": "implements",
+      "description": "Microsoft Intune は Settings Catalog を通じて粒度の細かい設定配布を提供する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Group Policy analytics は Microsoft Intune への移行判断を補完する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_001",
+      "relationship": "requires",
+      "description": "既存 GPO の分析結果をもとに移行優先順位を決める。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "PowerShell Desired State Configuration は GPO で表現しにくいサーバー構成の宣言的管理を補完する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Microsoft Configuration Manager は共同管理で Microsoft Intune と併用される。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "共同管理は Microsoft Configuration Manager の運用資産を前提にする。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "共同管理は Microsoft Intune の段階導入を前提にする。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_012",
+      "relationship": "implements",
+      "description": "Windows Autopilot はゼロタッチ展開の主要実装である。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "Windows Autopilot と Microsoft Intune を組み合わせることで配備直後の設定適用を自動化できる。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_010",
+      "relationship": "example_of",
+      "description": "Microsoft Entra Hybrid Join は共同管理と並行運用の代表的な前提条件である。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "Microsoft Entra joined 端末では Microsoft Intune が主要なポリシー配布面になる。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_016",
+      "relationship": "implements",
+      "description": "Ansible は YAML Playbook で構成を定義する。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_018",
+      "relationship": "implements",
+      "description": "Chef Infra はクックブック単位で構成を再利用する。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_017",
+      "relationship": "example_of",
+      "description": "Cinc は Chef Infra 系のオープンソース選択肢である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_021",
+      "relationship": "implements",
+      "description": "Puppet はマニフェストで望ましい状態を記述する。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_022",
+      "relationship": "implements",
+      "description": "Puppet は Hiera で設定値を外部化する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_024",
+      "relationship": "implements",
+      "description": "Salt は Pillars に機密値や変数を保持する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_025",
+      "relationship": "implements",
+      "description": "Salt は States で構成状態を定義する。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "Red Hat Satellite は Linux ライフサイクル管理を担い、Ansible による構成適用を補完する。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "Red Hat Ansible Automation Platform は Ansible を企業運用向けに拡張する。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_035",
+      "relationship": "requires",
+      "description": "CIS Benchmark を継続的に適用するには設定のコード化が必要である。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Microsoft Security Baseline は Microsoft Intune での標準化を補完する。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_031",
+      "relationship": "implements",
+      "description": "OpenSCAP は SCAP 評価の代表的実装である。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_026",
+      "relationship": "complements",
+      "description": "OpenSCAP は Red Hat Satellite 管理下の Linux に対するコンプライアンス評価を補完する。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_034",
+      "relationship": "mitigates",
+      "description": "段階的移行では設定責任の分界を明確化しポリシー競合を抑える必要がある。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_015",
+      "relationship": "mitigates",
+      "description": "Ansible のエージェントレス運用はエージェントスプロールを抑えやすい。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_002",
+      "relationship": "mitigates",
+      "description": "Windows の標準 MDM を活用する Microsoft Intune も追加エージェント依存を抑えやすい。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_013",
+      "relationship": "example_of",
+      "description": "Microsoft Entra Hybrid Join 期間は段階的移行の典型例である。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_014",
+      "relationship": "example_of",
+      "description": "最終的な Microsoft Entra joined 化は GPO フリー運用の完成形である。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "title": "Windows の第一選択は Microsoft Intune だが GPO 完全互換ではない",
+      "summary": "Windows クライアント管理の中心をクラウドへ移す場合、Microsoft Intune が最も現実的な後継になる。一方で GPO の全設定がそのまま移植できるわけではない。",
+      "details": [
+        "Settings Catalog は GPO に近い粒度の設定配布を提供するが、ADMX 依存の一部設定やレガシーなコンピューター起動順序制御は移植が難しい。",
+        "Group Policy analytics を先に実施し、移行不能設定を棚卸ししないと、PoC では成功しても本番で抜け漏れが生じやすい。",
+        "サーバー向け深い OS チューニングは Microsoft Intune 単独より Desired State Configuration やスクリプト補完を前提にする方が安全である。"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "title": "GPO からの移行は設定単位ではなく管理責任単位で分割する",
+      "summary": "GPO 廃止を一括で進めるのではなく、誰がどの端末群へどの方式で設定を適用するかを分解して進めるべきである。",
+      "details": [
+        "端末セキュリティ設定は Microsoft Intune、配備は Windows Autopilot、サーバー構成は Desired State Configuration や Ansible といった役割分担が有効である。",
+        "移行対象を『端末』『サーバー』『クロスプラットフォーム運用』『監査基準』に分けると、競合と責任境界が見えやすい。"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "title": "Desired State Configuration は Windows Server 残存環境の橋渡しになる",
+      "summary": "PowerShell Desired State Configuration は、GPO が担ってきた Windows Server のローカル構成標準化をコード化する用途で有効である。",
+      "details": [
+        "AD ドメイン依存を減らしつつ、IIS、サービス、ファイル、レジストリなどのサーバー設定を宣言的に維持できる。",
+        "Microsoft Intune が主にクライアント側へ寄るのに対し、Desired State Configuration はサーバー側の細かな状態制御に強い。"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "title": "Microsoft Configuration Manager は置き換え対象でもあり移行足場でもある",
+      "summary": "Microsoft Configuration Manager はクラウド移行の最終形ではないが、共同管理により Microsoft Intune への段階移行を支える。",
+      "details": [
+        "既存の配布、資産管理、運用手順を維持しながら、コンプライアンスやデバイス構成などのワークロードを順次 Microsoft Intune へ移せる。",
+        "日本企業では運用部門が急に全クラウド化へ移れないため、共同管理期間を設計に織り込む方が現実的である。"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "title": "Windows Autopilot と Microsoft Intune は GPO 代替というより配備モデル転換である",
+      "summary": "Windows Autopilot は既存端末管理の延長ではなく、初回起動から構成適用までをクラウド前提に再設計する仕組みである。",
+      "details": [
+        "ゼロタッチ展開によりキッティング作業を削減し、端末受領後すぐに Microsoft Entra ID 登録と Microsoft Intune ポリシー適用へつなげられる。",
+        "Windows Autopilot device preparation は既存 Autopilot と並行する前提で考えるべきで、全シナリオが即時に置き換わるわけではない。"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "title": "Linux と Windows が混在するなら Ansible 系が最も運用統合しやすい",
+      "summary": "クロスプラットフォーム視点では Ansible が最も採用しやすく、日本企業での説明責任にも乗せやすい。",
+      "details": [
+        "エージェントレスのため、Windows は WinRM、Linux は SSH で一元化しやすい。",
+        "YAML Playbook は SIer や運用担当者がレビューしやすく、変更管理プロセスに組み込みやすい。",
+        "商用サポートが必要なら Red Hat Ansible Automation Platform へ接続できるため、コミュニティ版からの拡張余地もある。"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "title": "Chef Infra、Puppet、Salt は強力だが日本市場では支援体制差を見極める必要がある",
+      "summary": "Chef Infra、Puppet、Salt は宣言的運用に適するが、日本での人材調達と一次サポートは Microsoft 系や Red Hat 系より不利になりやすい。",
+      "details": [
+        "Chef Infra はクックブック再利用性が高いが Ruby 文化への適応が必要である。",
+        "Puppet はマニフェストと Hiera により大規模環境の階層化がしやすい。",
+        "Salt は高速性とイベント駆動が魅力だが、日本企業での保守ベンダー候補が限られやすい。",
+        "Cinc はコスト抑制に向くが、実質的には内製できる組織向けである。"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "title": "比較マトリクスは製品の優劣ではなく適用面で読むべきである",
+      "summary": "GPO 代替を比較するときは、単一製品で全要件を満たす発想を避け、適用面ごとの使い分けで評価する。",
+      "matrix": [
+        {
+          "tool": "Microsoft Intune",
+          "agent_presence": "追加エージェント依存が小さい",
+          "windows_support": "高い",
+          "linux_support": "低い",
+          "gpo_migration_ease": "高い",
+          "japan_support": "高い",
+          "cost_model": "ライセンス従量"
+        },
+        {
+          "tool": "PowerShell Desired State Configuration",
+          "agent_presence": "Local Configuration Manager 利用",
+          "windows_support": "高い",
+          "linux_support": "限定的",
+          "gpo_migration_ease": "中程度",
+          "japan_support": "中程度",
+          "cost_model": "追加製品費用は小さい"
+        },
+        {
+          "tool": "Microsoft Configuration Manager",
+          "agent_presence": "あり",
+          "windows_support": "高い",
+          "linux_support": "限定的",
+          "gpo_migration_ease": "中程度",
+          "japan_support": "高い",
+          "cost_model": "基盤保有コスト大"
+        },
+        {
+          "tool": "Ansible",
+          "agent_presence": "なし",
+          "windows_support": "中程度",
+          "linux_support": "高い",
+          "gpo_migration_ease": "中程度",
+          "japan_support": "高い",
+          "cost_model": "コミュニティ版は低い"
+        },
+        {
+          "tool": "Chef Infra / Cinc",
+          "agent_presence": "あり",
+          "windows_support": "中程度",
+          "linux_support": "高い",
+          "gpo_migration_ease": "中程度",
+          "japan_support": "限定的から低い",
+          "cost_model": "OSS と内製依存"
+        },
+        {
+          "tool": "Puppet",
+          "agent_presence": "あり",
+          "windows_support": "中程度",
+          "linux_support": "高い",
+          "gpo_migration_ease": "中程度",
+          "japan_support": "限定的",
+          "cost_model": "OSS と商用支援の混在"
+        },
+        {
+          "tool": "Salt",
+          "agent_presence": "主にあり",
+          "windows_support": "中程度",
+          "linux_support": "高い",
+          "gpo_migration_ease": "中程度",
+          "japan_support": "低い",
+          "cost_model": "OSS は低いが商用体制は流動的"
+        },
+        {
+          "tool": "Red Hat Satellite / Red Hat Ansible Automation Platform",
+          "agent_presence": "基本はなし、周辺機能あり",
+          "windows_support": "中程度",
+          "linux_support": "高い",
+          "gpo_migration_ease": "Linux 標準化では高い",
+          "japan_support": "高い",
+          "cost_model": "サブスクリプション"
+        }
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "title": "並行運用期間は意図的に設けるべきである",
+      "summary": "GPO と Microsoft Intune を同時に使う期間は失敗ではなく、むしろ必要な設計フェーズである。",
+      "details": [
+        "同一設定を両方から配らないよう、アカウント、BitLocker、Firewall、ブラウザー設定などをワークロード単位で明示的に分割する。",
+        "競合が起きやすい設定は検証用デバイスリングで先に潰し、優先適用ルールを運用手順書へ落とす。"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "title": "Microsoft Entra Hybrid Join 期間は Microsoft Intune 優先面を選別する",
+      "summary": "ハイブリッド参加中は全設定をクラウドへ寄せるのではなく、端末ライフサイクル上クラウドの利点が大きい領域から先に Microsoft Intune 化する。",
+      "details": [
+        "コンプライアンス、セキュリティベースライン、証明書配布、アプリ配布、Windows Update リングは先行候補になりやすい。",
+        "ログオンスクリプト、古い管理テンプレート、サーバー向け設定は最後まで GPO や別系統の構成管理に残りやすい。"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "title": "完全な Microsoft Entra joined 化で GPO フリーは現実化する",
+      "summary": "端末が Microsoft Entra joined へ寄るほど、GPO 依存を切り離しやすくなる。",
+      "details": [
+        "前提は、設定配布だけでなく、端末登録、アプリ配布、ローカル管理者制御、セキュリティベースライン、例外処理まで Microsoft Intune 側で成立していることである。",
+        "GPO フリー化は『GPO を削除した』ではなく、『ドメイン参加前提の運用手順が不要になった』状態を指す。"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "title": "セキュリティ基準は製品機能ではなく評価基準として分離する",
+      "summary": "CIS Benchmark、Microsoft Security Baseline、SCAP は管理ツールではなく、構成の妥当性を判定する基準と捉えるべきである。",
+      "details": [
+        "Microsoft Intune は Microsoft Security Baseline と親和性が高い。",
+        "Linux は OpenSCAP と Ansible や Red Hat Satellite を組み合わせると監査と修復を連結しやすい。",
+        "CIS Benchmark は Windows と Linux の双方で比較軸を揃えやすい。"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "title": "ベースラインは一度配るだけでは不十分で継続再適用が必要である",
+      "summary": "セキュリティベースラインは導入イベントではなく、例外管理と差分監視を伴う継続運用である。",
+      "details": [
+        "Windows では Microsoft Intune ポリシー、Linux では Ansible や OpenSCAP 修復タスクを継続運用へ組み込む必要がある。",
+        "例外承認を別管理せずに個別端末へ手修正を始めると、GPO から脱却しても実態は属人運用に逆戻りする。"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "title": "日本企業では製品選定より運用委託モデルの方が成否を左右しやすい",
+      "summary": "日本での導入実績やサポート体制は、製品機能差以上に SIer、MSP、社内運用者のスキル分布に影響される。",
+      "details": [
+        "Microsoft 系と Red Hat 系は国内サポート網を組みやすく、大規模企業で稟議を通しやすい。",
+        "Chef Infra、Puppet、Salt、Cinc は技術的に成立しても、障害時の一次対応と後任確保がボトルネックになりやすい。",
+        "そのため『最も優れたツール』より『3 年後も回せる運用モデル』を優先して選定するべきである。"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,348 @@
+{
+  "metadata": {
+    "scenario_id": "sim_sec_02",
+    "title": "証券会社ランサムウェア感染後72時間：AD全体汚染からの復旧判断",
+    "industry": "証券業",
+    "company_profile": {
+      "name": "首都フロンティア証券",
+      "size": "従業員5000人",
+      "it_env": "Windows Server 2022 の Active Directory、RHEL 8 フロントシステム、オンプレミスメール、NYSE と大阪取引所接続"
+    },
+    "themes": [
+      "ランサムウェア初動",
+      "Active Directory 汚染判定",
+      "取引継続と停止の判断",
+      "Recovery Forest とクリーンルーム",
+      "特権アカウント侵害の教訓"
+    ],
+    "knowledge_needs": [
+      {
+        "type": "process",
+        "topic": "ランサムウェア対応の初動手順と優先順位",
+        "why_needed": "72時間の意思決定で封じ込め、証拠保全、事業継続を並行させる必要があるため",
+        "maps_to_file": "06_security_hardening/ransomware_defense.json"
+      },
+      {
+        "type": "process",
+        "topic": "AD フォレスト汚染時の復旧手順と Recovery Forest の使いどころ",
+        "why_needed": "既存ドメインを信頼できるかどうかで復旧戦略が根本から変わるため",
+        "maps_to_file": "06_security_hardening/ransomware_defense.json"
+      },
+      {
+        "type": "fact",
+        "topic": "SMB、RDP、WinRM、SSH を使った横展開パターン",
+        "why_needed": "被害範囲の推定と封じ込め優先順位を決めるため",
+        "maps_to_file": "06_security_hardening/ransomware_defense.json"
+      },
+      {
+        "type": "framework",
+        "topic": "金融庁ガイドラインと JSDA 文脈でのインシデント報告・説明責任",
+        "why_needed": "技術判断だけでなく、報告タイミングと開示責任を同時に整理するため",
+        "maps_to_file": "07_migration_patterns/japan_security_frameworks.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "特権アクセス管理の不足が横展開に与える影響",
+        "why_needed": "なぜドメイン全体に広がったのかを再発防止策へ結びつけるため",
+        "maps_to_file": "06_security_hardening/privileged_access_management.json"
+      },
+      {
+        "type": "process",
+        "topic": "Linux と Windows の混在環境で認証境界を切り分ける方法",
+        "why_needed": "RHEL 8 フロントシステムが Active Directory 侵害の影響をどこまで受けるかを見極めるため",
+        "maps_to_file": "04_server_auth/os_auth_methods.json"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p01",
+      "name": "木村 雄一",
+      "role": "CISO",
+      "background": "全社サイバー対策の責任者。深夜の重大インシデントでは経営と現場の橋渡しを担う。",
+      "stance": "被害を小さく見積もるより、最悪ケースを前提に判断したい。"
+    },
+    {
+      "id": "p02",
+      "name": "橋本 智子",
+      "role": "SOC担当マネージャー",
+      "background": "24時間監視チームを統括。EDR と SIEM の相関分析を主導している。",
+      "stance": "アラートの量より、侵害の連鎖を止めることを優先する。"
+    },
+    {
+      "id": "p03",
+      "name": "渡辺 大輔",
+      "role": "AD管理者",
+      "background": "ドメインコントローラー、GPO、特権グループ運用を担当。AD の状態を最もよく知る。",
+      "stance": "ドメインを信頼できるかどうかを早く見極めたい。"
+    },
+    {
+      "id": "p04",
+      "name": "石井 弁護士",
+      "role": "顧問弁護士",
+      "background": "金融機関の情報漏えい、業務停止、当局報告案件を多く扱う。",
+      "stance": "事実確認前の断定は避けるが、報告遅延はもっと危険だと考える。"
+    },
+    {
+      "id": "p05",
+      "name": "SIer緊急対応チーム",
+      "role": "現場フォレンジック担当",
+      "background": "Windows、Active Directory、EDR 解析、証拠保全の実務部隊。",
+      "stance": "再起動やログ消失を避けつつ、最短で侵害経路を確定したい。"
+    },
+    {
+      "id": "p06",
+      "name": "金融庁検査官",
+      "role": "後日の検査担当",
+      "background": "金融機関のインシデント対応、復旧統制、再発防止策を評価する立場。",
+      "stance": "結果だけでなく、意思決定の根拠と平時準備を重視する。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "s1",
+      "title": "深夜の初動",
+      "setting": "午前2時12分。SOC 監視室から木村の携帯に緊急コールが入り、即時のブリッジ会議が始まる。",
+      "dialogue": [
+        {
+          "speaker": "p02",
+          "text": "EDR が 14台で同時に暗号化挙動を検知しました。共通点は管理共有 `ADMIN$` への接続履歴と、直前の特権アカウント利用です。さらに 1台の運用端末からドメイン管理者相当の資格情報が使われた痕跡があります。単発ではなく、横展開が始まっています。",
+          "subtext": "CISO に『端末事故』ではなく『認証基盤事故』だと認識させたい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "了解した。まず優先順位を明確にする。取引系、顧客影響、認証基盤の三つだ。ログ保全前にサーバーを落とす判断はしたくないが、封じ込めが遅れればそれも意味がない。SOC は時系列をまとめ、AD 管理者はドメインコントローラーの異常を先に見てくれ。",
+          "subtext": "混乱を抑えつつ、意思決定の軸を作ろうとしている。"
+        },
+        {
+          "speaker": "p03",
+          "text": "今確認したところ、2台のドメインコントローラーで異常なレプリケーション要求と管理者グループ変更の痕跡があります。まだ確定ではありませんが、単なるファイルサーバー感染ではなく、AD そのものに触られている可能性を前提に動くべきです。",
+          "subtext": "最悪ケースを受け入れてもらうため、言い切り過ぎずに危険度を上げている。"
+        }
+      ],
+      "issues_surfaced": [
+        "横展開が SMB 管理共有と特権資格情報を経由している疑い",
+        "ドメインコントローラーにも異常が及んでいる可能性",
+        "証拠保全と封じ込めを同時に進める必要がある"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    },
+    {
+      "scene_id": "s2",
+      "title": "被害範囲の判断",
+      "setting": "午前4時。SIer 緊急対応チームがオンライン参加し、ドメイン侵害判定の観点が共有される。",
+      "dialogue": [
+        {
+          "speaker": "p05",
+          "text": "現時点で、侵害判定は三段階で見ます。ドメイン管理者資格情報の窃取、レプリケーション権限の悪用、永続化の有無です。もし DCSync 相当の挙動や管理者グループ改変が事実なら、個別サーバーのクリーンアップでは足りません。フォレスト単位の信頼性を疑う必要があります。",
+          "subtext": "現場に厳しい判断を早く受け入れてほしい。"
+        },
+        {
+          "speaker": "p03",
+          "text": "ログを見ると、運用端末から複数の管理サーバーへ WinRM 接続が飛び、その後に RHEL 側の共有ストレージへのアクセスも増えています。Linux 自体が侵害されたかは別ですが、AD と連携するサービスアカウントは既に危険圏です。境界は想像より薄いです。",
+          "subtext": "Windows だけ止めても十分ではないことを示したい。"
+        },
+        {
+          "speaker": "p02",
+          "text": "SIEM 上では、退避用バックアップサーバーに対する不審ログオンも見えます。バックアップ管理者が本番 AD と同じ資格情報体系にぶら下がっているのであれば、復旧手段そのものが汚染されている可能性があります。",
+          "subtext": "復旧計画の前提が崩れていることを早く共有したい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "つまり、取引システムの稼働是非を判断する前に、認証基盤とバックアップ基盤をどこまで信じられるかを決めないといけないということだな。厳しいが、その前提で経営へ上げる。",
+          "subtext": "停止判断の重さを理解しつつ、逃げずに意思決定へ進む。"
+        }
+      ],
+      "issues_surfaced": [
+        "DCSync 相当の挙動があればフォレスト全体の信頼性が崩れる",
+        "RHEL 8 連携システムもサービスアカウント経由で影響を受け得る",
+        "バックアップ基盤の ID 分離不足が復旧可能性を下げている"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "04_server_auth/os_auth_methods.json"
+      ]
+    },
+    {
+      "scene_id": "s3",
+      "title": "封じ込め判断",
+      "setting": "午前7時。経営会議前の詰めで、取引継続か停止かを巡る緊張した議論になる。",
+      "dialogue": [
+        {
+          "speaker": "p01",
+          "text": "証券会社にとってシステム停止は最後の手段です。ただ、AD が汚染されているのに取引を継続すれば、顧客向けチャネルや市場接続運用端末にまで被害が広がる。私は部分停止ではなく、管理経路を先に遮断して、取引継続可能な範囲を限定的に見極めるべきだと考えます。",
+          "subtext": "全面停止の責任は重いが、中途半端な継続の方が危険だと思っている。"
+        },
+        {
+          "speaker": "p04",
+          "text": "法的には、事実確認前に過剰な開示をする必要はありません。しかし、重大インシデントの疑いを認識した時点で、当局や関係機関への初報準備は始めるべきです。後から『認識していたのに報告が遅れた』と見られる方が、はるかに説明が苦しくなります。",
+          "subtext": "技術判断に引きずられて報告が遅れることを防ぎたい。"
+        },
+        {
+          "speaker": "p02",
+          "text": "封じ込めとしては、ドメイン管理者の強制失効、管理共有の遮断、踏み台と WinRM の閉塞、バックアップ管理コンソールのネットワーク隔離を即時実施したいです。影響は大きいですが、このままでは攻撃者の横展開速度に勝てません。",
+          "subtext": "現場の手を止める前に、やるべき遮断を明確にしたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "停止対象をきれいに切り分けるのは困難です。だからこそ、まず管理プレーンを止め、ビジネスプレーンは最小限の固定運用に切り替えるのが現実的です。復旧に必要な証拠保全をしながら進められるのはこの形です。",
+          "subtext": "技術的に成立する封じ込め案へ議論を収束させている。"
+        }
+      ],
+      "issues_surfaced": [
+        "取引継続と封じ込めは二者択一ではなく、管理プレーン停止が中核になる",
+        "初報準備は事実確定前でも進める必要がある",
+        "管理共有、WinRM、踏み台の遮断が優先対策になる"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "07_migration_patterns/japan_security_frameworks.json"
+      ]
+    },
+    {
+      "scene_id": "s4",
+      "title": "復旧戦略議論",
+      "setting": "感染から36時間後。既存 AD を残して直すか、クリーンルームで再建するかが争点になる。",
+      "dialogue": [
+        {
+          "speaker": "p03",
+          "text": "率直に言うと、今のフォレストを完全に信頼するのは危険です。ドメイン管理者資格情報が抜かれ、管理者グループ変更の痕跡まである以上、パスワード変更だけでは足りません。回復用環境を隔離し、クリーンルームで新しい管理プレーンを立てる前提で考えるべきです。",
+          "subtext": "『直す』より『作り直す』判断へ持っていきたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "実務的には Recovery Forest とクリーンルームは同じ話ではありません。Recovery Forest は認証回復の中核、クリーンルームはビルド、検証、証跡保全を行う運用空間です。今回は両方必要です。バックアップが無事でも、復元先の管理者資格情報が汚染されていれば意味がありません。",
+          "subtext": "経営に誤解されやすい言葉を整理している。"
+        },
+        {
+          "speaker": "p01",
+          "text": "復旧時間はどのくらい見るべきですか。マーケット業務は待ってくれません。だが、信用できない AD に無理に戻すと、再暗号化で二度止まる。短い復旧より、再侵害しない復旧のほうが結果的に業務影響は小さいのかもしれない。",
+          "subtext": "事業継続責任と技術現実の間で腹をくくり始めている。"
+        },
+        {
+          "speaker": "p04",
+          "text": "当局や顧客説明でも、拙速な復旧で再発した場合のダメージは非常に大きいです。復旧時間の長短だけでなく、再発防止の合理性を示せるかが重要です。意思決定記録は必ず残してください。",
+          "subtext": "後日の説明責任を見据え、文書化を促している。"
+        }
+      ],
+      "issues_surfaced": [
+        "既存 AD を信用せず、Recovery Forest とクリーンルームを分けて考える必要がある",
+        "バックアップが残っていても管理者資格情報が汚染されていれば復旧できない",
+        "復旧時間だけでなく再侵害回避の合理性が評価対象になる"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    },
+    {
+      "scene_id": "s5",
+      "title": "事後レビュー",
+      "setting": "2週間後のレビュー会。金融庁検査官も同席し、平時の設計不備がどこにあったかを問う。",
+      "dialogue": [
+        {
+          "speaker": "p06",
+          "text": "今回の評価で重く見るのは、侵害そのものよりも、なぜ横展開を止められなかったかです。特権アカウントが常時有効で、運用端末が一般業務と混在し、バックアップ基盤も同じ認証体系に乗っていた。この構造では、一点突破が全体停止につながります。",
+          "subtext": "再発防止策を具体化させるため、根因を外さない。"
+        },
+        {
+          "speaker": "p02",
+          "text": "平時の運用では、利便性を優先して管理共有、RDP、WinRM を広く許可していました。加えて、外部委託の保守アカウント棚卸しが甘く、権限レビューも年1回で形骸化していた。攻撃者にとっては移動しやすい地図をこちらが用意していたと言えます。",
+          "subtext": "技術だけでなく運用責任も認める覚悟を示す。"
+        },
+        {
+          "speaker": "p03",
+          "text": "今後は Tier 0 の管理端末分離、JIT の導入、バックアップ管理者の分離、NTLM 制限、SMB 管理共有の厳格化をセットで進めます。単品対策ではまた抜かれます。認証境界と運用境界を同時に切り直さないと意味がありません。",
+          "subtext": "再発防止を断片施策で終わらせたくない。"
+        }
+      ],
+      "issues_surfaced": [
+        "常時特権、管理端末混在、バックアップ ID 非分離が横展開を許した",
+        "保守アカウントと権限レビューの運用が形骸化していた",
+        "再発防止には認証境界と運用境界の同時再設計が必要"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "06_security_hardening/ransomware_defense.json",
+        "07_migration_patterns/japan_security_frameworks.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "技術",
+      "current": "ドメイン管理者資格情報が運用端末経由で悪用された疑いがある",
+      "target": "Tier 0 管理端末と特権資格情報が日常業務端末から分離されている",
+      "gap": "PAW と管理プレーン分離が未整備",
+      "priority": "high"
+    },
+    {
+      "category": "技術",
+      "current": "SMB 管理共有、WinRM、RDP の到達範囲が広い",
+      "target": "管理経路が最小化され、明示許可制になっている",
+      "gap": "横展開を前提にしたネットワーク・ホスト制御が不足",
+      "priority": "high"
+    },
+    {
+      "category": "プロセス",
+      "current": "重大インシデント時の封じ込め判断と報告準備が並行設計されていない",
+      "target": "技術判断、経営報告、当局初報の流れが手順化されている",
+      "gap": "72時間の危機対応プロセスが曖昧",
+      "priority": "high"
+    },
+    {
+      "category": "技術",
+      "current": "バックアップ基盤が本番 AD と同じ認証体系に依存している",
+      "target": "バックアップ管理者と復旧経路が本番認証基盤から分離されている",
+      "gap": "Backup Identity Separation が未実装",
+      "priority": "high"
+    },
+    {
+      "category": "組織",
+      "current": "保守アカウントと外部委託アクセスの棚卸しが不十分",
+      "target": "委託先ごとの権限、期限、利用ログが継続的に管理される",
+      "gap": "第三者アクセス管理が契約と運用で断片化している",
+      "priority": "medium"
+    },
+    {
+      "category": "規制",
+      "current": "当局・業界団体への報告判断が場当たり的",
+      "target": "重大性評価と初報基準が文書化されている",
+      "gap": "金融業に求められる説明責任のテンプレートが不足",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "action": "重大インシデント時の72時間対応手順を、封じ込め、証拠保全、初報準備の3レーンで整備する",
+      "owner": "CISO + SOC",
+      "horizon": "1-2か月",
+      "expected_outcome": "深夜インシデントでも判断遅延を減らせる",
+      "related_knowledge": "06_security_hardening/ransomware_defense.json"
+    },
+    {
+      "action": "Tier 0 管理端末、JIT、特権レビュー、保守アカウント期限管理を導入する",
+      "owner": "AD管理者 + 情報セキュリティ部",
+      "horizon": "3-6か月",
+      "expected_outcome": "特権資格情報の横展開リスクを大幅に抑制できる",
+      "related_knowledge": "06_security_hardening/privileged_access_management.json"
+    },
+    {
+      "action": "バックアップ管理基盤を本番 AD から分離し、Recovery Forest とクリーンルームの復旧演習を年次実施する",
+      "owner": "インフラ統括 + SIer",
+      "horizon": "6-9か月",
+      "expected_outcome": "AD 汚染時でも復旧可能性を維持できる",
+      "related_knowledge": "06_security_hardening/ransomware_defense.json"
+    },
+    {
+      "action": "金融庁ガイドラインと JSDA 文脈を踏まえた初報・経営説明テンプレートを整備する",
+      "owner": "法務 + CISO",
+      "horizon": "1-3か月",
+      "expected_outcome": "報告遅延や説明不整合のリスクを下げられる",
+      "related_knowledge": "07_migration_patterns/japan_security_frameworks.json"
+    }
+  ]
+}

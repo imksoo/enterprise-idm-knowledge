@@ -1,0 +1,550 @@
+{
+  "metadata": {
+    "id": "zero_trust_architecture",
+    "title": "ゼロトラストアーキテクチャ詳解",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "ゼロトラスト",
+      "NIST SP 800-207",
+      "CISA",
+      "NISC",
+      "金融庁",
+      "FISC",
+      "SASE",
+      "ZTNA",
+      "特権アクセス管理",
+      "日本企業"
+    ],
+    "related_files": [
+      "../03_identity_architecture/identity_landscape.json",
+      "../03_identity_architecture/idp_comparison.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json",
+      "../06_security_hardening/sysadmin_access_evolution.json",
+      "../07_migration_patterns/japan_security_frameworks.json",
+      "../07_migration_patterns/international_security_frameworks.json"
+    ],
+    "research_date": "2026-04-07"
+  },
+  "principles": [
+    {
+      "id": "principle_001",
+      "name": "Never Trust, Always Verify",
+      "summary": "ネットワーク上の場所だけで主体を信頼せず、ユーザー、デバイス、アプリケーション、セッションごとに認証・認可・継続評価を行う。",
+      "nist_alignment": "NIST SP 800-207 の基本思想。通信元が社内であっても暗黙信頼を置かない。",
+      "implementation_implications": [
+        "社内LAN接続だけを許可根拠にしない",
+        "セッション開始時だけでなく継続評価を行う",
+        "リスク変化時は再認証またはセッション遮断を行う"
+      ]
+    },
+    {
+      "id": "principle_002",
+      "name": "Least Privilege Access",
+      "summary": "業務に必要な最小限の権限のみを、必要な範囲と時間に限定して付与する。",
+      "nist_alignment": "属性、状態、役割、デバイス健全性、時間、操作内容を用いた最小権限の適用。",
+      "implementation_implications": [
+        "ロールベース制御に加えて属性ベース制御を併用する",
+        "Just-in-Time アクセスで常時特権を排除する",
+        "アプリ単位・管理操作単位で認可を分離する"
+      ]
+    },
+    {
+      "id": "principle_003",
+      "name": "Assume Breach",
+      "summary": "端末侵害、資格情報窃取、内部不正、経路傍受を前提に、侵害後の横展開と権限昇格を抑える。",
+      "nist_alignment": "NIST SP 800-207 の tenet である hostile network 前提と、継続的監視・ログ・動的ポリシーに対応する。",
+      "implementation_implications": [
+        "ラテラルムーブメントを前提にマイクロセグメンテーションを実装する",
+        "全管理セッションを監査対象にする",
+        "SIEM と SOAR で高リスクイベント時に自動隔離する"
+      ]
+    },
+    {
+      "id": "principle_004",
+      "name": "PDP と PEP の分離",
+      "summary": "Policy Decision Point（PDP）がアクセス判断を行い、Policy Enforcement Point（PEP）が実際の通信許可・遮断を実施する。",
+      "nist_alignment": "NIST SP 800-207 では PDP を Policy Engine と Policy Administrator に分け、PEP が通信経路を制御する。",
+      "implementation_implications": [
+        "認可ロジックをゲートウェイ機器だけに閉じ込めない",
+        "IdP、デバイス情報、脅威インテリジェンスをPDPへ集約する",
+        "PEPはエージェント、リバースプロキシ、ゲートウェイ、踏み台の形で実装できる"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "id": "component_001",
+      "name": "IDプロバイダーと多要素認証",
+      "role": "主体の本人性確認と認証強度の担保",
+      "details": "Entra ID、Okta Workforce Identity、Ping Identity などが、SSO、フィッシング耐性 MFA、条件付きアクセス、トークン発行の中核となる。",
+      "representative_controls": [
+        "多要素認証",
+        "条件付きアクセス",
+        "FIDO2 / Passkey",
+        "リスクベース認証"
+      ]
+    },
+    {
+      "id": "component_002",
+      "name": "デバイス管理とデバイス健全性評価",
+      "role": "信頼された端末状態の継続確認",
+      "details": "Microsoft Intune などの UEM / MDM、Microsoft Defender for Endpoint や CrowdStrike などの EDR により、暗号化、パッチ、マルウェア対策、構成逸脱を判定する。",
+      "representative_controls": [
+        "MDM / UEM",
+        "EDR / XDR",
+        "デバイス コンプライアンス",
+        "端末隔離"
+      ]
+    },
+    {
+      "id": "component_003",
+      "name": "ZTNA",
+      "role": "アプリケーション単位のアクセス仲介と VPN 代替",
+      "details": "Zscaler ZPA、Palo Alto Networks Prisma Access Browser / ZTNA、Cloudflare Access などが、ユーザーをネットワークへ入れるのではなく、認可されたアプリケーションへ接続させる。",
+      "representative_controls": [
+        "アプリ単位公開",
+        "クライアント / ブローカー / コネクタ",
+        "セッション単位ポリシー",
+        "接続元IP非依存"
+      ]
+    },
+    {
+      "id": "component_004",
+      "name": "Secure Web Gateway",
+      "role": "Web 通信の制御、URL / コンテンツ検査、インターネット出口の統制",
+      "details": "Zscaler Internet Access、Netskope、Palo Alto Networks Prisma Access などが、社外 Web 利用の保護と可視化を担う。",
+      "representative_controls": [
+        "URLフィルタリング",
+        "TLS 復号検査",
+        "脅威防御",
+        "インターネット出口統制"
+      ]
+    },
+    {
+      "id": "component_005",
+      "name": "CASB",
+      "role": "SaaS 利用状況の可視化と SaaS 内データ保護",
+      "details": "API 連携型とプロキシ型の CASB により、シャドー IT、誤共有、危険なアプリ権限付与、機密データ流出を抑制する。",
+      "representative_controls": [
+        "SaaS可視化",
+        "DLP",
+        "異常行動検知",
+        "SaaS設定監査"
+      ]
+    },
+    {
+      "id": "component_006",
+      "name": "マイクロセグメンテーション",
+      "role": "東西トラフィック制御と侵害後の横展開抑止",
+      "details": "VMware NSX、Illumio、Akamai Guardicore Segmentation などが、ワークロード単位またはプロセス単位で通信を許可制に近づける。",
+      "representative_controls": [
+        "ワークロード単位ポリシー",
+        "東西通信の可視化",
+        "セグメント間の最小許可",
+        "侵害時の封じ込め"
+      ]
+    },
+    {
+      "id": "component_007",
+      "name": "SIEM / SOAR / XDR 連携",
+      "role": "継続的評価、異常検知、自動応答",
+      "details": "Microsoft Sentinel、Splunk、Google Security Operations などが、IdP、ZTNA、EDR、ネットワーク機器のシグナルを相関し、自動遮断や隔離を実施する。",
+      "representative_controls": [
+        "ログ集約",
+        "UEBA",
+        "自動プレイブック",
+        "高リスクセッション強制終了"
+      ]
+    },
+    {
+      "id": "component_008",
+      "name": "ポリシー制御プレーン",
+      "role": "PDP と PEP をまたいだ一貫した認可ルール運用",
+      "details": "IdP、デバイス情報、脅威情報、データ分類、管理対象重要度を統合し、リソース中心の認可ポリシーへ反映する。",
+      "representative_controls": [
+        "属性ベースアクセス制御",
+        "一元ポリシー管理",
+        "継続的評価",
+        "例外管理の期限設定"
+      ]
+    }
+  ],
+  "maturity_levels": [
+    {
+      "level": 1,
+      "name": "伝統的VPN + MFA",
+      "description": "リモート接続に VPN を使い、外部接続時だけ MFA を追加する段階。ネットワーク境界中心で、接続後は比較的広い到達性が残る。",
+      "technologies": [
+        "VPN",
+        "多要素認証",
+        "Active Directory",
+        "ファイアウォール"
+      ],
+      "typical_japan": true,
+      "strengths": [
+        "短期間で導入しやすい",
+        "既存運用との整合が取りやすい"
+      ],
+      "limitations": [
+        "接続後の横展開を抑えにくい",
+        "社内接続の暗黙信頼が残る",
+        "端末状態やアプリ単位認可が弱い"
+      ]
+    },
+    {
+      "level": 2,
+      "name": "ZTNA による VPN 代替",
+      "description": "主要な業務アプリをアプリ単位公開へ移し、ユーザーをネットワークへ入れず、必要なアプリへ仲介する段階。",
+      "technologies": [
+        "ZTNA",
+        "IdP",
+        "多要素認証",
+        "リバースプロキシ",
+        "踏み台の認証強化"
+      ],
+      "typical_japan": true,
+      "strengths": [
+        "外部公開面を縮小できる",
+        "VPN 機器依存を減らせる"
+      ],
+      "limitations": [
+        "レガシープロトコルの扱いが難しい",
+        "サーバー管理系は VPN 併存になりやすい"
+      ]
+    },
+    {
+      "level": 3,
+      "name": "条件付きアクセスとデバイス準拠",
+      "description": "ユーザー属性だけでなく、端末健全性、位置、リスク、セッション条件を加味して認可を変える段階。",
+      "technologies": [
+        "条件付きアクセス",
+        "MDM / UEM",
+        "EDR",
+        "デバイス コンプライアンス",
+        "リスクベース認証"
+      ],
+      "typical_japan": false,
+      "strengths": [
+        "BYOD やモバイルを含む制御精度が上がる",
+        "フィッシング耐性 MFA と相性が良い"
+      ],
+      "limitations": [
+        "業務端末の棚卸しと標準化が前提になる",
+        "ベンダー委託端末や共有端末で例外運用が増えやすい"
+      ]
+    },
+    {
+      "level": 4,
+      "name": "マイクロセグメンテーション",
+      "description": "ネットワーク単位ではなく、ワークロード、アプリケーション、管理系経路ごとに通信許可を細粒度化する段階。",
+      "technologies": [
+        "マイクロセグメンテーション",
+        "ホストベースファイアウォール",
+        "可視化ツール",
+        "サービスマップ",
+        "PAM"
+      ],
+      "typical_japan": false,
+      "strengths": [
+        "侵害後の横展開抑止に効果が高い",
+        "ランサムウェア対策と整合する"
+      ],
+      "limitations": [
+        "通信棚卸しの負荷が高い",
+        "業務停止リスクを恐れて適用が限定されやすい"
+      ]
+    },
+    {
+      "level": 5,
+      "name": "完全ZTA（リソース中心）",
+      "description": "リソース単位の認可、継続的評価、自動隔離、JIT 権限、データ保護まで統合し、社内外の区別より主体・状態・リスク・業務文脈を重視する段階。",
+      "technologies": [
+        "属性ベースアクセス制御",
+        "継続的評価",
+        "SIEM / SOAR",
+        "データ分類連動",
+        "JIT",
+        "セッション録画"
+      ],
+      "typical_japan": false,
+      "strengths": [
+        "境界侵害の前提に最も整合する",
+        "クラウド、SaaS、サーバー管理を一貫制御できる"
+      ],
+      "limitations": [
+        "組織横断の運用成熟度が必要",
+        "業務フロー再設計と例外管理が不可欠"
+      ]
+    }
+  ],
+  "japan_reality": {
+    "current_state_2026": "2026年4月時点の日本企業では、ゼロトラストは『概念としては一般化、実装としては部分導入』の段階にある。Gartner Japan が2025年2月に国内の従業員500人以上の組織を対象に実施した調査では、ゼロトラストとして見直し・強化した領域の上位は、ネットワーク・セキュリティ（SWG、CASB、ZTNA など）、ID / アクセス管理（多要素認証など強固な認証）、ID / アクセス管理（特権管理）であり、アプリケーション / ワークロード、CTEM、自動化 / 分析は後回しの傾向が示された。これは、日本企業の多くが Level 1 から Level 2 の途中、先進企業でも Level 3 一部到達が中心であることを示唆する。",
+    "gap_analysis": [
+      {
+        "theme": "『SASEと言ってもVPN』問題",
+        "reality": "多くの案件では、インターネット出口統制やクラウドプロキシ導入を SASE と呼んでいる一方、管理用アクセスやレガシー業務は従来 VPN に残る。",
+        "true_zta_requirement": "真の ZTA では、ユーザーをネットワークへ入れる発想ではなく、アプリケーションや管理対象リソースごとに認可し、接続後も継続評価する必要がある。",
+        "practical_implication": "VPN の MFA 強化だけでは、社内到達性、共有踏み台、固定許可経路が残り、横展開抑止が不十分になる。"
+      },
+      {
+        "theme": "アイデンティティ偏重でワークロード制御が弱い",
+        "reality": "Entra ID や多要素認証の導入は進むが、サーバー間通信、管理プロトコル、サービスアカウント、東西通信の制御が遅れやすい。",
+        "true_zta_requirement": "人の認証だけでなく、マシン ID、ワークロード、管理セッション、データ分類までポリシー対象に含める必要がある。",
+        "practical_implication": "SaaS 利用者は守れても、オンプレミス残存環境やランサムウェア横展開への耐性は限定的になる。"
+      },
+      {
+        "theme": "レガシーシステムの非適合",
+        "reality": "古い Web アプリ、Windows 統合認証、固定 IP 前提、共有 ID、厚いクライアント、工場系システムが条件付きアクセスや ZTNA に乗りにくい。",
+        "true_zta_requirement": "プロトコル変換、リバースプロキシ化、踏み台経由、例外管理の期限設定、段階的アプリ改修が必要となる。",
+        "practical_implication": "結果としてゼロトラスト対象は SaaS と一部の新規アプリに偏り、基幹系やサーバー管理系が残置される。"
+      },
+      {
+        "theme": "運用自動化不足",
+        "reality": "SIEM は導入しても、SOAR や自動隔離は外部委託任せ、または未実装の企業が多い。",
+        "true_zta_requirement": "リスク上昇時にセッション遮断、端末隔離、JIT 失効、再認証要求を自動連動できることが望ましい。",
+        "practical_implication": "ポリシーが静的になり、ゼロトラストが『強めのアクセス管理』に留まりやすい。"
+      }
+    ],
+    "barriers": [
+      {
+        "name": "レガシー依存",
+        "description": "Kerberos、RDP、SSH、SMB、固定接続元IP、共有アカウント運用が残り、アプリ単位認可に置き換えにくい。"
+      },
+      {
+        "name": "コスト負担",
+        "description": "ZTNA、SWG、CASB、EDR、SIEM、PAM を個別導入すると、ライセンスと設計・運用費が積み上がる。"
+      },
+      {
+        "name": "人材不足",
+        "description": "ポリシー設計、端末管理、クラウド認証、ログ分析を横断できる人材が少なく、MSSP や SIer 依存になりやすい。"
+      },
+      {
+        "name": "経営理解不足",
+        "description": "ゼロトラストを製品群の一括導入と誤解し、業務プロセス再設計や例外管理の重要性が過小評価されやすい。"
+      },
+      {
+        "name": "委託先統制の難しさ",
+        "description": "運用ベンダー、保守会社、子会社の端末や認証方式が統一されず、条件付きアクセスやフィッシング耐性 MFA の適用が遅れる。"
+      }
+    ]
+  },
+  "framework_mapping": [
+    {
+      "framework": "NIST SP 800-207",
+      "focus": "ゼロトラストの論理アーキテクチャ、PDP / PEP、継続的評価、資産と主体の状態に基づく動的ポリシー",
+      "mapping": [
+        "principles 全体が直接対応する",
+        "components のうちポリシー制御プレーン、ZTNA、デバイス健全性評価、SIEM 連携が中核となる",
+        "maturity_levels では Level 5 が最も整合する"
+      ],
+      "japan_implication": "日本企業では NIST の思想を参照しつつも、実装は SASE 製品導入先行になりやすいため、PDP / PEP の役割分担とリソース中心設計を明示する必要がある。"
+    },
+    {
+      "framework": "CISA Zero Trust Maturity Model",
+      "focus": "Identity、Devices、Networks、Applications and Workloads、Data の5本柱と、Visibility and Analytics、Automation and Orchestration、Governance の横断能力",
+      "mapping": [
+        "components の IDプロバイダー、デバイス管理、ZTNA、マイクロセグメンテーション、CASB が各柱に対応する",
+        "SIEM / SOAR / XDR 連携が横断能力に対応する",
+        "maturity_levels は Traditional から Optimal への移行を日本企業向けに単純化したものとみなせる"
+      ],
+      "japan_implication": "Gartner Japan の2025年調査で後回し傾向が見えたアプリケーション / ワークロードと自動化 / 分析は、CISA モデル上も成熟度を分ける差分となる。"
+    },
+    {
+      "framework": "NISC / デジタル庁 ゼロトラスト関連指針",
+      "focus": "政府情報システムにおけるゼロトラストアーキテクチャ適用方針と、属性ベースアクセス制御の技術整理",
+      "mapping": [
+        "principles の Least Privilege Access と PDP / PEP の整理に対応する",
+        "components のポリシー制御プレーンとデバイス健全性評価に対応する",
+        "Level 3 以降で必要になる属性ベースアクセス制御の考え方を補強する"
+      ],
+      "japan_implication": "国内公的文書はゼロトラストを単一製品ではなくアクセス制御方針として位置付けており、企業でも同様に ABAC と運用要件まで設計対象に含めるべきである。"
+    },
+    {
+      "framework": "金融庁 金融分野におけるサイバーセキュリティに関するガイドライン",
+      "focus": "リスクベース認証、リモートアクセスへの MFA、特権アカウント管理、ログ・監視、外部委託先管理",
+      "mapping": [
+        "components の IDプロバイダー、多要素認証、PAM、SIEM と直接対応する",
+        "server_access_zta の JIT、セッション監査、委託先アクセス統制と整合する"
+      ],
+      "japan_implication": "金融ではゼロトラストという語そのものよりも、特権統制、MFA、ログ、第三者管理の実装証跡が重視される。"
+    },
+    {
+      "framework": "FISC 安全対策基準",
+      "focus": "一意な利用者識別、共有アカウント禁止、特権アカウント統制、MFA、ログ保全、ジャンプサーバー経由の特権操作",
+      "mapping": [
+        "server_access_zta の踏み台のゼロトラスト化と強く対応する",
+        "maturity_levels では Level 2 から Level 4 への移行時に重要な統制要件となる"
+      ],
+      "japan_implication": "金融機関では『完全 ZTA』を一気に目指すより、FISC に沿って共有 ID 廃止、MFA、ジャンプサーバー統制、セッション記録を先に固める方が実装可能性が高い。"
+    }
+  ],
+  "server_access_zta": {
+    "patterns": [
+      {
+        "id": "server_pattern_001",
+        "name": "JIT 管理アクセス",
+        "description": "Windows Server や Linux サーバーへの管理権限を、申請・承認・時間制限付きで有効化し、作業終了後に自動失効させる。",
+        "benefits": [
+          "常時特権の排除",
+          "侵害時の悪用期間短縮",
+          "監査証跡の明確化"
+        ]
+      },
+      {
+        "id": "server_pattern_002",
+        "name": "PAM と ZTNA の統合",
+        "description": "PAM が資格情報・承認・セッション記録を担当し、ZTNA が接続経路をアプリ / 管理対象単位で仲介する。資格情報管理と経路制御を分離する構成。",
+        "benefits": [
+          "踏み台の過信を避けられる",
+          "委託先アクセスを細粒度化できる",
+          "接続元ネットワーク依存を減らせる"
+        ]
+      },
+      {
+        "id": "server_pattern_003",
+        "name": "踏み台サーバーのゼロトラスト化",
+        "description": "共有踏み台をそのまま残すのではなく、個人識別、フィッシング耐性 MFA、端末健全性、接続先単位の認可、セッション録画を適用した管理ポータルへ再設計する。",
+        "benefits": [
+          "共有アカウント依存の低減",
+          "RDP / SSH の監査性向上",
+          "ベンダー保守アクセスの分離"
+        ]
+      },
+      {
+        "id": "server_pattern_004",
+        "name": "サーバー管理プレーンのマイクロセグメンテーション",
+        "description": "RDP、SSH、WinRM、vCenter、バックアップ、監視、AD 管理などの管理系通信を業務通信と分離し、管理主体ごとに許可する。",
+        "benefits": [
+          "ラテラルムーブメント抑止",
+          "ランサムウェア封じ込め",
+          "Tier 0 / Tier 1 分離の実効性向上"
+        ]
+      }
+    ],
+    "tools": [
+      {
+        "category": "PAM",
+        "examples": [
+          "CyberArk",
+          "Delinea",
+          "BeyondTrust",
+          "WALLIX"
+        ],
+        "usage": "資格情報金庫、承認、JIT、セッション記録"
+      },
+      {
+        "category": "ZTNA",
+        "examples": [
+          "Zscaler ZPA",
+          "Palo Alto Networks Prisma Access",
+          "Cloudflare Access"
+        ],
+        "usage": "管理対象サーバーや運用ポータルへのアプリ単位接続"
+      },
+      {
+        "category": "IdP / Access Control",
+        "examples": [
+          "Entra ID",
+          "Okta Workforce Identity",
+          "Ping Identity"
+        ],
+        "usage": "多要素認証、条件付きアクセス、SSO、リスク判定"
+      },
+      {
+        "category": "Endpoint Security",
+        "examples": [
+          "Microsoft Intune",
+          "Microsoft Defender for Endpoint",
+          "CrowdStrike Falcon"
+        ],
+        "usage": "管理端末の健全性確認と隔離"
+      },
+      {
+        "category": "Segmentation",
+        "examples": [
+          "VMware NSX",
+          "Illumio",
+          "Akamai Guardicore Segmentation"
+        ],
+        "usage": "管理ネットワークと業務ネットワークの分離、東西通信制御"
+      }
+    ]
+  },
+  "knowledge_items": [
+    {
+      "id": "knowledge_001",
+      "title": "ゼロトラストは『製品群』ではなく『認可の設計原則』",
+      "content": "NIST SP 800-207 の核心は、社内外の場所で主体を区別することではなく、アクセス要求ごとに動的に認証・認可し、その結果を PEP で施行する点にある。SWG、CASB、ZTNA は実装部品であり、それ自体がゼロトラストの十分条件ではない。",
+      "tags": [
+        "ゼロトラスト",
+        "NIST SP 800-207",
+        "PDP",
+        "PEP"
+      ],
+      "source_urls": [
+        "https://nvlpubs.nist.gov/nistpubs/specialpublications/NIST.SP.800-207.pdf"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "title": "日本企業の現実は『SASE先行、ワークロード後回し』",
+      "content": "Gartner Japan の2025年5月8日公表内容では、国内大企業がゼロトラストとして強化した上位領域は、ネットワーク・セキュリティ、強固な認証、特権管理であり、アプリケーション / ワークロードと自動化 / 分析は後回し傾向にある。これは、多くの企業が SASE や ZTNA を入口にしつつ、完全なリソース中心設計には至っていないことを示す。",
+      "tags": [
+        "日本企業",
+        "SASE",
+        "ZTNA",
+        "Gartner"
+      ],
+      "source_urls": [
+        "https://www.gartner.co.jp/ja/newsroom/press-releases/pr-20250508-zero-trust"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "title": "日本の公的文書は ABAC と最小権限を重視している",
+      "content": "デジタル庁の2023年3月24日付技術レポートは、『ゼロトラストアーキテクチャ適用方針』の補助文書として ABAC を整理し、役割や ID だけでは不十分で、環境情報やリソース属性を含むアクセス制御が必要だと示している。国内実装でも、条件付きアクセスを単なる位置制御に留めず、属性ベースの認可へ進める必要がある。",
+      "tags": [
+        "デジタル庁",
+        "ABAC",
+        "最小権限",
+        "国内指針"
+      ],
+      "source_urls": [
+        "https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/f9f14968-6dd3-41dc-a97f-047618caf73c/8159607c/20230324_policies_development_management_outline_03.pdf"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "title": "金融分野ではゼロトラストの看板より実装証跡が問われる",
+      "content": "金融庁の2024年10月4日公表ガイドラインと FISC の安全対策基準では、リスクベース認証、MFA、特権統制、ジャンプサーバー経由、ログ保全、外部委託先管理が重視される。したがって金融機関では、ゼロトラストを宣言するよりも、管理者アクセスと委託先アクセスで一意識別、JIT、セッション記録を実装できているかが実務上の焦点となる。",
+      "tags": [
+        "金融庁",
+        "FISC",
+        "特権アクセス管理",
+        "ジャンプサーバー"
+      ],
+      "source_urls": [
+        "https://www.fsa.go.jp/news/r6/sonota/20241004/20241004.html",
+        "https://www.fisc.or.jp/publication/pdf/introduction_fisc-guideline-search_202408.pdf"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "title": "サーバーOSアクセスこそ日本企業のゼロトラスト難所",
+      "content": "SaaS への条件付きアクセスは進めやすいが、Windows Server や Linux サーバーの管理アクセスは、RDP、SSH、WinRM、SMB、ベンダー保守、共有踏み台、固定接続元IP などの既存運用が障壁になる。ここを JIT、PAM、ZTNA、セグメンテーションで再設計できるかが、Level 2 と Level 4 の差になる。",
+      "tags": [
+        "OS認証",
+        "特権アクセス管理",
+        "ZTNA",
+        "マイクロセグメンテーション"
+      ],
+      "source_urls": [
+        "https://nvlpubs.nist.gov/nistpubs/specialpublications/NIST.SP.800-207.pdf",
+        "https://www.gartner.co.jp/ja/newsroom/press-releases/pr-20250508-zero-trust"
+      ]
+    }
+  ]
+}

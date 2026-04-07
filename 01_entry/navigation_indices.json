@@ -1,0 +1,779 @@
+{
+  "metadata": {
+    "id": "entry_navigation_indices",
+    "title": "ナビゲーション索引",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "navigation",
+      "index"
+    ],
+    "related_files": [
+      "./knowledge_graph.json",
+      "../03_identity_architecture/idp_comparison.json",
+      "../03_identity_architecture/iga_tool_comparison.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../04_server_auth/oracle_db_auth.json",
+      "../06_security_hardening/industry_manufacturing_auth.json",
+      "../06_security_hardening/industry_energy_auth.json",
+      "../06_security_hardening/audit_log_operations.json",
+      "../03_identity_architecture/iam_capability_product_matrix.json",
+      "../03_identity_architecture/iam_product_landscape_japan.json",
+      "../08_identity_subjects/machine_identity_modern.json",
+      "../11_simulations/securities/sim_sec_03_sier_account_incident.json",
+      "../11_simulations/cross_industry/sim_x_03_byod_mdm_conflict.json",
+      "../11_simulations/finance/sim_fin_02_oracle_auth_review.json",
+      "../11_simulations/cross_industry/sim_x_04_nonhuman_id_explosion.json",
+      "../11_simulations/energy/sim_ene_01_ot_it_convergence.json",
+      "../11_simulations/public/sim_pub_01_gov_identity_reform.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "nav_node_001",
+      "label": "技術領域索引",
+      "object_type": "concept",
+      "description": "技術テーマ別の入口索引。",
+      "properties": {
+        "domains": [
+          "サーバー認証",
+          "ハイブリッド ID",
+          "セキュリティ強化",
+          "クラウドSaaS統制",
+          "監査証跡と棚卸し",
+          "非人間ID / ワークロードID"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_002",
+      "label": "主訴索引",
+      "object_type": "concept",
+      "description": "相談内容別の入口索引。",
+      "properties": {
+        "symptoms": [
+          "Kerberos が動かない",
+          "SMB 移行で認証が不安",
+          "NTLM を減らしたい",
+          "どの IdP を選ぶべきか",
+          "Oracleの共有SYSDBAをやめたい",
+          "特権IDの棚卸しをどう回すか分からない",
+          "作業ログとログインログの保全方式を整理したい",
+          "BYOD をどこまで許容すべきか",
+          "サービスアカウントが多すぎる",
+          "APIキーをやめたい",
+          "AIエージェントの権限設計が不安"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_003",
+      "label": "Kerberos認証とCIFS/SMB認証",
+      "object_type": "concept",
+      "description": "Kerberos、SMB、委任、二重ホップ、攻撃、モダン化を横断する参照先。",
+      "properties": {
+        "file": "../04_server_auth/kerberos_cifs_auth.json"
+      }
+    },
+    {
+      "id": "nav_node_004",
+      "label": "IdP製品比較マトリクス",
+      "object_type": "concept",
+      "description": "Entra ID、Okta、Ping Identity、国内IDaaSを比較し、提案時の選定理由を整理する入口。",
+      "properties": {
+        "file": "../03_identity_architecture/idp_comparison.json",
+        "personas": [
+          "SIerコンサルタント",
+          "CIO",
+          "CISO"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_005",
+      "label": "製造業ID管理特論",
+      "object_type": "concept",
+      "description": "SAP、工場OT、サプライヤー接続、出向・派遣、IoTデバイスIDを横断する製造業向け入口。",
+      "properties": {
+        "file": "../06_security_hardening/industry_manufacturing_auth.json",
+        "personas": [
+          "CISO",
+          "工場IT責任者",
+          "SIerコンサルタント"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_006",
+      "label": "IGA製品比較",
+      "object_type": "concept",
+      "description": "証券会社の職務分離、アクセス申請、定期棚卸、JSDA/FISC対応を軸にIGA製品を比較する入口。",
+      "properties": {
+        "file": "../03_identity_architecture/iga_tool_comparison.json",
+        "personas": [
+          "CIO",
+          "CISO",
+          "情報システム部門",
+          "内部監査部門",
+          "SIerアーキテクト"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_007",
+      "label": "Oracle Database認証・特権管理",
+      "object_type": "concept",
+      "description": "Oracle Databaseの認証方式、監査、特権統制、商用UNIX考慮、OCI移行を横断する入口。",
+      "properties": {
+        "file": "../04_server_auth/oracle_db_auth.json",
+        "personas": [
+          "金融機関のCISO",
+          "基幹系DBA",
+          "SIerアーキテクト"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_011",
+      "label": "エネルギー産業OT/IT認証",
+      "object_type": "concept",
+      "description": "電力、ガス、石油の制御系認証、OT DMZ、委託先保守、重要インフラ統制を横断する入口。",
+      "properties": {
+        "file": "../06_security_hardening/industry_energy_auth.json",
+        "personas": [
+          "CISO",
+          "情報システム部門",
+          "SIer"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_012",
+      "label": "監査証跡・ログ分析・棚卸し運用",
+      "object_type": "concept",
+      "description": "特権操作証跡、SIEM、UEBA、長期保管、アカウント棚卸し、孤立アカウント検出を横断する入口。",
+      "properties": {
+        "file": "../06_security_hardening/audit_log_operations.json",
+        "personas": [
+          "CISO",
+          "情報システム部門",
+          "内部監査部門",
+          "SIerコンサルタント"
+        ],
+        "symptoms": [
+          "特権IDの棚卸しをどう回すか分からない",
+          "作業ログとログインログの証跡設計を整理したい",
+          "FISC や J-SOX を意識した長期保管を設計したい"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_013",
+      "label": "マシンIDモダン管理",
+      "object_type": "concept",
+      "description": "非人間ID、ワークロードID、ゼロシークレット、RPA、AIエージェント、証明書自動化を横断する入口。",
+      "properties": {
+        "file": "../08_identity_subjects/machine_identity_modern.json",
+        "personas": [
+          "CISO",
+          "情報システム部門",
+          "DevSecOps",
+          "SIerコンサルタント"
+        ],
+        "symptoms": [
+          "サービスアカウントが多すぎる",
+          "APIキーをやめたい",
+          "AIエージェントの権限設計が不安",
+          "証明書の更新が人手運用になっている"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_014",
+      "label": "IAM製品ランドスケープ（日本市場）",
+      "object_type": "concept",
+      "description": "ディレクトリ、PAM、IdP、IGA、MFA、RADIUS、PKI、MDM/UEMを日本市場の採用傾向と価格帯で横断比較する入口。",
+      "properties": {
+        "file": "../03_identity_architecture/iam_product_landscape_japan.json",
+        "personas": [
+          "CIO",
+          "CISO",
+          "情報システム部門",
+          "SIerアーキテクト"
+        ],
+        "symptoms": [
+          "日本市場で実際に通るIAM製品を知りたい",
+          "国産と外資のどちらが監査対応しやすいか比較したい",
+          "PAMとIdPを同じ提案書で整理したい"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_015",
+      "label": "証券会社の委託先アカウント残存シナリオ",
+      "object_type": "concept",
+      "description": "退職済みSIer要員のVPN IDと踏み台アカウント残存、FISC対応、PAM導入判断を扱う会話型入口。",
+      "properties": {
+        "file": "../11_simulations/securities/sim_sec_03_sier_account_incident.json",
+        "personas": [
+          "内部監査部長",
+          "情報システム部長",
+          "CISO",
+          "コンプライアンス担当"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_016",
+      "label": "地方銀行のOracle Database統制シナリオ",
+      "object_type": "concept",
+      "description": "AIX 7.2上のOracle Database 19cで、共有SYSDBA、Unified Auditing、J-SOX対応を扱う会話型入口。",
+      "properties": {
+        "file": "../11_simulations/finance/sim_fin_02_oracle_auth_review.json",
+        "personas": [
+          "内部統制担当",
+          "DB管理者",
+          "CIO",
+          "監査法人担当"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_017",
+      "label": "電力OT/IT統合シミュレーション",
+      "object_type": "concept",
+      "description": "発電所SCADA、委託業者リモートアクセス、OT向けPAM導入可否を会話形式で学ぶ入口。",
+      "properties": {
+        "file": "../11_simulations/energy/sim_ene_01_ot_it_convergence.json",
+        "personas": [
+          "設備部長",
+          "IT部長",
+          "OTセキュリティSE",
+          "コンプライアンス担当"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_018",
+      "label": "自治体ID改革シミュレーション",
+      "object_type": "concept",
+      "description": "地方自治体のActive Directory更改、ログ3年保存、委託先アクセス統制を会話形式で学ぶ入口。",
+      "properties": {
+        "file": "../11_simulations/public/sim_pub_01_gov_identity_reform.json",
+        "personas": [
+          "情報政策課長",
+          "総務部長",
+          "IT職員",
+          "マイナンバー担当"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_019",
+      "label": "BYOD現実シミュレーション",
+      "object_type": "concept",
+      "description": "私物スマートフォン、SharePoint、アプリ保護ポリシー、条件付きアクセス、法務論点を横断する商社向け会話型入口。",
+      "properties": {
+        "file": "../11_simulations/cross_industry/sim_x_03_byod_mdm_conflict.json",
+        "personas": [
+          "CISO",
+          "IT企画部長",
+          "営業本部長",
+          "法務部長"
+        ]
+      }
+    },
+    {
+      "id": "nav_node_020",
+      "label": "非人間ID危機シミュレーション",
+      "object_type": "concept",
+      "description": "RPA、APIキー、GitHub シークレット、gMSA、Managed Identity、保管庫選定を横断する保険業向け会話型入口。",
+      "properties": {
+        "file": "../11_simulations/cross_industry/sim_x_04_nonhuman_id_explosion.json",
+        "personas": [
+          "CISO",
+          "デジタル推進部長",
+          "RPA担当SE",
+          "クラウドアーキテクト"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "nav_node_003",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "サーバー認証領域の詳細参照先として配置する。"
+    },
+    {
+      "from": "nav_node_003",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "Kerberos 障害や NTLM 廃止の相談で参照する。"
+    },
+    {
+      "from": "nav_node_004",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "ハイブリッドIDやSaaS統制の製品比較入口として配置する。"
+    },
+    {
+      "from": "nav_node_004",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "どのIdPを選ぶべきかという相談の入口として参照する。"
+    },
+    {
+      "from": "nav_node_005",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "セキュリティ強化とハイブリッドIDをまたぐ業界別入口として配置する。"
+    },
+    {
+      "from": "nav_node_005",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "SAP、OT、外部委託、サプライヤーIDに悩む相談の入口として参照する。"
+    },
+    {
+      "from": "nav_node_006",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "クラウドSaaS統制とIDガバナンス領域の製品比較入口として配置する。"
+    },
+    {
+      "from": "nav_node_006",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "申請と棚卸しをどう回すか、職務分離をどう実装するかという相談の入口として参照する。"
+    },
+    {
+      "from": "nav_node_007",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "サーバー認証と特権統制をまたぐDB固有論点の入口として配置する。"
+    },
+    {
+      "from": "nav_node_007",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "共有SYSDBA解消、Oracle監査、商用UNIX移行、OCI再設計の相談で参照する。"
+    },
+    {
+      "from": "nav_node_007",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "深夜障害時のリモート特権作業と監査証跡の相談で参照する。"
+    },
+    {
+      "from": "nav_node_007",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "セキュリティ強化とリモートアクセス統制をまたぐ金融向け入口として配置する。"
+    },
+    {
+      "from": "nav_node_008",
+      "to": "nav_node_005",
+      "relationship": "example_of",
+      "description": "製造業ID管理特論の具体的な会話型入口として参照する。"
+    },
+    {
+      "from": "nav_node_009",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "商用UNIX更改やEOL後運用の相談で参照する。"
+    },
+    {
+      "from": "nav_node_010",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "ゼロトラスト、OT境界、重要インフラを横断する入口として配置する。"
+    },
+    {
+      "from": "nav_node_011",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "セキュリティ強化と特権アクセス管理の業界別入口として配置する。"
+    },
+    {
+      "from": "nav_node_011",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "OT と IT をまたぐ認証設計や委託先アクセス統制の相談で参照する。"
+    },
+    {
+      "from": "nav_node_012",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "セキュリティ強化と監査証跡運用をまたぐ入口として配置する。"
+    },
+    {
+      "from": "nav_node_012",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "特権ID棚卸し、証跡保全、SIEM運用の相談で参照する。"
+    },
+    {
+      "from": "nav_node_013",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "非人間ID / ワークロードID領域の詳細入口として配置する。"
+    },
+    {
+      "from": "nav_node_013",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "サービスアカウント、APIキー、RPA、AIエージェント、証明書運用の相談入口として参照する。"
+    },
+    {
+      "from": "nav_node_014",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "製品選定と市場比較の詳細参照先として配置する。"
+    },
+    {
+      "from": "nav_node_014",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "国産と外資のどちらが監査対応しやすいか比較したい相談で参照する。"
+    },
+    {
+      "from": "nav_node_014",
+      "to": "nav_node_003",
+      "relationship": "example_of",
+      "description": "CIO、CISO、情報システム部門、SIerがIAM製品の採用方針を整理する際に参照する。"
+    },
+    {
+      "from": "nav_node_015",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "退職者IDが消えない、委託先アクセスが不安という相談の入口として参照する。"
+    },
+    {
+      "from": "nav_node_015",
+      "to": "nav_node_012",
+      "relationship": "example_of",
+      "description": "踏み台ログ、棚卸し、長期保管を伴う証跡設計の入口として配置する。"
+    },
+    {
+      "from": "nav_node_016",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "共有SYSDBA解消、J-SOX監査前の緊急改善という相談の入口として参照する。"
+    },
+    {
+      "from": "nav_node_016",
+      "to": "nav_node_007",
+      "relationship": "example_of",
+      "description": "Oracle Database認証・特権管理の具体的な会話型入口として配置する。"
+    },
+    {
+      "from": "nav_node_017",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "電力OT、委託業者アクセス、重要インフラ規制対応を学ぶシミュレーション入口として配置する。"
+    },
+    {
+      "from": "nav_node_017",
+      "to": "nav_node_011",
+      "relationship": "example_of",
+      "description": "エネルギー産業OT/IT認証の具体的な会話型入口として参照する。"
+    },
+    {
+      "from": "nav_node_018",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "自治体のActive Directory更改、ログ保全、委託先アクセス統制を学ぶシミュレーション入口として配置する。"
+    },
+    {
+      "from": "nav_node_018",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "LGWAN制約下の近代化やEntra ID段階適用の相談で参照する。"
+    },
+    {
+      "from": "nav_node_019",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "クラウドSaaS統制と端末管理をまたぐ BYOD 相談の入口として配置する。"
+    },
+    {
+      "from": "nav_node_019",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "BYOD をどこまで許容すべきかという主訴の入口として参照する。"
+    },
+    {
+      "from": "nav_node_020",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "非人間ID統制とセキュリティ強化をまたぐ相談の入口として配置する。"
+    },
+    {
+      "from": "nav_node_020",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "サービスアカウントや API キーが増えすぎたという主訴の入口として参照する。"
+    },
+    {
+      "from": "nav_node_012",
+      "to": "nav_node_001",
+      "relationship": "example_of",
+      "description": "技術領域横断の製品比較入口として配置する。"
+    },
+    {
+      "from": "nav_node_012",
+      "to": "nav_node_002",
+      "relationship": "example_of",
+      "description": "どの製品を組み合わせるべきかという相談の入口として参照する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "nav_knowledge_001",
+      "topic": "技術領域別入口",
+      "summary": "サーバー認証 > Kerberos/CIFS の導線を追加した。",
+      "details": [
+        "対象ファイル: ../04_server_auth/kerberos_cifs_auth.json",
+        "主要テーマ: SPN、委任、SMB、SQL Server、IIS、SharePoint、PostgreSQL、攻撃、モダン化"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_003"
+      ]
+    },
+    {
+      "id": "nav_knowledge_002",
+      "topic": "IdP比較入口",
+      "summary": "提案段階で使うIdP製品比較マトリクスへの導線を追加した。",
+      "details": [
+        "対象ファイル: ../03_identity_architecture/idp_comparison.json",
+        "主な利用者: SIerコンサルタント、CIO、CISO"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_004"
+      ]
+    },
+    {
+      "id": "nav_knowledge_003",
+      "topic": "製造業ID管理入口",
+      "summary": "SAP、工場OT、サプライヤー接続を横断する製造業向け入口を追加した。",
+      "details": [
+        "対象ファイル: ../06_security_hardening/industry_manufacturing_auth.json",
+        "主要テーマ: SAP S/4HANA、SAP GRC Access Control、FireFighter ID、PLC、SCADA、MES、IEC 62443、ISO/IEC 27001、IoTデバイスID"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_005"
+      ]
+    },
+    {
+      "id": "nav_knowledge_004",
+      "topic": "IGA比較入口",
+      "summary": "証券会社向けのIGA製品比較への導線を追加した。",
+      "details": [
+        "対象ファイル: ../03_identity_architecture/iga_tool_comparison.json",
+        "主要テーマ: アクセス申請、定期アクセスレビュー、SOD（職務分離）、ロールマイニング、日本型人事連携、JSDA/FISC"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_006"
+      ]
+    },
+    {
+      "id": "nav_knowledge_005",
+      "topic": "Oracle Database認証入口",
+      "summary": "Oracle Databaseの認証方式、監査、特権統制、商用UNIX考慮、OCI移行をまとめた入口を追加した。",
+      "details": [
+        "対象ファイル: ../04_server_auth/oracle_db_auth.json",
+        "主要テーマ: Kerberos、TLS/SSL、RADIUS、External Authentication、Database Vault、Unified Auditing、AVDF、AIX、Oracle Solaris、OCI"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_007"
+      ]
+    },
+    {
+      "id": "nav_knowledge_006",
+      "topic": "シミュレーション入口",
+      "summary": "銀行、製造、エネルギーの意思決定シナリオへの導線を追加した。",
+      "details": [
+        "対象ファイル: ../11_simulations/finance/sim_fin_01_regional_bank_fisc.json",
+        "対象ファイル: ../11_simulations/manufacturing/sim_mfg_01_ot_it_integration.json",
+        "対象ファイル: ../11_simulations/manufacturing/sim_mfg_02_hp_ux_migration.json",
+        "対象ファイル: ../11_simulations/energy/sim_ene_01_power_zero_trust.json"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_007",
+        "nav_node_008",
+        "nav_node_009",
+        "nav_node_010"
+      ]
+    },
+    {
+      "id": "nav_knowledge_007",
+      "topic": "エネルギー産業入口",
+      "summary": "電力、ガス、石油向けの OT/IT 認証アーキテクチャ入口を追加した。",
+      "details": [
+        "対象ファイル: ../06_security_hardening/industry_energy_auth.json",
+        "主要テーマ: SCADA、DCS、Purdue Model、OT DMZ、委託先一時アクセス、ブレークグラス、重要インフラ規制"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_011"
+      ]
+    },
+    {
+      "id": "nav_knowledge_011",
+      "topic": "製品選定入口",
+      "summary": "IAM機能ケイパビリティと日本市場製品の組み合わせを比較する入口を追加した。",
+      "details": [
+        "参照先: ../03_identity_architecture/iam_capability_product_matrix.json",
+        "対象: IdP、IGA、PAM、SIEM、UEM、国産ニッチ製品"
+      ],
+      "related_nodes": [
+        "nav_node_011",
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_003"
+      ]
+    },
+    {
+      "id": "nav_knowledge_012",
+      "topic": "監査証跡と棚卸し入口",
+      "summary": "特権操作証跡、SIEM、UEBA、アカウント棚卸し、長期保管を横断する入口を追加した。",
+      "details": [
+        "対象ファイル: ../06_security_hardening/audit_log_operations.json",
+        "主要テーマ: Windows Event Log、auditd、Oracle Unified Audit、CyberArk、SecureCube Access Check、Logstorage、Microsoft Sentinel、Entra ID Governance、SailPoint、PCI DSS、FISC、J-SOX"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_012"
+      ]
+    },
+    {
+      "id": "nav_knowledge_013",
+      "topic": "マシンIDモダン管理入口",
+      "summary": "2025-2026年時点の非人間ID、ワークロードID、シークレット管理、PKI自動化を横断する入口を追加した。",
+      "details": [
+        "対象ファイル: ../08_identity_subjects/machine_identity_modern.json",
+        "主要テーマ: サービスアカウント、グループ管理サービスアカウント、Kubernetes ServiceAccount、OIDC / Workload Identity Federation、Managed Identity、RPA Bot ID、AIエージェント ID、HashiCorp Vault、Azure Key Vault、AWS Secrets Manager、Google Cloud Secret Manager、CyberArk Conjur、Delinea Secret Server、ACME、Venafi"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_013"
+      ]
+    },
+    {
+      "id": "nav_knowledge_014",
+      "topic": "IAM製品ランドスケープ入口",
+      "summary": "日本市場向けのIAM製品全景と比較マトリクスを参照する入口を追加した。",
+      "details": [
+        "対象ファイル: ../03_identity_architecture/iam_product_landscape_japan.json",
+        "主要テーマ: Active Directory、Entra ID、CyberArk、SecureCube Access Check、HENNGE One、CloudGate UNO、SailPoint、NetAttest EPS、GMO GlobalSign、Intune"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_003",
+        "nav_node_014"
+      ]
+    },
+    {
+      "id": "nav_knowledge_015",
+      "topic": "証券業の委託先アカウント残存シナリオ入口",
+      "summary": "FISC安全対策基準、外部委託管理、PAM（特権アクセス管理）導入判断を会話形式で学べる入口を追加した。",
+      "details": [
+        "対象ファイル: ../11_simulations/securities/sim_sec_03_sier_account_incident.json",
+        "主な利用者: CISO、内部監査、SIer提案担当、コンプライアンス担当"
+      ],
+      "related_nodes": [
+        "nav_node_002",
+        "nav_node_012",
+        "nav_node_015"
+      ]
+    },
+    {
+      "id": "nav_knowledge_016",
+      "topic": "銀行業のOracle Database統制シナリオ入口",
+      "summary": "AIX残存環境、共有SYSDBA、Oracle Unified Auditing、J-SOX監査対応を会話形式で学べる入口を追加した。",
+      "details": [
+        "対象ファイル: ../11_simulations/finance/sim_fin_02_oracle_auth_review.json",
+        "主な利用者: CIO、内部統制担当、DBA、監査法人対応担当"
+      ],
+      "related_nodes": [
+        "nav_node_002",
+        "nav_node_007",
+        "nav_node_016"
+      ]
+    },
+    {
+      "id": "nav_knowledge_017",
+      "topic": "電力OT/IT統合シミュレーション入口",
+      "summary": "発電所SCADA、委託業者リモートアクセス、OT向けPAMの現実論を学ぶシナリオへの導線を追加した。",
+      "details": [
+        "対象ファイル: ../11_simulations/energy/sim_ene_01_ot_it_convergence.json",
+        "主要テーマ: SCADA、GE iFIX、OSIsoft PI System、Active Directory、Privileged Access Management、Just-in-Time Access、重要インフラ規制対応"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_011",
+        "nav_node_017"
+      ]
+    },
+    {
+      "id": "nav_knowledge_018",
+      "topic": "自治体ID改革シミュレーション入口",
+      "summary": "マイナンバー法改正、Windows Server 2012 R2更改、LGWAN制約下のEntra ID活用を扱うシナリオへの導線を追加した。",
+      "details": [
+        "対象ファイル: ../11_simulations/public/sim_pub_01_gov_identity_reform.json",
+        "主要テーマ: アクセスログ3年保存、Active Directory、Entra ID、LGWAN、ガバメントクラウド、委託先アクセス管理"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_018"
+      ]
+    },
+    {
+      "id": "nav_knowledge_019",
+      "topic": "BYOD現実シミュレーション入口",
+      "summary": "Microsoft Intune 未整備のまま BYOD が常態化した商社シナリオへの導線を追加した。",
+      "details": [
+        "対象ファイル: ../11_simulations/cross_industry/sim_x_03_byod_mdm_conflict.json",
+        "主要テーマ: 私物スマートフォン、SharePoint、アプリ保護ポリシー、準拠デバイス、法務、会社支給端末化"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_019"
+      ]
+    },
+    {
+      "id": "nav_knowledge_020",
+      "topic": "非人間ID危機シミュレーション入口",
+      "summary": "RPA、APIキー、GitHub シークレット漏えい、gMSA、Managed Identity を横断する保険業シナリオへの導線を追加した。",
+      "details": [
+        "対象ファイル: ../11_simulations/cross_industry/sim_x_04_nonhuman_id_explosion.json",
+        "主要テーマ: サービスアカウント棚卸し、GitHub シークレットスキャン、HashiCorp Vault、CyberArk Conjur 系、ランサムウェア横展開"
+      ],
+      "related_nodes": [
+        "nav_node_001",
+        "nav_node_002",
+        "nav_node_020"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "metadata": {
+    "scenario_id": "sim_mfg_01",
+    "title": "化学メーカーOT/IT統合でのID管理境界線：工場DCSへのAD統合は是か非か",
+    "industry": "製造",
+    "company_profile": {
+      "company_type": "大手化学メーカー",
+      "employees": 6000,
+      "locations": "国内工場5カ所",
+      "environment": [
+        "IT系はWindows Server Active Directory",
+        "Entra Hybrid Join移行中",
+        "OT系は工場ごとの独立Windowsドメイン",
+        "DCS/PLC周辺にWindows XP/7残存"
+      ],
+      "current_constraints": [
+        "DCSの停止許容度が極めて低い",
+        "ベンダー依存が強い",
+        "IEC 62443準拠を目指している"
+      ]
+    },
+    "themes": [
+      "OTセキュリティ",
+      "IEC 62443",
+      "Active Directory",
+      "特権アクセス管理",
+      "ゾーン分割"
+    ],
+    "knowledge_needs": [
+      "IEC 62443におけるZone/Conduit設計とID管理の関係",
+      "OT環境でActive Directory統合を避けるべき条件",
+      "踏み台サーバーとPAMによるOT保守統制の設計",
+      "Windows XP/7残存環境での代替防御策",
+      "新設DCSと既設DCSで異なる移行方針の切り分け",
+      "IT/OT境界でのログ取得と委託先接続管理"
+    ]
+  },
+  "personas": [
+    {
+      "id": "mfg1_p01",
+      "name": "中島 武",
+      "role": "IT部門長",
+      "background": "全社インフラ統合を進めており、工場側もID管理を一元化したいと考えている。",
+      "stance": "OT側もActive Directoryで統合し、運用と監査を標準化したい。"
+    },
+    {
+      "id": "mfg1_p02",
+      "name": "原田 誠",
+      "role": "工場設備部長",
+      "background": "化学プラントの運転責任を担い、停止リスクに極めて敏感である。",
+      "stance": "DCSに不用意な変更を加えることに強く反対する。"
+    },
+    {
+      "id": "mfg1_p03",
+      "name": "セキュリティコンサルタント",
+      "role": "IEC 62443専門家",
+      "background": "製造業と重要インフラ向けにOTネットワーク分離設計を支援してきた。",
+      "stance": "統合よりもZone/Conduitと補完統制の整備を優先すべきと考える。"
+    },
+    {
+      "id": "mfg1_p04",
+      "name": "DCSベンダーSE",
+      "role": "DCSベンダーSE",
+      "background": "既設DCSの保守を担当し、製品制約を熟知している。",
+      "stance": "現行DCSはActive Directory統合に対応しておらず、ベンダー責任範囲外の変更を避けたい。"
+    },
+    {
+      "id": "mfg1_p05",
+      "name": "SIer提案担当",
+      "role": "SIer提案担当",
+      "background": "製造業向けに工場ネットワーク分離と特権接続設計を提案してきた。",
+      "stance": "既設OTは分離維持、新設設備のみ段階統合とする現実路線を提案したい。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "mfg1_scene_01",
+      "title": "OTセキュリティインシデント",
+      "setting": "他社工場へのサイバー攻撃報道を受けた緊急経営会議。",
+      "dialogue": [
+        {
+          "speaker": "中島 武",
+          "text": "同業他社の工場停止が報じられて、経営から『うちは大丈夫か』と問われています。IT側から見ると、工場ごとに認証基盤が分かれたままなのが最も気になります。",
+          "subtext": "全社統制の欠如を問題視している。"
+        },
+        {
+          "speaker": "原田 誠",
+          "text": "心配なのはわかりますが、DCSは止まれば生産だけでなく安全にも響きます。机上の統合論で現場を触られるのが一番困ります。",
+          "subtext": "安全停止より誤変更を恐れている。"
+        },
+        {
+          "speaker": "セキュリティコンサルタント",
+          "text": "この論点は、ITと同じ設計をOTへ持ち込むかではありません。どこまで分離し、どの境界を監視し、例外アクセスをどう統制するかです。",
+          "subtext": "議論の軸を境界管理へずらしている。"
+        },
+        {
+          "speaker": "SIer提案担当",
+          "text": "まずは全工場で保守接続経路と認証方式を可視化しましょう。統合の可否は、その後に設備ライフサイクルとベンダー制約で切り分けるべきです。",
+          "subtext": "性急な一元化を避けたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "経営層の危機感増大",
+        "IT/OT認証基盤の分断",
+        "安全停止リスクへの懸念",
+        "保守接続の可視化不足"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "06_security_hardening/ransomware_defense.json",
+        "05_hybrid_scenarios/hybrid_os_combinations.json"
+      ]
+    },
+    {
+      "scene_id": "mfg1_scene_02",
+      "title": "現状把握の衝撃",
+      "setting": "IT部門が初めて工場側の認証環境を棚卸しし、現場実態を知る。",
+      "dialogue": [
+        {
+          "speaker": "中島 武",
+          "text": "棚卸し結果を見て驚きました。工場AではWindows XP、工場CではWindows 7の保守端末がまだ現役で、工場ごとに別ドメイン、別手順です。",
+          "subtext": "IT標準から大きく外れている現実に直面した。"
+        },
+        {
+          "speaker": "原田 誠",
+          "text": "古いのは承知していますが、検証設備がなくて簡単には更新できません。現場では『動いているものを触るな』が安全の原則です。",
+          "subtext": "技術負債より操業継続を優先している。"
+        },
+        {
+          "speaker": "セキュリティコンサルタント",
+          "text": "OTでは珍しくありません。ただし古いOSがあるなら、統合より先に到達制御、USB制御、保守経路固定などの代替防御を置く必要があります。",
+          "subtext": "パッチ不能環境の現実策を示している。"
+        },
+        {
+          "speaker": "SIer提案担当",
+          "text": "全社Active Directoryへ今すぐ載せ替える話ではなく、まずは工場ごとに踏み台経由へ強制し、誰が入ったかを残すところから始めるのが妥当です。",
+          "subtext": "段階的統制強化を提案している。"
+        }
+      ],
+      "issues_surfaced": [
+        "Windows XP/7残存",
+        "工場ごとの独立ドメイン",
+        "更新検証環境不足",
+        "代替防御策の未整備"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/hybrid_os_combinations.json",
+        "06_security_hardening/ransomware_defense.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    },
+    {
+      "scene_id": "mfg1_scene_03",
+      "title": "DCSベンダーとの壁",
+      "setting": "IT部門がDCSベンダーへActive Directory統合可否を確認する打ち合わせ。",
+      "dialogue": [
+        {
+          "speaker": "中島 武",
+          "text": "全社監査の観点では、少なくとも認証は標準化したいのです。既設DCSを工場専用ADから本社Active Directoryへ統合できませんか。",
+          "subtext": "統制観点から統合を強く望んでいる。"
+        },
+        {
+          "speaker": "DCSベンダーSE",
+          "text": "現行機種はActive Directory統合をサポートしていません。認証変更は保守契約外で、障害時の責任分界も持てません。",
+          "subtext": "製品制約と契約リスクを明確に示している。"
+        },
+        {
+          "speaker": "原田 誠",
+          "text": "だから言ったでしょう。止まった時に誰が責任を取るのかが先です。現場にとって、非対応機器へ本社標準を当てるのは実験と同じです。",
+          "subtext": "ベンダー非対応を盾に現行維持を主張している。"
+        },
+        {
+          "speaker": "中島 武",
+          "text": "統合不可なら、せめて保守接続だけでも統制しないと監査に耐えません。認証本体に触れずに改善できる余地を探したいです。",
+          "subtext": "方針を接続経路統制へ修正し始めた。"
+        }
+      ],
+      "issues_surfaced": [
+        "既設DCSのActive Directory非対応",
+        "保守契約と責任分界の制約",
+        "監査要求と製品制約の衝突",
+        "認証本体以外の改善余地"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "06_security_hardening/privileged_access_management.json",
+        "05_hybrid_scenarios/hybrid_os_combinations.json"
+      ]
+    },
+    {
+      "scene_id": "mfg1_scene_04",
+      "title": "IEC 62443の適用",
+      "setting": "コンサルタントがZone/Conduitと一方向通信を前提に設計原則を説明する会議。",
+      "dialogue": [
+        {
+          "speaker": "セキュリティコンサルタント",
+          "text": "IEC 62443で重要なのは、ITとOTを同じID基盤にすることではなく、ゾーンごとに許容通信と管理主体を明確化することです。制御ゾーンは原則として独立維持です。",
+          "subtext": "統合より分離設計を優先している。"
+        },
+        {
+          "speaker": "SIer提案担当",
+          "text": "工場ごとに管理用の踏み台サーバーを置き、IT側からはその一点だけを経由させます。保守ベンダーもPAMで時間制限し、セッション録画を残します。",
+          "subtext": "技術的な落としどころを具体化している。"
+        },
+        {
+          "speaker": "中島 武",
+          "text": "データは一方向通信、管理は踏み台経由、認証は工場側で維持という整理ですね。全社で欲しいのは、少なくとも入口の本人確認と承認記録です。",
+          "subtext": "統合目標を現実的に再定義している。"
+        },
+        {
+          "speaker": "原田 誠",
+          "text": "その条件なら、DCS本体を変えずに済みます。現場としても、管理の入口を限定する方が受け入れやすいです。",
+          "subtext": "現場が受け入れ可能な線を示した。"
+        }
+      ],
+      "issues_surfaced": [
+        "制御ゾーンの独立維持",
+        "管理経路の一点集約",
+        "保守ベンダー接続の時間制限",
+        "一方向通信の必要性"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "06_security_hardening/privileged_access_management.json",
+        "06_security_hardening/ransomware_defense.json"
+      ]
+    },
+    {
+      "scene_id": "mfg1_scene_05",
+      "title": "現実的な落としどころ",
+      "setting": "経営説明前に、既設設備と新設設備で異なる方針を最終合意する。",
+      "dialogue": [
+        {
+          "speaker": "SIer提案担当",
+          "text": "提案は二本立てです。既設DCSは工場専用踏み台サーバーとPAMで入口統制を強化し、新設DCSだけは調達要件にActive Directory対応を入れて将来統合を狙います。",
+          "subtext": "現場制約と将来標準を両立したい。"
+        },
+        {
+          "speaker": "中島 武",
+          "text": "全社統制としては、入口認証、承認、ログ保全を共通化し、認証本体の統合は設備更新タイミングに合わせます。それなら経営にも説明できます。",
+          "subtext": "一元化の定義を修正して前へ進めようとしている。"
+        },
+        {
+          "speaker": "原田 誠",
+          "text": "既設設備に無理をさせないなら賛成です。条件は、切替試験を工場停止と切り離し、夜間緊急対応手順まで現場と一緒に詰めることです。",
+          "subtext": "安全最優先の条件付き承認。"
+        },
+        {
+          "speaker": "セキュリティコンサルタント",
+          "text": "その方針ならIEC 62443の考え方とも整合します。統合の対象と非対象を明確にし、境界を監視する設計で進めましょう。",
+          "subtext": "設計原則に沿った合意だと確認している。"
+        }
+      ],
+      "issues_surfaced": [
+        "既設DCSと新設DCSの方針分離",
+        "調達要件へのActive Directory対応追加",
+        "夜間緊急対応手順の整備",
+        "境界監視の継続運用"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "06_security_hardening/privileged_access_management.json",
+        "05_hybrid_scenarios/hybrid_os_combinations.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "OT認証基盤",
+      "current": "工場ごとに独立したWindowsドメインを運用し、全社標準から外れている",
+      "target": "既設設備は分離維持しつつ、入口統制と将来調達要件を全社標準化する",
+      "gap": "統合対象と非対象の線引きが曖昧で、方針が定まっていない",
+      "priority": "high"
+    },
+    {
+      "category": "レガシーOS",
+      "current": "Windows XP/7ベース端末が残存し、パッチやモダン認証が困難",
+      "target": "代替防御とネットワーク分離でリスクを抑えつつ更新計画を持つ",
+      "gap": "到達制御、USB制御、監視、更新優先順位の設計が不足",
+      "priority": "high"
+    },
+    {
+      "category": "ベンダー依存",
+      "current": "DCSベンダーのサポート範囲外変更ができない",
+      "target": "保守契約と調達要件でID・接続要件を明文化する",
+      "gap": "既設保守契約の見直しと新規調達基準が未整備",
+      "priority": "medium"
+    },
+    {
+      "category": "保守接続統制",
+      "current": "工場ごとにベンダー接続経路と記録方法が異なる",
+      "target": "踏み台サーバー + PAMで接続を一点集約し録画する",
+      "gap": "PAM、承認、時間制限、セッション録画の仕組みがない",
+      "priority": "high"
+    },
+    {
+      "category": "IEC 62443適用",
+      "current": "ネットワーク分離はあるがZone/Conduitの設計根拠が文書化されていない",
+      "target": "ゾーン定義、許容通信、責任分界を明文化する",
+      "gap": "資産分類、通信要件、監視ポイント整理が不足",
+      "priority": "high"
+    },
+    {
+      "category": "経営説明",
+      "current": "IT統合か現状維持かの二項対立で議論されている",
+      "target": "既設維持と新設標準化を分けた段階計画で説明する",
+      "gap": "投資効果と操業リスクを両立したロードマップがない",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "phase": "phase_1",
+      "action": "全工場の保守接続経路、認証方式、レガシーOS残存箇所を棚卸しし、ゾーン図を作成する",
+      "owner": "IT部門長 + 工場設備部",
+      "rationale": "統合可否を設備実態に基づいて判断するため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "工場専用踏み台サーバーとPAMを導入し、ベンダー接続を時間制限付きにする",
+      "owner": "SIer提案担当",
+      "rationale": "DCS本体に手を入れずに入口統制を強化できるため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "IEC 62443のZone/Conduit定義と許容通信ルールを工場別に文書化する",
+      "owner": "セキュリティコンサルタント",
+      "rationale": "IT/OT境界の説明責任を設計書で担保するため"
+    },
+    {
+      "phase": "phase_2",
+      "action": "新設DCS・更新案件の調達要件にActive Directory対応と監査ログ要件を追加する",
+      "owner": "IT部門長",
+      "rationale": "既設設備を壊さず、将来の統合余地を計画的に広げるため"
+    },
+    {
+      "phase": "phase_2",
+      "action": "Windows XP/7残存端末に対する代替防御と更新優先順位を定める",
+      "owner": "工場設備部長",
+      "rationale": "パッチ不能環境のリスクを現実的に下げる必要があるため"
+    }
+  ]
+}

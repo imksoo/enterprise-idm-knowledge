@@ -1,0 +1,1275 @@
+{
+  "metadata": {
+    "id": "topic_hr_org_lifecycle",
+    "title": "人事・組織ライフサイクルとID管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "人事連携",
+      "Joiner",
+      "Mover",
+      "Leaver",
+      "組織改編",
+      "承認フロー",
+      "権限管理",
+      "日本企業"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "人事システム",
+      "object_type": "concept",
+      "description": "採用、入社、異動、休職、退職、組織改編の正式データを保持する業務システム。ID管理ではイベント起点として扱う。",
+      "properties": {
+        "examples": [
+          "SAP HCM",
+          "Workday",
+          "COMPANY人事",
+          "奉行HR"
+        ],
+        "business_owner": "人事部門"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "HR Source of Truth",
+      "object_type": "pattern",
+      "description": "人事システムを人の所属、雇用状態、入社日、退職日、上長情報の正本とし、ID側は追従する基本モデル。",
+      "properties": {
+        "master_fields": [
+          "employee_id",
+          "employment_status",
+          "join_date",
+          "leave_date",
+          "manager_id",
+          "organization_code"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Joiner",
+      "object_type": "pattern",
+      "description": "採用決定から入社初日までにIDを準備し、業務開始時点で必要最小限の利用環境を提供するライフサイクル。",
+      "properties": {
+        "trigger_events": [
+          "内定確定",
+          "入社承認",
+          "入社日到来"
+        ]
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "入社前ID準備期間",
+      "object_type": "pattern",
+      "description": "内定から入社日までの期間に、本人確認、端末準備、アカウント作成、初期通知を段階実行する運用設計。",
+      "properties": {
+        "common_window": "入社日の5から14営業日前",
+        "gating_controls": [
+          "雇用契約確定",
+          "所属確定",
+          "上長確定"
+        ]
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "初日ログイン体験",
+      "object_type": "pattern",
+      "description": "初回ログイン、初期パスワード変更、多要素認証登録、アプリ配布、案内表示を含む OOBE 設計。",
+      "properties": {
+        "includes": [
+          "初回サインイン",
+          "多要素認証登録",
+          "必須アプリ展開",
+          "利用規程同意"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "入社前アクセス",
+      "object_type": "pattern",
+      "description": "オンボーディング資料や初日案内への限定アクセスを、正式な本番権限と分離して安全に付与する設計。",
+      "properties": {
+        "allowed_resources": [
+          "入社案内ポータル",
+          "研修資料",
+          "提出書類"
+        ],
+        "restricted_resources": [
+          "基幹システム",
+          "共有ファイルサーバー",
+          "特権系ポータル"
+        ]
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "試用期間アクセス制御",
+      "object_type": "pattern",
+      "description": "試用期間中は高リスク権限を抑制し、評価確定後に本来権限へ昇格する段階的付与モデル。",
+      "properties": {
+        "restricted_entitlements": [
+          "管理者権限",
+          "機密情報閲覧",
+          "外部送信権限"
+        ]
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "Mover",
+      "object_type": "pattern",
+      "description": "異動、昇格、兼務、出向、プロジェクト配属など、既存IDを維持しながら権限を再構成するライフサイクル。",
+      "properties": {
+        "trigger_events": [
+          "部署異動",
+          "役職変更",
+          "兼務追加",
+          "プロジェクトアサイン"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "権限切替タイミング",
+      "object_type": "risk",
+      "description": "異動日とシステム反映日がずれることで、旧部署権限が残存したり新部署権限が未付与になったりする運用リスク。",
+      "properties": {
+        "failure_modes": [
+          "旧権限残存",
+          "新権限未付与",
+          "承認待ち停滞"
+        ]
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "昇格時権限再設計",
+      "object_type": "pattern",
+      "description": "役職昇格では権限追加だけでなく、旧ロール前提の例外権限を棚卸しして再設計する必要がある。",
+      "properties": {
+        "review_targets": [
+          "共有フォルダー",
+          "承認権限",
+          "特権グループ",
+          "システム管理権限"
+        ]
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "出向アカウント移管",
+      "object_type": "pattern",
+      "description": "出向元から出向先へ所属実態が移る際に、Active Directory アカウントを維持、複製、または再発行する移管パターン。",
+      "properties": {
+        "patterns": [
+          "同一 forest 内の移管",
+          "信頼関係を用いた相互利用",
+          "新規ID再発行"
+        ]
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "兼務者ID管理",
+      "object_type": "pattern",
+      "description": "複数組織と複数ロールを同時保有する利用者に対し、主所属と副所属を分離して権限を付与する設計。",
+      "properties": {
+        "required_attributes": [
+          "primary_org",
+          "secondary_orgs",
+          "primary_role",
+          "secondary_roles"
+        ]
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "一時的プロジェクト権限",
+      "object_type": "pattern",
+      "description": "PJ配属や監査対応など期間限定の業務に対して、開始日と終了日を持つ一時権限を付与する設計。",
+      "properties": {
+        "required_fields": [
+          "project_code",
+          "start_date",
+          "end_date",
+          "approver"
+        ]
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "承認ライン更新",
+      "object_type": "pattern",
+      "description": "上長変更や組織変更に応じて、申請承認の経路と委譲先を即時更新する統制。",
+      "properties": {
+        "affected_processes": [
+          "アクセス申請",
+          "購買承認",
+          "特権昇格承認"
+        ]
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "Leaver",
+      "object_type": "pattern",
+      "description": "退職、契約終了、派遣終了、業務委託終了に伴い、人のアクセスを無効化し、記録と引き継ぎを管理するライフサイクル。",
+      "properties": {
+        "trigger_events": [
+          "退職確定",
+          "契約終了",
+          "最終出社日"
+        ]
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "即時無効化",
+      "object_type": "pattern",
+      "description": "退職日当日または通知時点で認証を止め、VPN、メール、SaaS、特権経路を一斉停止するデプロビジョニング。",
+      "properties": {
+        "priority_targets": [
+          "Entra ID",
+          "Active Directory",
+          "VPN",
+          "メール",
+          "特権アクセス管理"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "メールボックス保持",
+      "object_type": "pattern",
+      "description": "退職者本人の認証は止めつつ、法務、監査、業務引き継ぎのためにメールやファイルを一定期間保持する設計。",
+      "properties": {
+        "typical_considerations": [
+          "訴訟対応",
+          "監査証跡",
+          "業務引き継ぎ"
+        ],
+        "example_requirement": "金融業では7年程度の保持要件が論点になることがある"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "オフボーディング自動化",
+      "object_type": "pattern",
+      "description": "人事イベントを起点に、ID停止、共有資産回収、代理設定、チケット発行、証跡保全を自動化する設計。",
+      "properties": {
+        "checklist_items": [
+          "アカウント停止",
+          "貸与端末回収",
+          "メール転送停止",
+          "共有フォルダー引き継ぎ",
+          "証明書失効"
+        ]
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "緊急退職対応",
+      "object_type": "pattern",
+      "description": "懲戒解雇や重大インシデント時に、本人通知と同時にアクセス遮断、端末回収、物理入館停止を行う緊急プロセス。",
+      "properties": {
+        "required_stakeholders": [
+          "人事",
+          "法務",
+          "情報システム",
+          "総務",
+          "現場管理者"
+        ]
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "組織変更",
+      "object_type": "pattern",
+      "description": "合併、分社、持株会社化、部署統廃合など、組織構造の変化がID体系と権限モデルを再定義するイベント群。",
+      "properties": {
+        "change_types": [
+          "M&A",
+          "分社",
+          "事業売却",
+          "部署統廃合"
+        ]
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "M&A ID統合",
+      "object_type": "pattern",
+      "description": "合併や買収時に、Active Directory forest 統合、信頼関係、暫定 federation のどれで共存するかを決める設計。",
+      "properties": {
+        "integration_choices": [
+          "forest統合",
+          "外部信頼",
+          "二重IDの暫定共存"
+        ]
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "ID分離",
+      "object_type": "pattern",
+      "description": "分社や事業売却時に、対象人員、グループ、共有資産、委託先アカウントを切り分けて独立運用へ移す設計。",
+      "properties": {
+        "separation_targets": [
+          "ユーザーID",
+          "グループ",
+          "メールドメイン",
+          "共有データ"
+        ]
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "グループ会社IDモデル",
+      "object_type": "pattern",
+      "description": "持株会社と事業会社の間で、共通ID基盤、会社別テナント、共有認証のみ共通化のいずれを採るか決める設計。",
+      "properties": {
+        "governance_points": [
+          "人事コード体系",
+          "上長系統",
+          "監査責任分界"
+        ]
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "組織改編と権限再設計",
+      "object_type": "pattern",
+      "description": "部署名変更や統廃合に合わせて、OU、グループ、承認経路、アプリロールを再編する作業。",
+      "properties": {
+        "rework_targets": [
+          "OU",
+          "セキュリティグループ",
+          "グループポリシー代替設定",
+          "承認経路"
+        ]
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "休職アカウント管理",
+      "object_type": "pattern",
+      "description": "育休、病休、介護休暇などで一時離脱する利用者に対し、完全削除ではなく休止状態と復職導線を設計する。",
+      "properties": {
+        "common_controls": [
+          "対話ログオン停止",
+          "メール保持",
+          "復職時再有効化"
+        ]
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "役員ID管理",
+      "object_type": "pattern",
+      "description": "役員会資料、M&A情報、指名報酬情報などの機微情報にアクセスする役員向けに、強い認証と高い監査性を持たせる設計。",
+      "properties": {
+        "required_controls": [
+          "強制MFA",
+          "端末制限",
+          "秘密保持区分",
+          "代理秘書アクセス管理"
+        ]
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "外部監査人アクセス",
+      "object_type": "pattern",
+      "description": "監査期間だけ閲覧中心の権限を付与し、監査終了と同時に失効させる一時アクセス管理。",
+      "properties": {
+        "access_principles": [
+          "閲覧中心",
+          "期限必須",
+          "監査ログ保全"
+        ]
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "調査中アカウント凍結",
+      "object_type": "pattern",
+      "description": "内部不正調査や証拠保全のため、就業規則、調査規程、法務判断に基づいてアカウントを凍結するプロセス。",
+      "properties": {
+        "required_controls": [
+          "法務承認",
+          "証拠保全",
+          "アクセスログ保全",
+          "関係者秘匿"
+        ]
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "SCIM 2.0",
+      "object_type": "protocol",
+      "description": "ユーザーとグループの作成、更新、削除を標準APIで連携するプロビジョニング標準。",
+      "properties": {
+        "scope": [
+          "ユーザー",
+          "グループ",
+          "属性同期"
+        ]
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "HR Connector",
+      "object_type": "pattern",
+      "description": "Entra ID や Okta が Workday や SAP SuccessFactors などから人事イベントを受けてIDを同期する連携パターン。",
+      "properties": {
+        "target_platforms": [
+          "Entra ID",
+          "Okta"
+        ],
+        "common_sources": [
+          "Workday",
+          "SAP SuccessFactors"
+        ]
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "日本型人事パッケージ連携",
+      "object_type": "pattern",
+      "description": "SCIM 非対応の人事パッケージを前提に、CSV 連携やカスタムAPIで現実的にID連携する設計。",
+      "properties": {
+        "examples": [
+          "COMPANY",
+          "奉行",
+          "POSITIVE",
+          "e-人事"
+        ],
+        "maturity_path": [
+          "CSV連携",
+          "カスタムAPI",
+          "将来SCIM化"
+        ]
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "CSV連携",
+      "object_type": "pattern",
+      "description": "人事システムから日次または時間単位で出力したCSVを中間処理し、ID基盤へ反映する方式。",
+      "properties": {
+        "strengths": [
+          "導入容易",
+          "既存人事パッケージで実現しやすい"
+        ],
+        "weaknesses": [
+          "即時性不足",
+          "差分判定の複雑化"
+        ]
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "カスタムAPI連携",
+      "object_type": "pattern",
+      "description": "人事システムや中間基盤のAPIを用いて、イベント駆動または準リアルタイムでIDを更新する方式。",
+      "properties": {
+        "strengths": [
+          "即時性",
+          "例外処理の柔軟性"
+        ],
+        "weaknesses": [
+          "開発保守コスト",
+          "責任分界の複雑化"
+        ]
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "属性正規化",
+      "object_type": "pattern",
+      "description": "氏名、ヨミガナ、旧姓、外国籍氏名、社員番号、組織コードの表記揺れをID側で正規化する設計。",
+      "properties": {
+        "normalization_targets": [
+          "display_name",
+          "phonetic_name",
+          "former_name",
+          "legal_name",
+          "employee_id"
+        ]
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "OU設計",
+      "object_type": "pattern",
+      "description": "Active Directory の OU を組織図、管理委任、適用ポリシーのどれに寄せて設計するかを決める構造。",
+      "properties": {
+        "tradeoffs": [
+          "組織図連動の分かりやすさ",
+          "権限モデルとの乖離",
+          "統廃合時の再設計負荷"
+        ]
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "RBAC",
+      "object_type": "concept",
+      "description": "役割ベースで権限をまとめ、所属や職務に応じて定型権限セットを割り当てるモデル。",
+      "properties": {
+        "strengths": [
+          "説明しやすい",
+          "承認しやすい",
+          "監査しやすい"
+        ]
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "ABAC",
+      "object_type": "concept",
+      "description": "部署、職位、雇用区分、勤務地、プロジェクト属性などを条件にして動的に権限判断するモデル。",
+      "properties": {
+        "useful_attributes": [
+          "organization_code",
+          "job_grade",
+          "employment_type",
+          "project_code",
+          "country"
+        ]
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "日本型組織階層",
+      "object_type": "concept",
+      "description": "本社、事業部、部、課、係のような多段階組織を前提に、権限継承と承認経路を設計する日本企業特有の構造。",
+      "properties": {
+        "hierarchy_example": [
+          "本社",
+          "事業部",
+          "部",
+          "課",
+          "係"
+        ]
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "職位×部署マトリクス",
+      "object_type": "pattern",
+      "description": "職位と部署の組み合わせごとに標準権限を定義し、兼務や例外を上乗せする設計。",
+      "properties": {
+        "examples": [
+          "部長×経理部",
+          "担当者×営業部",
+          "課長×情報システム部"
+        ]
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "承認フロー",
+      "object_type": "pattern",
+      "description": "上長承認、部長承認、CISO承認など、権限種別ごとに段階承認を定義するアクセス統制。",
+      "properties": {
+        "approval_levels": [
+          "上長承認",
+          "部長承認",
+          "CISO承認"
+        ]
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "オンボーディング遅延コスト",
+      "object_type": "risk",
+      "description": "入社初日から必要環境が使えないことで、教育時間、上長支援工数、現場引き継ぎが増える業務損失。",
+      "properties": {
+        "sample_metrics": [
+          "初日利用可能率",
+          "平均遅延日数",
+          "新入社員1人あたり損失時間"
+        ]
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "退職者アカウント残存リスク",
+      "object_type": "risk",
+      "description": "退職後もIDやメール、VPN、共有フォルダー権限が残ることで、不正利用や監査指摘につながるリスク。",
+      "properties": {
+        "sample_metrics": [
+          "退職後7日残存件数",
+          "退職後30日残存件数",
+          "高権限残存件数"
+        ]
+      }
+    },
+    {
+      "id": "node_043",
+      "label": "権限超過コンプライアンスリスク",
+      "object_type": "risk",
+      "description": "異動や兼務終了後も不要権限が残り、個人情報、財務情報、取締役会資料への過剰アクセスが継続するリスク。",
+      "properties": {
+        "sample_metrics": [
+          "SoD違反件数",
+          "例外権限残存日数",
+          "未棚卸しグループ件数"
+        ]
+      }
+    },
+    {
+      "id": "node_044",
+      "label": "ヘルプデスクパスワードリセットコスト",
+      "object_type": "risk",
+      "description": "初期設定不備や認証登録不足により、ヘルプデスクが初日からパスワード再設定対応を繰り返す運用コスト。",
+      "properties": {
+        "sample_metrics": [
+          "月間リセット件数",
+          "1件あたり対応時間",
+          "人件費換算額"
+        ]
+      }
+    },
+    {
+      "id": "node_045",
+      "label": "IDセルフサービス",
+      "object_type": "pattern",
+      "description": "本人確認済みの手段でパスワード再設定、認証器再登録、連絡先更新を自力で実施させる運用設計。",
+      "properties": {
+        "self_service_scope": [
+          "パスワードリセット",
+          "多要素認証再登録",
+          "プロファイル更新"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "人事システムが保持する正式情報を HR Source of Truth として扱う。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_003",
+      "relationship": "implements",
+      "description": "入社イベントを起点に Joiner プロセスを発火させる。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_008",
+      "relationship": "implements",
+      "description": "異動や昇格などの人事イベントを Mover プロセスへ渡す。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_015",
+      "relationship": "implements",
+      "description": "退職や契約終了イベントを Leaver プロセスへ渡す。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_020",
+      "relationship": "implements",
+      "description": "組織コードや上長構造の変更を組織変更プロセスへ渡す。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "Joiner では入社前ID準備期間の設計が必要である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_005",
+      "relationship": "requires",
+      "description": "Joiner では初日ログイン体験の品質が生産性に直結する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_006",
+      "relationship": "complements",
+      "description": "正式入社前の限定アクセスを分離設計すると安全性が高まる。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "試用期間中の段階的権限付与を組み合わせると過剰権限を抑えやすい。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_041",
+      "relationship": "mitigates",
+      "description": "事前準備を標準化すると初日から使えない期間を短縮できる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_041",
+      "relationship": "mitigates",
+      "description": "初回ログインと認証登録を整えることでオンボーディング遅延を減らす。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "事前案内を限定提供すると初日ログイン体験の失敗を減らせる。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_043",
+      "relationship": "mitigates",
+      "description": "試用期間中の高リスク権限を制限することで権限超過を抑える。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "Mover では異動日と権限反映日の整合を取る必要がある。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "昇格時は旧権限を含めた棚卸しが必要である。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "出向時はアカウント移管方式を選ぶ必要がある。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "兼務者には複数組織・複数ロールを扱える設計が必要である。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_013",
+      "relationship": "complements",
+      "description": "プロジェクト配属では期間付き権限を追加する必要がある。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "上長変更に伴い承認ライン更新が必要になる。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_043",
+      "relationship": "mitigates",
+      "description": "切替時刻を厳密化すると旧権限の残存を減らせる。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_043",
+      "relationship": "mitigates",
+      "description": "昇格時の棚卸しは権限の足し算だけになる事態を防ぐ。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_020",
+      "relationship": "complements",
+      "description": "出向アカウント移管は組織変更や会社間境界の設計と密接に関係する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_039",
+      "relationship": "requires",
+      "description": "兼務者には職位と部署の組み合わせを表現するマトリクスが必要である。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_037",
+      "relationship": "complements",
+      "description": "一時権限は属性ベース条件と相性がよい。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "承認ライン更新は承認フロー全体の前提条件である。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "Leaver では退職時点の即時無効化が必要である。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "本人アクセス停止後のメール保持方針が必要である。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "Leaver ではオフボーディングチェックリストの自動化が重要である。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "懲戒や重大事案向けの緊急手順を別途持つ必要がある。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_042",
+      "relationship": "mitigates",
+      "description": "即時無効化は退職者アカウント残存リスクを直接下げる。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "メール保持はオフボーディング自動化の一部として管理すると漏れが減る。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_042",
+      "relationship": "mitigates",
+      "description": "自動化された停止チェックは残存アカウントを減らす。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_016",
+      "relationship": "complements",
+      "description": "緊急退職では即時無効化を人事通知と同時実行する。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "M&A では共存か統合かの方針決定が必要である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "分社や売却ではID分離設計が必要である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_023",
+      "relationship": "requires",
+      "description": "持株会社化ではグループ会社間のIDモデルを定義する必要がある。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_024",
+      "relationship": "requires",
+      "description": "部署統廃合ではOUと権限の再設計が必要である。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_035",
+      "relationship": "requires",
+      "description": "M&A 統合では OU と管理境界の再設計が必要になる。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_023",
+      "relationship": "complements",
+      "description": "買収後の持株会社モデルと整合させて統合方式を決める。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_037",
+      "relationship": "requires",
+      "description": "分離後のアクセス境界は属性ベースで再定義しやすい。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_036",
+      "relationship": "complements",
+      "description": "会社共通の標準ロールを RBAC で定義すると横断統制しやすい。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_035",
+      "relationship": "complements",
+      "description": "組織改編では OU 再配置の影響を評価する必要がある。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_036",
+      "relationship": "complements",
+      "description": "組織名変更だけでなくロール定義の見直しも必要である。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_037",
+      "relationship": "complements",
+      "description": "組織改編後の属性変更に応じてアクセス条件を更新する。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "休職は退職ではないため、Leaver とは別の休止モデルとして扱う。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_037",
+      "relationship": "requires",
+      "description": "役員の機微情報アクセスは属性条件で細かく制御しやすい。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_013",
+      "relationship": "complements",
+      "description": "外部監査人アクセスは期限付き一時権限の代表例である。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_016",
+      "relationship": "complements",
+      "description": "監査終了と同時に無効化する終了制御が必要である。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_040",
+      "relationship": "requires",
+      "description": "調査中の凍結は法務承認を含む厳格な承認フローを要する。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_042",
+      "relationship": "mitigates",
+      "description": "疑義発生時に即時凍結できると不正継続と証拠隠滅を防ぎやすい。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_030",
+      "relationship": "complements",
+      "description": "SCIM 2.0 は HR Connector の標準的な実装方式を提供する。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_002",
+      "relationship": "implements",
+      "description": "HR Connector は HR Source of Truth をID基盤へ反映する。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_029",
+      "relationship": "requires",
+      "description": "標準化された連携では SCIM 2.0 の利用が有効である。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_032",
+      "relationship": "requires",
+      "description": "日本型人事パッケージではまず CSV 連携が現実解になりやすい。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_033",
+      "relationship": "complements",
+      "description": "即時性が必要な業務ではカスタムAPIを併用する。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_034",
+      "relationship": "requires",
+      "description": "表記揺れが多いため属性正規化が不可欠である。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_030",
+      "relationship": "complements",
+      "description": "CSV を中間処理して HR Connector 的に取り込む構成が多い。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_030",
+      "relationship": "complements",
+      "description": "API 連携はイベント駆動の HR Connector として機能する。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "正本属性の品質を高めることで誤プロビジョニングを減らす。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_038",
+      "relationship": "requires",
+      "description": "OU 設計では日本型組織階層の深さを考慮する必要がある。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_039",
+      "relationship": "requires",
+      "description": "RBAC を実務に落とすには職位×部署の標準ロール定義が必要である。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "ABAC を併用するとマトリクスの例外や一時条件を表現しやすい。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "日本型組織階層をマトリクスへ落とし込むことで承認と権限が説明しやすくなる。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_040",
+      "relationship": "requires",
+      "description": "標準ロールごとに承認レベルを定義する必要がある。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_013",
+      "relationship": "requires",
+      "description": "一時権限の付与では例外承認の記録が必要である。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_027",
+      "relationship": "requires",
+      "description": "外部監査人アクセスでは部長やCISOによる明示承認が必要になりやすい。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_028",
+      "relationship": "requires",
+      "description": "調査中アカウント凍結では法務系承認の証跡が必要である。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_044",
+      "relationship": "mitigates",
+      "description": "セルフサービス化によりヘルプデスクのパスワード対応件数を削減できる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_045",
+      "relationship": "complements",
+      "description": "初日にセルフサービス登録まで完了させると運用負荷が下がる。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "人事イベントをID管理の起点に置く理由",
+      "summary": "ID管理を申請起点だけで回すと、入退社や異動が実態とずれやすい。人事システムを HR Source of Truth に据え、雇用状態と組織状態の変化を直接イベントとして扱う方が漏れが少ない。",
+      "evidence_nodes": [
+        "node_001",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "Joiner 設計の要点",
+      "summary": "Joiner の成否は初日そのものより、入社前ID準備期間にどこまで整備できるかで決まる。所属、上長、端末、認証器登録導線が未確定だと初日ログイン体験が破綻しやすい。",
+      "evidence_nodes": [
+        "node_003",
+        "node_004",
+        "node_005"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "入社前アクセスの分離原則",
+      "summary": "オンボーディング資料と本番業務権限を同じIDで同時に開放すると過剰付与になりやすい。入社前アクセスは対象資産を限定し、正式な雇用開始まで高リスク資産を閉じるべきである。",
+      "evidence_nodes": [
+        "node_006",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "試用期間中の権限制御",
+      "summary": "試用期間は雇用状態が暫定であるため、機密情報、外部送信、高権限操作を抑えた段階付与が有効である。評価確定後に標準ロールへ移すと過剰権限を避けやすい。",
+      "evidence_nodes": [
+        "node_007",
+        "node_043"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Mover で起きやすい失敗",
+      "summary": "Mover の典型的な失敗は、新権限付与より旧権限剥奪の遅れである。異動日基準、業務開始時刻基準、承認完了基準のどれを採るかを明文化しないと旧部署権限が残りやすい。",
+      "evidence_nodes": [
+        "node_008",
+        "node_009"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "昇格時は足し算運用を避ける",
+      "summary": "昇格で権限を足すだけにすると、担当者時代の例外権限や一時権限が温存される。昇格時権限再設計では、旧ロール由来の権限削除を同時に実施するべきである。",
+      "evidence_nodes": [
+        "node_010",
+        "node_043"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "兼務者と一時権限の扱い",
+      "summary": "兼務者を単一所属として扱うと、説明不能な例外グループが増える。主所属と副所属を分け、一時的プロジェクト権限には終了日を必須化する方が監査しやすい。",
+      "evidence_nodes": [
+        "node_012",
+        "node_013",
+        "node_039"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "上長変更が与える影響",
+      "summary": "マネージャー変更は単なる組織情報更新ではなく、アクセス承認、特権昇格、購買、例外申請の経路を変える。承認ライン更新が遅れると、退任上長が承認権を持ち続ける。",
+      "evidence_nodes": [
+        "node_014",
+        "node_040"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "Leaver 設計の基本原則",
+      "summary": "退職者本人の認証停止と業務データ保持は分けて考えるべきである。即時無効化でアクセスを止めつつ、メールや共有資産は引き継ぎと法務要件に合わせて保持する。",
+      "evidence_nodes": [
+        "node_015",
+        "node_016",
+        "node_017"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "オフボーディング自動化の価値",
+      "summary": "退職処理を手作業に頼ると、SaaS、VPN、共有フォルダー、証明書のどれかが抜けやすい。チェックリスト自動化は残存アカウントと監査指摘の双方を減らす。",
+      "evidence_nodes": [
+        "node_018",
+        "node_042"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "緊急退職は通常退職と分けて設計する",
+      "summary": "懲戒解雇や内部不正発覚時は、人事通知、物理入館停止、端末回収、ID停止を分単位で同期させる必要がある。通常の退職ワークフローとは別の緊急手順を持つべきである。",
+      "evidence_nodes": [
+        "node_019",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "M&A と分離の設計判断",
+      "summary": "M&A では forest 統合が将来の標準化に有利だが、短期は信頼関係や暫定共存が現実的になりやすい。逆に事業売却ではID分離を先に固めないと情報持ち出しリスクが高まる。",
+      "evidence_nodes": [
+        "node_021",
+        "node_022",
+        "node_023"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "組織改編で再設計が必要なもの",
+      "summary": "部署名変更だけなら表示名更新で済むこともあるが、統廃合では OU、ロール、属性条件、承認ラインまで再設計が必要になる。組織改編を単なるマスタ更新として扱うと例外権限が増殖する。",
+      "evidence_nodes": [
+        "node_024",
+        "node_035",
+        "node_036",
+        "node_037"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "特殊ケースの扱い",
+      "summary": "休職、役員、外部監査人、調査対象者は通常社員と同じライフサイクルでは扱えない。休止、強化、期限付き、凍結という別モデルを持つ方が実務に合う。",
+      "evidence_nodes": [
+        "node_025",
+        "node_026",
+        "node_027",
+        "node_028"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "HR Connector と日本型人事パッケージの現実差",
+      "summary": "Workday や SAP SuccessFactors は HR Connector との親和性が高い一方、日本型人事パッケージでは CSV 連携から始まることが多い。設計では理想より、現実の連携成熟度を前提に段階化する必要がある。",
+      "evidence_nodes": [
+        "node_030",
+        "node_031",
+        "node_032",
+        "node_033"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "属性正規化が重要な理由",
+      "summary": "ヨミガナ、旧姓、外国籍氏名、社員番号形式の不一致は、重複IDや誤マッチの原因になる。属性正規化は見た目の整形ではなく、誤プロビジョニング防止策として扱うべきである。",
+      "evidence_nodes": [
+        "node_034",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "OU と RBAC と ABAC の役割分担",
+      "summary": "OU は管理委任とポリシー適用の境界として有効だが、業務権限まで背負わせると組織改編で破綻しやすい。業務権限は RBAC、例外や条件分岐は ABAC に寄せる分担が現実的である。",
+      "evidence_nodes": [
+        "node_035",
+        "node_036",
+        "node_037"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "日本型組織階層とマトリクス権限",
+      "summary": "本社、事業部、部、課、係の階層だけで権限を決めると、同じ部署でも職位差を表現しきれない。職位×部署マトリクスで標準権限を定義すると説明責任を果たしやすい。",
+      "evidence_nodes": [
+        "node_038",
+        "node_039"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "承認フローの設計原則",
+      "summary": "全権限を一律に多段承認にすると処理が停滞する。標準ロールは上長承認、高リスク権限は部長承認、特権や機微情報は CISO承認のように層別化する方が運用しやすい。",
+      "evidence_nodes": [
+        "node_040",
+        "node_039"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "業務インパクトの定量化",
+      "summary": "オンボーディング遅延は初日利用可能率と平均遅延日数、退職者アカウント残存は残存件数と残存日数、権限超過は SoD 違反件数、パスワードリセットは月間件数と対応時間で可視化しやすい。セルフサービス導入はヘルプデスクコスト削減の主要施策である。",
+      "evidence_nodes": [
+        "node_041",
+        "node_042",
+        "node_043",
+        "node_044",
+        "node_045"
+      ]
+    }
+  ]
+}

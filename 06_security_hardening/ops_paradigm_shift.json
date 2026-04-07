@@ -1,0 +1,1271 @@
+{
+  "metadata": {
+    "id": "ops_paradigm_shift",
+    "title": "対話的OSログインからモダン運用へのパラダイムシフト",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "interactive-login",
+      "Ansible",
+      "Infrastructure as Code",
+      "GitOps",
+      "JEA",
+      "zero-standing-privilege",
+      "break-glass",
+      "runbook",
+      "特権アクセス管理",
+      "運用自動化"
+    ],
+    "related_files": [
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/group_policy_alternatives.json",
+      "06_security_hardening/ransomware_defense.json",
+      "03_identity_architecture/identity_landscape.json",
+      "04_server_auth/os_auth_methods.json",
+      "07_migration_patterns/ad_to_entra_migration.json"
+    ],
+    "references": [
+      {
+        "title": "NIST SP 800-207 Zero Trust Architecture",
+        "url": "https://csrc.nist.gov/pubs/sp/800/207/final",
+        "published": "2020-08-11"
+      },
+      {
+        "title": "CIS Controls v8.1",
+        "url": "https://www.cisecurity.org/controls/cis-controls-list",
+        "published": "2024-10-30"
+      },
+      {
+        "title": "Identity and Access Management: Recommended Best Practices for Administrators",
+        "url": "https://www.cisa.gov/sites/default/files/2023-12/ESF%20IDENTITY%20AND%20ACCESS%20MANAGEMENT%20RECOMMENDED%20BEST%20PRACTICES%20FOR%20ADMINISTRATORS%20PP-23-0248_508C.pdf",
+        "published": "2023-03-21"
+      },
+      {
+        "title": "Just Enough Administration",
+        "url": "https://learn.microsoft.com/en-us/powershell/scripting/security/remoting/jea/overview?view=powershell-7.6",
+        "published": "2024-04-01"
+      },
+      {
+        "title": "JEA Session Configurations",
+        "url": "https://learn.microsoft.com/en-us/powershell/scripting/security/remoting/jea/session-configurations?view=powershell-7.6",
+        "published": "2024-04-01"
+      },
+      {
+        "title": "Manage emergency access accounts in Microsoft Entra ID",
+        "url": "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access",
+        "published": "2025-09-23"
+      },
+      {
+        "title": "Privileged access deployment",
+        "url": "https://learn.microsoft.com/en-us/security/privileged-access-workstations/privileged-access-deployment",
+        "published": "2024-06-20"
+      },
+      {
+        "title": "Red Hat Ansible Automation Platform RBAC",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.6/html/access_management_and_authentication/gw-managing-access",
+        "published": "2026-03-01"
+      },
+      {
+        "title": "Workflow approval nodes in Red Hat Ansible Automation Platform",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/latest/html/using_automation_execution/controller-workflow-job-templates",
+        "published": "2025-08-01"
+      },
+      {
+        "title": "HashiCorp 2024 State of Cloud Strategy Survey",
+        "url": "https://www.hashicorp.com/blog/hashicorp-state-of-cloud-strategy-survey-2024-cloud-maturity",
+        "published": "2024-10-17"
+      },
+      {
+        "title": "CNCF Annual Survey 2024",
+        "url": "https://www.cncf.io/reports/cncf-annual-survey-2024/",
+        "published": "2025-04-01"
+      },
+      {
+        "title": "CNCF Argo CD End User Survey 2025",
+        "url": "https://www.cncf.io/announcements/2025/07/24/cncf-end-user-survey-finds-argo-cd-as-majority-adopted-gitops-solution-for-kubernetes/",
+        "published": "2025-07-24"
+      },
+      {
+        "title": "SoftBank Selects Red Hat Ansible Tower",
+        "url": "https://www.redhat.com/ja/about/press-releases/softbank-selects-red-hat-ansible-tower-improve-efficiency-and-reduce-deployment-times",
+        "published": "2019-08-28"
+      },
+      {
+        "title": "みずほ証券がプロセスを自動化し、仮想サーバーを迅速に提供",
+        "url": "https://www.redhat.com/rhdc/managed-files/rh-mizuho-securities-case-study-f30916pr-202205-ja.pdf",
+        "published": "2022-05-01"
+      },
+      {
+        "title": "SOMPOシステムズ、Ansibleでネットワーク運用高度化に挑戦",
+        "url": "https://www.redhat.com/ja/engage/sompo-systems-ansible-automates-2025-japan-report",
+        "published": "2025-11-17"
+      },
+      {
+        "title": "Ansible Automation Platform and ServiceNow ITSM Integration",
+        "url": "https://www.redhat.com/en/blog/ansible-automation-platform-and-servicenow-itsm-integration",
+        "published": "2024-09-26"
+      },
+      {
+        "title": "FISC 資料5 2025年度API 安全対策基準改訂案",
+        "url": "https://www.fisc.or.jp/document/fintech/file/FinTech_20260213_07.pdf",
+        "published": "2025-12-04"
+      }
+    ]
+  },
+  "problem_analysis": {
+    "interactive_login_risks": [
+      {
+        "id": "risk_001",
+        "label": "操作の非再現性",
+        "description": "同じ目的の作業でもシェル履歴、環境変数、実行順序、ローカル一時ファイル、事前手作業の有無で結果が変わる。変更がコード化されていないため、復元と再実行の品質が低い。",
+        "control_implication": "Infrastructure as Code や Playbook に落ちていない変更は、変更管理と災害復旧の両方で再現不能な資産になる。"
+      },
+      {
+        "id": "risk_002",
+        "label": "証跡の不完全性",
+        "description": "RDP や SSH の接続ログだけでは、実際に何を入力し、どの値を変更し、どの判断で中断したかまでは残らない。クリップボード、GUI 操作、複数ウィンドウも追跡しにくい。",
+        "control_implication": "インシデント後の事後検証、J-SOX、FISC の作業記録保管、委託先統制で説明可能性が不足する。"
+      },
+      {
+        "id": "risk_003",
+        "label": "ヒューマンエラー",
+        "description": "タイポ、対象サーバー取り違え、環境取り違え、本番と検証の混同、誤削除が発生しやすい。夜間保守や障害時は認知負荷が高まり、事故率が上がる。",
+        "control_implication": "対話的ログインは個人技能に依存し、二者承認や dry-run を組み込みにくい。"
+      },
+      {
+        "id": "risk_004",
+        "label": "Excel手順書との乖離",
+        "description": "Excel 手順書は静的だが、現場作業は例外判断を伴うため乖離が起きやすい。手順通りに実行されたか、途中で逸脱したか、誰がその場判断をしたかが検証しにくい。",
+        "control_implication": "承認済み手順と実行実績の一致を担保するには、手順を Playbook やワークフローに変換する必要がある。"
+      },
+      {
+        "id": "risk_005",
+        "label": "同時作業競合",
+        "description": "複数人が同一サーバーへ同時ログインすると、設定競合、再起動競合、ロック競合、原因切り分け不能が起きやすい。",
+        "control_implication": "チケット連携やキュー制御がない対話作業は、変更凍結や作業窓管理との整合が弱い。"
+      },
+      {
+        "id": "risk_006",
+        "label": "権限の過剰付与",
+        "description": "作業に必要な権限だけを絞り込むのが難しく、ローカル管理者や sudo 全権、Domain Admins 相当が常時有効になりやすい。",
+        "control_implication": "ゼロトラストと最小権限の観点では、常時特権は説明困難であり、侵害時の横展開を加速させる。"
+      },
+      {
+        "id": "risk_007",
+        "label": "後追い調査困難",
+        "description": "障害や不正操作の後に、誰が何をしたか、どの時点で状態が変わったかを厳密に復元しづらい。共有アカウントや代理作業があるとさらに悪化する。",
+        "control_implication": "PAM（特権アクセス管理）、JEA、Automation Controller のような主体識別と実行証跡の結合が必要になる。"
+      }
+    ],
+    "why_it_remains": [
+      {
+        "id": "reality_001",
+        "label": "レガシーシステムの緊急対応",
+        "description": "古いミドルウェア、閉域網、手順固定の商用パッケージ、OS 標準外設定では自動化が未整備なまま残りやすい。"
+      },
+      {
+        "id": "reality_002",
+        "label": "障害調査とデバッグ",
+        "description": "未知障害の初動ではログ確認、プロセス状態確認、ネットワーク疎通確認のために探索的な対話作業が必要になる。"
+      },
+      {
+        "id": "reality_003",
+        "label": "Excel手順書文化",
+        "description": "承認は紙や Excel、実行は人手、証跡はスクリーンショットという分断が残り、手順のコード化が後回しになりやすい。"
+      },
+      {
+        "id": "reality_004",
+        "label": "ベンダー保守の前提",
+        "description": "一部製品ではベンダーが対話式作業しか正式サポートせず、顧客側が自動化しても保守契約と衝突する。"
+      },
+      {
+        "id": "reality_005",
+        "label": "暫定変更の恒久化",
+        "description": "障害回避の一時変更が Playbook や IaC に戻されず、その場の修正が本番真実になっていく。"
+      }
+    ],
+    "design_principles": [
+      "対話的ログインを全面禁止ではなく、定型作業から順に非対話化し、対話作業を例外化する。",
+      "例外として残す対話作業も、PAM（特権アクセス管理）、JIT、セッション録画、専用端末、事後レビューで囲い込む。",
+      "手順書、承認、実行、証跡を分離せず、同一ワークフロー上で結合する。",
+      "障害調査で得た暫定コマンドは、そのまま放置せず Playbook、Runbook、監視改善へ還元する。",
+      "OS へログインしない運用モデルを優先し、Kubernetes、サーバーレス、PaaS、マネージド DB を採れる領域から先に移す。"
+    ]
+  },
+  "alternative_methods": [
+    {
+      "layer": "構成管理・自動化ツール",
+      "goal": "定型作業を再現可能な実行単位へ変換し、承認と証跡を付与する。",
+      "methods": [
+        {
+          "name": "Ansible / AWX / Red Hat Ansible Automation Platform",
+          "type": "agentless",
+          "strengths": [
+            "SSH / WinRM 経由で導入障壁が低い",
+            "Playbook による冪等性",
+            "Automation Controller の RBAC と実行履歴",
+            "Approval node による承認停止点"
+          ],
+          "fit": "Windows と Linux が混在し、日本企業の運用部門と SIer がレビューする環境に向く。",
+          "limits": [
+            "レガシー GUI 操作や対話型インストーラは扱いにくい",
+            "初期は inventory と資格情報管理の設計が必要"
+          ]
+        },
+        {
+          "name": "Puppet / Chef Infra / Salt / CFEngine",
+          "type": "agent-based",
+          "strengths": [
+            "継続的なドリフト検知",
+            "宣言的な状態維持",
+            "エージェント常駐による強制力"
+          ],
+          "fit": "大量台数に対して標準状態を継続強制したい場合に向く。",
+          "limits": [
+            "エージェント導入と運用の負荷",
+            "日本語運用支援や内製人材の確保に差が出やすい"
+          ]
+        }
+      ]
+    },
+    {
+      "layer": "Infrastructure as Code",
+      "goal": "インフラ資源の変更をコードと PR で管理し、手動変更をドリフトとして扱う。",
+      "methods": [
+        {
+          "name": "Terraform / OpenTofu",
+          "scope": "マルチクラウド、ネットワーク、IAM、DNS、PaaS",
+          "principle": "IaC 化されていないリソースは例外資産として明示管理する。",
+          "strengths": [
+            "宣言的差分管理",
+            "plan による事前レビュー",
+            "state と drift の可視化"
+          ]
+        },
+        {
+          "name": "Pulumi",
+          "scope": "プログラマブル IaC",
+          "strengths": [
+            "既存言語資産を使える",
+            "複雑な条件分岐や抽象化に強い"
+          ]
+        },
+        {
+          "name": "AWS CloudFormation / Azure Bicep / ARM",
+          "scope": "クラウドベンダー標準",
+          "strengths": [
+            "ベンダー機能追随が早い",
+            "ガードレールやポリシーと連携しやすい"
+          ]
+        }
+      ]
+    },
+    {
+      "layer": "GitOps",
+      "goal": "Git を唯一の真実として、変更承認と実反映を分離する。",
+      "methods": [
+        {
+          "name": "Argo CD",
+          "scope": "Kubernetes",
+          "strengths": [
+            "Git との差分検知",
+            "自動同期",
+            "自己修復",
+            "マルチクラスタ管理"
+          ]
+        },
+        {
+          "name": "Flux CD",
+          "scope": "Kubernetes",
+          "strengths": [
+            "軽量な GitOps コントローラー",
+            "OCI、Helm、Kustomize と親和性"
+          ]
+        }
+      ],
+      "note": "GitOps は OS への SSH 排除を目的とするのではなく、Kubernetes やクラスタ API への変更経路を PR ベースへ統一する設計である。"
+    },
+    {
+      "layer": "Runbook Automation / ITSM 連携",
+      "goal": "承認済みチケットから安全に自動実行し、結果をチケットへ戻す。",
+      "methods": [
+        {
+          "name": "ServiceNow Orchestration / Flow + Ansible 連携",
+          "strengths": [
+            "承認ワークフローと自動実行を接続できる",
+            "CMDB を実行対象の参照元にできる",
+            "結果をチケットへ自動反映できる"
+          ],
+          "fit": "紙の承認を電子承認へ移す際の橋渡しに向く。"
+        }
+      ]
+    },
+    {
+      "layer": "コンテナ・クラウドネイティブ",
+      "goal": "OS 自体へ触れない運用モデルへ移す。",
+      "methods": [
+        {
+          "name": "Kubernetes + kubectl + GitOps",
+          "strengths": [
+            "ノードへ SSH せずに宣言的管理できる",
+            "ロールベースで API 権限を分離できる"
+          ]
+        },
+        {
+          "name": "AWS Lambda / Azure Functions",
+          "strengths": [
+            "サーバー OS 管理を回避できる"
+          ]
+        },
+        {
+          "name": "Azure App Service / AWS Elastic Beanstalk / マネージド PaaS",
+          "strengths": [
+            "アプリ運用と基盤運用を分離できる"
+          ]
+        },
+        {
+          "name": "RDS / Azure SQL Database",
+          "strengths": [
+            "DB の OS へログインしない前提を徹底できる"
+          ]
+        }
+      ]
+    },
+    {
+      "layer": "Windows 環境の非対話的特権管理",
+      "goal": "Windows Server 運用でフル管理者ログオンを減らす。",
+      "methods": [
+        {
+          "name": "Windows Admin Center",
+          "strengths": [
+            "ブラウザ経由の管理",
+            "サーバーごとの GUI 操作を集約"
+          ],
+          "limits": [
+            "高度な標準化や再現性は別途自動化が必要"
+          ]
+        },
+        {
+          "name": "PowerShell Remoting + JEA",
+          "strengths": [
+            "コマンド単位の最小権限委任",
+            "Transcript とログによる監査"
+          ],
+          "limits": [
+            "ロール設計と継続メンテナンスが必要"
+          ]
+        },
+        {
+          "name": "LAPS",
+          "strengths": [
+            "ローカル管理者秘密情報の使い回しを防ぐ"
+          ],
+          "limits": [
+            "対話的ログイン自体をなくすものではない"
+          ]
+        }
+      ]
+    },
+    {
+      "layer": "Break Glass",
+      "goal": "自動化が壊れた時だけ使う最終手段として対話的ログインを残す。",
+      "methods": [
+        {
+          "name": "PAM（CyberArk / BeyondTrust など）経由の JIT 発行",
+          "strengths": [
+            "資格情報の非開示",
+            "セッション録画",
+            "時間制限",
+            "使用後の即時失効"
+          ]
+        },
+        {
+          "name": "専用端末 + 事後レビュー",
+          "strengths": [
+            "一般端末からの緊急特権利用を防ぐ",
+            "誤用と不正使用の検知力を上げる"
+          ]
+        }
+      ]
+    }
+  ],
+  "maturity_model": [
+    {
+      "level": 0,
+      "name": "すべて対話的ログイン + Excel 手順書",
+      "interactive_login_ratio_estimate": "90-100%",
+      "id_management_relationship": "共有アカウントや広い管理者権限が残りやすく、個人識別と権限最小化が弱い。",
+      "japan_distribution_2026_estimate": "25-35%",
+      "characteristics": [
+        "手順は Excel と口伝",
+        "承認と実行が分離",
+        "夜間保守と属人化が常態化"
+      ],
+      "next_step": "踏み台サーバーと個人アカウント化から始める。"
+    },
+    {
+      "level": 1,
+      "name": "踏み台サーバー + ログ取得",
+      "interactive_login_ratio_estimate": "70-90%",
+      "id_management_relationship": "個人識別は改善するが、常時特権と手動操作は残る。",
+      "japan_distribution_2026_estimate": "20-30%",
+      "characteristics": [
+        "接続元制限",
+        "接続ログや画面録画",
+        "手動レビュー中心"
+      ],
+      "next_step": "PAM（特権アクセス管理）で JIT と資格情報非開示へ進む。"
+    },
+    {
+      "level": 2,
+      "name": "PAM ツール導入",
+      "interactive_login_ratio_estimate": "40-70%",
+      "id_management_relationship": "特権付与の時間制限、セッション録画、承認フローが入り、後追い調査性が大きく改善する。",
+      "japan_distribution_2026_estimate": "15-25%",
+      "characteristics": [
+        "JIT",
+        "セッション録画",
+        "専用端末の導入開始"
+      ],
+      "next_step": "定型作業を Playbook 化し、対話ログインを例外へ押し下げる。"
+    },
+    {
+      "level": 3,
+      "name": "Ansible 等で定型作業を自動化",
+      "interactive_login_ratio_estimate": "10-30%",
+      "id_management_relationship": "実行主体が個人、ジョブ、資格情報に分解され、権限委任と証跡が結び付きやすくなる。",
+      "japan_distribution_2026_estimate": "15-20%",
+      "characteristics": [
+        "Playbook 実行",
+        "ITSM 連携",
+        "定型申請の自動実行"
+      ],
+      "next_step": "IaC と Git へ変更源泉を寄せる。"
+    },
+    {
+      "level": 4,
+      "name": "Infrastructure as Code + GitOps",
+      "interactive_login_ratio_estimate": "1-10%",
+      "id_management_relationship": "本番変更の主体が PR とパイプラインになり、人の常時特権が大きく減る。",
+      "japan_distribution_2026_estimate": "5-10%",
+      "characteristics": [
+        "PR ベース承認",
+        "drift 検知",
+        "クラスタ API 中心運用"
+      ],
+      "next_step": "セルフサービス化とプラットフォーム標準化へ進む。"
+    },
+    {
+      "level": 5,
+      "name": "Platform Engineering",
+      "interactive_login_ratio_estimate": "<1%",
+      "id_management_relationship": "人の直接操作は例外運用となり、権限は API、テンプレート、セルフサービスポータル単位で付与される。",
+      "japan_distribution_2026_estimate": "1-3%",
+      "characteristics": [
+        "セルフサービスポータル",
+        "承認済みテンプレート",
+        "Break Glass のみ対話ログイン"
+      ],
+      "next_step": "例外運用の継続棚卸しと廃止を回す。"
+    }
+  ],
+  "industry_cases": [
+    {
+      "id": "case_001",
+      "organization": "SoftBank",
+      "sector": "通信",
+      "country": "日本",
+      "published": "2019-08-28",
+      "summary": "SSL 証明書更新の手作業を Red Hat Ansible Tower で自動化し、更新時間を 30 分から 2 時間から約 20 秒へ短縮し、更新工数を 99% 削減した。",
+      "relevance": "Excel 手順書と夜間作業に依存した定型運用を、Playbook による再現可能なジョブへ移せることを示す。",
+      "sources": [
+        "https://www.redhat.com/ja/about/press-releases/softbank-selects-red-hat-ansible-tower-improve-efficiency-and-reduce-deployment-times"
+      ]
+    },
+    {
+      "id": "case_002",
+      "organization": "みずほ証券",
+      "sector": "金融",
+      "country": "日本",
+      "published": "2022-05-01",
+      "summary": "仮想サーバーのプロビジョニングを電子申請ワークフローと Ansible Automation Platform で連携し、作業時間を 90-95% 短縮した。Linux は約 240 分から約 10 分、Windows は約 300 分から約 30 分へ改善した。",
+      "relevance": "金融業で重要な承認と実行の分離を保ちつつ、手動バケツリレーをワークフロー化した事例である。",
+      "sources": [
+        "https://www.redhat.com/rhdc/managed-files/rh-mizuho-securities-case-study-f30916pr-202205-ja.pdf"
+      ]
+    },
+    {
+      "id": "case_003",
+      "organization": "SOMPOシステムズ",
+      "sector": "保険",
+      "country": "日本",
+      "published": "2025-11-17",
+      "summary": "自動化 CoE が Red Hat Ansible Automation Platform を主要ツールに採用し、参照・確認系から着手して、外部委託作業の内製化と属人ルールの明確化を進めている。",
+      "relevance": "全面自動化ではなく、観測系から始めて段階的に設定変更系へ進む現実的な移行順序を示す。",
+      "sources": [
+        "https://www.redhat.com/ja/engage/sompo-systems-ansible-automates-2025-japan-report"
+      ]
+    },
+    {
+      "id": "case_004",
+      "organization": "CNCF End User Community",
+      "sector": "クラウドネイティブ",
+      "country": "グローバル",
+      "published": "2025-04-01",
+      "summary": "CNCF Annual Survey 2024 は、2024 年秋の 750 件の回答を基に、回答者の 4 分の 1 が開発とデプロイのほぼすべてにクラウドネイティブ手法を使うと報告した。",
+      "relevance": "OS へ直接ログインする運用から、API と宣言的管理へ移る市場全体の方向性を示す。",
+      "sources": [
+        "https://www.cncf.io/reports/cncf-annual-survey-2024/"
+      ]
+    },
+    {
+      "id": "case_005",
+      "organization": "Argo CD End User Survey",
+      "sector": "GitOps",
+      "country": "グローバル",
+      "published": "2025-07-24",
+      "summary": "2025 年の Argo CD 利用者調査では、97% が本番利用、60% が 2 年超利用、42% が 1 インスタンスで 500 超のアプリケーションを管理すると回答した。",
+      "relevance": "Kubernetes 領域では GitOps が実験段階を越え、大規模運用の標準手法になりつつある。",
+      "sources": [
+        "https://www.cncf.io/announcements/2025/07/24/cncf-end-user-survey-finds-argo-cd-as-majority-adopted-gitops-solution-for-kubernetes/"
+      ]
+    },
+    {
+      "id": "case_006",
+      "organization": "HashiCorp State of Cloud Strategy Survey",
+      "sector": "マルチクラウド運用",
+      "country": "グローバル",
+      "published": "2024-10-17",
+      "summary": "2024 年調査では、高度に成熟したクラウド運用組織は全体の 8% にとどまり、成熟化にはプラットフォームチームによる運用自動化と標準化が重要とされた。",
+      "relevance": "IaC やプラットフォーム化は理想形だが、実際には成熟組織はまだ少なく、移行グラデーション設計が必要である。",
+      "sources": [
+        "https://www.hashicorp.com/blog/hashicorp-state-of-cloud-strategy-survey-2024-cloud-maturity"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "対話的OSログイン",
+      "object_type": "concept",
+      "description": "管理者が SSH や RDP でサーバーへ直接ログインし、対話的に変更や調査を行う従来型運用。"
+    },
+    {
+      "id": "node_002",
+      "label": "運用自動化",
+      "object_type": "concept",
+      "description": "定型作業をコード化し、承認、実行、証跡を統合する運用方式。"
+    },
+    {
+      "id": "node_003",
+      "label": "Ansible",
+      "object_type": "product",
+      "description": "エージェントレスの構成管理とジョブ自動化に強い製品。"
+    },
+    {
+      "id": "node_004",
+      "label": "Infrastructure as Code",
+      "object_type": "concept",
+      "description": "インフラ変更をコードとして管理する方式。"
+    },
+    {
+      "id": "node_005",
+      "label": "GitOps",
+      "object_type": "concept",
+      "description": "Git を唯一の真実として、変更を PR と自動反映で管理する方式。"
+    },
+    {
+      "id": "node_006",
+      "label": "JEA",
+      "object_type": "product",
+      "description": "PowerShell Remoting 上でコマンド単位の最小権限委任を行う方式。"
+    },
+    {
+      "id": "node_007",
+      "label": "LAPS",
+      "object_type": "product",
+      "description": "ローカル管理者秘密情報の使い回しを防ぐ管理機能。"
+    },
+    {
+      "id": "node_008",
+      "label": "特権アクセス管理",
+      "object_type": "concept",
+      "description": "高権限アカウントの利用を最小化し、統制、記録、時間制限を加える管理体系。"
+    },
+    {
+      "id": "node_009",
+      "label": "踏み台サーバー",
+      "object_type": "pattern",
+      "description": "管理接続を集約し、到達制御と監査を付与する方式。"
+    },
+    {
+      "id": "node_010",
+      "label": "Just-in-Time アクセス",
+      "object_type": "pattern",
+      "description": "必要な時だけ短時間の特権を有効化するアクセス設計。"
+    },
+    {
+      "id": "node_011",
+      "label": "特権アクセス ワークステーション",
+      "object_type": "pattern",
+      "description": "特権操作を一般業務端末から分離する専用端末設計。"
+    },
+    {
+      "id": "node_012",
+      "label": "Break Glass",
+      "object_type": "pattern",
+      "description": "通常統制が使えない緊急時だけ使う例外アクセス設計。"
+    },
+    {
+      "id": "node_013",
+      "label": "ServiceNow",
+      "object_type": "product",
+      "description": "承認フロー、CMDB、ITSM と自動実行を接続する運用基盤。"
+    },
+    {
+      "id": "node_014",
+      "label": "Argo CD",
+      "object_type": "product",
+      "description": "Kubernetes 向け GitOps デリバリーツール。"
+    },
+    {
+      "id": "node_015",
+      "label": "Flux CD",
+      "object_type": "product",
+      "description": "Kubernetes 向け軽量 GitOps コントローラー。"
+    },
+    {
+      "id": "node_016",
+      "label": "非再現性",
+      "object_type": "risk",
+      "description": "手作業変更が環境差異や順序依存で再現できない状態。"
+    },
+    {
+      "id": "node_017",
+      "label": "証跡不備",
+      "object_type": "risk",
+      "description": "誰が何を変更したかを厳密に再構成できない状態。"
+    },
+    {
+      "id": "node_018",
+      "label": "ゼロトラスト",
+      "object_type": "concept",
+      "description": "場所やネットワーク境界で暗黙信頼せず、都度認証認可する設計思想。"
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "対話的OSログインは非再現性リスクを内包する。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "対話的OSログインは証跡不備を生みやすい。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "replaces",
+      "description": "運用自動化は定型作業における直接ログインを置き換える。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_002",
+      "relationship": "implements",
+      "description": "Ansible は運用自動化の実装手段である。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Infrastructure as Code はサーバー外側の変更源泉をコード化する。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_004",
+      "relationship": "complements",
+      "description": "GitOps は Infrastructure as Code と PR ベース運用を強化する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_005",
+      "relationship": "implements",
+      "description": "Argo CD は GitOps を実装する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_005",
+      "relationship": "implements",
+      "description": "Flux CD は GitOps を実装する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_008",
+      "relationship": "implements",
+      "description": "JEA は Windows の特権アクセス管理をコマンド単位で実装する。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_008",
+      "relationship": "implements",
+      "description": "LAPS はローカル管理者秘密情報の共有を減らす。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "踏み台サーバーは接続経路統制と記録を補完する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_008",
+      "relationship": "implements",
+      "description": "Just-in-Time アクセスは常時特権を減らす。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "特権アクセス ワークステーションは端末分離で特権利用を保護する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "Break Glass は例外的な緊急アクセスを管理する。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "ServiceNow は承認と実行結果記録を自動化へ接続する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "ゼロトラストでは特権アクセス管理の強化が必要となる。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_016",
+      "relationship": "mitigates",
+      "description": "Infrastructure as Code は変更の再現性を高める。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_017",
+      "relationship": "mitigates",
+      "description": "運用自動化は実行主体と結果の記録を結び付けやすい。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "対話的OSログインはゼロトラストと相性が悪い",
+      "summary": "NIST SP 800-207 は、場所やネットワーク位置に基づく暗黙信頼を否定し、セッション確立前の認証と認可を重視している。常時有効な管理者アカウントでサーバーへ直接入る運用は、この考え方に逆行する。",
+      "details": [
+        "対話的ログインでは『管理ネットワーク内だから信頼する』運用が残りやすい。",
+        "ゼロトラストでは接続経路よりも主体、端末、要求コンテキスト、時間制限が重要になる。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_008",
+        "node_018"
+      ],
+      "sources": [
+        "https://csrc.nist.gov/pubs/sp/800/207/final"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "CIS Controls はアカウント、アクセス、監査ログを一体で扱う",
+      "summary": "CIS Controls v8.1 は Control 5 をアカウント管理、Control 6 をアクセス制御、Control 8 を監査ログ管理として定義している。対話作業を残すなら、この三点を同時に満たさなければ統制として弱い。",
+      "details": [
+        "接続ログだけでなく、権限付与と作業ログの結合が必要である。",
+        "管理者アカウントだけ別管理しても、実行ログがなければ説明責任は不足する。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_008",
+        "node_017"
+      ],
+      "sources": [
+        "https://www.cisecurity.org/controls/cis-controls-list"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "CISA と NSA の IAM ガイドは管理者環境の硬化を重視する",
+      "summary": "CISA と NSA の IAM ガイドは、Identity Governance、環境 hardening、MFA、監査とモニタリングを管理者向け優先論点として挙げている。『ログインできる』ことより『どう制御されるか』が焦点である。",
+      "details": [
+        "高権限主体は横展開と権限昇格の主要標的である。",
+        "管理者の作業環境とライフサイクル管理を分離しないと、運用自動化だけでは不十分である。"
+      ],
+      "related_nodes": [
+        "node_008",
+        "node_011",
+        "node_018"
+      ],
+      "sources": [
+        "https://www.cisa.gov/sites/default/files/2023-12/ESF%20IDENTITY%20AND%20ACCESS%20MANAGEMENT%20RECOMMENDED%20BEST%20PRACTICES%20FOR%20ADMINISTRATORS%20PP-23-0248_508C.pdf",
+        "https://www.cisa.gov/news-events/alerts/2023/03/21/cisa-and-nsa-release-enduring-security-framework-guidance-identity-and-access-management"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "対話的ログインをやめる主因は効率より再現性である",
+      "summary": "効率化だけなら熟練運用者の対話作業でも速い場合がある。だが、再現性、承認連動、レビュー可能性、災害復旧可能性ではコード化された運用が優位である。",
+      "details": [
+        "属人作業は最速でも、組織運用としては最適になりにくい。",
+        "本番再作業、横展開、監査、教育まで含めると非対話化の便益が大きい。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_002",
+        "node_016"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "JEA はフル管理者配布の代替として有効",
+      "summary": "Microsoft Learn の JEA 概要は、virtual accounts や group-managed service accounts を使って、通常ユーザーの behalf で特権操作させ、実行可能コマンドを限定できると説明している。",
+      "details": [
+        "Windows Server 運用では『DNS 管理のため Domain Admins へ入れる』ような乱暴な権限付与を避けやすい。",
+        "コマンド、関数、外部コマンド単位で公開範囲を制御できる。"
+      ],
+      "related_nodes": [
+        "node_006",
+        "node_008"
+      ],
+      "sources": [
+        "https://learn.microsoft.com/en-us/powershell/scripting/security/remoting/jea/overview?view=powershell-7.6"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "JEA は TranscriptDirectory 設計までやって初めて監査になる",
+      "summary": "Microsoft Learn の JEA Session Configurations は、TranscriptDirectory にセッショントランスクリプトを保管し、標準ユーザーはアクセス不可、監査担当だけが閲覧可能にすべきと示している。",
+      "details": [
+        "JEA はロール設計だけでなく、トランスクリプト保管先のアクセス制御が重要である。",
+        "共有ファイルサーバーや SIEM への転送まで含めて設計しないと監査証跡が分散する。"
+      ],
+      "related_nodes": [
+        "node_006",
+        "node_017"
+      ],
+      "sources": [
+        "https://learn.microsoft.com/en-us/powershell/scripting/security/remoting/jea/session-configurations?view=powershell-7.6"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "Break Glass は例外口ではなく災害用統制である",
+      "summary": "Microsoft Entra の emergency access guidance は、二つ以上の緊急アカウント、クラウド専用、通常経路と別の強力な認証、定期検証を推奨している。Break Glass を日常運用の裏口にしてはならない。",
+      "details": [
+        "平時は使わないことが前提である。",
+        "利用時はアラート、ログ保全、事後レビュー、定期ドリルが必要である。"
+      ],
+      "related_nodes": [
+        "node_012",
+        "node_008"
+      ],
+      "sources": [
+        "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "緊急アカウントも専用端末から使うべきである",
+      "summary": "Microsoft Entra の緊急アクセスガイダンスは、緊急アカウント利用者が designated secure workstation や Privileged Access Workstation を用いるべきとする。例外アカウントでも一般端末からの利用は推奨されない。",
+      "details": [
+        "Break Glass は認証だけでなく端末依存性を分離する必要がある。",
+        "一般端末のブラウザやメール経由で緊急アカウントを使うと、例外経路そのものが侵害起点になる。"
+      ],
+      "related_nodes": [
+        "node_011",
+        "node_012"
+      ],
+      "sources": [
+        "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access",
+        "https://learn.microsoft.com/en-us/security/privileged-access-workstations/privileged-access-deployment"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "特権アクセス ワークステーションは端末分離の実装手段である",
+      "summary": "Microsoft の privileged access deployment は、secure accounts、workstations and devices、interface security を一体で構成し、一般端末での特権作業を避ける前提を置いている。",
+      "details": [
+        "特権端末はメール、一般 Web 閲覧、ローカル管理者権限の削除、URL 制限などを組み合わせる。",
+        "人のログイン先だけでなく、ログイン元端末の信頼性を上げるのが要点である。"
+      ],
+      "related_nodes": [
+        "node_011",
+        "node_008"
+      ],
+      "sources": [
+        "https://learn.microsoft.com/en-us/security/privileged-access-workstations/privileged-access-deployment"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "Zero Standing Privilege の実務実装は JIT と Eligible 権限である",
+      "summary": "Zero Standing Privilege は製品名ではなく設計原則であり、実務では PIM の eligible assignment、PAM の JIT、短時間資格情報発行で実装される。",
+      "details": [
+        "『権限を持たない状態が通常』であることが本質である。",
+        "対話的ログインを残しても、常時特権を排除すればリスクは大きく下げられる。"
+      ],
+      "related_nodes": [
+        "node_008",
+        "node_010"
+      ],
+      "sources": [
+        "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/security-emergency-access"
+      ],
+      "evidence_level": "medium"
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "Ansible Automation Platform の RBAC は手順承認の電子化に向く",
+      "summary": "Red Hat Ansible Automation Platform の RBAC は、ユーザーとチームに対し必要最小限の実行権限だけを割り当て、資格情報を露出せずにジョブを使わせる設計を取れる。",
+      "details": [
+        "監査専用ロールを分けられるため、実行権限と閲覧権限を分離できる。",
+        "日本企業の承認者、実行者、監査者の責務分離に合わせやすい。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_008"
+      ],
+      "sources": [
+        "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.6/html/access_management_and_authentication/gw-managing-access",
+        "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/using_automation_execution/assembly-ug-overview"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "Approval node は『承認してから自動実行』の実装に直結する",
+      "summary": "Red Hat の workflow approval node は、次の Playbook 実行前に承認停止点を置き、時間切れ時には自動 deny できる。紙の承認を電子化する第一歩として実務的である。",
+      "details": [
+        "承認者条件を workflow job template 権限や組織管理者で制御できる。",
+        "承認後の実行は人手ではなくジョブに引き渡せる。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_013"
+      ],
+      "sources": [
+        "https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/latest/html/using_automation_execution/controller-workflow-job-templates"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "ServiceNow 連携は承認と実行結果の断絶を埋める",
+      "summary": "Red Hat の ServiceNow ITSM integration は、ServiceNow を inventory source にしたり、チケット更新と自動化ワークフローを往復連携できるとしている。申請、承認、実行、結果反映を一本化しやすい。",
+      "details": [
+        "CMDB と実行対象を接続すると、対象サーバーの誤選択を減らせる。",
+        "クローズドループ automation は『承認済みだけれど手作業』という断絶を縮める。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_013"
+      ],
+      "sources": [
+        "https://www.redhat.com/en/blog/ansible-automation-platform-and-servicenow-itsm-integration",
+        "https://access.redhat.com/articles/7127603"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "SoftBank 事例は定型運用から自動化すべきことを示す",
+      "summary": "SoftBank は SSL 証明書更新のような高頻度定型作業を自動化し、更新時間を約 20 秒に短縮、工数を 99% 削減した。まず定型から非対話化するのが投資対効果が高い。",
+      "details": [
+        "夜間作業負荷の削減にもつながっている。",
+        "個人技能依存のばらつきが減り、品質を揃えやすい。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_002"
+      ],
+      "sources": [
+        "https://www.redhat.com/ja/about/press-releases/softbank-selects-red-hat-ansible-tower-improve-efficiency-and-reduce-deployment-times"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "みずほ証券は電子申請と Playbook を結合している",
+      "summary": "みずほ証券は電子申請ワークフローと Playbook 実行をつなぎ、複数チームの手作業リレーを一気通貫の自動化に変えた。金融業の承認文化と自動化は両立できる。",
+      "details": [
+        "Linux は約 240 分から約 10 分、Windows は約 300 分から約 30 分になった。",
+        "承認の存在を理由に手作業を残す必要はないことを示す。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_013",
+        "node_002"
+      ],
+      "sources": [
+        "https://www.redhat.com/rhdc/managed-files/rh-mizuho-securities-case-study-f30916pr-202205-ja.pdf"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "SOMPO システムズ事例は参照系から始める現実解を示す",
+      "summary": "SOMPO システムズは、まず参照・確認系の自動化から始め、外部委託作業の内製化や属人ルールの明確化に進んでいる。対話的ログインを一気にゼロへしなくても前進できる。",
+      "details": [
+        "『参照系から設定変更系へ』は日本企業で失敗しにくい順序である。",
+        "自動化 CoE を置くことで、運用と開発の橋渡しがしやすい。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_003"
+      ],
+      "sources": [
+        "https://www.redhat.com/ja/engage/sompo-systems-ansible-automates-2025-japan-report"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "HashiCorp 2024 調査は成熟組織が少数であることを示す",
+      "summary": "HashiCorp の 2024 State of Cloud Strategy Survey では、高度に成熟した組織は 8% にとどまる。IaC とプラットフォーム化は増えているが、全社レベルで定着している企業はまだ少ない。",
+      "details": [
+        "理想アーキテクチャだけを前提にせず、成熟度モデルを用意する必要がある。",
+        "Platform team による標準化が成熟度向上の鍵とされている。"
+      ],
+      "related_nodes": [
+        "node_004",
+        "node_002"
+      ],
+      "sources": [
+        "https://www.hashicorp.com/blog/hashicorp-state-of-cloud-strategy-survey-2024-cloud-maturity"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "CNCF Annual Survey 2024 は cloud native が主流化していることを示す",
+      "summary": "CNCF Annual Survey 2024 は、回答者の 4 分の 1 が開発とデプロイのほぼすべてで cloud native 手法を採用しているとした。これは OS へ直接ログインする運用の比重が相対的に下がっている兆候である。",
+      "details": [
+        "Kubernetes、API、宣言的運用が広がると SSH に頼る余地は減る。",
+        "ただし非 cloud native 資産の残存を前提に、並行運用設計が必要である。"
+      ],
+      "related_nodes": [
+        "node_004",
+        "node_005"
+      ],
+      "sources": [
+        "https://www.cncf.io/reports/cncf-annual-survey-2024/"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "Argo CD は GitOps の実運用成熟を示す",
+      "summary": "2025 年の Argo CD End User Survey では、97% が本番利用、60% が 2 年超利用、42% が 500 超のアプリケーションを 1 インスタンスで管理すると回答した。GitOps は実験ではなく本番標準になりつつある。",
+      "details": [
+        "Kubernetes 領域では『本番で触るのは Git と PR』が現実解になっている。",
+        "人が本番ノードへ SSH する必要性は限定的になる。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_014"
+      ],
+      "sources": [
+        "https://www.cncf.io/announcements/2025/07/24/cncf-end-user-survey-finds-argo-cd-as-majority-adopted-gitops-solution-for-kubernetes/"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "GitOps は Kubernetes 中心であり、全運用を即時に置き換えるわけではない",
+      "summary": "GitOps の成熟は Kubernetes 領域で顕著だが、Windows Server やレガシー DB、閉域系ミドルウェアは別経路が必要である。GitOps は万能ではなく、適用面を誤ると失敗する。",
+      "details": [
+        "OS 認証とクラスタ API 認可を混同してはいけない。",
+        "サーバー OS を残す領域では Ansible、JEA、PAM との併用が現実的である。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_003",
+        "node_006"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "Excel 手順書は Playbook の前段資産として扱うべきである",
+      "summary": "Excel 手順書を捨てるのではなく、承認項目、入力値、分岐条件、実行順序を抽出して Playbook や Job Template のパラメータへ落とすべきである。",
+      "details": [
+        "手順書を実行者依存の説明書のまま残すと、統制文書と実行実態が乖離する。",
+        "変換の第一歩は『スクリーンショット中心の手順』を変数中心へ書き換えること。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_003"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "紙の承認は自動実行を阻害するが、承認そのものが問題ではない",
+      "summary": "問題は承認の有無ではなく、承認結果が機械可読でないことにある。電子承認に変われば、承認済みパラメータをそのままジョブに引き渡せる。",
+      "details": [
+        "承認と手作業が密結合していると、承認のたびに対話的ログインが必要になる。",
+        "ITSM と Automation Controller の連携はここを解く。"
+      ],
+      "related_nodes": [
+        "node_013",
+        "node_003"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_023",
+      "topic": "FISC 文脈では作業記録保管を自動化側で充足しやすい",
+      "summary": "FISC 由来資料では、作業者、作業日時、作業内容等の記録を残し一定期間保管することが示されている。これは Playbook 実行ログ、チケット ID、ジョブ結果、差分保管で満たしやすい。",
+      "details": [
+        "スクリーンショットより、入力値、実行者、対象、結果、戻り値が構造化されている方が監査しやすい。",
+        "作業記録を『人が作る文書』から『システムが残す実績』へ変えるべきである。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_013",
+        "node_017"
+      ],
+      "sources": [
+        "https://www.fisc.or.jp/document/fintech/file/FinTech_20260213_07.pdf"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_024",
+      "topic": "J-SOX 対応でも自動化は不利ではない",
+      "summary": "J-SOX では職務分掌、承認、変更記録、再現性が重要であり、対話的ログインよりも PR、承認、ジョブ履歴、差分保存の方が監査証跡を一貫させやすい。",
+      "details": [
+        "人手作業は『やったことの説明』になりがちで、『承認通りに実施した証明』になりにくい。",
+        "自動化は統制を弱めるのではなく、統制対象を明確化する。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_004",
+        "node_017"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_025",
+      "topic": "ベンダーが対話作業を要求する場合でも例外管理できる",
+      "summary": "ベンダー保守で対話式しかサポートしない場合でも、PAM（特権アクセス管理）経由、時間制限、録画、同席レビュー、作業後の差分吸い上げで囲い込める。",
+      "details": [
+        "ベンダー要件を理由に共有アカウントを許容してはいけない。",
+        "例外アクセスは通常運用経路と切り分けて棚卸し対象にする。"
+      ],
+      "related_nodes": [
+        "node_008",
+        "node_012",
+        "node_009"
+      ],
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_026",
+      "topic": "LAPS は『ログインしない化』ではなく『ログイン被害の局所化』である",
+      "summary": "LAPS はローカル管理者秘密情報の横展開を防ぐが、手動ログイン自体は残る。よって LAPS だけでは運用パラダイムは変わらず、JEA や自動化との併用が必要である。",
+      "details": [
+        "LAPS は Level 1 から Level 2 の衛生改善として重要である。",
+        "しかし運用モデルの主役はあくまで自動化や JIT である。"
+      ],
+      "related_nodes": [
+        "node_007",
+        "node_008"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_027",
+      "topic": "踏み台サーバーはゴールではなく過渡期の制御である",
+      "summary": "踏み台サーバーは接続元制御と記録には有効だが、作業そのものは手動のままである。成熟度を上げるには、踏み台の内側で自動化へ置換していく必要がある。",
+      "details": [
+        "Level 1 で止まると、録画された属人作業が残り続ける。",
+        "踏み台の役割は『無秩序な直ログインを止める』ことであって『最終形』ではない。"
+      ],
+      "related_nodes": [
+        "node_009",
+        "node_001",
+        "node_002"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_028",
+      "topic": "クラウドネイティブ運用では OS ログインより API 権限が主戦場になる",
+      "summary": "Kubernetes、サーバーレス、PaaS、マネージド DB では、OS への SSH よりも API の RBAC、Git、CI/CD、シークレット管理が統制対象になる。運用管理の中心が『サーバー』から『制御面』へ移る。",
+      "details": [
+        "OS へログインしないから安全なのではなく、統制対象が変わる。",
+        "そのため GitOps と IAM を別々ではなく一体で設計する必要がある。"
+      ],
+      "related_nodes": [
+        "node_004",
+        "node_005"
+      ],
+      "evidence_level": "high"
+    },
+    {
+      "id": "knowledge_029",
+      "topic": "日本企業の現実では Level 3 を主目標に置くのが妥当な場合が多い",
+      "summary": "2026 年時点の日本企業では、全面 GitOps や Platform Engineering を短期目標にすると失敗しやすい。まずは定型作業の自動化と例外ログインの囲い込みを達成する Level 3 が現実的な到達点になりやすい。",
+      "details": [
+        "Windows、Linux、ベンダー保守、金融監査、閉域網が混在するためである。",
+        "Level 3 でも証跡、再現性、夜間作業削減、特権縮小の効果は大きい。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_003",
+        "node_008"
+      ],
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_030",
+      "topic": "移行初期は『参照系』『定型構築』『定型変更』の順で進めるとよい",
+      "summary": "最初から障害初動や複雑保守を自動化するのではなく、参照系、定型構築、定型変更、例外調査の順で非対話化する方が成功しやすい。",
+      "details": [
+        "参照系は失敗時の影響が小さく、inventory 整備と認証接続の確認に使える。",
+        "定型構築やパッチ適用で再現性と監査性を稼ぎ、その後に例外作業の削減へ進む。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_003",
+        "node_013"
+      ],
+      "evidence_level": "high"
+    }
+  ]
+}

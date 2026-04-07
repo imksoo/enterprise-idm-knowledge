@@ -1,0 +1,678 @@
+{
+  "metadata": {
+    "id": "topic_privileged_access_management",
+    "title": "特権アクセス管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "PAM",
+      "LAPS",
+      "JEA",
+      "PIM",
+      "JIT",
+      "PAW",
+      "sudo",
+      "Tier Model",
+      "踏み台サーバー",
+      "監査"
+    ],
+    "related_files": [
+      "06_security_hardening/ransomware_defense.json",
+      "03_identity_architecture/identity_landscape.json",
+      "04_server_auth/os_auth_methods.json",
+      "05_hybrid_scenarios/entra_hybrid_join.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "Privileged Access Management",
+      "object_type": "concept",
+      "description": "特権アカウント、昇格操作、管理端末、監査を統合的に制御する管理領域。",
+      "properties": {
+        "goal": "常時特権の排除",
+        "scope": [
+          "Windows Server",
+          "Linux",
+          "Entra ID",
+          "運用端末",
+          "踏み台"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Windows LAPS",
+      "object_type": "product",
+      "description": "Windows 標準機能として提供されるローカル管理者パスワード管理。AD と Entra ID の両方に対応する。",
+      "properties": {
+        "platform": "Windows 10/11, Windows Server 2019 以降の更新適用環境",
+        "storage_targets": [
+          "Active Directory",
+          "Entra ID"
+        ],
+        "supports_passphrase": true,
+        "supports_post_auth_actions": true
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Microsoft LAPS (Legacy)",
+      "object_type": "product",
+      "description": "旧来の Microsoft LAPS。AD にローカル管理者パスワードを保管する追加導入型ソリューション。",
+      "properties": {
+        "platform": "Active Directory 中心",
+        "storage_targets": [
+          "Active Directory"
+        ],
+        "supports_passphrase": false,
+        "supports_post_auth_actions": false
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "Local Administrator Password Rotation",
+      "object_type": "pattern",
+      "description": "端末やサーバーごとに異なるローカル管理者秘密情報を自動ローテーションする設計パターン。",
+      "properties": {
+        "risk_reduced": [
+          "横展開",
+          "共有ローカル管理者パスワード再利用"
+        ]
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Passwordless Recovery Account Design",
+      "object_type": "pattern",
+      "description": "緊急時の回復用アカウントを限定的に維持しつつ、平時は使用不可に近い状態に保つ設計。",
+      "properties": {
+        "controls": [
+          "金庫管理",
+          "二者承認",
+          "使用後ローテーション"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "Just Enough Administration",
+      "object_type": "concept",
+      "description": "PowerShell のロール機能を用いて必要最小限のコマンドレットと操作だけを委任する方式。",
+      "properties": {
+        "technology": "PowerShell Remoting",
+        "granularity": "コマンド単位"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "JEA Role Capability",
+      "object_type": "pattern",
+      "description": "JEA で公開するコマンド、関数、外部実行、引数制約を定義するロール能力ファイル。",
+      "properties": {
+        "artifacts": [
+          ".psrc",
+          ".pssc"
+        ]
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "PowerShell Transcription",
+      "object_type": "pattern",
+      "description": "PowerShell 実行内容をセッション単位で記録し、特権操作の追跡性を高める監査方式。",
+      "properties": {
+        "log_targets": [
+          "ファイル共有",
+          "SIEM"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "Privileged Identity Management",
+      "object_type": "product",
+      "description": "Entra ID 上で管理ロールやグループの昇格を時間制限付きで制御する機能。",
+      "properties": {
+        "platform": "Entra ID",
+        "controls": [
+          "承認",
+          "MFA",
+          "理由入力",
+          "時間制限"
+        ]
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "Eligible Role Assignment",
+      "object_type": "pattern",
+      "description": "常時有効ではなく、要求時のみ有効化可能な管理ロール割り当て。",
+      "properties": {
+        "default_state": "inactive",
+        "activation": "on-demand"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "Just-in-Time Access",
+      "object_type": "pattern",
+      "description": "必要な期間だけ特権を有効化し、作業終了後は速やかに回収するアクセス設計。",
+      "properties": {
+        "time_bound": true,
+        "approval_models": [
+          "manager approval",
+          "security approval",
+          "break glass exception"
+        ]
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Privileged Access Workstation",
+      "object_type": "pattern",
+      "description": "特権操作専用に管理された端末。メール、Web 閲覧、一般業務を分離する。",
+      "properties": {
+        "isolation": [
+          "専用端末",
+          "アプリ制御",
+          "ネットワーク制限"
+        ]
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "Tier Model",
+      "object_type": "concept",
+      "description": "管理対象の重要度に応じて管理者、端末、資格情報を分離する運用モデル。",
+      "properties": {
+        "tiers": [
+          "Tier 0",
+          "Tier 1",
+          "Tier 2"
+        ]
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "Tier 0",
+      "object_type": "concept",
+      "description": "AD DS、Entra Connect、PKI、特権管理基盤など認証基盤そのものを扱う階層。",
+      "properties": {
+        "assets": [
+          "Domain Controller",
+          "Entra Connect",
+          "PAM 基盤"
+        ]
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "Tier 1",
+      "object_type": "concept",
+      "description": "業務サーバー、アプリケーションサーバー、DB サーバーを扱う管理階層。",
+      "properties": {
+        "assets": [
+          "Windows Server",
+          "Linux Server",
+          "DB Server"
+        ]
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "Tier 2",
+      "object_type": "concept",
+      "description": "クライアント端末やユーザー業務環境を扱う管理階層。",
+      "properties": {
+        "assets": [
+          "PC",
+          "VDI",
+          "モバイル端末"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "Bastion Host",
+      "object_type": "pattern",
+      "description": "管理接続を集約し、到達制御とセッション監査を実施する踏み台サーバー方式。",
+      "properties": {
+        "controls": [
+          "接続元制限",
+          "セッション記録",
+          "多要素認証"
+        ]
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "Session Recording",
+      "object_type": "pattern",
+      "description": "RDP、SSH、Web 管理セッションを再生可能な形で記録する監査方式。",
+      "properties": {
+        "media": [
+          "video-like replay",
+          "command logs",
+          "metadata"
+        ]
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "Privileged Audit Logging",
+      "object_type": "pattern",
+      "description": "特権申請、昇格、接続、コマンド実行、変更結果を相関可能な形で残す監査設計。",
+      "properties": {
+        "key_fields": [
+          "requester",
+          "approver",
+          "target",
+          "start_time",
+          "end_time",
+          "command",
+          "ticket_id"
+        ]
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "Linux sudo",
+      "object_type": "product",
+      "description": "UNIX/Linux で昇格権限を細粒度に委任する標準的な仕組み。",
+      "properties": {
+        "config_files": [
+          "/etc/sudoers",
+          "/etc/sudoers.d/"
+        ],
+        "best_practices": [
+          "NOPASSWD の最小化",
+          "コマンド単位の許可",
+          "ログ転送"
+        ]
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "sudoers Policy",
+      "object_type": "pattern",
+      "description": "ユーザー、グループ、ホスト、実行ユーザー、コマンド許可範囲を明示する `sudoers` 設計。",
+      "properties": {
+        "principle": "allow list",
+        "linting": "visudo"
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "sudo I/O Logging",
+      "object_type": "pattern",
+      "description": "sudo 実行時の標準入力、出力、端末操作を記録する監査機能。",
+      "properties": {
+        "log_type": [
+          "command",
+          "TTY I/O"
+        ]
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "CyberArk",
+      "object_type": "product",
+      "description": "パスワード保管、セッション管理、JIT、アプリケーション資格情報管理を提供する PAM 製品。",
+      "properties": {
+        "category": "third-party PAM"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "BeyondTrust",
+      "object_type": "product",
+      "description": "特権パスワード管理、リモートサポート、エンドポイント権限制御を統合する PAM 製品。",
+      "properties": {
+        "category": "third-party PAM"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "Delinea",
+      "object_type": "product",
+      "description": "旧 Thycotic 系を含む PAM 製品群。シークレット管理、昇格、セッション管理を提供する。",
+      "properties": {
+        "former_name": "Thycotic",
+        "category": "third-party PAM"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "Break Glass Account",
+      "object_type": "pattern",
+      "description": "強い制御障害時に限定利用する緊急用管理アカウント。通常運用では使用禁止とする。",
+      "properties": {
+        "requirements": [
+          "厳格保管",
+          "除外範囲の最小化",
+          "定期検証"
+        ]
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "Service Account Vaulting",
+      "object_type": "pattern",
+      "description": "サービスアカウントや API シークレットをアプリケーションから分離して保管し、定期的にローテーションする。",
+      "properties": {
+        "targets": [
+          "service accounts",
+          "API keys",
+          "database credentials"
+        ]
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "Approval Workflow",
+      "object_type": "pattern",
+      "description": "特権昇格前に用途、対象、時間、変更チケットを審査するワークフロー。",
+      "properties": {
+        "approval_inputs": [
+          "reason",
+          "target system",
+          "change ticket",
+          "requested duration"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_003",
+      "relationship": "replaces",
+      "description": "Windows LAPS は旧 Microsoft LAPS の後継であり、機能統合が進んでいる。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "Windows LAPS はローカル管理者秘密情報の個別ローテーションを実装する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "旧 Microsoft LAPS もローカル管理者パスワード管理を実装する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "JEA にはロール能力定義とセッション構成が必要となる。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "JEA の運用では PowerShell 実行記録を併用して追跡性を確保する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_010",
+      "relationship": "implements",
+      "description": "PIM は Eligible な管理ロール割り当てを提供する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "PIM は JIT 昇格を Entra ID ロールやグループで実現する。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_028",
+      "relationship": "requires",
+      "description": "JIT では承認、理由入力、時間制限を含む申請フローが必要となる。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_013",
+      "relationship": "implements",
+      "description": "PAW は Tier 分離を端末面で実装する。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "Tier モデルは Tier 0 の明確な定義を必要とする。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "Tier モデルは Tier 1 の管理境界を定義する。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "Tier モデルは Tier 2 の管理境界を定義する。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "踏み台サーバーはセッション記録と組み合わせると監査性が高まる。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_019",
+      "relationship": "implements",
+      "description": "踏み台は接続ログを集約し、特権監査設計の実装点になる。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "sudo の安全運用には明確な sudoers 設計が必要である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_022",
+      "relationship": "complements",
+      "description": "sudo は I/O ログを有効化することで特権操作の再現性を確保できる。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_017",
+      "relationship": "implements",
+      "description": "CyberArk はセッション管理や踏み台機能を提供できる。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_017",
+      "relationship": "implements",
+      "description": "BeyondTrust は特権リモート接続の制御と記録を提供する。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_027",
+      "relationship": "implements",
+      "description": "Delinea はサービスアカウントやシークレットの保管とローテーションを支援する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_027",
+      "relationship": "implements",
+      "description": "CyberArk はアプリケーション資格情報管理を提供する。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "Break Glass Account は回復用アカウント設計の一部として扱う。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "PAM 全体設計では昇格から変更結果まで追跡できる監査が必須である。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "モダンな PAM は管理端末の分離を前提とする。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "常時特権を避けるため PAM は JIT を中核制御として採用する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "Windows LAPS と旧 Microsoft LAPS の違い",
+      "summary": "Windows LAPS は OS 標準機能として統合され、AD と Entra ID の両保存先、パスフレーズ、ポスト認証アクション、旧ポリシー互換性を備える。一方で旧 Microsoft LAPS は AD 中心の追加導入型であり、今から新規採用する優先度は低い。",
+      "related_nodes": [
+        "node_002",
+        "node_003",
+        "node_004"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "LAPS の設計要点",
+      "summary": "共有ローカル管理者パスワードを残すと端末 1 台侵害から全域横展開につながる。LAPS では端末ごとに異なる秘密情報、短めのローテーション、閲覧権限の最小化、回収後の利用停止確認を組み合わせるべきである。",
+      "related_nodes": [
+        "node_002",
+        "node_004",
+        "node_019"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "JEA の価値",
+      "summary": "フル管理者権限を配らず、特定業務に必要な PowerShell コマンドだけを許可できる。日本企業でよくある運用委託先への広い管理者権限付与を縮小するうえで有効である。",
+      "related_nodes": [
+        "node_006",
+        "node_007",
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "JEA 導入時の落とし穴",
+      "summary": "ロール設計が曖昧だと結局フル PowerShell を許可しやすい。許可コマンド、引数、外部実行、モジュール更新影響を明示し、トランスクリプションと SIEM 連携まで設計して初めて監査可能な最小権限になる。",
+      "related_nodes": [
+        "node_006",
+        "node_007",
+        "node_008",
+        "node_019"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Entra ID PIM の使いどころ",
+      "summary": "クラウド管理ロール、Privileged Access Group、Azure リソース管理の常時権限を避ける中核機能として用いる。MFA、承認、理由入力、時間制限、通知を標準化し、恒久的な active assignment を例外化するべきである。",
+      "related_nodes": [
+        "node_009",
+        "node_010",
+        "node_011",
+        "node_028"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "JIT アクセスパターン",
+      "summary": "JIT は単に時間制限を付けるだけでは不十分である。チケット番号、対象システム、作業窓、承認者、操作ログ、作業後レビューを一連でつなぐと、内部不正と侵害後の権限悪用の両方を抑制できる。",
+      "related_nodes": [
+        "node_011",
+        "node_019",
+        "node_028"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "PAW の実務的な位置づけ",
+      "summary": "PAW は上級管理者だけの専用端末ではなく、Tier 0 管理と一般業務を混在させないための基本制御である。メール添付や一般 Web 閲覧を行う端末から Tier 0 へ接続させないことが侵害耐性を大きく左右する。",
+      "related_nodes": [
+        "node_012",
+        "node_013",
+        "node_014"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "Tier 0/1/2 分離の考え方",
+      "summary": "Tier 0 は認証基盤そのもの、Tier 1 はサーバー群、Tier 2 はクライアント管理であり、資格情報と管理端末を跨いで共有しないことが要点である。小規模組織でも論理分離は可能で、必ずしも人員を完全分離する必要はない。",
+      "related_nodes": [
+        "node_013",
+        "node_014",
+        "node_015",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "踏み台サーバーの現代化",
+      "summary": "単なる RDP 中継では不十分で、接続元制限、多要素認証、セッション録画、SSH/RDP 双方の統合監査、ファイル転送制御が必要である。可能ならパスワード開示ではなくセッションプロキシ方式を採用する。",
+      "related_nodes": [
+        "node_017",
+        "node_018",
+        "node_019"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "Linux sudo の適切な設計",
+      "summary": "Linux では `ALL=(ALL) ALL` の乱用が最も典型的な失敗である。`sudoers.d` に役割別ポリシーを分離し、コマンド許可を明示し、`NOPASSWD` を例外化し、I/O ログを中央送信する構成が望ましい。",
+      "related_nodes": [
+        "node_020",
+        "node_021",
+        "node_022"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "特権監査ログ設計",
+      "summary": "監査ログは接続ログ、昇格ログ、コマンドログ、変更結果ログが別系統でも相関できるように `requester`、`target`、`session_id`、`ticket_id` を揃えるべきである。後から SIEM で結びつけられない設計は運用上の価値が低い。",
+      "related_nodes": [
+        "node_018",
+        "node_019",
+        "node_028"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "サードパーティ PAM 製品の選定軸",
+      "summary": "CyberArk、BeyondTrust、Delinea はいずれも保管庫、セッション制御、昇格管理を持つが、強みは異なる。評価では Windows だけでなく Linux、ネットワーク機器、クラウドロール、API シークレット、運用委託先接続の扱いまで確認する必要がある。",
+      "related_nodes": [
+        "node_023",
+        "node_024",
+        "node_025",
+        "node_027"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "サービスアカウント管理",
+      "summary": "人間の管理者よりも長寿命なサービスアカウントが侵害の温床になりやすい。保管庫によるローテーション、利用先棚卸し、Kerberos 連携やマネージド ID への移行計画を併せて進めるべきである。",
+      "related_nodes": [
+        "node_027",
+        "node_001"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "Break Glass Account の扱い",
+      "summary": "緊急用アカウントは必要だが、通常の例外口として残すと統制が崩れる。除外対象は最小限にし、利用時は即時通知、事後レビュー、パスワード変更、保管方法の再確認を実施するべきである。",
+      "related_nodes": [
+        "node_026",
+        "node_005",
+        "node_019"
+      ]
+    }
+  ]
+}

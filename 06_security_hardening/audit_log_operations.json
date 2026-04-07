@@ -1,0 +1,1388 @@
+{
+  "metadata": {
+    "id": "audit_log_operations",
+    "title": "システム管理ユーザーの証跡管理・ログ分析・アカウント棚卸し運用",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "audit-log",
+      "siem",
+      "ueba",
+      "account-review",
+      "access-certification",
+      "orphaned-account",
+      "jsox",
+      "fisc"
+    ],
+    "related_files": [
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/sysadmin_access_evolution.json",
+      "06_security_hardening/ransomware_defense.json",
+      "04_server_auth/os_auth_methods.json",
+      "03_identity_architecture/identity_landscape.json",
+      "08_identity_subjects/id_operations_framework.json",
+      "08_identity_subjects/non_human_identity.json"
+    ],
+    "reference_urls": [
+      "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4624",
+      "https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5145",
+      "https://learn.microsoft.com/en-us/windows-server/manage/windows-admin-center/use/logging",
+      "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview",
+      "https://learn.microsoft.com/en-us/entra/id-governance/lifecycle-workflow-inactive-users",
+      "https://learn.microsoft.com/en-us/azure/sentinel/identify-threats-with-entity-behavior-analytics",
+      "https://learn.microsoft.com/en-us/azure/sentinel/anomalies-reference",
+      "https://learn.microsoft.com/en-us/azure/sentinel/sentinel-security-copilot",
+      "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/auditing-the-system_security-hardening",
+      "https://docs.oracle.com/en/database/oracle/oracle-database/26/dbseg/administering-the-audit-trail.html",
+      "https://docs.oracle.com/en/database/oracle/oracle-database/26/dbseg/configuring-audit-policies.html",
+      "https://docs.oracle.com/en/database/oracle/audit-vault-database-firewall/",
+      "https://www.oracle.com/jp/security/database-security/audit-vault-database-firewall/faq/",
+      "https://www.splunk.com/en_us/pdfs/product-briefs/splunk-uba-end-of-sale-faq.pdf",
+      "https://www.ibm.com/jp-ja/products/qradar-siem",
+      "https://logstorage.com/news/20241008/",
+      "https://logstorage.com/news/20260206/",
+      "https://www.nri-secure.co.jp/service/solution/accesscheck/features/basic",
+      "https://www.nri-secure.co.jp/service/solution/accesscheck/case",
+      "https://www.nri-secure.co.jp/news/2023/0130",
+      "https://www.nri-secure.co.jp/hubfs/NRIS/PDF/nrisecure-solution-guide.pdf",
+      "https://documentation.sailpoint.com/saas/user-help/certs/reviewing/index.html",
+      "https://www.sailpoint.com/solutions/access-certification",
+      "https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4-0-SAQ-D-Merchant.pdf",
+      "https://www.nisc.go.jp/pdf/policy/general/k304-111C.pdf",
+      "https://www.fisc.or.jp/document/security/file/Cyber_mapping_202508.pdf",
+      "https://www.fsa.go.jp/news/r6/sonota/20241004/18.pdf"
+    ]
+  },
+  "log_sources": [
+    {
+      "id": "logsrc_windows_server",
+      "platform": "Windows Server",
+      "category": "OS認証",
+      "importance": "highest",
+      "evidence_purpose": [
+        "サーバーログイン証跡",
+        "特権操作証跡",
+        "横展開兆候の検知",
+        "共有アクセスの追跡"
+      ],
+      "sub_sources": [
+        {
+          "name": "Security Audit Log",
+          "records": [
+            {
+              "event_id": 4624,
+              "event_name": "ログオン成功",
+              "operational_value": "ログオンタイプを見れば対話、RDP、サービス、ネットワークの区別ができる。特権IDの利用開始点として基準になる。"
+            },
+            {
+              "event_id": 4625,
+              "event_name": "ログオン失敗",
+              "operational_value": "総当たり、資格情報誤用、無効アカウント利用の検知に使う。"
+            },
+            {
+              "event_id": 4634,
+              "event_name": "ログオフ",
+              "operational_value": "4624 と組み合わせて作業時間を算出する。"
+            },
+            {
+              "event_id": 4647,
+              "event_name": "ユーザー起点のログオフ",
+              "operational_value": "手動ログオフの終了点として使う。"
+            },
+            {
+              "event_id": 4648,
+              "event_name": "明示的資格情報の利用",
+              "operational_value": "runas、別資格情報での接続、踏み台経由の二次認証確認に有効。"
+            },
+            {
+              "event_id": 4720,
+              "event_name": "アカウント作成",
+              "operational_value": "突発的な管理者作成や不正なローカルアカウント追加の検知に使う。"
+            },
+            {
+              "event_id": 4726,
+              "event_name": "アカウント削除",
+              "operational_value": "削除済み証跡として棚卸し結果と整合確認する。"
+            },
+            {
+              "event_id": 4728,
+              "event_name": "セキュリティ対応グループへの追加",
+              "operational_value": "Domain Admins などへの追加監視に使う。"
+            },
+            {
+              "event_id": 4732,
+              "event_name": "ローカルAdministratorsへの追加",
+              "operational_value": "サーバー単位のローカル昇格を捕捉する。"
+            },
+            {
+              "event_id": 4756,
+              "event_name": "ユニバーサルグループへの追加",
+              "operational_value": "広域な特権グループ変更を捕捉する。"
+            },
+            {
+              "event_id": 4768,
+              "event_name": "Kerberos TGT 要求",
+              "operational_value": "ドメイン認証の開始点として利用し、特権IDの利用元把握に使う。"
+            },
+            {
+              "event_id": 4769,
+              "event_name": "Kerberos TGS 要求",
+              "operational_value": "管理系サービスや共有アクセスへの展開把握に使う。"
+            },
+            {
+              "event_id": 4776,
+              "event_name": "NTLM 認証",
+              "operational_value": "レガシー認証残存の把握、横展開経路の監視に使う。"
+            },
+            {
+              "event_id": 5140,
+              "event_name": "共有オブジェクトアクセス",
+              "operational_value": "管理共有やファイルサーバー作業の起点把握に使う。"
+            },
+            {
+              "event_id": 5145,
+              "event_name": "共有オブジェクトへの詳細アクセス判定",
+              "operational_value": "どの共有のどのパスに対してどの権利を要求したかまで追える。"
+            }
+          ],
+          "source_urls": [
+            "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4624",
+            "https://learn.microsoft.com/en-us/windows/security/threat-protection/auditing/event-5145",
+            "https://learn.microsoft.com/en-us/entra/identity/domain-services/security-audit-events"
+          ]
+        },
+        {
+          "name": "PowerShell Script Block Logging",
+          "records": [
+            {
+              "event_id": 4104,
+              "event_name": "Script Block Logging",
+              "operational_value": "PowerShell 実行内容の可読な証跡として、昇格作業の事後レビューに有効。"
+            }
+          ],
+          "source_urls": [
+            "https://learn.microsoft.com/en-us/troubleshoot/azure/virtual-machines/windows/debug-customscriptextension-runcommand-scripts"
+          ]
+        },
+        {
+          "name": "WinRM Operational Log",
+          "records": [
+            {
+              "event_id": 145,
+              "event_name": "WSMan operation started",
+              "operational_value": "PowerShell Remoting や自動化ツール経由の作業開始把握に使う。"
+            }
+          ],
+          "source_urls": [
+            "https://learn.microsoft.com/en-us/answers/questions/2196194/windows-remote-something-invoking-it-frequently-is"
+          ]
+        },
+        {
+          "name": "Windows Admin Center Event Log",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "WindowsAdminCenter channel",
+              "operational_value": "GUI 管理作業でも PowerShell 名や接続先情報が残るため、運用者の説明責任に使える。"
+            }
+          ],
+          "source_urls": [
+            "https://learn.microsoft.com/en-us/windows-server/manage/windows-admin-center/use/logging"
+          ]
+        }
+      ],
+      "collection_design": {
+        "minimum_controls": [
+          "高度な監査ポリシーで Logon/Logoff と Account Management を有効化する",
+          "PowerShell Script Block Logging と Module Logging を有効化する",
+          "Event Forwarding かエージェントで中央集約する",
+          "NTP 同期を徹底して SIEM 相関精度を維持する"
+        ],
+        "retention_risk": "ローカル Security ログは既定サイズのままだと上書きが早く、障害対応や監査に耐えない。",
+        "japan_enterprise_note": "日本企業ではジャンプサーバーを経由しても最終接続先サーバー側の証跡が弱いケースが多く、踏み台ログだけで監査を終わらせると不十分になりやすい。"
+      }
+    },
+    {
+      "id": "logsrc_linux_rhel",
+      "platform": "RHEL/Linux",
+      "category": "OS認証",
+      "importance": "highest",
+      "evidence_purpose": [
+        "SSHログイン証跡",
+        "sudo・su 昇格証跡",
+        "コマンド実行証跡",
+        "設定変更証跡"
+      ],
+      "sub_sources": [
+        {
+          "name": "/var/log/secure または auth.log",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "PAM/sshd authentication",
+              "operational_value": "接続元IP、対象ユーザー、認証成功失敗を把握する。"
+            }
+          ],
+          "source_urls": [
+            "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/pdf/configuring_authentication_and_authorization_in_rhel/introduction-to-system-authentication"
+          ]
+        },
+        {
+          "name": "auditd",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "execve",
+              "operational_value": "実行コマンドと引数を高粒度で取得し、sudo 配下の作業を追跡できる。"
+            },
+            {
+              "event_id": null,
+              "event_name": "open/write/chmod/chown",
+              "operational_value": "重要設定ファイルや認証関連ファイルへの変更追跡に使う。"
+            },
+            {
+              "event_id": null,
+              "event_name": "/etc/sudoers と sudoers.d 監視",
+              "operational_value": "特権委任ルールの変更検知に有効。"
+            }
+          ],
+          "source_urls": [
+            "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/auditing-the-system_security-hardening",
+            "https://www.mankier.com/5/auditd.conf"
+          ]
+        },
+        {
+          "name": "sudo I/O logging",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "sudo log_input/log_output",
+              "operational_value": "対話的な端末入出力証跡を取得でき、PAM がない場合の補完になる。"
+            }
+          ],
+          "source_urls": [
+            "https://man7.org/linux/man-pages/man5/sudoers.5.html"
+          ]
+        },
+        {
+          "name": "systemd journal",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "journalctl service logs",
+              "operational_value": "sshd、sudo、polkit、systemd unit 変更の横断調査に使う。"
+            }
+          ],
+          "source_urls": [
+            "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/security_hardening/auditing-the-system_security-hardening"
+          ]
+        },
+        {
+          "name": "SSSD logs",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "sssd_<domain>.log",
+              "operational_value": "Active Directory 連携時の認証失敗や属性解決異常の切り分けに使う。"
+            }
+          ],
+          "source_urls": [
+            "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/pdf/configuring_authentication_and_authorization_in_rhel/understanding-sssd-and-its-benefits_configuring-authentication-and-authorization-in-rhel"
+          ]
+        }
+      ],
+      "collection_design": {
+        "minimum_controls": [
+          "auditd を停止不能に近い形で構成し、重要ファイルへの watch ルールを入れる",
+          "sudo の NOPASSWD を原則廃止し、I/O logging を有効化する",
+          "SSH 直ログインを抑止し、個人ID経由の昇格に寄せる",
+          "監査ログ専用パーティション、または keep_logs と外部アーカイブを併用する"
+        ],
+        "retention_risk": "auditd のディスク枯渇時動作を甘くすると、最も必要な場面で証跡が欠落する。",
+        "japan_enterprise_note": "Linux 運用では shell history に依存している現場がまだ多いが、履歴削除が可能なため監査証跡としては弱い。"
+      }
+    },
+    {
+      "id": "logsrc_aix",
+      "platform": "AIX",
+      "category": "OS認証",
+      "importance": "medium",
+      "evidence_purpose": [
+        "商用UNIX残存環境のログイン証跡",
+        "su 操作の追跡",
+        "旧来運用の監査継続"
+      ],
+      "sub_sources": [
+        {
+          "name": "/var/adm/sulog",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "su操作ログ",
+              "operational_value": "root への昇格痕跡を確認する。"
+            }
+          ],
+          "source_urls": []
+        },
+        {
+          "name": "/var/adm/wtmp",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "ログイン/ログアウト履歴",
+              "operational_value": "UNIX 系の基本入退室ログとして使う。"
+            }
+          ],
+          "source_urls": []
+        },
+        {
+          "name": "AIX Audit Subsystem",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "コマンド実行・ファイルアクセス",
+              "operational_value": "高権限作業の補足に使うが、RHEL/Linux より設定ノウハウが不足しやすい。"
+            }
+          ],
+          "source_urls": []
+        }
+      ],
+      "collection_design": {
+        "minimum_controls": [
+          "ログの中央転送を前提にし、ローカル保存のみで終えない",
+          "root 共有運用が残るなら踏み台やPAMで補完する"
+        ],
+        "retention_risk": "AIX 単体では検索性が低く、インシデント時の初動が遅れやすい。",
+        "japan_enterprise_note": "基幹や生産管理でAIXが残る企業では、運用標準が担当者依存のまま更新されていないことが多い。"
+      }
+    },
+    {
+      "id": "logsrc_database",
+      "platform": "Oracle Database / SQL Server / SAP",
+      "category": "アプリケーション監査",
+      "importance": "high",
+      "evidence_purpose": [
+        "DB管理者の証跡",
+        "DDL/DCL 変更履歴",
+        "機密データ参照の追跡"
+      ],
+      "sub_sources": [
+        {
+          "name": "Oracle Unified Audit",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "統合監査証跡",
+              "operational_value": "監査は常時有効であり、SYSDBA や管理者の活動も監査対象に含めやすい。"
+            },
+            {
+              "event_id": null,
+              "event_name": "ORA_ACCOUNT_MGMT",
+              "operational_value": "CREATE USER、ALTER USER、GRANT、REVOKE など権限変更監査に使う。"
+            }
+          ],
+          "source_urls": [
+            "https://docs.oracle.com/en/database/oracle/oracle-database/26/dbseg/administering-the-audit-trail.html",
+            "https://docs.oracle.com/en/database/oracle/oracle-database/26/dbseg/configuring-audit-policies.html"
+          ]
+        },
+        {
+          "name": "Oracle Audit Vault and Database Firewall",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "Database Activity Monitoring",
+              "operational_value": "監査ログと SQL トラフィックを統合し、特権ユーザーの機密データアクセスや権限を横断監視できる。"
+            }
+          ],
+          "source_urls": [
+            "https://docs.oracle.com/en/database/oracle/audit-vault-database-firewall/",
+            "https://www.oracle.com/jp/security/database-security/audit-vault-database-firewall/faq/"
+          ]
+        },
+        {
+          "name": "SQL Server Audit / Extended Events",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "SQL Server Audit",
+              "operational_value": "ログイン、DDL、権限変更、SELECT 監査を用途別に設計できる。"
+            }
+          ],
+          "source_urls": []
+        },
+        {
+          "name": "SAP Security Audit Log",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "SM20 / SM19",
+              "operational_value": "SU01 や PFCG など管理系トランザクションの利用証跡に使う。"
+            }
+          ],
+          "source_urls": []
+        }
+      ],
+      "collection_design": {
+        "minimum_controls": [
+          "OSログとDB監査ログを別系統で取り、相互検証できるようにする",
+          "DBA 作業はチケット番号、個人ID、端末、SQL を突合可能にする",
+          "DB監査は purge 前提で設計し、外部保管と組み合わせる"
+        ],
+        "retention_risk": "DB 側だけの監査ではログイン前後の人の動きが見えず、OS 側だけの監査では実行 SQL が見えない。",
+        "japan_enterprise_note": "Oracle 監査は本番性能懸念で限定導入されがちだが、SYSDBA と権限変更だけでも先に取るべきである。"
+      }
+    },
+    {
+      "id": "logsrc_pam",
+      "platform": "特権アクセス管理",
+      "category": "PAM（特権アクセス管理）",
+      "importance": "highest",
+      "evidence_purpose": [
+        "申請と作業の一体証跡",
+        "セッション録画",
+        "特権ID秘匿化",
+        "委託先アクセス統制"
+      ],
+      "sub_sources": [
+        {
+          "name": "CyberArk Privileged Session Manager",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "session recording",
+              "operational_value": "RDP/SSH/Web 管理セッションを録画し、事後監査や調査で再生可能な証跡を残す。"
+            }
+          ],
+          "source_urls": [
+            "https://www.cyberark.com/products/privileged-session-manager/"
+          ]
+        },
+        {
+          "name": "SecureCube Access Check",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "作業申請・承認・ログ取得・監査補助",
+              "operational_value": "申請承認、アクセス制御、ログ取得管理、監査補助を一連で扱える。"
+            }
+          ],
+          "source_urls": [
+            "https://www.nri-secure.co.jp/service/solution/accesscheck/features/basic",
+            "https://www.nri-secure.co.jp/service/solution/accesscheck/case"
+          ]
+        },
+        {
+          "name": "Legacy bastion with script/tlog",
+          "records": [
+            {
+              "event_id": null,
+              "event_name": "screen/script/tlog recording",
+              "operational_value": "PAM 導入前の暫定措置としては有効だが、申請承認や秘匿化が弱い。"
+            }
+          ],
+          "source_urls": [
+            "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html-single/recording_sessions/index"
+          ]
+        }
+      ],
+      "collection_design": {
+        "minimum_controls": [
+          "個人IDでPAMへ入り、共有管理者IDへ直接ログインできない構造にする",
+          "録画だけでなく申請、承認、理由、対象、時間帯を紐付ける",
+          "セッションメタデータを SIEM に送り、長期検索は SIEM 側で行う",
+          "委託先ごとに接続先、時間帯、操作手段を制限する"
+        ],
+        "retention_risk": "録画は完全証跡に見えるが、検索性と長期保管コストが高い。メタデータ化とSIEM連携が前提になる。",
+        "japan_enterprise_note": "日本企業では PAM を入れても申請承認を別ワークフローに残し、二重管理になる例が多い。"
+      }
+    }
+  ],
+  "siem_products": [
+    {
+      "name": "Splunk Enterprise Security",
+      "category": "global",
+      "positioning": "大規模相関分析と高度SOC運用向け",
+      "strengths": [
+        "PAM、EDR、AD、Entra ID、ネットワークの相関分析に強い",
+        "大規模環境での検索性能と柔軟性が高い",
+        "日本の大手企業・金融で導入事例が多い"
+      ],
+      "cautions": [
+        "運用人材とルール設計の難度が高い",
+        "データ量連動でコストが膨らみやすい",
+        "Splunk UBA は 2025-12-10 に End of Sale、2026-12 にサポート終了予定であり、新規検討は ES 内蔵 UEBA 前提で考えるべき"
+      ],
+      "privileged_monitoring_fit": "CyberArk や踏み台ログと組み合わせると特権ユーザーの相関分析に強い。",
+      "source_urls": [
+        "https://www.splunk.com/en_us/pdfs/product-briefs/splunk-uba-end-of-sale-faq.pdf",
+        "https://www.splunk.com/pdfs/ja_jp/customer-success-stories/japan-net-bank-case-study.pdf"
+      ]
+    },
+    {
+      "name": "Microsoft Sentinel",
+      "category": "global",
+      "positioning": "Entra ID と Microsoft 365 を中核にしたクラウドネイティブ SIEM/SOAR",
+      "strengths": [
+        "UEBA がネイティブ統合されている",
+        "Entra ID、Defender、Office 365、Azure Activity との接続が容易",
+        "Security Copilot 連携で調査支援を組み込みやすい"
+      ],
+      "cautions": [
+        "オンプレミスの細粒度ログ設計を怠ると、クラウド側だけ見えて現場サーバー証跡が欠ける",
+        "KQL とルール運用の習熟が必要"
+      ],
+      "privileged_monitoring_fit": "Entra ID と Windows イベントを中心に、特権IDの異常時間帯利用、異常昇格、横展開兆候を検知しやすい。",
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/azure/sentinel/identify-threats-with-entity-behavior-analytics",
+        "https://learn.microsoft.com/en-us/azure/sentinel/anomalies-reference",
+        "https://learn.microsoft.com/en-us/azure/sentinel/sentinel-security-copilot"
+      ]
+    },
+    {
+      "name": "IBM QRadar SIEM",
+      "category": "global",
+      "positioning": "金融・重要インフラで実績のある相関分析基盤",
+      "strengths": [
+        "金融業界での長期導入実績があり、保守運用体制を組みやすい",
+        "ルールベースの相関分析と資産コンテキスト連携がしやすい"
+      ],
+      "cautions": [
+        "クラウドネイティブ機能やAI文脈では Sentinel や Splunk より設計次第の差が出やすい"
+      ],
+      "privileged_monitoring_fit": "既存SOCと接続しやすく、保守ベンダー接続や特権イベントの長期運用に向く。",
+      "source_urls": [
+        "https://www.ibm.com/jp-ja/products/qradar-siem"
+      ]
+    },
+    {
+      "name": "Elastic Security",
+      "category": "global",
+      "positioning": "自社構築型でコスト柔軟性を重視する組織向け",
+      "strengths": [
+        "OSS ベースで保管層を設計しやすい",
+        "ログ量が大きい環境でもチューニング次第で拡張しやすい"
+      ],
+      "cautions": [
+        "検知テンプレートや運用設計を内製できる体制が前提",
+        "日本語監査レポートをそのまま出す用途には向きにくい"
+      ],
+      "privileged_monitoring_fit": "ログ保管と検索の器としては有効だが、J-SOX や金融監査向け帳票は別途整備が必要。",
+      "source_urls": [
+        "https://www.elastic.co/security"
+      ]
+    },
+    {
+      "name": "Logstorage",
+      "category": "japan",
+      "positioning": "日本市場向けの統合ログ管理/SIEM",
+      "strengths": [
+        "ログの圧縮・暗号化保管、改ざん検出、レポート機能を備える",
+        "2026-02-06 時点で金融機関採用100件突破と公表されている",
+        "SecureCube Access Check 連携パックを持つ"
+      ],
+      "cautions": [
+        "高度なUEBAや多様なSOARは別製品補完が必要な場面がある",
+        "国際標準SOC機能の厚みはグローバルSIEM群と比較して評価が必要"
+      ],
+      "privileged_monitoring_fit": "長期保管、国内監査、日本語レポート、PAM連携に強く、FISC・内部監査向けの説明がしやすい。",
+      "source_urls": [
+        "https://logstorage.com/news/20241008/",
+        "https://logstorage.com/news/20260206/"
+      ]
+    },
+    {
+      "name": "SecureCube Access Check",
+      "category": "japan",
+      "positioning": "特権アクセス管理を中心にした証跡取得基盤",
+      "strengths": [
+        "申請・承認、アクセス制御、ログ取得、監査補助をまとめて扱える",
+        "棚卸し、パスワード自動更新、迂回ログイン防止が可能",
+        "国内運用フローに合わせやすく、監査説明がしやすい"
+      ],
+      "cautions": [
+        "横断相関やUEBAは SIEM 連携前提で考えるべき",
+        "証跡を Access Check 内だけで閉じると全社監視には不足する"
+      ],
+      "privileged_monitoring_fit": "特権操作の一次証跡とし、二次分析は Logstorage や Sentinel へ流す構成が現実的。",
+      "source_urls": [
+        "https://www.nri-secure.co.jp/service/solution/accesscheck/features/basic",
+        "https://www.nri-secure.co.jp/service/solution/accesscheck/case",
+        "https://www.nri-secure.co.jp/hubfs/NRIS/PDF/nrisecure-solution-guide.pdf"
+      ]
+    },
+    {
+      "name": "SailPoint",
+      "category": "iga",
+      "positioning": "棚卸しとアクセス認証レビューの自動化",
+      "strengths": [
+        "Certification Campaigns でレビュー依頼、判断、失効を統制できる",
+        "Privileged Access フラグや Last Account Activity をレビュー判断に使える",
+        "AI 推奨と自動調整で Excel 棚卸しから脱却しやすい"
+      ],
+      "cautions": [
+        "ソース接続と権限モデル整備が弱いとレビュー品質が上がらない",
+        "まず権限の名寄せとオーナー定義が必要"
+      ],
+      "privileged_monitoring_fit": "SIEM ではなく棚卸し側の統制製品。特権ロールの定期認証レビューに向く。",
+      "source_urls": [
+        "https://documentation.sailpoint.com/saas/user-help/certs/reviewing/index.html",
+        "https://www.sailpoint.com/solutions/access-certification"
+      ]
+    },
+    {
+      "name": "Entra ID Governance",
+      "category": "iga",
+      "positioning": "Entra ID を中心にしたアクセスレビューとライフサイクル自動化",
+      "strengths": [
+        "Access Reviews で定期レビューを回せる",
+        "Lifecycle Workflows で非アクティブアカウントの無効化や削除を自動化できる",
+        "PIM と組み合わせると管理ロール棚卸しがしやすい"
+      ],
+      "cautions": [
+        "オンプレミスサーバーのローカルアカウントや古いサービスIDまでは単独でカバーしきれない"
+      ],
+      "privileged_monitoring_fit": "Entra 管理ロール、グループ、ゲストの棚卸しに有効で、Active Directory 側は別途補完が必要。",
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview",
+        "https://learn.microsoft.com/en-us/entra/id-governance/lifecycle-workflow-inactive-users"
+      ]
+    }
+  ],
+  "account_review_process": {
+    "governance_requirements": [
+      {
+        "regulation": "J-SOX",
+        "interpretation": "IT全般統制では、特権ID、退職者ID、権限変更、棚卸し結果の文書化が監査論点になりやすい。",
+        "practical_frequency": "年1回以上が一般的だが、特権ロールや委託先は半期または四半期の方が実務的。",
+        "source_type": "practice_based_inference"
+      },
+      {
+        "regulation": "FISC安全対策基準",
+        "interpretation": "認証・アクセス管理、ログ管理、監視、委託先統制の文脈で、特権IDの個人識別、利用制限、証跡保全、定期見直しが求められる。",
+        "practical_frequency": "高権限と委託先は四半期、一般管理権限は半期または年次が現実的。",
+        "source_type": "public_mapping_and_industry_practice"
+      },
+      {
+        "regulation": "PCI DSS v4.0",
+        "interpretation": "監査ログは最低12ヶ月保持し、そのうち直近3ヶ月を分析可能に保つ必要がある。Inactive user accounts は 90日以内に削除または無効化が必要。",
+        "practical_frequency": "アクセス権見直しは少なくとも半期、未使用アカウントは月次自動検出が望ましい。",
+        "source_type": "official"
+      }
+    ],
+    "levels": [
+      {
+        "level": "Level 1",
+        "name": "手動・Excel棚卸し",
+        "maturity": "low",
+        "steps": [
+          "Active Directory やローカルアカウント一覧を CSV 取得する",
+          "人事マスター、委託先台帳、システム一覧と手動突合する",
+          "退職者、異動者、長期未使用ID、権限過剰IDを抽出する",
+          "上長またはシステムオーナーに回付して承認を取る",
+          "無効化し、結果シートを監査証跡として保管する"
+        ],
+        "advantages": [
+          "着手障壁が低い",
+          "小規模環境なら短期改善しやすい"
+        ],
+        "weaknesses": [
+          "属人化しやすい",
+          "委託先やサービスアカウントのオーナーが抜けやすい",
+          "証跡の完全性が弱い"
+        ],
+        "japan_enterprise_note": "日本企業では最も一般的だが、Excel 自体が内部統制の弱点になりやすい。"
+      },
+      {
+        "level": "Level 2",
+        "name": "スクリプト自動化",
+        "maturity": "medium",
+        "steps": [
+          "PowerShell で LastLogonDate、PasswordLastSet、Enabled を収集する",
+          "Linux は lastlog、auditd、/etc/passwd、sudoers 変更履歴を収集する",
+          "Oracle Database は LAST_LOGIN、DBA_USERS、ロール付与を抽出する",
+          "判定ルールに基づきメールやチケットを自動起票する",
+          "無効化候補を一定期間観察してから停止する"
+        ],
+        "advantages": [
+          "90日未使用IDの検出や週次レビューを現実的に回せる",
+          "Excel 手作業を減らせる"
+        ],
+        "weaknesses": [
+          "ローカルアカウントや例外IDが抜けやすい",
+          "承認履歴の標準化が別途必要"
+        ],
+        "japan_enterprise_note": "実務上はこの段階が最も費用対効果が高く、Level 1 からの脱却点になりやすい。"
+      },
+      {
+        "level": "Level 3",
+        "name": "IGA による自動レビュー",
+        "maturity": "high",
+        "steps": [
+          "棚卸し対象ロール、グループ、アプリ、委託先ID、ゲストIDをモデル化する",
+          "レビューア、上長、システムオーナーを定義する",
+          "定期レビューと督促を自動送信する",
+          "否認時は自動剥奪または起票連携する",
+          "結果を監査用レポートとして保存する"
+        ],
+        "advantages": [
+          "監査証跡の完全性が高い",
+          "レビュー漏れを減らせる",
+          "特権ロールの継続的統制に向く"
+        ],
+        "weaknesses": [
+          "導入前に権限モデル整理が必要",
+          "例外運用の吸収設計が難しい"
+        ],
+        "products": [
+          "Entra ID Governance",
+          "SailPoint",
+          "Saviynt"
+        ],
+        "japan_enterprise_note": "Excel 文化からの移行では、まず特権ロールと委託先から絞って始める方が成功しやすい。"
+      }
+    ],
+    "orphaned_account_detection": {
+      "definition": "人事、委託先契約、システムオーナー、利用実績のいずれとも紐付かない孤立アカウント。",
+      "detection_patterns": [
+        "人事マスターに存在しないが Active Directory や Entra ID に残存するID",
+        "90日以上未使用の管理者ID",
+        "所有者属性が空欄のサービスアカウント",
+        "契約終了済みSIer企業の個人IDまたは共用ID",
+        "ローカル Administrators にだけ残る退職者ID"
+      ],
+      "automation_methods": [
+        "HRマスターとディレクトリの定期突合",
+        "LastLogonDate と sign-in inactivity の定期抽出",
+        "オーナー属性の必須化",
+        "Lifecycle Workflows による非アクティブユーザー無効化",
+        "棚卸し否認時の自動無効化チケット連携"
+      ],
+      "key_risks": [
+        "退職者残存による不正アクセス",
+        "委託先交代後の残存アクセス",
+        "説明責任のない固定運用IDの温存"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/entra/id-governance/lifecycle-workflow-inactive-users",
+        "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview"
+      ]
+    },
+    "service_account_inventory": {
+      "problem_statement": "サービスアカウントは人事連携から外れやすく、利用先不明、所有者不明、長期未変更パスワードの温床になりやすい。",
+      "inventory_steps": [
+        "Active Directory、ローカルOS、DB、ジョブスケジューラからサービスアカウント一覧を取得する",
+        "どのサーバー、どのサービス、どのジョブ、どの接続先で使うかを洗い出す",
+        "オーナー、業務用途、停止影響、代替方式を定義する",
+        "PasswordLastSet と最終利用日時を確認する",
+        "不要候補は無効化後に観察期間を設け、問題なければ削除する"
+      ],
+      "target_state_patterns": [
+        "Windows 系はグループ管理サービスアカウントへ移行する",
+        "クラウド系は Managed Identity を優先する",
+        "パスワード固定IDは PAM かシークレット管理でローテーションする"
+      ],
+      "evidence_required": [
+        "利用先一覧",
+        "オーナー",
+        "承認者",
+        "最終棚卸し日",
+        "最終パスワード変更日",
+        "ローテーション方式"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/services-hub/health/ja-prereqs/active-directory-security%28ja%29.pdf"
+      ]
+    }
+  },
+  "retention_requirements": [
+    {
+      "regulation": "PCI DSS v4.0",
+      "target": "監査ログ",
+      "retention_period": "最低12ヶ月、直近3ヶ月は即時分析可能",
+      "design_implication": "ホット保管とアーカイブ保管を分け、検索性能と長期保持を両立させる必要がある。",
+      "source_type": "official",
+      "source_urls": [
+        "https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4-0-SAQ-D-Merchant.pdf"
+      ]
+    },
+    {
+      "regulation": "PCI DSS v4.0",
+      "target": "Inactive user accounts",
+      "retention_period": "90日以内に削除または無効化",
+      "design_implication": "月次バッチでの長期未使用ID抽出と、自動チケット化が必要になる。",
+      "source_type": "official",
+      "source_urls": [
+        "https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4-0-SAQ-D-Merchant.pdf"
+      ]
+    },
+    {
+      "regulation": "NISC政府機関等の対策基準",
+      "target": "証跡",
+      "retention_period": "保存期間満了日まで保存",
+      "design_implication": "システム単位で保存期間を定義し、満了前削除を防ぐ統制が必要。",
+      "source_type": "official",
+      "source_urls": [
+        "https://www.nisc.go.jp/pdf/policy/general/k304-111C.pdf"
+      ]
+    },
+    {
+      "regulation": "NISC政府機関等の対策基準",
+      "target": "証跡の点検と分析",
+      "retention_period": "定期的または適宜",
+      "design_implication": "保管だけでなく、点検・分析・是正までを運用フローに含める必要がある。",
+      "source_type": "official",
+      "source_urls": [
+        "https://www.nisc.go.jp/pdf/policy/general/k304-111C.pdf"
+      ]
+    },
+    {
+      "regulation": "FISC安全対策基準",
+      "target": "特権操作ログ・委託先アクセスログ",
+      "retention_period": "金融機関では5年以上を前提とする長期保管設計が一般的",
+      "design_implication": "オンライン検索は短中期、法定監査対応はWORMまたは改ざん検知付きアーカイブに分けるのが現実的。",
+      "source_type": "public_mapping_and_industry_practice",
+      "source_urls": [
+        "https://www.fisc.or.jp/document/security/file/Cyber_mapping_202508.pdf",
+        "https://www.fsa.go.jp/news/r6/sonota/20241004/18.pdf"
+      ]
+    },
+    {
+      "regulation": "J-SOX",
+      "target": "棚卸し結果、権限変更承認、運用証跡",
+      "retention_period": "7年保管を前提に設計する企業が多い",
+      "design_implication": "Excel、メール、チケット、PAM、SIEM の証跡分散を避け、証跡の原本保全方針を決める必要がある。",
+      "source_type": "practice_based_inference",
+      "source_urls": []
+    },
+    {
+      "regulation": "金融商品取引業務実務",
+      "target": "取引関連や管理操作に関わる証跡",
+      "retention_period": "7年から10年の設計が多い",
+      "design_implication": "取引証跡とシステム管理証跡を同じタイムラインで引けることが重要。",
+      "source_type": "industry_practice",
+      "source_urls": []
+    },
+    {
+      "regulation": "個人情報保護法対応",
+      "target": "不正アクセス・漏えい調査ログ",
+      "retention_period": "事案対応完了まで保持し、必要に応じ延長",
+      "design_implication": "インシデント発生時に通常の削除サイクルを停止できるリーガルホールド設計が必要。",
+      "source_type": "practice_based_inference",
+      "source_urls": []
+    }
+  ],
+  "ai_analysis_trends": [
+    {
+      "trend": "UEBAの中心は行動ベースラインとリスクスコア化",
+      "time_context": "2026-04-07時点",
+      "detail": "Microsoft Sentinel UEBA は、ユーザー、ホスト、IP、アプリケーションなどの動的プロファイルを機械学習で作り、異常をリスクスコア化する。特権IDの異常時間帯利用、異常昇格、異常なローカルアカウント作成の検知に向く。",
+      "impact_on_operations": "SOC が特権操作をルール静的検知だけでなく、普段と違う作業として見られるようになる。",
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/azure/sentinel/identify-threats-with-entity-behavior-analytics",
+        "https://learn.microsoft.com/en-us/azure/sentinel/anomalies-reference"
+      ]
+    },
+    {
+      "trend": "AI支援は録画そのものより要約・異常抽出へ進んでいる",
+      "time_context": "2026-04-07時点",
+      "detail": "SecureCube Access Check は 2023-01-30 時点で AI動画ログ監査支援ツールを追加しており、録画の全件目視から異常候補抽出へ軸足が移っている。",
+      "impact_on_operations": "セッション録画の『あるが見ない』問題を緩和し、監査人のレビュー対象を絞り込める。",
+      "source_urls": [
+        "https://www.nri-secure.co.jp/news/2023/0130",
+        "https://www.nri-secure.co.jp/hubfs/NRIS/PDF/nrisecure-solution-guide.pdf"
+      ]
+    },
+    {
+      "trend": "Security Copilot と SIEM の統合が調査効率を上げる",
+      "time_context": "2026-04-07時点",
+      "detail": "Microsoft Sentinel と Security Copilot の連携は GA となっており、アラート調査、KQL 補助、インシデント要約の効率化が進んでいる。",
+      "impact_on_operations": "SOC の一次分析を短縮できるが、証跡原本の真正性や最終判断は人手が必要。",
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/azure/sentinel/sentinel-security-copilot",
+        "https://learn.microsoft.com/en-us/copilot/security/whats-new-copilot-security"
+      ]
+    },
+    {
+      "trend": "Splunkは単体UBAからES統合UEBAへ移行中",
+      "time_context": "2025-12-10 to 2026-12",
+      "detail": "Splunk UBA は 2025-12-10 に End of Sale となり、2026-12 にサポート終了予定。今後のUEBAは Splunk Enterprise Security 統合機能が中心になる。",
+      "impact_on_operations": "既存UBA利用企業は移行計画とユースケース再設計が必要。",
+      "source_urls": [
+        "https://www.splunk.com/en_us/pdfs/product-briefs/splunk-uba-end-of-sale-faq.pdf"
+      ]
+    },
+    {
+      "trend": "AIはコマンド意味理解に向かうが、証跡原本の保全が前提",
+      "time_context": "2024-2026",
+      "detail": "LLM やAIは PowerShell、bash、SQL の塊から危険操作候補を要約できるが、元ログと録画の完全性が弱いと誤判定の検証ができない。",
+      "impact_on_operations": "AI 導入前に、時刻同期、原本保全、チケット紐付け、イベント欠落監視を先に整える必要がある。",
+      "source_urls": []
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "監査証跡",
+      "object_type": "concept",
+      "description": "ログイン、昇格、操作、承認、結果確認を追跡可能にする証拠群。",
+      "properties": {
+        "core_elements": [
+          "誰が",
+          "いつ",
+          "どこから",
+          "何に対して",
+          "何をしたか",
+          "誰が承認したか"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "SIEM",
+      "object_type": "concept",
+      "description": "複数ログを集約し、検索、相関分析、検知、レポートを行う基盤。",
+      "properties": {}
+    },
+    {
+      "id": "node_003",
+      "label": "UEBA",
+      "object_type": "concept",
+      "description": "ユーザーとエンティティの行動ベースラインから異常を検知する分析方式。",
+      "properties": {}
+    },
+    {
+      "id": "node_004",
+      "label": "アカウント棚卸し",
+      "object_type": "concept",
+      "description": "付与済みアクセス権を定期的に見直し、妥当性を確認する運用。",
+      "properties": {}
+    },
+    {
+      "id": "node_005",
+      "label": "孤立アカウント",
+      "object_type": "risk",
+      "description": "所有者や正当利用根拠が不明なアカウント。",
+      "properties": {}
+    },
+    {
+      "id": "node_006",
+      "label": "サービスアカウント",
+      "object_type": "concept",
+      "description": "人ではなくサービスやジョブが利用する非人間ID。",
+      "properties": {}
+    },
+    {
+      "id": "node_007",
+      "label": "Oracle Audit Vault and Database Firewall",
+      "object_type": "product",
+      "description": "DB監査ログとSQLトラフィックを統合して監視する Oracle の監査基盤。",
+      "properties": {}
+    },
+    {
+      "id": "node_008",
+      "label": "CyberArk",
+      "object_type": "product",
+      "description": "セッション録画と特権ID秘匿化を行う特権アクセス管理製品。",
+      "properties": {}
+    },
+    {
+      "id": "node_009",
+      "label": "SecureCube Access Check",
+      "object_type": "product",
+      "description": "申請・承認・アクセス制御・ログ取得・監査補助を一体で扱う国内特権アクセス管理製品。",
+      "properties": {}
+    },
+    {
+      "id": "node_010",
+      "label": "Logstorage",
+      "object_type": "product",
+      "description": "長期保管と日本語監査レポートに強い国内ログ管理/SIEM製品。",
+      "properties": {}
+    },
+    {
+      "id": "node_011",
+      "label": "Microsoft Sentinel",
+      "object_type": "product",
+      "description": "UEBA と SOAR を統合したクラウドネイティブSIEM。",
+      "properties": {}
+    },
+    {
+      "id": "node_012",
+      "label": "Splunk Enterprise Security",
+      "object_type": "product",
+      "description": "大規模相関分析に強い SIEM。",
+      "properties": {}
+    },
+    {
+      "id": "node_013",
+      "label": "Entra ID Governance",
+      "object_type": "product",
+      "description": "Access Reviews と Lifecycle Workflows を提供する ID ガバナンス機能群。",
+      "properties": {}
+    },
+    {
+      "id": "node_014",
+      "label": "SailPoint",
+      "object_type": "product",
+      "description": "Certification Campaigns とアクセス認証レビューを自動化する IGA 製品。",
+      "properties": {}
+    },
+    {
+      "id": "node_015",
+      "label": "Windows Server",
+      "object_type": "product",
+      "description": "特権ログオン、PowerShell、WinRM の証跡源になるサーバーOS。",
+      "properties": {}
+    },
+    {
+      "id": "node_016",
+      "label": "Linux サーバー",
+      "object_type": "product",
+      "description": "SSH、sudo、auditd の証跡源になるサーバーOS。",
+      "properties": {}
+    },
+    {
+      "id": "node_017",
+      "label": "FISC安全対策基準",
+      "object_type": "concept",
+      "description": "金融機関で広く参照される認証、アクセス管理、ログ管理、監視の基準。",
+      "properties": {}
+    },
+    {
+      "id": "node_018",
+      "label": "J-SOX",
+      "object_type": "concept",
+      "description": "内部統制上の権限見直しと証跡保全に影響する日本の内部統制監査文脈。",
+      "properties": {}
+    },
+    {
+      "id": "node_019",
+      "label": "PCI DSS",
+      "object_type": "concept",
+      "description": "アクセス見直し、未使用アカウント無効化、監査ログ保管を明示するカード業界基準。",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "SIEM は分散証跡を横断検索可能にする。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "UEBA は十分なログ集約と基礎データを前提にする。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_005",
+      "relationship": "mitigates",
+      "description": "定期棚卸しは孤立アカウントを減らす。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "棚卸しはサービスアカウントを対象から外してはならない。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "Oracle AVDF はDB監査証跡を統合する。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "CyberArk はセッション録画と利用統制を実装する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "SecureCube Access Check は申請から監査補助までの証跡を残す。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "Logstorage は日本市場向けのログ管理/SIEM製品である。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_003",
+      "relationship": "implements",
+      "description": "Microsoft Sentinel は UEBA を内蔵する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "Splunk Enterprise Security は大規模SIEMの代表例である。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "Entra ID Governance はアクセスレビューと非アクティブID処理を支援する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "SailPoint は認証レビューと棚卸し自動化を支援する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_001",
+      "relationship": "requires",
+      "description": "Windows Server は高度な監査ポリシー設定がなければ十分な証跡源にならない。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_001",
+      "relationship": "requires",
+      "description": "Linux サーバーは auditd と sudo 設計がなければ追跡性が弱い。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_001",
+      "relationship": "requires",
+      "description": "FISC安全対策基準はログ保全と監視を重視する。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "FISC安全対策基準は権限の定期見直しを求める方向にある。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "J-SOX では棚卸し結果の文書化が重要になる。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "PCI DSS はアクセス見直しと未使用アカウント無効化を求める。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_010",
+      "relationship": "complements",
+      "description": "SecureCube Access Check の一次証跡を Logstorage に集約すると長期保管と横断検索に向く。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "SecureCube Access Check の操作ログを Sentinel へ送れば特権操作の異常検知を強化できる。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k_001",
+      "topic": "証跡設計はログソースの足し算ではなく相互検証で考える",
+      "content": "Windows Server、Linux サーバー、DB監査、PAM録画を別々に集めるだけでは不十分である。申請、承認、ログイン、昇格、コマンド、結果確認が同じ時系列で追えるように設計して初めて監査に耐える。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_002",
+      "topic": "踏み台ログだけでは日本企業の監査要求を満たしにくい",
+      "content": "踏み台に接続した証跡だけでは、最終接続先サーバーで何が起きたか、権限変更があったか、共有アクセスがあったかを説明しにくい。最終接続先OSログとPAMログの両方が必要である。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_003",
+      "topic": "PowerShell証跡は特権運用の実態把握に重要である",
+      "content": "Windows 管理では GUI 操作の裏で PowerShell が実行されることが多い。Script Block Logging がないと、誰が何を自動化したかの説明責任が弱くなる。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_004",
+      "topic": "Linuxでは shell history より auditd を優先すべきである",
+      "content": "history は削除や改ざんが可能で、監査証跡として脆弱である。auditd と sudo I/O logging を組み合わせる方が、コマンドと重要ファイル変更の追跡性が高い。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_005",
+      "topic": "証跡の真正性は保管方式で決まる",
+      "content": "ログ取得ができていても、暗号化、改ざん検知、WORM、保管先分離がなければ訴求力は弱い。長期保管は検索性と真正性を分けて設計する必要がある。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_006",
+      "topic": "Logstorage は国内監査と長期保管の説明がしやすい",
+      "content": "Logstorage は圧縮、暗号化保管、改ざん検出、レポートを明示しており、国内監査チームや金融向け提案で説明しやすい。2026年2月6日時点で金融機関採用100件突破も公表されている。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_007",
+      "topic": "SecureCube Access Check は日本企業の申請承認文化と相性がよい",
+      "content": "SecureCube Access Check は申請、承認、アクセス制御、ログ取得、監査補助を一体で扱えるため、紙やExcelに分散した運用を縮約しやすい。監査工数の削減にもつながる。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_008",
+      "topic": "PAM録画は完全証跡だが検索性が課題になる",
+      "content": "動画やキーストロークは調査には強いが、定例監査では検索と要約がボトルネックになる。メタデータ化して SIEM に送る設計が必要である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_009",
+      "topic": "SIEM は監査保管庫ではなく運用分析基盤として考えるべきである",
+      "content": "長期保管だけに SIEM を使うとコストが膨らみやすい。直近分析用のホット領域と、証拠保全用のアーカイブ領域を分ける方が運用しやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_010",
+      "topic": "Microsoft Sentinel は Entra ID 中心の企業で自然な選択肢になる",
+      "content": "Entra ID、Microsoft 365、Defender をすでに使っている企業では、管理ロール、サインイン、端末、メールを同じ分析基盤で見やすい。日本企業でも M365 中心の環境では拡張しやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_011",
+      "topic": "Splunk は新規なら ES 統合UEBA前提で見るべきである",
+      "content": "Splunk UBA は 2025年12月10日に End of Sale となったため、今後は Splunk Enterprise Security に統合された UEBA を前提に設計する必要がある。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_012",
+      "topic": "UEBA は特権ユーザーだけを特別扱いしすぎない方がよい",
+      "content": "異常行動は特権IDだけでなく、特権へ昇格する前の通常IDから始まることが多い。通常ID、端末、踏み台、特権IDのつながりで見る必要がある。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_013",
+      "topic": "Access Reviews は証跡としても有効である",
+      "content": "Entra ID Governance の Access Reviews は、誰がいつ何を確認し、継続可否をどう判断したかを残せる。棚卸しそのものが証跡になる点が重要である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_014",
+      "topic": "Lifecycle Workflows は孤立アカウント対策の即効薬になりやすい",
+      "content": "Entra ID Governance では一定日数非アクティブなユーザーの無効化や削除を自動化できるため、退職者や休職者の残存リスク低減に向く。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_015",
+      "topic": "SailPoint は Excel 棚卸しからの脱却手段として有効である",
+      "content": "Certification Campaigns、Privileged Access フラグ、Last Account Activity、AI推奨により、手動確認と根拠不足の棚卸しを減らせる。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_016",
+      "topic": "J-SOX 対応では棚卸し結果の文書化が重要である",
+      "content": "棚卸しを実施しただけでは不十分で、対象、判断者、判断根拠、是正結果を残す必要がある。Excel からシステム化へ移しても、この要件は変わらない。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_017",
+      "topic": "FISC 文脈では委託先アカウントの扱いが重要になる",
+      "content": "外部ベンダーやSIerのアクセスは、個人識別、時間制限、記録、終了時失効まで含めて統制しないと説明責任が弱い。共有ベンダーIDは避けるべきである。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_018",
+      "topic": "PCI DSS は未使用アカウントの自動検出を強く後押しする",
+      "content": "90日以内無効化要件があるため、月次または週次で LastLogon を抽出する運用が必要になる。これは特権ID棚卸しの自動化の出発点にもなる。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_019",
+      "topic": "サービスアカウント棚卸しは人アカウントより先に止めない勇気が必要である",
+      "content": "利用先不明のサービスアカウントを即削除すると障害になりやすい。まず観察期間付き無効化と依存関係可視化を行うべきである。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_020",
+      "topic": "gMSA は Windows 系サービスアカウント問題の現実解である",
+      "content": "固定パスワードのサービスアカウントを gMSA に寄せると、パスワード更新漏れと共有秘密のリスクを減らせる。ただし利用可能なアプリとそうでないものを切り分ける必要がある。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_021",
+      "topic": "Oracle の監査は SYSDBA とアカウント管理から着手するとよい",
+      "content": "すべての SQL を最初から監査しようとすると性能や運用負荷の懸念が出やすい。まずは SYSDBA、CREATE USER、ALTER USER、GRANT、REVOKE の監査から始める方が現実的である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_022",
+      "topic": "Oracle AVDF はDB監査とOS監査の橋渡しに有効である",
+      "content": "監査ログとSQLトラフィックを統合できるため、DBA がどのDBで何をしたかの可視化を強化しやすい。特権ユーザーの sensitive data アクセス監視に向く。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_023",
+      "topic": "録画のAI要約は監査工数削減の現実的なテーマになってきた",
+      "content": "AI動画ログ監査支援のように、録画全件レビューではなく異常候補抽出へ寄せる動きが出ている。今後は動画、コマンド、チケットの自動要約が広がる可能性が高い。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_024",
+      "topic": "SOC自動化は特権ID停止よりまず保守ベンダー遮断から始めるとよい",
+      "content": "日本企業では障害時の業務影響を恐れて自動停止に踏み込みにくい。まず委託先アカウントや深夜保守経路の遮断から自動化すると導入しやすい。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_025",
+      "topic": "Windows Event ID は 4624 だけでは足りない",
+      "content": "4624 だけ見ても、グループ昇格、明示的資格情報使用、共有アクセス、Kerberos や NTLM の残存までは追えない。4728、4732、4768、4769、4776、5145 まで見て初めて管理者行動の全体像に近づく。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_026",
+      "topic": "SIEM連携の価値は相関より先に名寄せで決まる",
+      "content": "PAM の個人ID、Active Directory の sAMAccountName、Entra ID の UPN、チケット番号、端末名が名寄せできないと、分析ルールを増やしても調査効率は上がらない。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_027",
+      "topic": "長期保管要件は規制別に一つへ寄せた方がよい",
+      "content": "J-SOX、FISC、PCI DSS、個人情報事故対応で保持年数がずれると、システムごとに削除ルールが散らばる。最も厳しい期間へ寄せた企業標準を先に決める方が運用は安定する。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_028",
+      "topic": "日本企業の現実解は Excel 全廃ではなく高リスク領域からの置換である",
+      "content": "いきなり全IDを IGA に移すより、特権ロール、委託先ID、長期未使用ID、サービスアカウントから先に自動化する方が失敗しにくい。Excel は最終的に例外レビューだけへ縮退させるのが現実的である。",
+      "evidence_level": "high",
+      "japan_specific": true
+    }
+  ]
+}

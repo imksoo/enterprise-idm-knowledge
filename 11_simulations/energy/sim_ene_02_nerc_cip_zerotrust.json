@@ -1,0 +1,350 @@
+{
+  "metadata": {
+    "scenario_id": "sim_ene_01",
+    "title": "電力会社の次世代ID管理：NERC CIP・JEAG1111とゼロトラストの接続点",
+    "industry": "エネルギー",
+    "company_profile": {
+      "company_type": "大手電力会社",
+      "employees": 10000,
+      "locations": "発電・送配電・本社機能を持つ全国拠点",
+      "environment": [
+        "IT系はEntra Hybrid Join移行中",
+        "OT系は専用Active Directory",
+        "SCADA/DCSはIT系と物理分離",
+        "政府のゼロトラスト推進方針への対応要求"
+      ],
+      "current_constraints": [
+        "制御系は物理分離前提",
+        "規制・ガイドラインが多層",
+        "IT/OT境界の認証経路が複雑"
+      ]
+    },
+    "themes": [
+      "ゼロトラスト",
+      "NERC CIP",
+      "JEAG1111",
+      "OT境界管理",
+      "特権アクセス管理"
+    ],
+    "knowledge_needs": [
+      "NERC CIP、JEAG1111、NIST SP 800-82 Rev.3の役割分担",
+      "ゼロトラストをOTへそのまま適用できない理由",
+      "IT/OT境界で必要なPAM（特権アクセス管理）と踏み台設計",
+      "物理分離された制御系でのログ保全と承認フロー設計",
+      "Entra Hybrid Join移行中のIT側ゼロトラスト強化策",
+      "電気事業法改正を踏まえた説明責任の整理"
+    ]
+  },
+  "personas": [
+    {
+      "id": "ene_p01",
+      "name": "本田 健",
+      "role": "CISO",
+      "background": "IT/OT両面のセキュリティ統括を担い、全社方針と規制対応をまとめている。",
+      "stance": "OTの制約を理解しつつ、IT/OT横断で説明可能な統制モデルを作りたい。"
+    },
+    {
+      "id": "ene_p02",
+      "name": "電力ISAC担当",
+      "role": "脅威情報共有担当",
+      "background": "他社インシデントや政府共有情報を収集し、社内へ展開している。",
+      "stance": "他社事例を根拠に、境界管理の強化を急ぐべきと考える。"
+    },
+    {
+      "id": "ene_p03",
+      "name": "制御システム部長",
+      "role": "制御システム部長",
+      "background": "発電制御システムの安定運転を担い、変更管理に厳しい。",
+      "stance": "制御系へIT流のゼロトラストを持ち込むことに反対する。"
+    },
+    {
+      "id": "ene_p04",
+      "name": "NISTコンサルタント",
+      "role": "NISTコンサルタント",
+      "background": "NERC CIPとNIST SP 800-82 Rev.3を踏まえた重要インフラ設計支援を行う。",
+      "stance": "OTはゾーン維持、ITはゼロトラスト、境界は厳格統制という整理を重視する。"
+    },
+    {
+      "id": "ene_p05",
+      "name": "SIer提案",
+      "role": "SIer提案",
+      "background": "IT/OT境界のID管理と保守接続設計を支援している。",
+      "stance": "IT側ゼロトラスト化とOT境界PAMの二層設計を提案したい。"
+    },
+    {
+      "id": "ene_p06",
+      "name": "経産省担当官",
+      "role": "経産省担当官",
+      "background": "重要インフラ向け制度対応の説明役を担うフィクションの担当官。",
+      "stance": "規制準拠だけでなく、実効性ある説明責任を重視する。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "ene_scene_01",
+      "title": "脅威情報の共有",
+      "setting": "電力ISACから他社OT攻撃事例が共有され、緊急対策会議が招集される。",
+      "dialogue": [
+        {
+          "speaker": "電力ISAC担当",
+          "text": "海外電力事業者で、IT側侵害から保守経路を経てOT境界へ迫った事例が共有されました。制御系そのものは分離されていても、境界のID管理が弱いと狙われます。",
+          "subtext": "脅威の焦点が境界にあると伝えたい。"
+        },
+        {
+          "speaker": "本田 健",
+          "text": "当社もITとOTは物理分離ですが、保守端末、申請フロー、委託先接続は複雑です。分離しているだけで安心できる段階ではありません。",
+          "subtext": "現状に安心していない。"
+        },
+        {
+          "speaker": "制御システム部長",
+          "text": "ただし、その話を理由に制御系をITと同じ仕組みに変えるのは反対です。止まらないことが最優先で、制御系の変更は最小限でなければなりません。",
+          "subtext": "誤った対策でリスクを増やしたくない。"
+        },
+        {
+          "speaker": "NISTコンサルタント",
+          "text": "その通りです。議論すべきは制御系の全面改造ではなく、境界アクセスと特権操作の統制をどう引き上げるかです。",
+          "subtext": "対策対象を絞っている。"
+        }
+      ],
+      "issues_surfaced": [
+        "他社OT攻撃事例の共有",
+        "境界ID管理の脆弱性",
+        "物理分離への過信",
+        "制御系変更への反発"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "06_security_hardening/ransomware_defense.json",
+        "05_hybrid_scenarios/hybrid_os_combinations.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_02",
+      "title": "現状のID管理課題",
+      "setting": "IT/OT境界の認証経路と特権アカウント運用を可視化するレビュー会。",
+      "dialogue": [
+        {
+          "speaker": "SIer提案",
+          "text": "棚卸しすると、IT側のEntra Hybrid Join移行と、OT側専用Active Directory、さらに保守ベンダー用ローカルIDが混在しています。承認もログ保全も経路ごとに別です。",
+          "subtext": "スパゲッティ化した実態を示している。"
+        },
+        {
+          "speaker": "本田 健",
+          "text": "これでは、誰が境界に入ったかは追えても、どの承認に基づいてどこまで操作したかが一つに結び付きません。説明責任の観点で弱いです。",
+          "subtext": "経営・規制説明を意識している。"
+        },
+        {
+          "speaker": "制御システム部長",
+          "text": "現場としては、保守ベンダーごとに事情が違うので例外が増えました。結果として、運転停止時の緊急経路が標準化されていません。",
+          "subtext": "例外運用の積み重ねを認めている。"
+        },
+        {
+          "speaker": "SIer提案",
+          "text": "まずは境界の入口を一点化し、PAMで個人認証、承認、録画、時間制限を統合する必要があります。そこを整えれば制御系本体は大きく変えずに済みます。",
+          "subtext": "改善の最短経路を示している。"
+        }
+      ],
+      "issues_surfaced": [
+        "IT/OT境界の認証経路乱立",
+        "ローカルID残存",
+        "承認とログの分断",
+        "緊急経路の未標準化"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "05_hybrid_scenarios/hybrid_os_combinations.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_03",
+      "title": "規制対応の整理",
+      "setting": "JEAG1111、NERC CIP、政府方針の位置付けを比較しながら整理する会議。",
+      "dialogue": [
+        {
+          "speaker": "経産省担当官",
+          "text": "制度対応では、国内の運用・保安文脈と国際的な重要インフラ規律を分けて整理する必要があります。規制名を並べるだけではなく、どの資産に何を適用するかが重要です。",
+          "subtext": "規制の読み替えを防ぎたい。"
+        },
+        {
+          "speaker": "NISTコンサルタント",
+          "text": "NERC CIPは境界保護と特権管理の考え方で参考になります。NIST SP 800-82 Rev.3はOT防御の実装原則、JEAG1111は国内の運用実務と説明責任に近い位置付けで見ると整理しやすいです。",
+          "subtext": "各フレームワークの役割を分解している。"
+        },
+        {
+          "speaker": "本田 健",
+          "text": "つまり、IT側ゼロトラスト方針をそのままOTへ当てるのではなく、OT境界統制と運用規律を別レイヤーで説明する必要があるわけですね。",
+          "subtext": "全体方針の構造を理解した。"
+        },
+        {
+          "speaker": "経産省担当官",
+          "text": "その通りです。制度対応では、適用除外の理由と代替統制が明確なら、現実的な設計として説明可能です。",
+          "subtext": "一律適用でないことを明示している。"
+        }
+      ],
+      "issues_surfaced": [
+        "規制・ガイドラインの位置付け混同",
+        "OT向け代替統制の必要性",
+        "適用対象の切り分け",
+        "説明責任の文書化"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "07_migration_patterns/japan_security_frameworks.json",
+        "06_security_hardening/sysadmin_access_evolution.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_04",
+      "title": "ゼロトラスト適用範囲の議論",
+      "setting": "IT側とOT側でゼロトラストの適用範囲を線引きする討議。",
+      "dialogue": [
+        {
+          "speaker": "制御システム部長",
+          "text": "制御系ネットワークに条件付きアクセスや頻繁なポリシー変更を入れるのは受け入れられません。認証失敗や遅延が運転に影響する構成は避けるべきです。",
+          "subtext": "制御安定性を最優先している。"
+        },
+        {
+          "speaker": "NISTコンサルタント",
+          "text": "ゼロトラストは思想として参考になりますが、OTへ同じ実装を持ち込む必要はありません。OTでは固定経路、限定端末、事前承認、監視強化が実質的な代替統制になります。",
+          "subtext": "概念適用と実装適用を分けている。"
+        },
+        {
+          "speaker": "本田 健",
+          "text": "IT側はEntra ID、条件付きアクセス、多要素認証で強化し、OT側はゾーン維持と境界PAMに注力する。その二層構造で整理すれば社内合意が取れそうです。",
+          "subtext": "全社方針としてまとめ始めた。"
+        },
+        {
+          "speaker": "SIer提案",
+          "text": "加えて、OT境界に入れる端末は限定し、委託先は特権アクセス ワークステーション相当の条件を付けます。自由接続を残さないことが重要です。",
+          "subtext": "境界運用を厳格化したい。"
+        }
+      ],
+      "issues_surfaced": [
+        "OTへの条件付きアクセスポリシー適用限界",
+        "思想と実装の切り分け",
+        "IT側ゼロトラスト強化",
+        "OT境界端末の限定"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_05",
+      "title": "現実的な設計",
+      "setting": "最終方針としてIT側ゼロトラスト化とOT境界PAMを組み合わせた設計を承認する場面。",
+      "dialogue": [
+        {
+          "speaker": "SIer提案",
+          "text": "最終案は、IT側でEntra Hybrid Joinと条件付きアクセスを進め、OT境界は専用踏み台とPAMで統制する構成です。制御系内部のActive Directoryは維持し、変更点を境界に集約します。",
+          "subtext": "変更影響を最小化したい。"
+        },
+        {
+          "speaker": "本田 健",
+          "text": "この案なら、政府方針にはIT側のゼロトラスト強化で応えつつ、制御系には代替統制を明示できます。経営にも規制当局にも説明しやすいです。",
+          "subtext": "説明可能性を重視している。"
+        },
+        {
+          "speaker": "制御システム部長",
+          "text": "制御系のゾーン維持が前提なら受け入れます。条件は、保守時の承認手順と緊急遮断手順を現場主導で作ることです。",
+          "subtext": "現場条件付きで合意した。"
+        },
+        {
+          "speaker": "経産省担当官",
+          "text": "適用範囲、非適用理由、代替統制、検証計画まで書ければ、制度対応として筋が通ります。運用レビューを継続条件にしてください。",
+          "subtext": "文書化と継続評価を求めている。"
+        }
+      ],
+      "issues_surfaced": [
+        "IT側ゼロトラストとOT境界統制の二層設計",
+        "制御系Active Directory維持",
+        "緊急遮断手順の整備",
+        "継続レビュー前提の制度対応"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/international_security_frameworks.json",
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/japan_security_frameworks.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "IT/OT境界統制",
+      "current": "認証経路と保守接続が複数に分かれ、個人認証と承認記録が一元化されていない",
+      "target": "境界の入口をPAMと専用踏み台へ集約し、録画・承認・時間制限を統合する",
+      "gap": "境界統制を担う共通基盤がない",
+      "priority": "high"
+    },
+    {
+      "category": "ゼロトラスト適用範囲",
+      "current": "IT側方針をOTへどう適用するかの整理が不十分",
+      "target": "IT側はゼロトラスト、OT側は代替統制という二層設計を明文化する",
+      "gap": "思想と実装の切り分けが文書化されていない",
+      "priority": "high"
+    },
+    {
+      "category": "規制対応整理",
+      "current": "JEAG1111、NERC CIP、政府方針の関係が担当者依存で解釈されている",
+      "target": "資産区分ごとに適用基準と代替統制を整理した説明資料を持つ",
+      "gap": "フレームワーク横断のマッピング資料がない",
+      "priority": "medium"
+    },
+    {
+      "category": "委託先アクセス",
+      "current": "保守ベンダーごとに経路とIDがばらばら",
+      "target": "個人ID、時間制限、録画、緊急遮断を標準化する",
+      "gap": "契約条件と運用標準の整備が不足",
+      "priority": "high"
+    },
+    {
+      "category": "OTログ保全",
+      "current": "境界での操作証跡が承認情報と結び付かない",
+      "target": "申請、承認、接続、操作、レビューを時系列で追える状態",
+      "gap": "ログ保管方式と相関分析基盤が未整備",
+      "priority": "medium"
+    },
+    {
+      "category": "緊急対応",
+      "current": "緊急保守時の遮断判断と例外アクセス手順が標準化されていない",
+      "target": "現場主導で緊急時手順を整備し、PAM上で実行管理する",
+      "gap": "現場・CISO・外部委託先の責任分界が曖昧",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "phase": "phase_1",
+      "action": "IT/OT境界の認証経路、踏み台、委託先接続を棚卸しし、入口統制対象を確定する",
+      "owner": "CISO + SIer提案",
+      "rationale": "スパゲッティ化した接続経路を整理しないと設計が始められないため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "OT境界に専用踏み台とPAMを導入し、個人認証、承認、録画、時間制限を一元化する",
+      "owner": "SIer提案",
+      "rationale": "制御系内部へ大きな変更を入れずに統制を強化できるため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "IT側のEntra Hybrid Join、条件付きアクセス、多要素認証の強化計画を加速する",
+      "owner": "CISO",
+      "rationale": "政府のゼロトラスト推進方針に対する主な対応領域がIT側だから"
+    },
+    {
+      "phase": "phase_2",
+      "action": "JEAG1111、NERC CIP、NIST SP 800-82 Rev.3のマッピング資料を資産区分別に作成する",
+      "owner": "NISTコンサルタント",
+      "rationale": "規制・監査対応の説明責任を強化するため"
+    },
+    {
+      "phase": "phase_2",
+      "action": "緊急遮断手順、ブレークグラス、運用レビューを現場主導で定義し年次訓練に組み込む",
+      "owner": "制御システム部長",
+      "rationale": "有事に机上設計だけで終わらせないため"
+    }
+  ]
+}

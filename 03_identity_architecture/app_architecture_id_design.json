@@ -1,0 +1,1595 @@
+{
+  "metadata": {
+    "id": "app_architecture_id_design_v1",
+    "title": "アプリケーションアーキテクチャ別 ID 管理・認証設計",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "application-architecture",
+      "authentication-design",
+      "service-account",
+      "modernization",
+      "japan-context"
+    ],
+    "related_files": [
+      "./identity_landscape.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "モノリシックWebアプリ",
+      "object_type": "pattern",
+      "description": "画面、業務ロジック、認証、セッション管理が一体化しやすい従来型 Web アプリケーション。",
+      "properties": {
+        "architecture_class": "web-monolith",
+        "common_in_japan": true
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "セッションベース認証",
+      "object_type": "pattern",
+      "description": "ログイン後にサーバー側セッションを保持し、Cookie 経由で継続利用する認証方式。",
+      "properties": {
+        "stateful": true,
+        "browser_friendly": true
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Session Cookie",
+      "object_type": "concept",
+      "description": "サーバー側セッション識別子を格納する Cookie。盗難や固定化への対策が必要である。",
+      "properties": {
+        "storage": "browser-cookie",
+        "risk_focus": "session-hijacking"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "LDAP bind型社内アプリ",
+      "object_type": "pattern",
+      "description": "Active Directory や LDAP ディレクトリへアプリケーションが直接 bind して認証する社内アプリの実装類型。",
+      "properties": {
+        "dependency": "direct-directory-coupling",
+        "modernization_difficulty": "high"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Integrated Windows Authentication",
+      "object_type": "pattern",
+      "description": "ブラウザと Windows ログオン資格情報を使って Kerberos を優先利用する統合認証方式。IWA とも呼ばれる。",
+      "properties": {
+        "platform_bias": "windows-domain",
+        "sso_scope": "intranet"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "アプリ改修によるモダナイズ",
+      "object_type": "pattern",
+      "description": "既存アプリケーションに SAML または OpenID Connect を実装し、IdP 連携へ寄せる近代化パターン。",
+      "properties": {
+        "change_scope": "application-code",
+        "target_state": "federation-ready"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "リバースプロキシ認証変換",
+      "object_type": "pattern",
+      "description": "アプリ本体を大きく改修せず、リバースプロキシやアクセスゲートウェイで SSO とヘッダー変換を担う近代化パターン。",
+      "properties": {
+        "change_scope": "edge-layer",
+        "target_state": "transitional-modernization"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "SPA + REST API",
+      "object_type": "pattern",
+      "description": "ブラウザ側に状態管理を持つ SPA と、バックエンド API を分離したモダン Web アーキテクチャ。",
+      "properties": {
+        "architecture_class": "spa-api",
+        "browser_public_client": true
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "Authorization Code Flow with PKCE",
+      "object_type": "pattern",
+      "description": "SPA のような公開クライアントで OpenID Connect を安全に利用するための認可コードフロー拡張。",
+      "properties": {
+        "protocol_family": "oauth-oidc",
+        "recommended_for_spa": true
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "JWT Access Token",
+      "object_type": "concept",
+      "description": "API 呼び出しで提示される JSON Web Token 形式のアクセストークン。寿命と格納場所の設計が重要である。",
+      "properties": {
+        "token_type": "access-token",
+        "format": "jwt"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "Refresh Token",
+      "object_type": "concept",
+      "description": "短寿命アクセストークンを再取得するための長めのトークン。漏えい時の影響が大きく、発行条件の制御が必要である。",
+      "properties": {
+        "token_type": "refresh-token",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "BFF",
+      "object_type": "pattern",
+      "description": "Backend for Frontend がブラウザの代わりにトークン処理を担い、フロントエンドにはセッションのみを見せる実装パターン。",
+      "properties": {
+        "full_name": "Backend for Frontend",
+        "goal": "reduce-browser-token-exposure"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "メモリ保持トークン",
+      "object_type": "pattern",
+      "description": "ブラウザ JavaScript メモリ内にアクセストークンを保持し、永続ストレージを避ける取り扱い方。",
+      "properties": {
+        "storage": "browser-memory",
+        "reload_behavior": "re-auth-or-refresh"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "HttpOnly Cookie",
+      "object_type": "pattern",
+      "description": "JavaScript から直接参照できない Cookie。トークンやセッション識別子の保護に使うが、CSRF 対策と一体設計が必要である。",
+      "properties": {
+        "browser_protection": "xss-exposure-reduction",
+        "requires_csrf_protection": true
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "マイクロサービスアーキテクチャ",
+      "object_type": "pattern",
+      "description": "機能を複数サービスへ分割し、サービス間認証と認可の一貫性が設計上の中心課題となるアーキテクチャ。",
+      "properties": {
+        "architecture_class": "microservices",
+        "east_west_traffic": true
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "mTLS",
+      "object_type": "protocol",
+      "description": "相互 TLS によりサービス間で相手を証明し、通信経路の暗号化と認証を同時に成立させる方式。",
+      "properties": {
+        "protocol_family": "transport-auth",
+        "trust_anchor_required": true
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "API Key",
+      "object_type": "protocol",
+      "description": "固定キーを呼び出し時に提示する簡便な方式。サービス間トレーサビリティやローテーションで限界が出やすい。",
+      "properties": {
+        "secret_based": true,
+        "suitability": "limited"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "Service Mesh",
+      "object_type": "pattern",
+      "description": "サイドカーまたはデータプレーンでサービス間通信を統制し、mTLS や可観測性を標準化する実装基盤。",
+      "properties": {
+        "scope": "east-west-traffic",
+        "operational_complexity": "medium-to-high"
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "Istio",
+      "object_type": "product",
+      "description": "mTLS、自動証明書配布、トラフィック制御を提供する代表的な Service Mesh 実装。",
+      "properties": {
+        "vendor": "open-source",
+        "mesh_style": "sidecar"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "Linkerd",
+      "object_type": "product",
+      "description": "比較的軽量な Service Mesh 実装で、mTLS 標準化の導入障壁を抑えやすい。",
+      "properties": {
+        "vendor": "open-source",
+        "mesh_style": "lightweight"
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "SPIFFE",
+      "object_type": "pattern",
+      "description": "ワークロードに標準化された ID 形式を与える仕様で、サービス主体を人間 ID から分離して扱える。",
+      "properties": {
+        "scope": "workload-identity",
+        "credential_form": "x509-or-jwt"
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "SPIRE",
+      "object_type": "product",
+      "description": "SPIFFE ベースのワークロード ID 発行と証明を実装する代表的な基盤。",
+      "properties": {
+        "vendor": "open-source",
+        "role": "spiffe-runtime"
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "JWT伝搬",
+      "object_type": "pattern",
+      "description": "フロントエンド起点の JWT を内部サービスへそのまま伝搬し、呼び出し連鎖で利用するパターン。",
+      "properties": {
+        "token_scope": "end-user-context",
+        "risk_focus": "audience-sprawl"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "On-Behalf-Of",
+      "object_type": "pattern",
+      "description": "中間サービスが受け取ったトークンを使って、下流向けに代理トークンを取得する委任パターン。",
+      "properties": {
+        "delegation_model": "downstream-token-issuance",
+        "control_level": "higher-than-propagation"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "Central Token Exchange",
+      "object_type": "pattern",
+      "description": "中央のトークンブローカーでトークン交換を統制し、下流システムごとに適切な主体とクレームへ変換する方式。",
+      "properties": {
+        "control_point": "central-broker",
+        "use_case": "heterogeneous-backend"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "Token Introspection",
+      "object_type": "pattern",
+      "description": "参照型トークンや検証ポリシーの一元化のために、API がトークン状態を認可サーバーへ問い合わせる方式。",
+      "properties": {
+        "token_style": "reference-or-policy-driven",
+        "tradeoff": "runtime-latency"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "サーバーレス / FaaS",
+      "object_type": "pattern",
+      "description": "短時間実行の関数へコードを載せるアーキテクチャで、実行主体とイベント起点の認証設計が中心になる。",
+      "properties": {
+        "architecture_class": "serverless",
+        "ephemeral_runtime": true
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "AWS Lambda",
+      "object_type": "product",
+      "description": "AWS の代表的な関数実行基盤。IAM ロールと連携した実行主体設計が前提となる。",
+      "properties": {
+        "vendor": "AWS",
+        "cloud": "aws"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "Azure Functions",
+      "object_type": "product",
+      "description": "Microsoft Azure の関数実行基盤。Managed Identity を前提にした設計と相性が良い。",
+      "properties": {
+        "vendor": "Microsoft",
+        "cloud": "azure"
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "Google Cloud Functions",
+      "object_type": "product",
+      "description": "Google Cloud の関数実行基盤。サービスアカウントと IAM を組み合わせた権限設計が要点となる。",
+      "properties": {
+        "vendor": "Google Cloud",
+        "cloud": "gcp"
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "実行ロール",
+      "object_type": "pattern",
+      "description": "関数やアプリケーションに実行時権限を与える非人間 ID 設計。最小権限原則と分離設計が前提となる。",
+      "properties": {
+        "identity_scope": "runtime",
+        "governance_focus": "least-privilege"
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "ワークロード ID",
+      "object_type": "concept",
+      "description": "人間ユーザーとは別に、コンテナ、関数、ジョブ、サービスへ付与する機械主体の ID。",
+      "properties": {
+        "principal_type": "non-human",
+        "usage_scope": "cloud-native"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "Cold Start 認証レイテンシ",
+      "object_type": "risk",
+      "description": "関数起動時のトークン取得、秘密情報取得、mTLS ハンドシェイクが初回遅延を増やす問題。",
+      "properties": {
+        "impact": "latency",
+        "trigger": "cold-start"
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "コンテナ / Kubernetes",
+      "object_type": "pattern",
+      "description": "Pod 単位の主体、Namespace 境界、外部クラウド権限との連携を含めて認証設計を組み立てる実行基盤。",
+      "properties": {
+        "architecture_class": "kubernetes",
+        "multi_tenant_risk": true
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "Projected Service Account Token",
+      "object_type": "pattern",
+      "description": "Kubernetes が短寿命トークンを Pod へ投影し、従来の長寿命 Service Account Token より安全に扱う方式。",
+      "properties": {
+        "token_lifetime": "short-lived",
+        "platform": "kubernetes"
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "OIDC Federation",
+      "object_type": "pattern",
+      "description": "外部ワークロードが OpenID Connect フェデレーションを介してクラウド権限を一時的に取得する連携方式。",
+      "properties": {
+        "credential_style": "federated-temporary",
+        "secretless": true
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "GitHub Actions",
+      "object_type": "product",
+      "description": "CI/CD 実行主体として OIDC Federation と組み合わせ、固定クラウド秘密情報を不要化しやすい。",
+      "properties": {
+        "vendor": "GitHub",
+        "workload_type": "ci-cd"
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "External Secrets Operator",
+      "object_type": "product",
+      "description": "外部 Secrets Manager や Vault から Kubernetes Secret を同期する運用パターンを実装するコンポーネント。",
+      "properties": {
+        "vendor": "open-source",
+        "secret_delivery": "sync"
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "Secrets Store CSI Driver",
+      "object_type": "product",
+      "description": "Secrets をファイルマウントで Pod に供給し、Kubernetes Secret への複製を減らしやすいコンポーネント。",
+      "properties": {
+        "vendor": "open-source",
+        "secret_delivery": "mount"
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "Namespace分離",
+      "object_type": "pattern",
+      "description": "チーム、環境、機密度ごとに Namespace を分離し、認可境界と横展開範囲を狭める設計。",
+      "properties": {
+        "control_scope": "kubernetes-boundary",
+        "goal": "blast-radius-reduction"
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "RBAC",
+      "object_type": "pattern",
+      "description": "Role Based Access Control により Kubernetes API とクラウド権限をロール単位で制御する方式。",
+      "properties": {
+        "control_model": "role-based",
+        "platform_scope": "kubernetes-and-cloud"
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "EKS IRSA",
+      "object_type": "pattern",
+      "description": "Amazon EKS で IAM Roles for Service Accounts を使い、Pod 単位で AWS 権限を付与する方式。",
+      "properties": {
+        "cloud": "aws",
+        "federation_model": "oidc"
+      }
+    },
+    {
+      "id": "node_043",
+      "label": "GKE Workload Identity",
+      "object_type": "pattern",
+      "description": "Google Kubernetes Engine で Kubernetes Service Account と Google Cloud IAM を結び付ける方式。",
+      "properties": {
+        "cloud": "gcp",
+        "federation_model": "workload-identity"
+      }
+    },
+    {
+      "id": "node_044",
+      "label": "AKS Workload Identity",
+      "object_type": "pattern",
+      "description": "Azure Kubernetes Service で OpenID Connect ベースに Microsoft Entra ID と連携するワークロード ID 方式。",
+      "properties": {
+        "cloud": "azure",
+        "federation_model": "workload-identity"
+      }
+    },
+    {
+      "id": "node_045",
+      "label": "レガシー基幹システム",
+      "object_type": "pattern",
+      "description": "COBOL、RPG、ホスト連携、古いミドルウェアを含み、固定 ID とバッチ運用が色濃く残る日本企業の基幹系アーキテクチャ。",
+      "properties": {
+        "architecture_class": "legacy-core",
+        "common_in_japan": true
+      }
+    },
+    {
+      "id": "node_046",
+      "label": "固定アカウントバッチ",
+      "object_type": "pattern",
+      "description": "夜間バッチやファイル連携で長寿命固定アカウントを使う実装慣行。棚卸しとローテーションが困難になりやすい。",
+      "properties": {
+        "identity_style": "static-nonhuman-id",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_047",
+      "label": "サービスアカウント",
+      "object_type": "concept",
+      "description": "アプリケーション、サービス、バッチ、ジョブが利用する非人間 ID。運用上は Service Account と呼ばれることが多い。",
+      "properties": {
+        "principal_type": "non-human",
+        "rotation_need": "high"
+      }
+    },
+    {
+      "id": "node_048",
+      "label": "ジョブスケジューラー",
+      "object_type": "product",
+      "description": "JP1、TWS、A-AUTO などのジョブ制御基盤。実行アカウントの棚卸しと分離設計が重要である。",
+      "properties": {
+        "examples": [
+          "JP1",
+          "TWS",
+          "A-AUTO"
+        ],
+        "role": "job-control"
+      }
+    },
+    {
+      "id": "node_049",
+      "label": "APIゲートウェイ",
+      "object_type": "pattern",
+      "description": "外部向けと内部向けの認証境界を分け、トークン検証や変換を集中化する近代化の中継点。",
+      "properties": {
+        "role": "policy-enforcement-point",
+        "modernization_use": "legacy-bridge"
+      }
+    },
+    {
+      "id": "node_050",
+      "label": "IBM MQ",
+      "object_type": "product",
+      "description": "メッセージング連携で長く使われる基盤。チャネル認証、接続主体、キューマネージャー権限の整理が重要である。",
+      "properties": {
+        "vendor": "IBM",
+        "integration_type": "messaging"
+      }
+    },
+    {
+      "id": "node_051",
+      "label": "データ連携 / ETL・ELT",
+      "object_type": "pattern",
+      "description": "大量データの抽出、加工、配布を担うアーキテクチャで、DB 認証とパイプライン実行主体の統制が中心になる。",
+      "properties": {
+        "architecture_class": "data-pipeline",
+        "cross-domain-access": true
+      }
+    },
+    {
+      "id": "node_052",
+      "label": "Talend",
+      "object_type": "product",
+      "description": "多様な接続先を扱う ETL 製品。接続ごとにサービスアカウントが増えやすい。",
+      "properties": {
+        "vendor": "Qlik",
+        "category": "etl"
+      }
+    },
+    {
+      "id": "node_053",
+      "label": "IBM DataStage",
+      "object_type": "product",
+      "description": "基幹系データ連携で残存しやすい ETL 製品。運用アカウント固定化が起きやすい。",
+      "properties": {
+        "vendor": "IBM",
+        "category": "etl"
+      }
+    },
+    {
+      "id": "node_054",
+      "label": "Informatica",
+      "object_type": "product",
+      "description": "大規模データ統合で広く使われる ETL 製品。実行サーバーと接続先の ID を分けて設計する必要がある。",
+      "properties": {
+        "vendor": "Informatica",
+        "category": "etl"
+      }
+    },
+    {
+      "id": "node_055",
+      "label": "Oracle Database Link",
+      "object_type": "pattern",
+      "description": "Oracle 間接続で資格情報を保持するリンク機能。接続主体が見えにくく、運用統制の抜け道になりやすい。",
+      "properties": {
+        "db_platform": "oracle",
+        "risk_focus": "embedded-db-credential"
+      }
+    },
+    {
+      "id": "node_056",
+      "label": "SQL Server Linked Server",
+      "object_type": "pattern",
+      "description": "SQL Server 間または外部接続を抽象化する機能。実行コンテキストの委任と保存資格情報の管理が論点となる。",
+      "properties": {
+        "db_platform": "sql-server",
+        "risk_focus": "delegation-and-credential-storage"
+      }
+    },
+    {
+      "id": "node_057",
+      "label": "Snowflake",
+      "object_type": "product",
+      "description": "SAML や OpenID Connect を介した外部認証を取り込みやすいクラウドデータ基盤。",
+      "properties": {
+        "vendor": "Snowflake",
+        "category": "cloud-data-platform"
+      }
+    },
+    {
+      "id": "node_058",
+      "label": "Databricks",
+      "object_type": "product",
+      "description": "データ処理と分析を統合するプラットフォーム。クラウド IAM と外部 IdP を組み合わせた設計が重要である。",
+      "properties": {
+        "vendor": "Databricks",
+        "category": "cloud-data-platform"
+      }
+    },
+    {
+      "id": "node_059",
+      "label": "Azure Synapse Analytics",
+      "object_type": "product",
+      "description": "Microsoft Azure の分析基盤。Microsoft Entra ID ベースの認証を標準に寄せやすい。",
+      "properties": {
+        "vendor": "Microsoft",
+        "category": "cloud-data-platform"
+      }
+    },
+    {
+      "id": "node_060",
+      "label": "データメッシュ",
+      "object_type": "pattern",
+      "description": "ドメインごとにデータプロダクト責任を持たせる設計思想で、データ共有主体の粒度と越境アクセスの統制が重要になる。",
+      "properties": {
+        "governance_model": "domain-oriented",
+        "identity_scope": "cross-domain"
+      }
+    },
+    {
+      "id": "node_061",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "LDAP bind 型アプリ、Integrated Windows Authentication、レガシー基幹の依存先として残存しやすいオンプレミスディレクトリ基盤。",
+      "properties": {
+        "vendor": "Microsoft",
+        "deployment": "on-premises"
+      }
+    },
+    {
+      "id": "node_062",
+      "label": "Kerberos",
+      "object_type": "protocol",
+      "description": "Integrated Windows Authentication や一部サービス間認証で重要となるチケットベースの認証プロトコル。",
+      "properties": {
+        "protocol_family": "ticket-based",
+        "sso_capable": true
+      }
+    },
+    {
+      "id": "node_063",
+      "label": "LDAP",
+      "object_type": "protocol",
+      "description": "ディレクトリ参照と認証連携に使われる標準プロトコル。社内アプリが直接依存しやすい。",
+      "properties": {
+        "protocol_family": "directory",
+        "legacy_dependency": "high"
+      }
+    },
+    {
+      "id": "node_064",
+      "label": "SAML",
+      "object_type": "protocol",
+      "description": "従来型 Web アプリや SaaS の SSO で広く使われるフェデレーション標準。",
+      "properties": {
+        "protocol_family": "federation",
+        "browser_ssO": true
+      }
+    },
+    {
+      "id": "node_065",
+      "label": "OpenID Connect",
+      "object_type": "protocol",
+      "description": "SPA、API、モバイル、クラウドネイティブ連携で主流となるモダン認証プロトコル。",
+      "properties": {
+        "protocol_family": "federation",
+        "api_friendly": true
+      }
+    },
+    {
+      "id": "node_066",
+      "label": "接続文字列へのパスワード埋め込み",
+      "object_type": "risk",
+      "description": "設定ファイルやソースコード、CI/CD 変数に資格情報を直接埋め込み、漏えい時の影響を広げる問題。",
+      "properties": {
+        "risk_area": "secret-management",
+        "common_in_japan": true
+      }
+    },
+    {
+      "id": "node_067",
+      "label": "開発段階での IdP 設計欠落",
+      "object_type": "risk",
+      "description": "開発チームが IdP やフェデレーション前提で設計せず、後から認証モダナイズ費用が膨らむ問題。",
+      "properties": {
+        "risk_area": "architecture-governance",
+        "common_in_japan": true
+      }
+    },
+    {
+      "id": "node_068",
+      "label": "環境横断サービスアカウント使い回し",
+      "object_type": "risk",
+      "description": "本番、ステージング、開発で同一のサービスアカウントや秘密情報を共用し、境界を失わせる問題。",
+      "properties": {
+        "risk_area": "environment-separation",
+        "common_in_japan": true
+      }
+    },
+    {
+      "id": "node_069",
+      "label": "最小権限",
+      "object_type": "concept",
+      "description": "人間 ID と非人間 ID の双方に対して必要最小限の権限だけを付与する設計原則。",
+      "properties": {
+        "security_principle": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "implements",
+      "description": "モノリシックWebアプリはセッションベース認証を実装しやすい。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "セッションベース認証は Session Cookie を必要とする。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "社内向けのモノリシックWebアプリには LDAP bind 型実装が多い。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_061",
+      "relationship": "requires",
+      "description": "LDAP bind型社内アプリは Active Directory への直接依存を持ちやすい。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_063",
+      "relationship": "implements",
+      "description": "LDAP bind型社内アプリは LDAP を直接実装する。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "モノリシックWebアプリは社内ポータル用途で Integrated Windows Authentication を補完的に使うことがある。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_062",
+      "relationship": "requires",
+      "description": "Integrated Windows Authentication は Kerberos を主要方式として必要とする。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_064",
+      "relationship": "implements",
+      "description": "アプリ改修によるモダナイズは SAML 実装を取り込みやすい。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_065",
+      "relationship": "implements",
+      "description": "アプリ改修によるモダナイズは OpenID Connect 実装を取り込みやすい。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_064",
+      "relationship": "implements",
+      "description": "リバースプロキシ認証変換は SAML を入口認証に使いやすい。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_065",
+      "relationship": "implements",
+      "description": "リバースプロキシ認証変換は OpenID Connect を入口認証に使いやすい。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_004",
+      "relationship": "complements",
+      "description": "リバースプロキシ認証変換は LDAP bind 型アプリの全面改修前の橋渡しになる。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "SPA + REST API は Authorization Code Flow with PKCE を前提に設計するのが基本である。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_065",
+      "relationship": "requires",
+      "description": "Authorization Code Flow with PKCE は OpenID Connect を必要とする。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_010",
+      "relationship": "implements",
+      "description": "SPA + REST API は API 呼び出しで JWT Access Token を扱うことが多い。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "SPA + REST API は継続ログインのため Refresh Token を使う場合がある。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "高リスク API では SPA + REST API に BFF を補完的に導入する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_013",
+      "relationship": "complements",
+      "description": "JWT Access Token はブラウザではメモリ保持トークンとして扱う方が安全な場面が多い。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "BFF はブラウザとの境界で HttpOnly Cookie を必要とすることが多い。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_014",
+      "relationship": "complements",
+      "description": "Refresh Token をブラウザに返す場合は HttpOnly Cookie と一体で制御する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_016",
+      "relationship": "complements",
+      "description": "マイクロサービスアーキテクチャでは東西トラフィック保護に mTLS を補完的に使う。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_017",
+      "relationship": "complements",
+      "description": "簡易な内部連携では API Key が残ることがあるが限定用途にとどめるべきである。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_018",
+      "relationship": "implements",
+      "description": "マイクロサービスアーキテクチャでは Service Mesh により認証を共通化しやすい。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_016",
+      "relationship": "implements",
+      "description": "Service Mesh は mTLS を標準機能として実装する。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_018",
+      "relationship": "example_of",
+      "description": "Istio は Service Mesh の代表例である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_018",
+      "relationship": "example_of",
+      "description": "Linkerd は Service Mesh の代表例である。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_032",
+      "relationship": "implements",
+      "description": "SPIFFE はワークロード ID を標準化して実装する。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_021",
+      "relationship": "implements",
+      "description": "SPIRE は SPIFFE ベースのワークロード ID 基盤を実装する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "JWT伝搬は JWT Access Token を下流へそのまま渡す。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "On-Behalf-Of は上流トークンを前提に下流用トークンを取得する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_025",
+      "relationship": "complements",
+      "description": "On-Behalf-Of は複数バックエンド連携では Central Token Exchange と補完関係にある。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_026",
+      "relationship": "complements",
+      "description": "Central Token Exchange は参照型トークンや失効確認のため Token Introspection と組み合わせやすい。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_028",
+      "relationship": "example_of",
+      "description": "AWS Lambda はサーバーレス / FaaS の代表例である。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_029",
+      "relationship": "example_of",
+      "description": "Azure Functions はサーバーレス / FaaS の代表例である。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_030",
+      "relationship": "example_of",
+      "description": "Google Cloud Functions はサーバーレス / FaaS の代表例である。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_031",
+      "relationship": "requires",
+      "description": "サーバーレス / FaaS は実行ロールの設計を必要とする。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_032",
+      "relationship": "implements",
+      "description": "実行ロールは関数実行時のワークロード ID を実装する。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_069",
+      "relationship": "requires",
+      "description": "実行ロールは最小権限の原則を必要とする。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_033",
+      "relationship": "requires",
+      "description": "サーバーレス / FaaS では Cold Start 認証レイテンシを考慮する必要がある。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_035",
+      "relationship": "requires",
+      "description": "コンテナ / Kubernetes では Projected Service Account Token の利用が推奨される。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_036",
+      "relationship": "complements",
+      "description": "コンテナ / Kubernetes では外部クラウド権限取得に OIDC Federation を補完的に使う。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_037",
+      "relationship": "complements",
+      "description": "OIDC Federation は GitHub Actions からクラウド権限を一時取得する方式と相性が良い。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_038",
+      "relationship": "complements",
+      "description": "コンテナ / Kubernetes では External Secrets Operator で秘密情報供給を補完する。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "コンテナ / Kubernetes では Secrets Store CSI Driver で秘密情報供給を補完する。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_040",
+      "relationship": "requires",
+      "description": "コンテナ / Kubernetes では Namespace分離が認可境界として必要である。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_041",
+      "relationship": "requires",
+      "description": "コンテナ / Kubernetes では RBAC が API 権限の基礎になる。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_036",
+      "relationship": "implements",
+      "description": "EKS IRSA は OIDC Federation を実装する。"
+    },
+    {
+      "from": "node_043",
+      "to": "node_032",
+      "relationship": "implements",
+      "description": "GKE Workload Identity はワークロード ID を実装する。"
+    },
+    {
+      "from": "node_044",
+      "to": "node_032",
+      "relationship": "implements",
+      "description": "AKS Workload Identity はワークロード ID を実装する。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_046",
+      "relationship": "implements",
+      "description": "レガシー基幹システムでは固定アカウントバッチが実装されやすい。"
+    },
+    {
+      "from": "node_046",
+      "to": "node_047",
+      "relationship": "requires",
+      "description": "固定アカウントバッチはサービスアカウントを必要とする。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_048",
+      "relationship": "complements",
+      "description": "レガシー基幹システムではジョブスケジューラーが実行主体管理を補完する。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_049",
+      "relationship": "complements",
+      "description": "レガシー基幹システムの近代化では APIゲートウェイが外部公開境界を補完する。"
+    },
+    {
+      "from": "node_049",
+      "to": "node_025",
+      "relationship": "complements",
+      "description": "APIゲートウェイはトークン変換のため Central Token Exchange と組み合わせやすい。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_050",
+      "relationship": "complements",
+      "description": "レガシー基幹システムでは IBM MQ がアプリ間連携を補完することが多い。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_052",
+      "relationship": "example_of",
+      "description": "Talend はデータ連携 / ETL・ELT の代表例である。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_053",
+      "relationship": "example_of",
+      "description": "IBM DataStage はデータ連携 / ETL・ELT の代表例である。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_054",
+      "relationship": "example_of",
+      "description": "Informatica はデータ連携 / ETL・ELT の代表例である。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_055",
+      "relationship": "complements",
+      "description": "データ連携 / ETL・ELT では Oracle Database Link が残存しやすい。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_056",
+      "relationship": "complements",
+      "description": "データ連携 / ETL・ELT では SQL Server Linked Server が残存しやすい。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_057",
+      "relationship": "complements",
+      "description": "データ連携 / ETL・ELT では Snowflake への外部認証連携が増えている。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_058",
+      "relationship": "complements",
+      "description": "データ連携 / ETL・ELT では Databricks への外部認証連携が増えている。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_059",
+      "relationship": "complements",
+      "description": "データ連携 / ETL・ELT では Azure Synapse Analytics への Microsoft Entra ID 統合が有効である。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_060",
+      "relationship": "complements",
+      "description": "データ連携 / ETL・ELT はデータメッシュ移行時にドメイン間 ID 管理へ拡張される。"
+    },
+    {
+      "from": "node_057",
+      "to": "node_064",
+      "relationship": "implements",
+      "description": "Snowflake は SAML を実装できる。"
+    },
+    {
+      "from": "node_057",
+      "to": "node_065",
+      "relationship": "implements",
+      "description": "Snowflake は OpenID Connect を実装できる。"
+    },
+    {
+      "from": "node_058",
+      "to": "node_065",
+      "relationship": "implements",
+      "description": "Databricks は OpenID Connect を実装できる。"
+    },
+    {
+      "from": "node_059",
+      "to": "node_065",
+      "relationship": "implements",
+      "description": "Azure Synapse Analytics は OpenID Connect 系の Microsoft Entra ID 認証と相性が良い。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_066",
+      "relationship": "requires",
+      "description": "LDAP bind型社内アプリは接続文字列や設定ファイルへのパスワード埋め込みを招きやすい。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_066",
+      "relationship": "requires",
+      "description": "データ連携 / ETL・ELT は接続文字列へのパスワード埋め込みが起きやすい。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_067",
+      "relationship": "requires",
+      "description": "従来型アプリ開発では開発段階での IdP 設計欠落が起きやすい。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_067",
+      "relationship": "mitigates",
+      "description": "SPA + REST API は初期段階から IdP 連携前提で設計すれば設計欠落を軽減できる。"
+    },
+    {
+      "from": "node_047",
+      "to": "node_068",
+      "relationship": "requires",
+      "description": "サービスアカウントを整理しないと環境横断サービスアカウント使い回しが起きやすい。"
+    },
+    {
+      "from": "node_068",
+      "to": "node_069",
+      "relationship": "mitigates",
+      "description": "環境ごとに権限と主体を分離し最小権限を徹底すると使い回しを軽減できる。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_069",
+      "relationship": "complements",
+      "description": "mTLS は通信相手を限定し、最小権限の実装を補完する。"
+    },
+    {
+      "from": "node_065",
+      "to": "node_069",
+      "relationship": "complements",
+      "description": "OpenID Connect はスコープやクレーム設計を通じて最小権限を補完する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k_001",
+      "topic": "モノリシックWebアプリの認証設計原則",
+      "content": "モノリシックWebアプリでは、認証処理、セッション管理、画面遷移が密結合しているため、ID 設計の主論点は『ログイン方式』だけでなく『セッション維持方式』まで含む。社内向けであれば Integrated Windows Authentication が成立しやすいが、社外公開やモバイル併用を前提にする場合は SAML または OpenID Connect へ段階移行する方が説明しやすい。",
+      "evidence_nodes": [
+        "node_001",
+        "node_002",
+        "node_005",
+        "node_064",
+        "node_065"
+      ]
+    },
+    {
+      "id": "k_002",
+      "topic": "セッションベース認証の典型課題",
+      "content": "セッションベース認証は実装しやすい一方、Session Cookie の盗難、固定化、タイムアウト不整合、Web サーバー間スケール時のセッション共有が問題になる。認証設計の説明では、認可サーバーの話だけでなく、Cookie 属性、失効、ロードバランサー配下のセッション戦略まで示す必要がある。",
+      "evidence_nodes": [
+        "node_002",
+        "node_003"
+      ]
+    },
+    {
+      "id": "k_003",
+      "topic": "LDAP bind型社内アプリの実態",
+      "content": "日本企業の内製・SIer 開発アプリでは、ログイン画面から Active Directory に直接 bind し、成功可否だけで認証する実装が今も多い。この方式は、パスワードポリシー変更、MFA、条件付きアクセス、IdP 切替の恩恵を受けにくく、認証近代化の障害になりやすい。",
+      "evidence_nodes": [
+        "node_004",
+        "node_061",
+        "node_063"
+      ]
+    },
+    {
+      "id": "k_004",
+      "topic": "Integrated Windows Authentication の適用境界",
+      "content": "Integrated Windows Authentication は社内 LAN、ドメイン参加端末、Windows ブラウザ、Kerberos 正常動作という前提がそろう場合に高い利便性を持つ。一方で、ゼロトラスト化、インターネット公開、非 Windows 端末混在、モバイル利用では適用範囲が狭まりやすく、将来設計では『残す理由』を明示しないと惰性維持になりやすい。",
+      "evidence_nodes": [
+        "node_005",
+        "node_062"
+      ]
+    },
+    {
+      "id": "k_005",
+      "topic": "モノリシック近代化の二つの道筋",
+      "content": "既存アプリを近代化する際は、アプリ改修によるモダナイズとリバースプロキシ認証変換の二択で整理すると顧客へ説明しやすい。前者は恒久解として優れるが改修費用が高く、後者は短期移行に向くがヘッダー伝搬やアプリ固有セッションの制約を残しやすい。",
+      "evidence_nodes": [
+        "node_006",
+        "node_007"
+      ]
+    },
+    {
+      "id": "k_006",
+      "topic": "SPA の基本は Authorization Code Flow with PKCE",
+      "content": "ブラウザ SPA は公開クライアントであるため、クライアントシークレット前提の設計は避け、Authorization Code Flow with PKCE を基本にする。Implicit Flow を前提にした古い資料が残っていても、新規設計や更改案件では採用理由が弱い。",
+      "evidence_nodes": [
+        "node_008",
+        "node_009",
+        "node_065"
+      ]
+    },
+    {
+      "id": "k_007",
+      "topic": "JWT Access Token の格納場所の説明軸",
+      "content": "JWT Access Token の取り扱いでは、ブラウザ JavaScript から見えるかどうかが主要な論点になる。メモリ保持トークンは永続化を避けられるが再読み込みや複数タブの扱いに工夫が必要で、Cookie ベースは送信自動化の利便性がある代わりに CSRF 対策を不可欠にする。『どちらが絶対正しいか』ではなく、BFF の有無と API 呼び出しモデルで説明するのが実務的である。",
+      "evidence_nodes": [
+        "node_010",
+        "node_013",
+        "node_014",
+        "node_012"
+      ]
+    },
+    {
+      "id": "k_008",
+      "topic": "Refresh Token は長寿命秘密情報として扱う",
+      "content": "Refresh Token はアクセストークンより長く使えるため、ブラウザへ無条件に置く設計は避けるべきである。ローテーション、失効、端末拘束、BFF でのサーバー側保管など、漏えい後の再利用を抑える仕組みまで含めて設計する必要がある。",
+      "evidence_nodes": [
+        "node_011",
+        "node_012",
+        "node_014"
+      ]
+    },
+    {
+      "id": "k_009",
+      "topic": "BFF はブラウザ露出を減らす設計パターン",
+      "content": "高機密データを扱う SPA では、BFF が OpenID Connect のやり取りとトークン保管を引き受け、フロントエンドには HttpOnly Cookie ベースのセッションだけを見せる構成が有効である。顧客説明では、『SPA なのにサーバーを置く理由』をセキュリティ責任分界で示すと伝わりやすい。",
+      "evidence_nodes": [
+        "node_012",
+        "node_014",
+        "node_065"
+      ]
+    },
+    {
+      "id": "k_010",
+      "topic": "マイクロサービスのサービス間認証は役割分担で考える",
+      "content": "マイクロサービスでは mTLS、JWT、API Key を排他的に選ぶより、用途ごとに役割分担する方が現実的である。mTLS は通信相手の真正性、JWT はエンドユーザー文脈やスコープ、API Key は限定的な外部連携というように、何を証明したいかで使い分けるべきである。",
+      "evidence_nodes": [
+        "node_015",
+        "node_016",
+        "node_017",
+        "node_010"
+      ]
+    },
+    {
+      "id": "k_011",
+      "topic": "Service Mesh による mTLS 自動化の意味",
+      "content": "mTLS を各サービス実装へ埋め込むと証明書配布、更新、失効、監視が破綻しやすい。Service Mesh を導入する価値は、開発チームごとのバラつきを抑え、証明書運用と通信ポリシーをプラットフォーム側へ寄せられる点にある。",
+      "evidence_nodes": [
+        "node_018",
+        "node_019",
+        "node_020",
+        "node_016"
+      ]
+    },
+    {
+      "id": "k_012",
+      "topic": "SPIFFE / SPIRE は人間 ID とワークロード ID を分離する",
+      "content": "内部サービス認証を人間向け IdP と同じ概念で扱うと、寿命、発行粒度、失効運用が合わない。SPIFFE / SPIRE はワークロード ID を独立に扱えるため、サービス主体を人間アカウントや固定秘密情報から切り離す説明軸として有効である。",
+      "evidence_nodes": [
+        "node_021",
+        "node_022",
+        "node_032"
+      ]
+    },
+    {
+      "id": "k_013",
+      "topic": "JWT伝搬と On-Behalf-Of の違い",
+      "content": "JWT伝搬は実装が単純だが、下流サービスまで同じオーディエンスや過剰クレームが広がりやすい。On-Behalf-Of はトークン取得コストと設計負荷が増える代わりに、下流サービスごとに最小化した権限を渡しやすい。顧客説明では、『誰の権限を、どのサービス向けに、どこで絞るか』を比較すると理解されやすい。",
+      "evidence_nodes": [
+        "node_023",
+        "node_024",
+        "node_010"
+      ]
+    },
+    {
+      "id": "k_014",
+      "topic": "Central Token Exchange と Token Introspection の適用場面",
+      "content": "複数のレガシー API、SaaS、社内サービスが混在する場合、各サービスへ直接トークン変換を実装すると整合性が崩れる。Central Token Exchange で変換責務を中央集約し、Token Introspection で失効やポリシー確認を統制すると、監査と例外処理を説明しやすい。",
+      "evidence_nodes": [
+        "node_025",
+        "node_026",
+        "node_049"
+      ]
+    },
+    {
+      "id": "k_015",
+      "topic": "サーバーレスでは実行ロールがアカウント設計そのもの",
+      "content": "サーバーレス / FaaS では OS ログオンや固定パスワードの話より、関数に紐づく実行ロールが何へアクセスできるかが核心になる。設計書でも『アプリケーションアカウント』という曖昧な表現ではなく、実行ロール単位で権限を定義した方が誤解が少ない。",
+      "evidence_nodes": [
+        "node_027",
+        "node_031",
+        "node_069"
+      ]
+    },
+    {
+      "id": "k_016",
+      "topic": "関数間呼び出しはイベント主体と実行主体を分けて考える",
+      "content": "AWS Lambda、Azure Functions、Google Cloud Functions の関数間呼び出しでは、誰がイベントを起こしたかと、どの実行ロールで下流へアクセスするかを分けて整理する必要がある。前者は監査、後者は権限境界の論点であり、混同すると過大権限になりやすい。",
+      "evidence_nodes": [
+        "node_028",
+        "node_029",
+        "node_030",
+        "node_031"
+      ]
+    },
+    {
+      "id": "k_017",
+      "topic": "Cold Start と認証のトレードオフ",
+      "content": "サーバーレスでは、起動時に Secrets Manager 参照、STS 呼び出し、証明書取得、Token Introspection を重ねるほど初回応答が遅くなる。性能要件が厳しい業務では、トークンキャッシュ方針、接続プール再利用、認証前処理の分離まで設計対象に含めるべきである。",
+      "evidence_nodes": [
+        "node_033",
+        "node_026",
+        "node_031"
+      ]
+    },
+    {
+      "id": "k_018",
+      "topic": "Kubernetes では Pod 主体の短寿命化が基本",
+      "content": "Kubernetes では長寿命 Secret に固定資格情報を置くより、Projected Service Account Token や Workload Identity により Pod 単位の短寿命主体へ寄せる方が安全である。『コンテナ用サービスアカウント』を永続 ID として使い回す設計は避けるべきである。",
+      "evidence_nodes": [
+        "node_034",
+        "node_035",
+        "node_032"
+      ]
+    },
+    {
+      "id": "k_019",
+      "topic": "CI/CD の固定秘密情報を減らす OIDC Federation",
+      "content": "GitHub Actions から AWS や Azure へデプロイする際、長寿命アクセスキーをリポジトリシークレットに置くより、OIDC Federation で実行時に一時権限を取得する方が安全である。顧客には『CI/CD も人間ではなくワークロード ID として扱う』と説明すると理解されやすい。",
+      "evidence_nodes": [
+        "node_036",
+        "node_037",
+        "node_032"
+      ]
+    },
+    {
+      "id": "k_020",
+      "topic": "Namespace分離、RBAC、Secrets 配布は一体設計",
+      "content": "Kubernetes では Namespace分離だけでは不十分で、RBAC、Secrets 配布方式、クラウド権限割り当てまで一体で設計しないと境界が崩れる。External Secrets Operator と Secrets Store CSI Driver はどちらも有効だが、『Kubernetes Secret に複製するか』『都度マウントするか』で露出面が変わる。",
+      "evidence_nodes": [
+        "node_038",
+        "node_039",
+        "node_040",
+        "node_041"
+      ]
+    },
+    {
+      "id": "k_021",
+      "topic": "レガシー基幹では固定アカウントが業務継続の前提になりやすい",
+      "content": "COBOL、RPG、バッチ中心の基幹システムでは、固定アカウントバッチやジョブスケジューラー連携が運用に深く組み込まれ、停止影響を恐れて見直しが後回しになりやすい。この領域では『いきなりゼロ化する』のではなく、利用先棚卸し、環境分離、ローテーション可能な対象から着手する段階設計が必要である。",
+      "evidence_nodes": [
+        "node_045",
+        "node_046",
+        "node_047",
+        "node_048"
+      ]
+    },
+    {
+      "id": "k_022",
+      "topic": "APIゲートウェイ経由の段階的近代化",
+      "content": "レガシー基幹システムを全面改修できない場合、外向けは APIゲートウェイで OpenID Connect トークンを受け、内部では既存セッションや MQ、固定アカウントへ橋渡しする構成が現実的である。ただし、ゲートウェイが『認証のごみ箱』にならないよう、どこで主体変換し、どこで監査するかを明示する必要がある。",
+      "evidence_nodes": [
+        "node_049",
+        "node_025",
+        "node_045"
+      ]
+    },
+    {
+      "id": "k_023",
+      "topic": "IBM MQ はメッセージ主体の認証設計が必要",
+      "content": "IBM MQ 連携では、送信元アプリ、チャネル、キューマネージャー管理者、運用ジョブが別主体であることを区別しないと権限が肥大化する。メッセージング認証は『接続できること』と『どのキューへ何ができるか』を分けて設計すべきである。",
+      "evidence_nodes": [
+        "node_050",
+        "node_047",
+        "node_069"
+      ]
+    },
+    {
+      "id": "k_024",
+      "topic": "ETL / ELT では接続先ごとのサービスアカウント増殖を抑える",
+      "content": "Talend、IBM DataStage、Informatica は多接続を前提とするため、案件ごとにサービスアカウントが増殖しやすい。設計では、実行基盤の主体、接続先 DB の主体、運用管理者の主体を分け、接続ごとの資格情報保管場所を決めることが重要である。",
+      "evidence_nodes": [
+        "node_051",
+        "node_052",
+        "node_053",
+        "node_054",
+        "node_047"
+      ]
+    },
+    {
+      "id": "k_025",
+      "topic": "DB Link は見えにくい埋め込み認証として扱う",
+      "content": "Oracle Database Link や SQL Server Linked Server は便利だが、どの資格情報で接続しているかがアプリ側から見えにくくなりやすい。顧客説明では、単なる DB 機能ではなく『埋め込みサービスアカウント』としてリスク評価する観点が重要である。",
+      "evidence_nodes": [
+        "node_055",
+        "node_056",
+        "node_047"
+      ]
+    },
+    {
+      "id": "k_026",
+      "topic": "クラウド分析基盤は外部認証へ寄せやすい",
+      "content": "Snowflake、Databricks、Azure Synapse Analytics は外部 IdP 連携との親和性が高く、個別ローカルユーザーを乱立させずに SAML や OpenID Connect へ寄せやすい。データ分析基盤は、レガシー ETL と違って認証モダナイズの先行適用対象として説明しやすい。",
+      "evidence_nodes": [
+        "node_057",
+        "node_058",
+        "node_059",
+        "node_064",
+        "node_065"
+      ]
+    },
+    {
+      "id": "k_027",
+      "topic": "データメッシュではドメイン間 ID 管理が新たな論点になる",
+      "content": "データメッシュへ進むと、単一 ETL 基盤で全権限を持つ設計よりも、ドメインごとにデータプロダクト主体を分ける方が望ましい。ここでは人間のロール設計だけでなく、パイプライン、共有 API、クエリエンジンのワークロード ID をどう分離するかが重要になる。",
+      "evidence_nodes": [
+        "node_060",
+        "node_051",
+        "node_032"
+      ]
+    },
+    {
+      "id": "k_028",
+      "topic": "日本企業で多い失敗パターン 1: LDAP bind 乱用",
+      "content": "内製・SIer 開発アプリで LDAP bind を乱用すると、認証要件が『ディレクトリへ届くこと』に矮小化され、IdP、MFA、条件付きアクセス、監査統合が後付けになる。短期開発では楽でも、更改時に最も高くつく設計負債になりやすい。",
+      "evidence_nodes": [
+        "node_004",
+        "node_063",
+        "node_067"
+      ],
+      "japan_specific": true
+    },
+    {
+      "id": "k_029",
+      "topic": "日本企業で多い失敗パターン 2: 接続文字列へのパスワード埋め込み",
+      "content": "接続文字列や設定ファイルへのパスワード埋め込みは、アプリ本体、バッチ、ETL、CI/CD のすべてで起きうる。ソース管理、配布アーカイブ、運用手順書にまで資格情報が拡散し、ローテーション不能になるため、Secrets Manager や Workload Identity へ置き換える計画が必要である。",
+      "evidence_nodes": [
+        "node_066",
+        "node_051",
+        "node_037",
+        "node_032"
+      ],
+      "japan_specific": true
+    },
+    {
+      "id": "k_030",
+      "topic": "日本企業で多い失敗パターン 3: 開発チームが IdP を知らない",
+      "content": "設計初期に IdP、フェデレーション、トークン寿命、非人間 ID を織り込まないまま画面と DB だけで設計すると、認証は最後に『とりあえずつなぐ』扱いになる。その結果、BFF 不在の SPA、過大権限の API、固定サービスアカウント乱用が同時発生しやすい。",
+      "evidence_nodes": [
+        "node_067",
+        "node_008",
+        "node_012",
+        "node_047"
+      ],
+      "japan_specific": true
+    },
+    {
+      "id": "k_031",
+      "topic": "日本企業で多い失敗パターン 4: 環境横断サービスアカウント使い回し",
+      "content": "本番、ステージング、開発で同一のサービスアカウントや同一秘密情報を使い回すと、開発環境侵害が本番横展開につながる。環境ごとの主体分離、権限差分、Secrets 分離を最小権限とセットで実装しないと、監査で説明できない構造になる。",
+      "evidence_nodes": [
+        "node_068",
+        "node_047",
+        "node_069"
+      ],
+      "japan_specific": true
+    },
+    {
+      "id": "k_032",
+      "topic": "認証プロトコル選定マトリクス",
+      "content": "プロトコル選定は『最新だから OIDC』ではなく、アーキテクチャ、クライアント種別、残存レガシー、サービス間通信の有無で決める。下表は SIer コンサルタントが顧客説明に使いやすいよう、主適性を高・中・低で整理したものである。",
+      "matrix": [
+        {
+          "architecture": "モノリシックWebアプリ",
+          "SAML": "高",
+          "OpenID Connect": "中",
+          "Kerberos": "中",
+          "mTLS": "低",
+          "API Key": "低",
+          "LDAP": "低",
+          "note": "社内専用なら Kerberos も成立するが、近代化の本命は SAML または OpenID Connect。LDAP は移行対象。"
+        },
+        {
+          "architecture": "SPA + REST API",
+          "SAML": "低",
+          "OpenID Connect": "高",
+          "Kerberos": "低",
+          "mTLS": "低",
+          "API Key": "低",
+          "LDAP": "低",
+          "note": "ブラウザ公開クライアントのため OpenID Connect + PKCE が基本。"
+        },
+        {
+          "architecture": "マイクロサービスアーキテクチャ",
+          "SAML": "低",
+          "OpenID Connect": "中",
+          "Kerberos": "低",
+          "mTLS": "高",
+          "API Key": "低",
+          "LDAP": "低",
+          "note": "ユーザー文脈は JWT、サービス相互認証は mTLS の役割分担が現実的。"
+        },
+        {
+          "architecture": "サーバーレス / FaaS",
+          "SAML": "低",
+          "OpenID Connect": "中",
+          "Kerberos": "低",
+          "mTLS": "低",
+          "API Key": "低",
+          "LDAP": "低",
+          "note": "外向け入口は OpenID Connect、内部権限は実行ロール中心で考える。"
+        },
+        {
+          "architecture": "コンテナ / Kubernetes",
+          "SAML": "低",
+          "OpenID Connect": "中",
+          "Kerberos": "低",
+          "mTLS": "高",
+          "API Key": "低",
+          "LDAP": "低",
+          "note": "Pod 間は mTLS、外部クラウド連携は OIDC Federation、ユーザー入口は別途 OpenID Connect。"
+        },
+        {
+          "architecture": "レガシー基幹システム",
+          "SAML": "中",
+          "OpenID Connect": "中",
+          "Kerberos": "中",
+          "mTLS": "低",
+          "API Key": "低",
+          "LDAP": "低",
+          "note": "内部残存認証は別管理しつつ、外向け近代化ではゲートウェイ経由の SAML または OpenID Connect が有効。"
+        },
+        {
+          "architecture": "データ連携 / ETL・ELT",
+          "SAML": "中",
+          "OpenID Connect": "中",
+          "Kerberos": "低",
+          "mTLS": "低",
+          "API Key": "低",
+          "LDAP": "低",
+          "note": "SaaS・分析基盤は外部認証へ寄せやすいが、既存 DB 接続はサービスアカウント管理が中心となる。"
+        }
+      ],
+      "evidence_nodes": [
+        "node_001",
+        "node_008",
+        "node_015",
+        "node_027",
+        "node_034",
+        "node_045",
+        "node_051",
+        "node_064",
+        "node_065",
+        "node_062",
+        "node_016",
+        "node_017",
+        "node_063"
+      ]
+    }
+  ]
+}

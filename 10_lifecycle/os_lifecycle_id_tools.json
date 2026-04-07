@@ -1,0 +1,1586 @@
+{
+  "metadata": {
+    "id": "os_lifecycle_id_tools",
+    "title": "サーバーOSサポートライフサイクルとID管理機能マトリクス",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "os-lifecycle",
+      "windows-server",
+      "rhel",
+      "laps",
+      "wsus",
+      "sssd",
+      "freeipa",
+      "patch-management"
+    ],
+    "related_files": [
+      "../04_server_auth/os_auth_methods.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json"
+    ],
+    "scope_note": "ベンダー公式ライフサイクル情報と公式技術ドキュメントを中心に、ID管理・認証・パッチ管理の観点で再構成した。将来日付が未確定の項目は planned または not_announced を明示した。",
+    "source_policy": "vendor_official_first"
+  },
+  "os_entries": [
+    {
+      "os_id": "windows_server_2008_r2",
+      "os_name": "Windows Server 2008 R2",
+      "vendor": "Microsoft",
+      "family": "Windows Server",
+      "release_date": "2009-10-22",
+      "mainstream_support_end": "2015-01-13",
+      "extended_support_end": "2020-01-14",
+      "support_status_as_of": "out_of_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "ended",
+        "coverage": "Year 1-3 on-premises/hybrid, Year 4 Azure only",
+        "end_date": "2024-01-09",
+        "conditions": [
+          "オンプレミス/ハイブリッドはボリュームライセンス経由",
+          "Azure上ではESU無償提供",
+          "2008/R2のみAzureで4年目ESUあり"
+        ],
+        "cost_indication": "Azureは無償。オンプレミスは有償で、後継OS更新より割高になりやすい。"
+      },
+      "id_management_features": {
+        "ad_functional_level": "Windows Server 2008 R2",
+        "laps": "Legacy Microsoft LAPS対応。Windows LAPS非対応。",
+        "mfa_native": "なし。AD FSやサードパーティーで補完。",
+        "fido2": "非対応",
+        "windows_hello": "サーバーOSとしての実運用対象外",
+        "ntlm_status": "広く残存。互換性依存が強い。",
+        "kerberos_aes": "AES128/256対応だが古いサービスアカウントでRC4残存が多い。",
+        "patch_management": "WSUS対応"
+      },
+      "migration_trigger": "ESUも終了済みで、侵害時の封じ込め設計より前にOS更改が必要。",
+      "id_management_impact": "RC4/NTLM残存が多く、Kerberos AES化やLAPS刷新の前提条件としてOS更新が必要。",
+      "japan_deployment_share": "低",
+      "notes": [
+        "古い業務サーバーや工場系残存で散発的に見られる。",
+        "ドメインコントローラー用途で残っている場合は最優先で退役対象。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2008-r2",
+        "https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates",
+        "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview"
+      ]
+    },
+    {
+      "os_id": "windows_server_2012_r2",
+      "os_name": "Windows Server 2012 R2",
+      "vendor": "Microsoft",
+      "family": "Windows Server",
+      "release_date": "2013-11-25",
+      "mainstream_support_end": "2018-10-09",
+      "extended_support_end": "2023-10-10",
+      "support_status_as_of": "esu_only",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "active_until_2026-10-13",
+        "coverage": "Year 1-3",
+        "end_date": "2026-10-13",
+        "conditions": [
+          "Azure上ではESU無償",
+          "オンプレミス/他クラウドはボリュームライセンスまたはAzure Arc経由",
+          "Azure Arc経由は月額課金",
+          "Commercial LicensingのFAQではWindows Server 2012/R2 ESUは各年100%相当の価格感"
+        ],
+        "cost_indication": "安価ではない。延命費用よりWS2022/2025更改の方が合理的になりやすい。"
+      },
+      "id_management_features": {
+        "ad_functional_level": "Windows Server 2012 R2",
+        "laps": "Legacy Microsoft LAPS対応。Windows LAPS非対応。",
+        "mfa_native": "なし。AD FS連携が中心。",
+        "fido2": "非対応",
+        "windows_hello": "限定的。最新のWindows Hello for Business前提には不向き。",
+        "ntlm_status": "有効。後方互換用途で残存しやすい。",
+        "kerberos_aes": "AES128/256対応だが、古いアカウント運用ではRC4依存が残りやすい。",
+        "patch_management": "WSUS対応"
+      },
+      "migration_trigger": "2026年10月13日にESU終了。以後は実質的にパッチ供給が止まる。",
+      "id_management_impact": "Windows LAPS、FIDO2、NTLM削減、Kerberos AES既定化のモダン化対象として更改トリガーになる。",
+      "japan_deployment_share": "中",
+      "notes": [
+        "日本企業の基幹・製造・周辺サーバーで残存例がまだ多い。",
+        "AD FSや古いIIS/業務ミドル構成とセットで残ることが多い。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2012-r2",
+        "https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates",
+        "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"
+      ]
+    },
+    {
+      "os_id": "windows_server_2016",
+      "os_name": "Windows Server 2016",
+      "vendor": "Microsoft",
+      "family": "Windows Server",
+      "release_date": "2016-10-15",
+      "mainstream_support_end": "2022-01-11",
+      "extended_support_end": "2027-01-12",
+      "support_status_as_of": "extended_support",
+      "esu_available": false,
+      "esu_program": {
+        "availability": "not_announced",
+        "coverage": "none",
+        "end_date": "not_announced",
+        "conditions": [],
+        "cost_indication": "未公表"
+      },
+      "id_management_features": {
+        "ad_functional_level": "Windows Server 2016",
+        "laps": "Legacy Microsoft LAPS対応。Windows LAPSネイティブ非対応。",
+        "mfa_native": "なし。AD FSやEntra連携で補完。",
+        "fido2": "サーバーOSとしてのネイティブ価値は限定的。オンプレADのFIDO2基盤は後続版が有利。",
+        "windows_hello": "Windows Hello for Business対応。Cloud Kerberos trustは後続更新KB条件あり。",
+        "ntlm_status": "有効。2024以降の廃止計画に対する調査対象。",
+        "kerberos_aes": "AES128/256対応。RC4監査イベントは2025年1月更新以降で改善。",
+        "patch_management": "WSUS対応"
+      },
+      "migration_trigger": "2027年1月12日でExtended Support終了。ESU未公表のため前倒し更改が妥当。",
+      "id_management_impact": "Windows LAPSへの移行対象外のため、ローカル管理者パスワード管理刷新時に更改議論が起きやすい。",
+      "japan_deployment_share": "中",
+      "notes": [
+        "2019/2022へ横移行しやすいが、同時にNTLM削減計画も必要。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2016",
+        "https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/deploy/",
+        "https://learn.microsoft.com/en-us/windows-server/security/kerberos/detect-remediate-rc4-kerberos"
+      ]
+    },
+    {
+      "os_id": "windows_server_2019",
+      "os_name": "Windows Server 2019",
+      "vendor": "Microsoft",
+      "family": "Windows Server",
+      "release_date": "2018-11-13",
+      "mainstream_support_end": "2024-01-09",
+      "extended_support_end": "2029-01-09",
+      "support_status_as_of": "extended_support",
+      "esu_available": false,
+      "esu_program": {
+        "availability": "not_announced",
+        "coverage": "none",
+        "end_date": "not_announced",
+        "conditions": [],
+        "cost_indication": "未公表"
+      },
+      "id_management_features": {
+        "ad_functional_level": "Windows Server 2016 functional levelを使用",
+        "laps": "Legacy Microsoft LAPS対応。Windows LAPSは2023-04-11以降の更新で対応。",
+        "mfa_native": "なし。Entra ID/AD FS/サードパーティーで補完。",
+        "fido2": "クラウド前提シナリオで利用可能だが、WS2022/2025の方が整備しやすい。",
+        "windows_hello": "Windows Hello for Business対応。Cloud Kerberos trustの条件を満たせる。",
+        "ntlm_status": "有効だが削減対象。",
+        "kerberos_aes": "AES128/256対応。RC4監査イベントは標準で利用可能。",
+        "patch_management": "WSUS対応、Intune/MECM併用しやすい"
+      },
+      "migration_trigger": "2029年1月9日まで延命できるが、WSUS縮退とNTLM削減の波で2025-2028に設計見直しが起こる。",
+      "id_management_impact": "Windows LAPS移行の現実的な最低ライン。Linux混在環境では2019が事実上の比較基準になりやすい。",
+      "japan_deployment_share": "高",
+      "notes": [
+        "日本企業で最も残りやすい現行世代の1つ。",
+        "AD DS機能レベルは2016のままで、2025機能を使うにはDC更新が必要。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2019",
+        "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview",
+        "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"
+      ]
+    },
+    {
+      "os_id": "windows_server_2022",
+      "os_name": "Windows Server 2022",
+      "vendor": "Microsoft",
+      "family": "Windows Server",
+      "release_date": "2021-08-18",
+      "mainstream_support_end": "2026-10-13",
+      "extended_support_end": "2031-10-14",
+      "support_status_as_of": "mainstream_support",
+      "esu_available": false,
+      "esu_program": {
+        "availability": "not_announced",
+        "coverage": "none",
+        "end_date": "not_announced",
+        "conditions": [],
+        "cost_indication": "未公表"
+      },
+      "id_management_features": {
+        "ad_functional_level": "Windows Server 2016 functional levelを使用",
+        "laps": "Windows LAPS対応（2023-04-11以降）。Legacy LAPSからの移行先として妥当。",
+        "mfa_native": "OS単体ではなし。Entra ID/AD FS連携が前提。",
+        "fido2": "ハイブリッド/クラウド前提で実装しやすい。",
+        "windows_hello": "Windows Hello for Business対応。Cloud Kerberos trust向けの現実的な標準。",
+        "ntlm_status": "有効だが将来廃止対象。",
+        "kerberos_aes": "AESが標準運用の中心。RC4削減計画を実施しやすい。",
+        "patch_management": "WSUS対応。ただし将来はIntune/WUfB/MECM再設計が必要。"
+      },
+      "migration_trigger": "2012 R2/2016からの移行先としてもっとも保守的。2031年まで猶予あり。",
+      "id_management_impact": "Windows LAPS、Cloud Kerberos trust、FIDO2実装の現実解として採用しやすい。",
+      "japan_deployment_share": "高",
+      "notes": [
+        "Azure EditionはHotpatch対象だが、一般的なオンプレ基幹サーバーではLTSC標準版が中心。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2022",
+        "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview",
+        "https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/deploy/"
+      ]
+    },
+    {
+      "os_id": "windows_server_2025",
+      "os_name": "Windows Server 2025",
+      "vendor": "Microsoft",
+      "family": "Windows Server",
+      "release_date": "2024-11-01",
+      "mainstream_support_end": "2029-11-13",
+      "extended_support_end": "2034-11-14",
+      "support_status_as_of": "mainstream_support",
+      "esu_available": false,
+      "esu_program": {
+        "availability": "not_applicable_yet",
+        "coverage": "none",
+        "end_date": "2034-11-14",
+        "conditions": [],
+        "cost_indication": "未公表"
+      },
+      "id_management_features": {
+        "ad_functional_level": "Windows Server 2025 functional level",
+        "laps": "Windows LAPS標準。DSRMパスワード管理やEntra IDバックアップも可能。",
+        "mfa_native": "OS単体ではなし。Entra ID連携前提。",
+        "fido2": "最新のハイブリッド認証基盤と相性がよい。",
+        "windows_hello": "Windows Hello for Business対応。Cloud Kerberos trust前提の設計がしやすい。",
+        "ntlm_status": "NTLMv1削除、NTLMv2は非推奨。将来削除予定。",
+        "kerberos_aes": "RC4の既定利用をさらに抑制。2025以降のAES強制化設計の基準。",
+        "patch_management": "WSUSは利用可能だが、Microsoftは『no longer actively developed』と明示"
+      },
+      "migration_trigger": "2025-2030の標準化先。WSUS縮退、NTLM削減、Kerberos AES化に対応する基盤更新の中心。",
+      "id_management_impact": "新しいAD DS機能レベル、Windows LAPS標準化、NTLM非推奨対応をまとめて進められる。",
+      "japan_deployment_share": "低",
+      "notes": [
+        "新規標準として有力だが、周辺製品の追随確認が必要。",
+        "WSUSの廃止方向が運用体制見直しを直接促す。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2025",
+        "https://learn.microsoft.com/en-us/windows-server/get-started/removed-deprecated-features-windows-server",
+        "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels",
+        "https://learn.microsoft.com/en-us/windows-server/security/kerberos/detect-remediate-rc4-kerberos"
+      ]
+    },
+    {
+      "os_id": "rhel_7",
+      "os_name": "Red Hat Enterprise Linux 7",
+      "vendor": "Red Hat",
+      "family": "RHEL",
+      "release_date": "2014-06-10",
+      "full_support_end": "2019-08-06",
+      "maintenance_support_1_end": "2021-08-03",
+      "maintenance_support_2_end": "2024-06-30",
+      "extended_life_phase_end": "2028-06-30",
+      "support_status_as_of": "extended_lifecycle_support_optional",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "ELS optional add-on",
+        "coverage": "RHEL 7 last minor release",
+        "end_date": "2028-06-30",
+        "conditions": [
+          "別料金のExtended Lifecycle Support add-on",
+          "既存インストール中心の保守",
+          "新機能や広範なハードウェア有効化は期待できない"
+        ],
+        "cost_indication": "延命専用の追加コスト。更改延期のための保険として扱うべき。"
+      },
+      "id_management_features": {
+        "sssd": "1.x系中心。AD参加、sudo rules、offline cacheの基本機能が主軸。",
+        "idm": "IdM 4.6系。FreeIPAベース。AD trustは可能だが新機能は限定的。",
+        "authselect": "未導入。authconfig中心。",
+        "realmd": "利用可能。AD参加の標準的手段。",
+        "azure_ad_direct_join": "標準では非推奨。AD DSまたはIdM経由が前提。",
+        "patch_management": "Red Hat Satellite/Uyuni/SUMA等"
+      },
+      "migration_trigger": "2024-06-30で通常保守終了。ELSは延命策にすぎず、RHEL 8/9移行が前提。",
+      "id_management_impact": "authselect未導入世代で、現代的な認証スタック標準化の阻害要因になる。",
+      "japan_deployment_share": "高",
+      "notes": [
+        "RHEL 7は日本の金融・製造で長期残存が多い。",
+        "CentOS 7残存と同じ文脈で棚卸し対象になる。"
+      ],
+      "source_urls": [
+        "https://access.redhat.com/support/policy/updates/errata",
+        "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/7/html/system-level_authentication_guide/realmd"
+      ]
+    },
+    {
+      "os_id": "rhel_8",
+      "os_name": "Red Hat Enterprise Linux 8",
+      "vendor": "Red Hat",
+      "family": "RHEL",
+      "release_date": "2019-05-07",
+      "full_support_end": "2024-05-31",
+      "maintenance_support_end": "2029-05-31",
+      "extended_life_phase_end": "2032-05-31",
+      "support_status_as_of": "maintenance_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "EUS/EUS add-ons and Extended Life Phase",
+        "coverage": "selected minor releases",
+        "end_date": "2032-05-31",
+        "conditions": [
+          "偶数minor中心にEUS",
+          "Full Support後は新機能より安定運用重視",
+          "Extended Life Phaseでは新規修正は限定される"
+        ],
+        "cost_indication": "EUSは追加費用。標準保守より高いがRHEL 7延命よりは合理的。"
+      },
+      "id_management_features": {
+        "sssd": "2.x系列へ移行。AD統合、sudo rules、smart card、offline authが強化。",
+        "idm": "IdM 4.8前後。FreeIPA系機能が拡張。",
+        "authselect": "導入済み。authconfig置き換え。",
+        "realmd": "標準。AD直接参加の基本導線。",
+        "azure_ad_direct_join": "一般的なサーバー運用では未成熟。AD DS/IdMが中心。",
+        "patch_management": "Red Hat Satellite/Uyuni/SUMA等"
+      },
+      "migration_trigger": "RHEL 7からの標準更改先として多いが、2030年代前半を見据えるならRHEL 9/10も比較対象。",
+      "id_management_impact": "authselect標準化で認証設定の再現性が改善し、Linux認証統制の基盤世代になる。",
+      "japan_deployment_share": "高",
+      "notes": [
+        "日本企業ではRHEL 7後継としてもっとも普及している。"
+      ],
+      "source_urls": [
+        "https://access.redhat.com/support/policy/updates/errata",
+        "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/htmlsingle/considerations_in_adopting_rhel_8/"
+      ]
+    },
+    {
+      "os_id": "rhel_9",
+      "os_name": "Red Hat Enterprise Linux 9",
+      "vendor": "Red Hat",
+      "family": "RHEL",
+      "release_date": "2022-05-17",
+      "full_support_end": "2027-05-31",
+      "maintenance_support_end": "2032-05-31",
+      "extended_life_phase_end": "2035-05-31",
+      "support_status_as_of": "full_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "EUS and Enhanced EUS for selected minor releases",
+        "coverage": "selected even minor releases",
+        "end_date": "2035-05-31",
+        "conditions": [
+          "minor releaseごとにEUS対象が決まる",
+          "長期固定運用ではEUSの採否が重要",
+          "Maintenance以降は機能追加より保守性重視"
+        ],
+        "cost_indication": "標準保守にEUS追加で増額。SAPや規制業界では許容されやすい。"
+      },
+      "id_management_features": {
+        "sssd": "2.7+世代。AD統合、sudo、証明書、offline authが安定。",
+        "idm": "IdM 4.9系。FreeIPA機能とAnsible連携が成熟。",
+        "authselect": "標準",
+        "realmd": "標準",
+        "azure_ad_direct_join": "Entra IDとの直接サインイン周辺機能は拡大したが、サーバーOSの本流は依然としてAD DS/IdM。",
+        "patch_management": "Red Hat Satellite/Uyuni/SUMA等"
+      },
+      "migration_trigger": "RHEL 8からの次期標準候補。2025-2030のLinux認証基盤の中核。",
+      "id_management_impact": "Windows AD主導のハイブリッド環境で、Linux側の標準参加方式をSSSD/realmdへ寄せやすい。",
+      "japan_deployment_share": "中",
+      "notes": [
+        "『Integrating RHEL systems directly with Windows Active Directory』が正式ドキュメント化され、AD直接参加の運用標準が明確。"
+      ],
+      "source_urls": [
+        "https://access.redhat.com/support/policy/updates/errata",
+        "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/integrating_rhel_systems_directly_with_windows_active_directory/index"
+      ]
+    },
+    {
+      "os_id": "rhel_10",
+      "os_name": "Red Hat Enterprise Linux 10",
+      "vendor": "Red Hat",
+      "family": "RHEL",
+      "release_date": "2025-05-20",
+      "full_support_end": "2030-05-31",
+      "maintenance_support_end": "2035-05-31",
+      "extended_life_phase_end": "2038-05-31",
+      "support_status_as_of": "full_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "EUS/Enhanced EUS planned",
+        "coverage": "selected even minor releases",
+        "end_date": "2038-05-31",
+        "conditions": [
+          "将来日付はRed Hatのplanning guideベースで近似",
+          "minor releaseごとの固定運用ではEnhanced EUSが重要"
+        ],
+        "cost_indication": "未確定だがEUS系は追加費用前提。"
+      },
+      "id_management_features": {
+        "sssd": "2.x最新系列。将来的なEntra/AD/IdM統合の主戦場。",
+        "idm": "RHEL IdM/FreeIPAの継続進化世代。",
+        "authselect": "標準",
+        "realmd": "標準",
+        "azure_ad_direct_join": "2025-2030の設計検討対象。実務ではAD DSまたはIdMを中継する設計が当面主流。",
+        "patch_management": "Red Hat Satellite/Uyuni/SUMA等"
+      },
+      "migration_trigger": "2030年代まで見据えた長期標準化候補。RHEL 8/9からの次期基準。",
+      "id_management_impact": "Linux認証基盤を10年単位で標準化したい企業で、IdM/AD統合の再設計時点になる。",
+      "japan_deployment_share": "低",
+      "notes": [
+        "将来フェーズのため、ミドルウェア互換性確認が前提。",
+        "将来日付はRed Hatが『close approximations』と明記。"
+      ],
+      "source_urls": [
+        "https://access.redhat.com/support/policy/updates/errata",
+        "https://docs.redhat.com/fr/documentation/red_hat_enterprise_linux/10/html/10.0_release_notes"
+      ]
+    },
+    {
+      "os_id": "centos_7",
+      "os_name": "CentOS 7",
+      "vendor": "Community",
+      "family": "CentOS",
+      "release_date": "2014-07-07",
+      "support_end": "2024-06-30",
+      "support_status_as_of": "out_of_support",
+      "esu_available": false,
+      "id_management_features": {
+        "sssd": "RHEL 7相当",
+        "freeipa": "利用可能だが保守責任は自社側に偏る",
+        "patch_management": "コミュニティミラー前提だったがEOLで維持負荷増大"
+      },
+      "migration_trigger": "2024-06-30でEOL。法令対応・脆弱性対応・監査対応で残置困難。",
+      "id_management_impact": "Linux認証基盤の再標準化を迫る典型例。RHEL 8/9、AlmaLinux、Rocky Linuxの選定が必要。",
+      "japan_deployment_share": "高",
+      "notes": [
+        "中小SIer案件や古い業務パッケージで残存が多い。"
+      ],
+      "source_urls": [
+        "https://www.centos.org/centos-linux-eol/"
+      ]
+    },
+    {
+      "os_id": "almalinux_8",
+      "os_name": "AlmaLinux 8",
+      "vendor": "AlmaLinux OS Foundation",
+      "family": "RHEL-compatible Linux",
+      "release_date": "2021-03-30",
+      "support_end": "2029-05-31",
+      "support_status_as_of": "supported",
+      "esu_available": false,
+      "id_management_features": {
+        "sssd": "RHEL 8互換",
+        "freeipa": "利用可能",
+        "patch_management": "Uyuni/SUMA/Ansible等で管理可能"
+      },
+      "migration_trigger": "CentOS 7後継の有力候補だが、商用サポート要件の確認が必要。",
+      "id_management_impact": "SSSD/FreeIPA運用は可能だが、ベンダー責任分界点を明確にする必要がある。",
+      "japan_deployment_share": "中",
+      "notes": [
+        "10年サポート方針を掲げるRHEL互換OS。"
+      ],
+      "source_urls": [
+        "https://wiki.almalinux.org/release-notes/",
+        "https://almalinux.org/"
+      ]
+    },
+    {
+      "os_id": "rocky_linux_9",
+      "os_name": "Rocky Linux 9",
+      "vendor": "RESF",
+      "family": "RHEL-compatible Linux",
+      "release_date": "2022-07-14",
+      "support_end": "2032-05-31",
+      "support_status_as_of": "supported",
+      "esu_available": false,
+      "id_management_features": {
+        "sssd": "RHEL 9互換",
+        "freeipa": "利用可能",
+        "patch_management": "Uyuni/SUMA/Ansible等で管理可能"
+      },
+      "migration_trigger": "CentOS 7後継として選ばれやすいが、保守モデルと認証標準を先に決める必要がある。",
+      "id_management_impact": "AD参加やFreeIPA連携は可能だが、商用RHELほどの運用責任分界は得にくい。",
+      "japan_deployment_share": "中",
+      "notes": [
+        "RHEL互換重視の移行先として採用例が増えている。"
+      ],
+      "source_urls": [
+        "https://rockylinux.org/",
+        "https://docs.rockylinux.org/"
+      ]
+    },
+    {
+      "os_id": "ubuntu_server_20_04_lts",
+      "os_name": "Ubuntu Server 20.04 LTS",
+      "vendor": "Canonical",
+      "family": "Ubuntu Server LTS",
+      "release_date": "2020-04-23",
+      "standard_support_end": "2025-05-29",
+      "esm_end": "2030-04-23",
+      "support_status_as_of": "esm_transition",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Ubuntu Pro / ESM",
+        "coverage": "Mainは標準5年、Proで10年。Legacy add-onで最長15年。",
+        "end_date": "2030-04-23",
+        "conditions": [
+          "Ubuntu Pro契約が必要",
+          "ESM Apps/Infraの対象差分に注意",
+          "Legacy add-onは追加契約"
+        ],
+        "cost_indication": "Ubuntu Pro前提。RHELより導入しやすいが無償ではない。"
+      },
+      "id_management_features": {
+        "sssd": "利用可能。AD参加の一般手段。",
+        "adsys": "AD Group Policy clientとして利用可能。Ubuntu Proと相性が良い。",
+        "landscape": "Canonicalのパッチ管理・監査・アクセス管理基盤。",
+        "livepatch": "Ubuntu Proで利用可能",
+        "patch_management": "Landscape/Ansible/apt ecosystem"
+      },
+      "migration_trigger": "2025年5月29日で標準サポート終了。以後はUbuntu Pro前提。",
+      "id_management_impact": "AD連携は継続可能だが、標準保守のままでは監査対応が弱くなる。",
+      "japan_deployment_share": "中",
+      "notes": [
+        "アプリケーション基盤や開発系サーバーで利用が多い。"
+      ],
+      "source_urls": [
+        "https://ubuntu.com/about/release-cycle",
+        "https://ubuntu.com/security/esm",
+        "https://documentation.ubuntu.com/adsys/stable/"
+      ]
+    },
+    {
+      "os_id": "ubuntu_server_22_04_lts",
+      "os_name": "Ubuntu Server 22.04 LTS",
+      "vendor": "Canonical",
+      "family": "Ubuntu Server LTS",
+      "release_date": "2022-04-21",
+      "standard_support_end": "2027-06-01",
+      "esm_end": "2032-04-21",
+      "support_status_as_of": "standard_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Ubuntu Pro / ESM",
+        "coverage": "5年標準 + 5年ESM",
+        "end_date": "2032-04-21",
+        "conditions": [
+          "Ubuntu ProでESM Apps/InfraとLivepatch",
+          "Landscape連携で運用を統合しやすい"
+        ],
+        "cost_indication": "Ubuntu Pro追加費用。"
+      },
+      "id_management_features": {
+        "sssd": "利用可能",
+        "adsys": "Active Directory Group Policy clientとして利用可能",
+        "landscape": "利用可能",
+        "livepatch": "利用可能",
+        "patch_management": "Landscape/Ansible/apt ecosystem"
+      },
+      "migration_trigger": "20.04からの標準移行先。Linux側のADポリシー運用を取り込みやすい。",
+      "id_management_impact": "Windows管理チームがUbuntuをADポリシーで一定制御する設計がしやすい。",
+      "japan_deployment_share": "中",
+      "notes": [],
+      "source_urls": [
+        "https://ubuntu.com/about/release-cycle",
+        "https://ubuntu.com/landscape",
+        "https://documentation.ubuntu.com/adsys/stable/"
+      ]
+    },
+    {
+      "os_id": "ubuntu_server_24_04_lts",
+      "os_name": "Ubuntu Server 24.04 LTS",
+      "vendor": "Canonical",
+      "family": "Ubuntu Server LTS",
+      "release_date": "2024-04-25",
+      "standard_support_end": "2029-05-31",
+      "esm_end": "2034-04-25",
+      "support_status_as_of": "standard_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Ubuntu Pro / ESM",
+        "coverage": "5年標準 + 5年ESM + Legacy add-onで最長15年",
+        "end_date": "2034-04-25",
+        "conditions": [
+          "Ubuntu ProでESM, Livepatch, Landscape"
+        ],
+        "cost_indication": "Ubuntu Pro追加費用。"
+      },
+      "id_management_features": {
+        "sssd": "利用可能",
+        "adsys": "Ubuntu Desktop/ServerをADで管理可能。privileges, AppArmor, certificates対応。",
+        "landscape": "利用可能",
+        "livepatch": "利用可能",
+        "patch_management": "Landscape/Ansible/apt ecosystem"
+      },
+      "migration_trigger": "2025-2030にUbuntuを標準化する場合の基準版。",
+      "id_management_impact": "Linux側の『Group Policy代替』としてADsysを正式採用しやすい。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://ubuntu.com/about/release-cycle",
+        "https://ubuntu.com/landscape",
+        "https://documentation.ubuntu.com/adsys/stable/"
+      ]
+    },
+    {
+      "os_id": "sles_12_sp5",
+      "os_name": "SUSE Linux Enterprise Server 12 SP5",
+      "vendor": "SUSE",
+      "family": "SLES",
+      "release_date": "2019-06-24",
+      "general_support_end": "2024-10-31",
+      "ltss_end": "2027-10-31",
+      "support_status_as_of": "ltss_optional",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "LTSS",
+        "coverage": "Long Term Service Pack Support",
+        "end_date": "2027-10-31",
+        "conditions": [
+          "追加費用のLTSS契約",
+          "SMT 12はLTSS条件で継続。SLES 15以降はRMTへ移行推奨"
+        ],
+        "cost_indication": "LTSS追加費用。延命用途。"
+      },
+      "id_management_features": {
+        "sssd": "利用可能",
+        "realmd": "利用可能",
+        "patch_management": "SUSE Manager / Uyuni / RMT",
+        "directory_integration": "AD/LDAP/Kerberos連携可能"
+      },
+      "migration_trigger": "General Support終了済み。SLES 15系へ移行しない理由を監査で説明しづらい。",
+      "id_management_impact": "SMTからRMT、旧LDAP/TLS設定の見直しが必要。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://www.suse.com/lifecycle/",
+        "https://www.suse.com/support/policy-products/"
+      ]
+    },
+    {
+      "os_id": "sles_15_series",
+      "os_name": "SUSE Linux Enterprise Server 15 series",
+      "vendor": "SUSE",
+      "family": "SLES",
+      "release_date": "2018-07-16",
+      "general_support_end": "2031-07-31",
+      "ltss_end": "2034-07-31",
+      "support_status_as_of": "supported",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "LTSS on final service pack",
+        "coverage": "major lifecycle + LTSS",
+        "end_date": "2034-07-31",
+        "conditions": [
+          "service packごとのライフサイクル確認が必要",
+          "LTSSは追加費用"
+        ],
+        "cost_indication": "商用サポート前提。"
+      },
+      "id_management_features": {
+        "sssd": "利用可能",
+        "realmd": "利用可能",
+        "patch_management": "SUSE Manager / Uyuni / RMT",
+        "directory_integration": "AD/LDAP/Kerberos連携可能"
+      },
+      "migration_trigger": "SLES 12残存からの標準更改先。",
+      "id_management_impact": "Uyuni/SUSE ManagerによるLinuxパッチ統制と認証統合をまとめて再設計しやすい。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://www.suse.com/lifecycle/",
+        "https://documentation.suse.com/suma/"
+      ]
+    },
+    {
+      "os_id": "oracle_linux_8",
+      "os_name": "Oracle Linux 8",
+      "vendor": "Oracle",
+      "family": "Oracle Linux",
+      "release_date": "2019-07-18",
+      "premier_support_end": "2029-07",
+      "extended_support_end": "2032-07",
+      "sustaining_support": "indefinite",
+      "support_status_as_of": "premier_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Premier/Extended/Sustaining model",
+        "coverage": "major release lifecycle",
+        "end_date": "2032-07",
+        "conditions": [
+          "Oracle Linux Support subscription前提",
+          "Kspliceはサブスクリプション条件に依存"
+        ],
+        "cost_indication": "商用サポート費用あり。Ksplice込み構成はRHELとの差別化要素。"
+      },
+      "id_management_features": {
+        "sssd": "RHEL 8互換に近い",
+        "freeipa": "利用可能",
+        "ksplice": "再起動なしカーネルパッチ適用が可能",
+        "uln": "Unbreakable Linux Networkでパッケージ/errata配信",
+        "patch_management": "ULN / Oracle Linux Manager / Ansible"
+      },
+      "migration_trigger": "RHEL互換性を維持しつつKspliceを使いたい場合の比較対象。",
+      "id_management_impact": "認証面はRHEL互換だが、パッチ運用だけ別体系になることがある。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://docs.oracle.com/en/operating-systems/oracle-linux/product-lifecycle/",
+        "https://linux.oracle.com/",
+        "https://www.oracle.com/linux/"
+      ]
+    },
+    {
+      "os_id": "oracle_linux_9",
+      "os_name": "Oracle Linux 9",
+      "vendor": "Oracle",
+      "family": "Oracle Linux",
+      "release_date": "2022-06-30",
+      "premier_support_end": "2032-06",
+      "extended_support_end": "2035-06",
+      "sustaining_support": "indefinite",
+      "support_status_as_of": "premier_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Premier/Extended/Sustaining model",
+        "coverage": "major release lifecycle",
+        "end_date": "2035-06",
+        "conditions": [
+          "Oracle Linux Support subscription前提",
+          "KspliceとULNの活用が前提になりやすい"
+        ],
+        "cost_indication": "商用サポート費用あり。"
+      },
+      "id_management_features": {
+        "sssd": "RHEL 9互換に近い",
+        "freeipa": "利用可能",
+        "ksplice": "再起動なしパッチ適用",
+        "uln": "更新配信基盤",
+        "patch_management": "ULN / Oracle Linux Manager / Ansible"
+      },
+      "migration_trigger": "RHEL 9比較で、ライブパッチ要件が強い場合の候補。",
+      "id_management_impact": "認証はRHEL互換で設計できるが、更新運用だけOracle色が強い。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://docs.oracle.com/en/operating-systems/oracle-linux/product-lifecycle/",
+        "https://linux.oracle.com/"
+      ]
+    },
+    {
+      "os_id": "aix_7_1",
+      "os_name": "AIX 7.1",
+      "vendor": "IBM",
+      "family": "AIX",
+      "release_date": "2010-09-10",
+      "support_end": "2023-04-30",
+      "support_status_as_of": "out_of_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Service Extension may apply",
+        "coverage": "contractual extension only",
+        "end_date": "contractual",
+        "conditions": [
+          "IBM Service Extension契約前提"
+        ],
+        "cost_indication": "高コストになりやすい。"
+      },
+      "id_management_features": {
+        "rbac": "AIX RBACあり",
+        "trustedaix": "Trusted Execution/Trusted AIX系機能あり",
+        "ldap_client": "LDAP clientあり",
+        "kerberos_client": "Kerberos clientあり",
+        "patch_management": "NIM/IBM系運用が中心"
+      },
+      "migration_trigger": "EOS済み。維持理由が特定アプリに限定される。",
+      "id_management_impact": "古いLDAP/TLS、古いKerberos設定、手作業運用がID統制の弱点になる。",
+      "japan_deployment_share": "低",
+      "notes": [
+        "Power基幹や勘定系周辺で残存。"
+      ],
+      "source_urls": [
+        "https://www.ibm.com/support/pages/aix-support-lifecycle-information",
+        "https://www.ibm.com/support/lifecycle/search?q=AIX%20Standard%20Edition"
+      ]
+    },
+    {
+      "os_id": "aix_7_2",
+      "os_name": "AIX 7.2",
+      "vendor": "IBM",
+      "family": "AIX",
+      "release_date": "2015-10-05",
+      "support_end": "not_announced",
+      "support_status_as_of": "supported",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Service Extension may apply later",
+        "coverage": "major release dependent",
+        "end_date": "not_announced",
+        "conditions": [
+          "IBM Lifecycleページで正式確認が必要"
+        ],
+        "cost_indication": "未確定"
+      },
+      "id_management_features": {
+        "rbac": "AIX RBACあり",
+        "trustedaix": "Trusted Executionあり",
+        "ldap_client": "LDAP clientあり",
+        "kerberos_client": "Kerberos clientあり",
+        "patch_management": "NIM/IBM系運用が中心"
+      },
+      "migration_trigger": "OS自体は残るが、TLS 1.2/1.3、LDAP証明書、古いSSH/PAM設計の見直しが先行課題。",
+      "id_management_impact": "ADやLDAPとつなぐ場合、暗号・証明書周辺の互換検証工数が大きい。",
+      "japan_deployment_share": "中",
+      "notes": [
+        "IBMの現行サポートページではTLごとのEnd of Fix Support管理が中心。"
+      ],
+      "source_urls": [
+        "https://www.ibm.com/support/pages/aix-support-lifecycle-information"
+      ]
+    },
+    {
+      "os_id": "aix_7_3",
+      "os_name": "AIX 7.3",
+      "vendor": "IBM",
+      "family": "AIX",
+      "release_date": "2021-12-10",
+      "support_end": "not_announced",
+      "support_status_as_of": "supported",
+      "esu_available": false,
+      "id_management_features": {
+        "rbac": "AIX RBACあり",
+        "trustedaix": "Trusted Executionあり",
+        "ldap_client": "LDAP clientあり",
+        "kerberos_client": "Kerberos clientあり",
+        "patch_management": "NIM/IBM系運用が中心"
+      },
+      "migration_trigger": "AIX残置が必要な場合の現行標準。",
+      "id_management_impact": "Power基盤を残すとしても、ID統制はAD/LDAPとPAM/SSHの境界で個別設計が必要。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://www.ibm.com/support/pages/aix-support-lifecycle-information"
+      ]
+    },
+    {
+      "os_id": "solaris_10",
+      "os_name": "Oracle Solaris 10",
+      "vendor": "Oracle",
+      "family": "Oracle Solaris",
+      "release_date": "2005-01-31",
+      "extended_support_end": "2021-01",
+      "support_status_as_of": "sustaining_support_only",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Sustaining Support",
+        "coverage": "limited",
+        "end_date": "indefinite",
+        "conditions": [
+          "Oracle Lifetime Support Policyに従う",
+          "新規修正より既存サポート中心"
+        ],
+        "cost_indication": "高コストで延命色が強い。"
+      },
+      "id_management_features": {
+        "pam": "PAM実装あり",
+        "nsswitch": "nsswitch.confあり",
+        "ldap_client": "LDAP clientあり",
+        "kerberos_client": "Kerberos service moduleあり",
+        "patch_management": "Oracle系保守運用"
+      },
+      "migration_trigger": "Solaris 10残存はID刷新以前にプラットフォーム退役検討が必要。",
+      "id_management_impact": "TLS/LDAP/Kerberos互換と証明書運用がボトルネックになりやすい。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://www.oracle.com/a/ocom/docs/lifetime-support-hardware-064287.pdf",
+        "https://docs.oracle.com/"
+      ]
+    },
+    {
+      "os_id": "solaris_11_4",
+      "os_name": "Oracle Solaris 11.4",
+      "vendor": "Oracle",
+      "family": "Oracle Solaris",
+      "release_date": "2018-08-28",
+      "premier_support_end": "2031-11",
+      "support_status_as_of": "premier_support",
+      "esu_available": true,
+      "esu_program": {
+        "availability": "Oracle Lifetime Support Policy",
+        "coverage": "Premier/Extended/Sustaining",
+        "end_date": "2031-11",
+        "conditions": [
+          "Oracle support contract前提"
+        ],
+        "cost_indication": "商用保守前提。"
+      },
+      "id_management_features": {
+        "pam": "PAM実装あり",
+        "nsswitch": "nsswitchあり",
+        "ldap_client": "Oracle Solaris 11.4 LDAP naming serviceあり",
+        "kerberos_client": "Kerberos service moduleあり",
+        "patch_management": "Oracle support repository/IPS"
+      },
+      "migration_trigger": "Solarisを残す場合の現実的な最低ライン。",
+      "id_management_impact": "PAM/LDAP/Kerberosは使えるが、Windows/LDAPの新暗号要件との整合検証が必要。",
+      "japan_deployment_share": "低",
+      "notes": [],
+      "source_urls": [
+        "https://docs.oracle.com/cd/E37838_01/html/E61012/index.html",
+        "https://www.oracle.com/a/ocom/docs/lifetime-support-hardware-064287.pdf"
+      ]
+    },
+    {
+      "os_id": "hpux_11iv3",
+      "os_name": "HP-UX 11i v3",
+      "vendor": "HPE",
+      "family": "HP-UX",
+      "release_date": "2007-02-01",
+      "support_end": "reference_only_contractual",
+      "support_status_as_of": "residual_contract_support",
+      "esu_available": false,
+      "id_management_features": {
+        "pam": "利用可能",
+        "ldap_client": "LDAP-UXあり",
+        "kerberos_client": "pam_krb5 / KRB5 client系が残存構成で利用されることがある",
+        "patch_management": "HPE保守契約依存"
+      },
+      "migration_trigger": "ほぼEOL相当。アプリ延命事情がなければ更改優先。",
+      "id_management_impact": "TLS/LDAP/Kerberos互換性の制約が大きく、現代的ID基盤との統合は高コスト。",
+      "japan_deployment_share": "低",
+      "notes": [
+        "参考情報扱い。新規標準化候補ではない。"
+      ],
+      "source_urls": [
+        "https://community.hpe.com/"
+      ]
+    }
+  ],
+  "patch_management_tools": [
+    {
+      "tool_id": "wsus",
+      "tool_name": "Windows Server Update Services",
+      "vendor": "Microsoft",
+      "primary_os": [
+        "Windows Server",
+        "Windows client"
+      ],
+      "linux_support": false,
+      "cloud_native": false,
+      "deployment_model": "on-premises",
+      "status": "deprecated_direction",
+      "cost_indication": "Windows Serverライセンス内だが運用工数が高い",
+      "strengths": [
+        "オンプレ閉域でも使いやすい",
+        "承認ベースで保守的運用が可能"
+      ],
+      "limitations": [
+        "Windows専用",
+        "モダン管理と相性が悪い",
+        "Windows Server 2025で『no longer actively developed』"
+      ],
+      "id_management_relevance": "パッチ準拠性の証跡がID管理のコンプライアンス統制と結びつく。"
+    },
+    {
+      "tool_id": "intune_wufb",
+      "tool_name": "Microsoft Intune / Windows Update for Business",
+      "vendor": "Microsoft",
+      "primary_os": [
+        "Windows client",
+        "Windows Server (限定的)"
+      ],
+      "linux_support": false,
+      "cloud_native": true,
+      "deployment_model": "SaaS",
+      "status": "strategic",
+      "cost_indication": "M365/Intuneライセンス前提",
+      "strengths": [
+        "クラウド準拠性管理と統合",
+        "Entra ID/Conditional Accessと接続しやすい"
+      ],
+      "limitations": [
+        "Windows Server中心のオンプレ閉域運用にはそのまま置換しにくい"
+      ],
+      "id_management_relevance": "準拠性シグナルをEntra ID条件付きアクセスと結びつけやすい。"
+    },
+    {
+      "tool_id": "mecm",
+      "tool_name": "Microsoft Endpoint Configuration Manager",
+      "vendor": "Microsoft",
+      "primary_os": [
+        "Windows Server",
+        "Windows client"
+      ],
+      "linux_support": false,
+      "cloud_native": "co-management",
+      "deployment_model": "hybrid",
+      "status": "supported",
+      "cost_indication": "中から高",
+      "strengths": [
+        "既存WSUS運用からの移行が比較的容易",
+        "大規模Windows資産管理に強い"
+      ],
+      "limitations": [
+        "Linux統合は弱い",
+        "クラウドネイティブではない"
+      ],
+      "id_management_relevance": "Windows資産の準拠性証跡を維持しつつID刷新を段階移行しやすい。"
+    },
+    {
+      "tool_id": "uyuni",
+      "tool_name": "Uyuni",
+      "vendor": "Community",
+      "primary_os": [
+        "SLES",
+        "RHEL-compatible Linux",
+        "Ubuntu"
+      ],
+      "linux_support": true,
+      "cloud_native": false,
+      "deployment_model": "self-hosted",
+      "status": "active",
+      "cost_indication": "OSS本体は低コスト、運用内製工数は高い",
+      "strengths": [
+        "Linux横断のパッチ/構成管理",
+        "RHEL互換OSやUbuntuも視野に入る"
+      ],
+      "limitations": [
+        "Windows向け主戦力ではない",
+        "運用設計は自社責任"
+      ],
+      "id_management_relevance": "Linuxサーバーのパッチ準拠性をID統制の一部として可視化しやすい。"
+    },
+    {
+      "tool_id": "suse_manager",
+      "tool_name": "SUSE Manager",
+      "vendor": "SUSE",
+      "primary_os": [
+        "SLES",
+        "RHEL-compatible Linux",
+        "Ubuntu"
+      ],
+      "linux_support": true,
+      "cloud_native": false,
+      "deployment_model": "self-hosted",
+      "status": "active",
+      "cost_indication": "商用ライセンスで中程度",
+      "strengths": [
+        "Uyuni系の商用版",
+        "規制業界でも採用しやすい"
+      ],
+      "limitations": [
+        "Windows管理の本命ではない"
+      ],
+      "id_management_relevance": "SUSE系や混在Linuxの準拠性証跡を監査しやすい。"
+    },
+    {
+      "tool_id": "landscape",
+      "tool_name": "Landscape",
+      "vendor": "Canonical",
+      "primary_os": [
+        "Ubuntu"
+      ],
+      "linux_support": true,
+      "cloud_native": true,
+      "deployment_model": "SaaS_or_self-hosted",
+      "status": "active",
+      "cost_indication": "Ubuntu Pro前提で中程度",
+      "strengths": [
+        "Ubuntu向けパッチ自動化、監査、アクセス管理",
+        "air-gapped環境にも対応可能"
+      ],
+      "limitations": [
+        "Ubuntu中心で、RHEL系の統合管理には向かない"
+      ],
+      "id_management_relevance": "UbuntuとADsys/SSSD運用を組み合わせる際の統制基盤になる。"
+    }
+  ],
+  "lifecycle_decision_matrix": [
+    {
+      "scenario": "Windows Server 2012 R2がまだ稼働中",
+      "risk_level": "critical",
+      "reason": "2023-10-10でExtended Support終了。ESU終了後は無償パッチなし。",
+      "recommended_action": "即時移行。Windows Server 2022または2025へ更新し、Entra Hybrid Join前提の認証設計へ移行。",
+      "id_management_impact": "Legacy LAPS刷新、NTLM削減、Kerberos AES監査、Windows Hello for Business整備が必要"
+    },
+    {
+      "scenario": "Windows Server 2016を2027年以降も使いたい",
+      "risk_level": "high",
+      "reason": "2027-01-12でExtended Support終了。ESU未公表。",
+      "recommended_action": "2026年中にWS2022/2025更改計画を確定。",
+      "id_management_impact": "Windows LAPSとCloud Kerberos trustの採否を同時決定する必要がある"
+    },
+    {
+      "scenario": "RHEL 7またはCentOS 7が残っている",
+      "risk_level": "critical",
+      "reason": "通常保守は終了済み。ELSは延命策にすぎない。",
+      "recommended_action": "RHEL 8/9または互換OSへ更改し、SSSD/authselect標準化を進める。",
+      "id_management_impact": "authconfig依存の認証設定を脱却し、AD/IdM参加方式を統一する必要がある"
+    },
+    {
+      "scenario": "Ubuntu 20.04 LTSをUbuntu Proなしで継続利用",
+      "risk_level": "high",
+      "reason": "2025-05-29で標準サポート終了。",
+      "recommended_action": "Ubuntu Pro導入か22.04/24.04へ更改。",
+      "id_management_impact": "ADsysやLandscapeを採用するならこのタイミングで標準化しやすい"
+    },
+    {
+      "scenario": "SLES 12 SP5をLTSSで延命中",
+      "risk_level": "high",
+      "reason": "LTSSは延命策であり、2027-10-31以降は余地が小さい。",
+      "recommended_action": "SLES 15系へ移行し、RMT/SUSE Manager運用へ整理。",
+      "id_management_impact": "LDAP/TLSと古い認証設定の棚卸しが必要"
+    },
+    {
+      "scenario": "AIX 7.2とSolaris 10が残る混在環境",
+      "risk_level": "high",
+      "reason": "OS自体の延命よりLDAP/TLS/Kerberos互換性の維持コストが高い。",
+      "recommended_action": "ADをマスターに据えるなら中継LDAPやPAM/PKI再設計を先に行う。",
+      "id_management_impact": "証明書配布、暗号スイート、アカウント統制の個別例外が増える"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_201",
+      "label": "OSライフサイクル",
+      "object_type": "concept",
+      "description": "OSの保守期限と延長保守条件。",
+      "properties": {}
+    },
+    {
+      "id": "node_202",
+      "label": "Windows LAPS",
+      "object_type": "product",
+      "description": "Windowsのローカル管理者パスワード管理機能。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_203",
+      "label": "WSUS",
+      "object_type": "product",
+      "description": "Windows向け更新承認・配布基盤。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_204",
+      "label": "SSSD",
+      "object_type": "product",
+      "description": "Linuxの認証統合デーモン。",
+      "properties": {
+        "vendor": "Community"
+      }
+    },
+    {
+      "id": "node_205",
+      "label": "RHEL IdM",
+      "object_type": "product",
+      "description": "Red HatのLinux統合ID管理基盤。",
+      "properties": {
+        "vendor": "Red Hat"
+      }
+    },
+    {
+      "id": "node_206",
+      "label": "パッチ準拠性",
+      "object_type": "concept",
+      "description": "最新パッチ適用状況を監査可能にする統制。",
+      "properties": {}
+    },
+    {
+      "id": "node_207",
+      "label": "NTLM削減",
+      "object_type": "pattern",
+      "description": "Windows認証をKerberos中心へ再設計する流れ。",
+      "properties": {}
+    },
+    {
+      "id": "node_208",
+      "label": "Kerberos AES強制化",
+      "object_type": "pattern",
+      "description": "RC4依存を監査・削減しAES中心へ寄せる施策。",
+      "properties": {}
+    },
+    {
+      "id": "node_209",
+      "label": "ADをマスターIdPとする混在OS運用",
+      "object_type": "pattern",
+      "description": "WindowsとLinux/UNIXをActive Directory中心で統合する設計。",
+      "properties": {}
+    },
+    {
+      "id": "node_210",
+      "label": "レガシーUNIX残存",
+      "object_type": "risk",
+      "description": "AIX/Solaris/HP-UXが残ることでTLS/LDAP/Kerberos互換の例外が増える。",
+      "properties": {
+        "impact": "high"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_201",
+      "to": "node_206",
+      "relationship": "requires",
+      "description": "ライフサイクル終端に近づくほどパッチ準拠性証跡が重要になる。"
+    },
+    {
+      "from": "node_203",
+      "to": "node_206",
+      "relationship": "implements",
+      "description": "WSUSはWindows更新承認の基本実装だった。"
+    },
+    {
+      "from": "node_203",
+      "to": "node_201",
+      "relationship": "complements",
+      "description": "OSライフサイクル管理と更新基盤管理は一体で扱う必要がある。"
+    },
+    {
+      "from": "node_202",
+      "to": "node_207",
+      "relationship": "complements",
+      "description": "Windows LAPS導入は古い横展開管理者アカウント運用の縮小と相性が良い。"
+    },
+    {
+      "from": "node_204",
+      "to": "node_209",
+      "relationship": "implements",
+      "description": "SSSDはLinuxをAD主導で統合する主要手段。"
+    },
+    {
+      "from": "node_205",
+      "to": "node_209",
+      "relationship": "complements",
+      "description": "RHEL IdMはAD trust併用のLinux側ハブとして使える。"
+    },
+    {
+      "from": "node_207",
+      "to": "node_208",
+      "relationship": "requires",
+      "description": "NTLM削減はKerberos AES標準化と並行で進める必要がある。"
+    },
+    {
+      "from": "node_210",
+      "to": "node_209",
+      "relationship": "mitigates",
+      "description": "例外管理をしないとAD主導統合が破綻しやすい。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "Windows Server 2025のWSUS位置づけ",
+      "summary": "MicrosoftはWSUSをWindows Server 2025で『no longer actively developed』と明示した。",
+      "details": [
+        "利用は継続可能だが、戦略製品ではない。",
+        "将来のWindows更新統制はIntune/WUfBまたはMECM、閉域では代替運用設計が必要。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows-server/get-started/removed-deprecated-features-windows-server"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "Windows LAPS対応範囲",
+      "summary": "Windows LAPSはWindows Server 2019/2022/2025で利用可能だが、2016以前は対象外。",
+      "details": [
+        "2023-04-11以降の更新が前提。",
+        "Legacy Microsoft LAPSはWindows 11 23H2以降で非推奨。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "AD DS機能レベルの変化",
+      "summary": "Windows Server 2019/2022でも機能レベルは2016止まりだったが、2025で新機能レベルが追加された。",
+      "details": [
+        "Forest/Domain Functional Levelを2025に上げるにはDC更新が必要。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/active-directory-functional-levels"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "NTLM非推奨ロードマップ",
+      "summary": "Windows Server 2025ではNTLMv1が削除され、LANMAN/NTLMv2も非推奨とされた。",
+      "details": [
+        "今後のWindows ServerでNTLMv2も削除される方向。",
+        "Kerberosへ寄せる棚卸しを2025-2030で進める必要がある。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows-server/get-started/removed-deprecated-features-windows-server"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Kerberos AES既定化の分岐点",
+      "summary": "2022-11-08以降の更新で、未設定アカウントのKerberos既定暗号はRC4よりAES-SHA1が優先されるようになった。",
+      "details": [
+        "CVE-2022-37966対応が背景。",
+        "RC4監査とサービスアカウントのパスワード再生成が必要。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows-server/security/kerberos/detect-remediate-rc4-kerberos"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "RC4の更なる縮小",
+      "summary": "Microsoftは2026年第2四半期末までにAD DCの既定想定暗号からRC4を無効化する計画を示している。",
+      "details": [
+        "Windows Server 2025ではDCがRC4のTGTを発行しない。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows-server/security/kerberos/detect-remediate-rc4-kerberos"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "Windows Hello for BusinessとサーバーOS",
+      "summary": "Windows Hello for Business自体はクライアント主体だが、Cloud Kerberos trustではWindows Server 2016以降のDC条件が関わる。",
+      "details": [
+        "Hybrid環境ではDC更新がサインイン体験に直結する。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows/security/identity-protection/hello-for-business/deploy/"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "Windows Server 2012 R2 ESUの費用感",
+      "summary": "Microsoft FAQではWindows Server 2012/R2のCommercial Licensing ESUは各年100%相当の価格感と説明されている。",
+      "details": [
+        "Azure上では無償。",
+        "オンプレはArcまたはCommercial Licensingで有償。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/lifecycle/faq/extended-security-updates"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "RHEL 7終了の意味",
+      "summary": "RHEL 7は2024-06-30で通常保守が終了し、以後はELS前提となる。",
+      "details": [
+        "CentOS 7 EOLと同時期で、Linux基盤刷新の大きなトリガーになった。"
+      ],
+      "source_urls": [
+        "https://access.redhat.com/support/policy/updates/errata"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "RHEL 8以降の認証スタック",
+      "summary": "RHEL 8からauthselectが本格導入され、authconfig依存から脱却した。",
+      "details": [
+        "認証設定の再現性と標準化が進めやすい。"
+      ],
+      "source_urls": [
+        "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/htmlsingle/considerations_in_adopting_rhel_8/"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "RHEL 9のAD直接参加",
+      "summary": "RHEL 9では『Integrating RHEL systems directly with Windows Active Directory』が正式ドキュメント化され、SSSD/realmd運用が標準化された。",
+      "details": [
+        "LinuxをADに参加させる場合の基本設計が明確。"
+      ],
+      "source_urls": [
+        "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/integrating_rhel_systems_directly_with_windows_active_directory/index"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "RHEL 9以降とEntra ID",
+      "summary": "Entra IDとの直接参加需要は増えているが、サーバーOSログオンの本流は依然としてAD DSまたはIdM中継である。",
+      "details": [
+        "Azure VMサインイン機能と、企業LAN内のサーバーOS参加は別問題として扱うべき。"
+      ],
+      "source_urls": [
+        "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/integrating_rhel_systems_directly_with_windows_active_directory/index"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "CentOS 7 EOLの影響",
+      "summary": "CentOS 7の2024-06-30 EOLは、Linux認証基盤の棚卸しと再標準化を強制した。",
+      "details": [
+        "AlmaLinux, Rocky Linux, RHELへの再編が起きた。"
+      ],
+      "source_urls": [
+        "https://www.centos.org/centos-linux-eol/"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "Ubuntu LTSの保守構造",
+      "summary": "Ubuntu LTSは標準5年、Ubuntu ProでESM 10年、Legacy add-onで最長15年まで延長できる。",
+      "details": [
+        "MainとUniverseの扱いを区別して設計する必要がある。"
+      ],
+      "source_urls": [
+        "https://ubuntu.com/about/release-cycle",
+        "https://ubuntu.com/security/esm"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "Landscapeの位置づけ",
+      "summary": "LandscapeはUbuntu向けにパッチ自動化、監査、アクセス管理を提供する。",
+      "details": [
+        "air-gapped環境でも使える。",
+        "WSUS代替というよりUbuntu向け統制基盤。"
+      ],
+      "source_urls": [
+        "https://ubuntu.com/landscape"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "ADsysの価値",
+      "summary": "ADsysはUbuntuのActive Directory Group Policy clientであり、SSSD/Winbindと連携してUbuntu Desktop/Serverを管理できる。",
+      "details": [
+        "boot/login時のポリシー適用、privileges管理、AppArmor、証明書自動登録を扱える。"
+      ],
+      "source_urls": [
+        "https://documentation.ubuntu.com/adsys/stable/"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "SLES 12から15への論点",
+      "summary": "SLES 12 SP5はLTSS延命フェーズに入り、SLES 15系への移行ではSMTからRMTへの切替も論点になる。",
+      "details": [
+        "SUSE Manager/Uyuniと合わせて更新統制を再設計しやすい。"
+      ],
+      "source_urls": [
+        "https://www.suse.com/lifecycle/"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "Oracle Linuxの差別化",
+      "summary": "Oracle LinuxはRHEL互換運用にKspliceとULNを組み合わせる点が特徴。",
+      "details": [
+        "認証面はRHEL互換、更新面はOracle独自色が強い。"
+      ],
+      "source_urls": [
+        "https://docs.oracle.com/en/operating-systems/oracle-linux/product-lifecycle/",
+        "https://linux.oracle.com/"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "AIXの現実",
+      "summary": "AIX 7.1はEOS済み、7.2/7.3はTLごとのFix Support管理が中心で、AD/LDAP連携は暗号互換の個別検証が必要。",
+      "details": [
+        "RBACやTrusted Executionはあるが、Windows/Linuxの標準設計とは分けて扱うべき。"
+      ],
+      "source_urls": [
+        "https://www.ibm.com/support/pages/aix-support-lifecycle-information"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "Solaris 11.4のLDAP/Kerberos実装",
+      "summary": "Solaris 11.4はLDAP naming service、PAM、Kerberos service module、nsswitchを備える。",
+      "details": [
+        "ただしActive Directoryや新TLS要件との整合は検証が必要。"
+      ],
+      "source_urls": [
+        "https://docs.oracle.com/cd/E37838_01/html/E61012/index.html"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "HP-UXの扱い",
+      "summary": "HP-UXは参考情報レベルで、現代的なID標準化の対象ではなく例外管理対象である。",
+      "details": [
+        "LDAP-UXやpam_krb5があっても、全体最適の標準には据えにくい。"
+      ],
+      "source_urls": [
+        "https://community.hpe.com/"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "WSUS代替の考え方",
+      "summary": "WSUSの代替は1製品置換ではなく、WindowsはIntune/MECM、LinuxはUyuni/SUMA/Landscapeへ役割分担する考え方が現実的。",
+      "details": [
+        "混在OSで単一ツール統一に固執すると設計が歪みやすい。"
+      ],
+      "source_urls": [
+        "https://learn.microsoft.com/en-us/windows-server/get-started/removed-deprecated-features-windows-server",
+        "https://ubuntu.com/landscape",
+        "https://documentation.suse.com/suma/"
+      ]
+    },
+    {
+      "id": "knowledge_023",
+      "topic": "日本企業での移行トリガー",
+      "summary": "OSのEOLは、ID管理刷新そのものより、監査・脆弱性対応・保守契約更新をきっかけに意思決定されることが多い。",
+      "details": [
+        "特に証券・銀行・製造・エネルギーでは『サポート切れOSに管理者がログオンする』こと自体が監査論点になる。"
+      ],
+      "source_urls": []
+    },
+    {
+      "id": "knowledge_024",
+      "topic": "混在OSの現実的課題 1",
+      "summary": "Windows Server 2019 + RHEL 8 + AIX 7.2 の混在では、ADをマスターIdPにしてもLinuxとUNIXで参加方式が揃わない。",
+      "details": [
+        "RHELはSSSD/realmdで標準化しやすい。",
+        "AIXはLDAP/Kerberos/PAMの個別調整が必要。"
+      ],
+      "source_urls": []
+    },
+    {
+      "id": "knowledge_025",
+      "topic": "混在OSの現実的課題 2",
+      "summary": "Windows LAPSとLinux特権管理は別物であり、混在環境では『ローカル管理者資格情報の統制』をOS別に分けて設計する必要がある。",
+      "details": [
+        "WindowsはWindows LAPS、Linuxはsudo/PAM/PAM（特権アクセス管理）製品で補完するのが一般的。"
+      ],
+      "source_urls": []
+    },
+    {
+      "id": "knowledge_026",
+      "topic": "混在OSの現実的課題 3",
+      "summary": "FreeIPA/RHEL IdMとADのtrustは有効だが、Linux専用ポリシーとWindows専用ポリシーの境界を明確にしないと運用が破綻しやすい。",
+      "details": [
+        "アカウント源泉、sudo権限、ホストベースアクセス制御を分けて考える必要がある。"
+      ],
+      "source_urls": []
+    },
+    {
+      "id": "knowledge_027",
+      "topic": "混在OSの現実的課題 4",
+      "summary": "AIX/Solarisの古いLDAPクライアントでは、TLS証明書チェーンや暗号スイート制約がActive Directoryや新LDAPサーバーと衝突しやすい。",
+      "details": [
+        "ID統制より先に通信互換の検証計画が必要。"
+      ],
+      "source_urls": []
+    },
+    {
+      "id": "knowledge_028",
+      "topic": "2025-2030の変化",
+      "summary": "2025-2030では、Windows側はWSUS縮退・NTLM削減・Kerberos AES化、Linux側はRHEL 7/CentOS 7後の標準化が同時進行する。",
+      "details": [
+        "このため、OS更改とID刷新を別案件に切り分けるより、認証・更新・特権管理を同時設計した方が手戻りが少ない。"
+      ],
+      "source_urls": []
+    }
+  ]
+}

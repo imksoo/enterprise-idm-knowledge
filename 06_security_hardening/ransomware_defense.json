@@ -1,0 +1,669 @@
+{
+  "metadata": {
+    "id": "topic_ransomware_defense",
+    "title": "ランサムウェア対策と ID 観点の防御",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "ransomware",
+      "lateral movement",
+      "Credential Guard",
+      "Protected Users",
+      "LSA Protection",
+      "NTLM",
+      "SMB",
+      "microsegmentation",
+      "backup",
+      "Sentinel"
+    ],
+    "related_files": [
+      "06_security_hardening/privileged_access_management.json",
+      "04_server_auth/kerberos_cifs_auth.json",
+      "03_identity_architecture/ad_current_state.json",
+      "05_hybrid_scenarios/entra_hybrid_join.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "Ransomware Defense",
+      "object_type": "concept",
+      "description": "ランサムウェア侵害に対して、ID、認証、ネットワーク、バックアップ、監視を統合して防御する考え方。",
+      "properties": {
+        "focus": [
+          "横展開阻止",
+          "資格情報保護",
+          "復旧性",
+          "早期検知"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Lateral Movement",
+      "object_type": "concept",
+      "description": "侵害者が 1 台の端末やサーバーから他の資産へ認証情報や管理プロトコルを使って移動する行為。",
+      "properties": {
+        "paths": [
+          "SMB",
+          "RDP",
+          "WinRM",
+          "PsExec",
+          "SSH"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "SMB Signing",
+      "object_type": "pattern",
+      "description": "SMB 通信の完全性を検証し、中間者攻撃や改ざんを抑止する制御。",
+      "properties": {
+        "scope": [
+          "clients",
+          "servers"
+        ],
+        "effect": "セッション改ざんの抑止"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "NTLM Restriction",
+      "object_type": "pattern",
+      "description": "NTLM の利用を段階的に無効化または制限し、Kerberos 優先へ移行する制御。",
+      "properties": {
+        "modes": [
+          "audit",
+          "deny domain accounts",
+          "deny all"
+        ]
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Administrative Share Disablement",
+      "object_type": "pattern",
+      "description": "不要な管理共有 `C$` や `ADMIN$` を無効化または厳格制限して横展開経路を減らす設計。",
+      "properties": {
+        "targets": [
+          "workstations",
+          "non-managed servers"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "Credential Guard",
+      "object_type": "product",
+      "description": "Windows の仮想化ベースセキュリティを利用し、資格情報の抽出を困難にする保護機能。",
+      "properties": {
+        "platform": "Windows Enterprise / Server",
+        "protects": [
+          "NTLM hashes",
+          "Kerberos TGT-related secrets"
+        ]
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "Protected Users",
+      "object_type": "pattern",
+      "description": "高権限ユーザーに対し、古い認証方式や長寿命チケットを制限する Active Directory セキュリティグループ。",
+      "properties": {
+        "restrictions": [
+          "NTLM 無効",
+          "DES/RC4 抑止",
+          "キャッシュ資格情報制限"
+        ]
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "LSA Protection",
+      "object_type": "pattern",
+      "description": "`lsass.exe` を保護プロセスとして動作させ、資格情報ダンプ耐性を高める制御。",
+      "properties": {
+        "registry_policy": "RunAsPPL",
+        "goal": "LSASS への不正アクセス抑止"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "DPAPI Protection",
+      "object_type": "pattern",
+      "description": "DPAPI に依存する秘密情報の保護を強化し、バックアップキー管理や端末保護を見直す設計。",
+      "properties": {
+        "targets": [
+          "saved credentials",
+          "application secrets",
+          "browser secrets"
+        ]
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "Microsegmentation",
+      "object_type": "pattern",
+      "description": "業務系、管理系、バックアップ系を細かく分離し、サーバー間通信を必要最小限へ絞る設計。",
+      "properties": {
+        "enforcement": [
+          "host firewall",
+          "network firewall",
+          "SDN controls"
+        ]
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "Server Quarantine",
+      "object_type": "pattern",
+      "description": "侵害兆候が出たサーバーを業務停止と引き換えに速やかに隔離する運用設計。",
+      "properties": {
+        "triggers": [
+          "EDR high severity",
+          "credential theft indicators",
+          "mass encryption behavior"
+        ]
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Firewall Policy Baseline",
+      "object_type": "pattern",
+      "description": "管理ポート、ファイル共有、認証通信を明示許可制で定義するファイアウォール要件の基準。",
+      "properties": {
+        "allow_list_style": true,
+        "examples": [
+          "Kerberos",
+          "LDAP(S)",
+          "SMB",
+          "WinRM",
+          "RDP",
+          "SSH"
+        ]
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "Backup Identity Separation",
+      "object_type": "pattern",
+      "description": "バックアップシステムの管理者、認証基盤、運用端末を本番 AD と分離する設計。",
+      "properties": {
+        "separation_targets": [
+          "backup admin accounts",
+          "backup consoles",
+          "backup service accounts"
+        ]
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "Immutable Backup",
+      "object_type": "pattern",
+      "description": "削除・暗号化・上書きに耐える不変バックアップを保持し、侵害後も復旧可能性を確保する制御。",
+      "properties": {
+        "controls": [
+          "WORM",
+          "retention lock",
+          "offline copy"
+        ]
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "Recovery Forest",
+      "object_type": "pattern",
+      "description": "AD 侵害時にディレクトリ再建と認証回復を行うための隔離された回復用環境。",
+      "properties": {
+        "purpose": "identity recovery"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "SIEM Integration",
+      "object_type": "pattern",
+      "description": "認証、管理操作、EDR、ネットワークイベントを集約し、侵害兆候を相関分析する連携設計。",
+      "properties": {
+        "sources": [
+          "Windows Event",
+          "Sysmon",
+          "Entra logs",
+          "Firewall logs",
+          "EDR telemetry"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "Entra ID Protection",
+      "object_type": "product",
+      "description": "Entra ID のリスクベース検知と条件付きアクセス連携により、侵害済み ID の利用を抑制する機能。",
+      "properties": {
+        "detections": [
+          "risk users",
+          "risk sign-ins"
+        ]
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "Microsoft Sentinel",
+      "object_type": "product",
+      "description": "クラウドネイティブ SIEM/SOAR として、AD や Entra ID に対する攻撃検知と対応自動化を担う。",
+      "properties": {
+        "capabilities": [
+          "analytics rules",
+          "UEBA",
+          "playbooks"
+        ]
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "Active Directory Attack Detection",
+      "object_type": "pattern",
+      "description": "Kerberoasting、DCShadow、DCSync、Pass-the-Hash などの AD 攻撃を検知する分析パターン。",
+      "properties": {
+        "attacks": [
+          "DCSync",
+          "DCShadow",
+          "Kerberoasting",
+          "Pass-the-Hash"
+        ]
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "Pass-the-Hash",
+      "object_type": "risk",
+      "description": "パスワードそのものではなくハッシュを再利用して横展開する代表的な攻撃手法。",
+      "properties": {
+        "depends_on": [
+          "hash theft",
+          "NTLM"
+        ]
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "Kerberoasting",
+      "object_type": "risk",
+      "description": "サービスチケットをオフライン解析してサービスアカウント秘密情報を狙う攻撃手法。",
+      "properties": {
+        "targets": [
+          "SPN accounts"
+        ]
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "DCSync",
+      "object_type": "risk",
+      "description": "ドメインコントローラーになりすましてディレクトリ秘密情報を取得する攻撃手法。",
+      "properties": {
+        "required_rights": [
+          "Replicating Directory Changes"
+        ]
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "Privileged Access Workstation",
+      "object_type": "pattern",
+      "description": "高権限作業を一般業務端末から分離し、資格情報窃取と横展開を減らす専用端末設計。",
+      "properties": {
+        "relationship": "PAM と共通する基盤制御"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "Managed Service Account",
+      "object_type": "pattern",
+      "description": "サービスアカウントを長寿命固定資格情報から分離し、ローテーション可能にする方式。",
+      "properties": {
+        "examples": [
+          "gMSA",
+          "managed identities"
+        ]
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "Backup Admin Tier",
+      "object_type": "concept",
+      "description": "本番ドメイン管理者とは別に設けるバックアップ専用の管理階層。",
+      "properties": {
+        "goal": "本番侵害時でも復旧権限を温存"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "Japan Enterprise Reality",
+      "object_type": "concept",
+      "description": "日本企業で見られる、兼務管理者、単一 AD 依存、SIer 常駐運用、古い認証方式残存といった実態。",
+      "properties": {
+        "characteristics": [
+          "一人管理者依存",
+          "レガシーサーバー残存",
+          "運用委託の広い権限"
+        ]
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "Single Admin Compromise Scenario",
+      "object_type": "risk",
+      "description": "1 つの管理者アカウント侵害から DC、ファイルサーバー、バックアップ、仮想基盤まで同時に失陥する典型パターン。",
+      "properties": {
+        "blast_radius": "enterprise-wide"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "Mitigation Priority",
+      "object_type": "pattern",
+      "description": "限られた人員と予算で優先度順に対策を実装するための整理軸。",
+      "properties": {
+        "priority_buckets": [
+          "immediate",
+          "next",
+          "strategic"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "ランサムウェア対策では横展開阻止が中核となる。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_002",
+      "relationship": "mitigates",
+      "description": "SMB 署名は SMB 経路の改ざんやなりすましを抑え、横展開耐性を高める。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_020",
+      "relationship": "mitigates",
+      "description": "NTLM 制限は Pass-the-Hash の成立条件を縮小する。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_002",
+      "relationship": "mitigates",
+      "description": "管理共有の無効化や制限は不必要な横展開経路を減らす。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_020",
+      "relationship": "mitigates",
+      "description": "Credential Guard は資格情報窃取を難しくし、ハッシュ再利用リスクを減らす。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_004",
+      "relationship": "complements",
+      "description": "Protected Users は NTLM 制限を高権限ユーザーに対して先行適用する足場になる。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_020",
+      "relationship": "mitigates",
+      "description": "LSA Protection は LSASS からの秘密情報ダンプを困難にする。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "DPAPI 保護は端末上の保存済み秘密情報流出を抑え、侵害後の悪用を減らす。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_002",
+      "relationship": "mitigates",
+      "description": "マイクロセグメンテーションは横移動可能な到達範囲を減らす。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "サーバー検疫を成立させるには事前の通信分離設計が必要である。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_010",
+      "relationship": "implements",
+      "description": "ファイアウォール要件はマイクロセグメンテーションを具体化する。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_025",
+      "relationship": "implements",
+      "description": "バックアップ ID 分離はバックアップ専用管理階層を実装する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_001",
+      "relationship": "mitigates",
+      "description": "不変バックアップは暗号化被害後の復旧不能化を抑止する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_013",
+      "relationship": "complements",
+      "description": "Recovery Forest は ID 基盤破壊時の最終復旧手段としてバックアップ分離を補完する。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "SIEM 連携の代表実装として Microsoft Sentinel を利用できる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_019",
+      "relationship": "implements",
+      "description": "Sentinel は AD 攻撃検知ルールを実装する基盤となる。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_016",
+      "relationship": "complements",
+      "description": "Entra ID Protection のリスク検知は SIEM 側の相関分析を補完する。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_021",
+      "relationship": "mitigates",
+      "description": "AD 攻撃検知は Kerberoasting の兆候把握に役立つ。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_022",
+      "relationship": "mitigates",
+      "description": "AD 攻撃検知は DCSync の異常なレプリケーション要求を検知対象に含める。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_002",
+      "relationship": "mitigates",
+      "description": "PAW は高権限資格情報を一般端末から切り離し、横展開起点を減らす。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_021",
+      "relationship": "mitigates",
+      "description": "管理対象化されたサービスアカウントは Kerberoasting に対する露出を下げる。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_027",
+      "relationship": "example_of",
+      "description": "日本企業の実態として、単一管理者依存は全域停止シナリオを招きやすい。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "優先度付けではまず SMB 署名や基本防御の徹底を含める。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "資格情報保護の早期実装は優先度が高い。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_013",
+      "relationship": "requires",
+      "description": "復旧性確保のためバックアップ ID 分離は優先対象である。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "横展開阻止の基本原則",
+      "summary": "ランサムウェア被害の深刻度は侵入そのものより横展開速度で決まる。SMB、RDP、WinRM、管理共有、共通管理者資格情報の同時対策が必要であり、単一制御だけでは止まりにくい。",
+      "related_nodes": [
+        "node_001",
+        "node_002",
+        "node_003",
+        "node_004",
+        "node_005"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "SMB 署名の位置づけ",
+      "summary": "SMB 署名は万能ではないが、通信完全性の確保により古い中間者的手口やセッション改ざんの余地を狭める。ファイルサーバー、管理共有、レプリケーション経路を含めて段階的に強制する価値がある。",
+      "related_nodes": [
+        "node_003",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "NTLM 無効化と制限",
+      "summary": "NTLM を一括停止するとレガシー業務が止まる場合があるため、監査から始めて依存先を洗い出し、管理者系アカウント、サーバー間通信、外部委託接続の順で縮退させるのが現実的である。",
+      "related_nodes": [
+        "node_004",
+        "node_007",
+        "node_026"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "管理共有の扱い",
+      "summary": "管理共有 `C$` や `ADMIN$` は完全無効化が難しい環境もある。その場合でも接続元を踏み台や管理セグメントに限定し、一般端末からの到達性を断つことが重要である。",
+      "related_nodes": [
+        "node_005",
+        "node_010",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Credential Guard と LSA Protection",
+      "summary": "Credential Guard と LSA Protection はどちらも資格情報窃取耐性を高めるが、役割は異なる。前者は VBS による秘密情報分離、後者は `lsass.exe` の保護強化であり、併用することで防御層が厚くなる。",
+      "related_nodes": [
+        "node_006",
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "Protected Users の適用先",
+      "summary": "Protected Users は高権限者へ先行適用する価値が高いが、古いプロトコル依存を抱えるサービスアカウントには不向きである。ドメイン管理者、バックアップ管理者、認証基盤管理者から段階導入するのがよい。",
+      "related_nodes": [
+        "node_007",
+        "node_025"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "DPAPI の実務上の注意",
+      "summary": "DPAPI 自体だけではなく、その前提となるユーザー資格情報やバックアップキー管理が重要である。侵害端末に保存されたブラウザ秘密情報やアプリ秘密情報の回収経路として見直す必要がある。",
+      "related_nodes": [
+        "node_009",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "ネットワーク分離と検疫",
+      "summary": "検疫はインシデント時に初めて考えると失敗する。事前に管理系、バックアップ系、業務系の許可通信を整理し、EDR 連携でサーバー単位の遮断や限定通信モードへ切り替えられるようにしておくべきである。",
+      "related_nodes": [
+        "node_010",
+        "node_011",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "バックアップの ID 分離",
+      "summary": "バックアップ製品の管理者を本番ドメイン管理者と兼務させると、1 つの資格情報侵害でバックアップ削除まで到達される。管理者、認証基盤、保管先、運用端末を分離しておくことが復旧性を左右する。",
+      "related_nodes": [
+        "node_013",
+        "node_014",
+        "node_025",
+        "node_027"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "不変バックアップの意味",
+      "summary": "オフラインや WORM 保護のないバックアップは、侵害者にとって次の暗号化対象になりやすい。不変性、別認証系、復元演習の 3 点がそろって初めて実効的な復旧策になる。",
+      "related_nodes": [
+        "node_014",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "Sentinel による AD 攻撃検知",
+      "summary": "Microsoft Sentinel では DC のセキュリティイベント、Sysmon、Defender 系シグナル、Entra ログを組み合わせることで DCSync、異常な認証失敗、管理者グループ変更、疑わしいチケット発行を相関できる。",
+      "related_nodes": [
+        "node_016",
+        "node_018",
+        "node_019",
+        "node_022"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "Entra ID Protection の役割",
+      "summary": "オンプレミス侵害の文脈でも Entra ID Protection は重要である。侵害済み資格情報のクラウド側悪用や、ハイブリッド管理者の異常サインインを早期に把握し、条件付きアクセスと連動させられる。",
+      "related_nodes": [
+        "node_017",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "日本企業でよくある全落ちパターン",
+      "summary": "単一の管理者アカウントがメール端末、運用端末、仮想基盤、バックアップ、AD 管理を兼務していると、フィッシング 1 回から全システム停止へ直結する。実被害ではこの資格情報集中が被害拡大の主要因になりやすい。",
+      "related_nodes": [
+        "node_026",
+        "node_027",
+        "node_023"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "日本企業での対策優先順位",
+      "summary": "現実的な優先順位は、まず管理者分離、PAW、バックアップ ID 分離、Credential Guard、基本的なファイアウォール制御である。その次に NTLM 依存解消、マイクロセグメンテーション、Recovery Forest、分析自動化へ進む構成が実行しやすい。",
+      "related_nodes": [
+        "node_023",
+        "node_013",
+        "node_006",
+        "node_028"
+      ]
+    }
+  ]
+}

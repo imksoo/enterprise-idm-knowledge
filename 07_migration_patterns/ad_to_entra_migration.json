@@ -1,0 +1,768 @@
+{
+  "metadata": {
+    "id": "topic_ad_to_entra_migration",
+    "title": "Active Directory から Entra ID への移行パターン",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "Active Directory",
+      "Entra ID",
+      "移行",
+      "ハイブリッド",
+      "日本企業",
+      "レガシーシステム",
+      "SIer"
+    ],
+    "related_files": [
+      "../03_identity_architecture/ad_current_state.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/group_policy_alternatives.json",
+      "../06_security_hardening/privileged_access_management.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_ad_source",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "日本企業で現在も多くの Windows Server、業務システム、オンプレミス認証基盤の中心となっているディレクトリサービス。",
+      "properties": {
+        "role": "source_identity_platform",
+        "typical_residual_scope": [
+          "オンプレミス サーバー管理者認証",
+          "レガシーアプリの Kerberos",
+          "ベンダー保守アカウント"
+        ]
+      }
+    },
+    {
+      "id": "node_entra_target",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "クラウド中心の認証、条件付きアクセス、多要素認証、デバイス管理連携を担う移行先の中核基盤。",
+      "properties": {
+        "role": "target_identity_platform",
+        "strategic_value": [
+          "ゼロトラスト強化",
+          "クラウドSaaS統合",
+          "運用標準化"
+        ]
+      }
+    },
+    {
+      "id": "node_pattern_lift_shift",
+      "label": "Lift & Shift",
+      "object_type": "pattern",
+      "description": "既存の Active Directory 依存を大きく変えずに Azure VM 上へ移す、または Entra Domain Services を補完利用して延命する移行パターン。",
+      "properties": {
+        "primary_use_case": "短期的なデータセンター閉鎖やサーバー更改",
+        "fit_for_japan": "レガシー依存が強く、設計責任を SIer と分担したい組織"
+      }
+    },
+    {
+      "id": "node_pattern_hybrid",
+      "label": "Hybrid Coexistence",
+      "object_type": "pattern",
+      "description": "Active Directory と Entra ID を長期間併存させ、ユーザー・端末・アプリを段階的に移行する現実的な主流パターン。",
+      "properties": {
+        "primary_use_case": "中堅から大企業の現実解",
+        "fit_for_japan": "オンプレミス残存環境と基幹系を維持しながら統制を進める組織"
+      }
+    },
+    {
+      "id": "node_pattern_full_cloud",
+      "label": "Full Cloud",
+      "object_type": "pattern",
+      "description": "新設組織やスタートアップのように Active Directory を持ち込まず、Entra ID を中心に端末・認証・運用を設計するパターン。",
+      "properties": {
+        "primary_use_case": "新設法人、分社、ゼロベース刷新",
+        "constraints": [
+          "既存オンプレミス依存が少ないこと",
+          "業務アプリのモダナイズが進んでいること"
+        ]
+      }
+    },
+    {
+      "id": "node_pattern_app_first",
+      "label": "Application-first",
+      "object_type": "pattern",
+      "description": "アプリケーションごとに認証基盤を切り替え、SAML や OpenID Connect 対応可能な領域から Entra ID に寄せるパターン。",
+      "properties": {
+        "primary_use_case": "認証方式が混在する企業",
+        "benefit": "ビジネス優先度に沿った移行順序を定義しやすい"
+      }
+    },
+    {
+      "id": "node_azure_vm_ad",
+      "label": "Azure VM",
+      "object_type": "product",
+      "description": "Active Directory ドメインコントローラーをクラウド上へ再配置する際の実行基盤。",
+      "properties": {
+        "role": "infrastructure",
+        "considerations": [
+          "可用性設計",
+          "バックアップ",
+          "ネットワーク分離"
+        ]
+      }
+    },
+    {
+      "id": "node_entra_ds",
+      "label": "Entra Domain Services",
+      "object_type": "product",
+      "description": "ドメイン参加や LDAP、Kerberos を一部代替できるが、既存 Active Directory の完全代替ではないマネージドドメインサービス。",
+      "properties": {
+        "role": "managed_domain_service",
+        "caution": "複雑な GPO や一部のドメイン管理要件をそのまま移植できない"
+      }
+    },
+    {
+      "id": "node_entra_connect",
+      "label": "Entra Connect",
+      "object_type": "product",
+      "description": "Active Directory から Entra ID へユーザーやグループを同期する基盤コンポーネント。",
+      "properties": {
+        "role": "directory_sync",
+        "phase": "phase_1"
+      }
+    },
+    {
+      "id": "node_phs",
+      "label": "Password Hash Synchronization",
+      "object_type": "concept",
+      "description": "Active Directory のパスワード情報を Entra ID 側へ同期し、クラウド認証の足場を整える方式。",
+      "properties": {
+        "role": "cloud_auth_bootstrap",
+        "phase": "phase_1"
+      }
+    },
+    {
+      "id": "node_hybrid_join",
+      "label": "Entra Hybrid Join",
+      "object_type": "concept",
+      "description": "既存のドメイン参加端末を維持しつつ Entra ID 管理対象として登録する中間ステップ。",
+      "properties": {
+        "role": "device_transition",
+        "phase": "phase_1"
+      }
+    },
+    {
+      "id": "node_ca",
+      "label": "Conditional Access",
+      "object_type": "concept",
+      "description": "ユーザー、端末状態、場所、リスクに応じてアクセス条件を制御するクラウド側ポリシー。",
+      "properties": {
+        "role": "zero_trust_control",
+        "phase": "phase_2"
+      }
+    },
+    {
+      "id": "node_mfa",
+      "label": "Multi-Factor Authentication",
+      "object_type": "concept",
+      "description": "パスワード依存を減らし、侵害時の横展開を抑止するための基本対策。",
+      "properties": {
+        "role": "identity_protection",
+        "phase": "phase_2"
+      }
+    },
+    {
+      "id": "node_laps",
+      "label": "Local Administrator Password Solution",
+      "object_type": "concept",
+      "description": "端末ごとのローカル管理者パスワードを個別管理し、共通パスワード運用を排除する対策。",
+      "properties": {
+        "role": "endpoint_privilege_control",
+        "phase": "phase_3"
+      }
+    },
+    {
+      "id": "node_jit",
+      "label": "Just-in-Time",
+      "object_type": "concept",
+      "description": "管理者権限を常時付与せず、必要な時だけ昇格させる特権管理の考え方。",
+      "properties": {
+        "role": "privileged_access_control",
+        "phase": "phase_3"
+      }
+    },
+    {
+      "id": "node_entra_join",
+      "label": "Entra Join",
+      "object_type": "concept",
+      "description": "端末を Active Directory 非依存で Entra ID に直接参加させるクラウドネイティブな管理形態。",
+      "properties": {
+        "role": "ad_free_endpoint_state",
+        "phase": "phase_4"
+      }
+    },
+    {
+      "id": "node_assess_ad_health",
+      "label": "AD健全性チェック",
+      "object_type": "concept",
+      "description": "孤立 OU、未使用アカウント、過剰権限、重複グループ、古い信頼関係を洗い出し、移行の前提を整える評価作業。",
+      "properties": {
+        "category": "assessment",
+        "day": "day_0"
+      }
+    },
+    {
+      "id": "node_assess_kerberos",
+      "label": "Kerberos依存アプリ棚卸し",
+      "object_type": "concept",
+      "description": "CIFS、SQL Server、IIS、Java アプリなどの Kerberos 依存と SPN 設計を確認する棚卸し。",
+      "properties": {
+        "category": "assessment",
+        "day": "day_0"
+      }
+    },
+    {
+      "id": "node_assess_service_accounts",
+      "label": "サービスアカウント把握",
+      "object_type": "concept",
+      "description": "ジョブ実行、ミドルウェア、バックアップ、監視、ベンダー保守を含む全サービスアカウントを可視化する作業。",
+      "properties": {
+        "category": "assessment",
+        "day": "day_0"
+      }
+    },
+    {
+      "id": "node_assess_gpo",
+      "label": "グループポリシー依存分析",
+      "object_type": "concept",
+      "description": "ログオンスクリプト、証明書配布、レジストリ設定、アプリ制御などを分析し、代替先を定義する評価作業。",
+      "properties": {
+        "category": "assessment",
+        "day": "day_0"
+      }
+    },
+    {
+      "id": "node_day0",
+      "label": "Day 0",
+      "object_type": "pattern",
+      "description": "アセスメント、方針決定、責任分界、テナント設計、影響分析を固める準備フェーズ。",
+      "properties": {
+        "timeframe": "0-3ヶ月",
+        "deliverables": [
+          "現状評価",
+          "移行方針",
+          "優先順位"
+        ]
+      }
+    },
+    {
+      "id": "node_phase1",
+      "label": "フェーズ1",
+      "object_type": "pattern",
+      "description": "Entra Connect、Password Hash Synchronization、Entra Hybrid Join を導入し、基本的なハイブリッド基盤を構築する段階。",
+      "properties": {
+        "timeframe": "3-6ヶ月",
+        "focus": "同期と端末登録"
+      }
+    },
+    {
+      "id": "node_phase2",
+      "label": "フェーズ2",
+      "object_type": "pattern",
+      "description": "Conditional Access と Multi-Factor Authentication を全社展開し、クラウド側の認証強度を標準化する段階。",
+      "properties": {
+        "timeframe": "6-12ヶ月",
+        "focus": "利用者認証強化"
+      }
+    },
+    {
+      "id": "node_phase3",
+      "label": "フェーズ3",
+      "object_type": "pattern",
+      "description": "Local Administrator Password Solution と Just-in-Time 特権管理を進め、特権横展開リスクを下げる段階。",
+      "properties": {
+        "timeframe": "12-24ヶ月",
+        "focus": "特権最小化"
+      }
+    },
+    {
+      "id": "node_phase4",
+      "label": "フェーズ4",
+      "object_type": "pattern",
+      "description": "Entra Join を中心に AD フリー化を進め、Active Directory の残置範囲を限定する最終段階。",
+      "properties": {
+        "timeframe": "24ヶ月以上",
+        "focus": "AD依存の縮退"
+      }
+    },
+    {
+      "id": "node_risk_ntlm_kerberos",
+      "label": "NTLMとKerberosのレガシー依存",
+      "object_type": "risk",
+      "description": "認証改修が難しい業務アプリやファイル共有が残り、Entra ID 単独化を妨げる代表的な障壁。",
+      "properties": {
+        "category": "technical_barrier",
+        "severity": "high"
+      }
+    },
+    {
+      "id": "node_risk_sier",
+      "label": "SIer責任分界の曖昧化",
+      "object_type": "risk",
+      "description": "設計責任、運用責任、障害切り分けが分散し、移行判断が遅延する日本企業で典型的な障壁。",
+      "properties": {
+        "category": "governance_barrier",
+        "severity": "high"
+      }
+    },
+    {
+      "id": "node_risk_user_training",
+      "label": "利用者教育不足",
+      "object_type": "risk",
+      "description": "Authenticator 登録、認証方式変更、端末再登録に対する理解不足が展開速度を落とすリスク。",
+      "properties": {
+        "category": "adoption_barrier",
+        "severity": "medium"
+      }
+    },
+    {
+      "id": "node_risk_fallback",
+      "label": "フォールバック未設計",
+      "object_type": "risk",
+      "description": "同期停止、誤ポリシー適用、MFA 障害時の退避経路が定義されていないため業務停止につながるリスク。",
+      "properties": {
+        "category": "operational_barrier",
+        "severity": "high"
+      }
+    },
+    {
+      "id": "node_risk_japan_core",
+      "label": "オンプレミス基幹システム残存",
+      "object_type": "risk",
+      "description": "日本企業では基幹システムが最後まで Kerberos やドメイン参加を要求し、完全移行の最終障壁になりやすい。",
+      "properties": {
+        "category": "japan_specific_risk",
+        "severity": "high"
+      }
+    },
+    {
+      "id": "node_risk_vendor_accounts",
+      "label": "ベンダー管理アカウント整理不足",
+      "object_type": "risk",
+      "description": "保守契約に紐づく共有 ID や固定パスワードが残り、移行後の統制を崩すリスク。",
+      "properties": {
+        "category": "japan_specific_risk",
+        "severity": "high"
+      }
+    },
+    {
+      "id": "node_risk_jp_calendar",
+      "label": "日本固有の業務要件",
+      "object_type": "risk",
+      "description": "年号・元号、帳票、旧式クライアントなど日本固有の業務要件が端末更新やアプリ刷新を遅らせるリスク。",
+      "properties": {
+        "category": "japan_specific_risk",
+        "severity": "medium"
+      }
+    },
+    {
+      "id": "node_delivery_inhouse",
+      "label": "内製主導",
+      "object_type": "pattern",
+      "description": "社内の情報システム部門が設計主導権を持ち、SIer は局所的に活用する実行モデル。",
+      "properties": {
+        "cost_profile": "初期は人材確保コストが高いが中長期運用は安定",
+        "fit": "標準化を継続できる組織"
+      }
+    },
+    {
+      "id": "node_delivery_sier",
+      "label": "SIer委託",
+      "object_type": "pattern",
+      "description": "設計・構築・移行の多くを SIer に委託する実行モデル。",
+      "properties": {
+        "cost_profile": "初期導入は進めやすいが責任分界の定義が成否を左右する",
+        "fit": "大規模で関係者が多い組織"
+      }
+    },
+    {
+      "id": "node_delivery_msp",
+      "label": "MSP活用",
+      "object_type": "pattern",
+      "description": "運用監視や定常変更を外部サービスに寄せ、社内は統制と例外判断に集中する実行モデル。",
+      "properties": {
+        "cost_profile": "月額化しやすいが運用契約の粒度設計が必要",
+        "fit": "少人数の情報システム部門"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_pattern_lift_shift",
+      "to": "node_ad_source",
+      "relationship": "requires",
+      "description": "既存の Active Directory 設計を大きく変えずに延命するため、元の Active Directory 依存を前提とする。"
+    },
+    {
+      "from": "node_pattern_lift_shift",
+      "to": "node_azure_vm_ad",
+      "relationship": "implements",
+      "description": "ドメインコントローラーを Azure VM 上に再配置してクラウド移送する。"
+    },
+    {
+      "from": "node_pattern_lift_shift",
+      "to": "node_entra_ds",
+      "relationship": "complements",
+      "description": "一部のドメイン参加や LDAP 需要に対して Entra Domain Services を補完的に用いる。"
+    },
+    {
+      "from": "node_pattern_hybrid",
+      "to": "node_entra_connect",
+      "relationship": "requires",
+      "description": "長期並行運用では Entra Connect によるディレクトリ同期が基盤になる。"
+    },
+    {
+      "from": "node_pattern_hybrid",
+      "to": "node_phs",
+      "relationship": "requires",
+      "description": "クラウド認証の普及には Password Hash Synchronization が実務上の標準になる。"
+    },
+    {
+      "from": "node_pattern_hybrid",
+      "to": "node_hybrid_join",
+      "relationship": "requires",
+      "description": "既存端末の管理継続には Entra Hybrid Join が現実的な橋渡しになる。"
+    },
+    {
+      "from": "node_pattern_full_cloud",
+      "to": "node_entra_target",
+      "relationship": "implements",
+      "description": "Entra ID を単独の主要認証基盤として用いる。"
+    },
+    {
+      "from": "node_pattern_full_cloud",
+      "to": "node_entra_join",
+      "relationship": "requires",
+      "description": "端末を Entra Join 中心で管理することが前提になる。"
+    },
+    {
+      "from": "node_pattern_app_first",
+      "to": "node_entra_target",
+      "relationship": "complements",
+      "description": "SaaS や改修容易なアプリから先行して Entra ID へ寄せる。"
+    },
+    {
+      "from": "node_day0",
+      "to": "node_assess_ad_health",
+      "relationship": "requires",
+      "description": "Day 0 では AD健全性チェックが必須である。"
+    },
+    {
+      "from": "node_day0",
+      "to": "node_assess_kerberos",
+      "relationship": "requires",
+      "description": "Day 0 では Kerberos 依存の把握が必須である。"
+    },
+    {
+      "from": "node_day0",
+      "to": "node_assess_service_accounts",
+      "relationship": "requires",
+      "description": "Day 0 ではサービスアカウント把握が必須である。"
+    },
+    {
+      "from": "node_day0",
+      "to": "node_assess_gpo",
+      "relationship": "requires",
+      "description": "Day 0 ではグループポリシー依存分析が必須である。"
+    },
+    {
+      "from": "node_phase1",
+      "to": "node_entra_connect",
+      "relationship": "implements",
+      "description": "フェーズ1で Entra Connect を導入する。"
+    },
+    {
+      "from": "node_phase1",
+      "to": "node_phs",
+      "relationship": "implements",
+      "description": "フェーズ1で Password Hash Synchronization を有効化する。"
+    },
+    {
+      "from": "node_phase1",
+      "to": "node_hybrid_join",
+      "relationship": "implements",
+      "description": "フェーズ1で Entra Hybrid Join を展開する。"
+    },
+    {
+      "from": "node_phase2",
+      "to": "node_ca",
+      "relationship": "implements",
+      "description": "フェーズ2で Conditional Access を全社適用へ拡大する。"
+    },
+    {
+      "from": "node_phase2",
+      "to": "node_mfa",
+      "relationship": "implements",
+      "description": "フェーズ2で Multi-Factor Authentication を標準化する。"
+    },
+    {
+      "from": "node_phase3",
+      "to": "node_laps",
+      "relationship": "implements",
+      "description": "フェーズ3で Local Administrator Password Solution を導入する。"
+    },
+    {
+      "from": "node_phase3",
+      "to": "node_jit",
+      "relationship": "implements",
+      "description": "フェーズ3で Just-in-Time 特権管理を定着させる。"
+    },
+    {
+      "from": "node_phase4",
+      "to": "node_entra_join",
+      "relationship": "implements",
+      "description": "フェーズ4で Entra Join を拡大して AD フリー化を進める。"
+    },
+    {
+      "from": "node_risk_ntlm_kerberos",
+      "to": "node_pattern_full_cloud",
+      "relationship": "mitigates",
+      "description": "このリスクが高い場合、完全移行の適用範囲を縮小すべきという判断材料になる。"
+    },
+    {
+      "from": "node_assess_kerberos",
+      "to": "node_risk_ntlm_kerberos",
+      "relationship": "mitigates",
+      "description": "Kerberos依存アプリ棚卸しは NTLM と Kerberos のレガシー依存リスクを下げる。"
+    },
+    {
+      "from": "node_assess_service_accounts",
+      "to": "node_risk_vendor_accounts",
+      "relationship": "mitigates",
+      "description": "サービスアカウント把握はベンダー管理アカウント整理不足の解消につながる。"
+    },
+    {
+      "from": "node_assess_gpo",
+      "to": "node_phase4",
+      "relationship": "requires",
+      "description": "AD フリー化にはグループポリシー依存の代替が必要になる。"
+    },
+    {
+      "from": "node_ca",
+      "to": "node_risk_user_training",
+      "relationship": "requires",
+      "description": "Conditional Access の展開は利用者教育を前提とする。"
+    },
+    {
+      "from": "node_mfa",
+      "to": "node_risk_user_training",
+      "relationship": "requires",
+      "description": "Multi-Factor Authentication の全展開には登録支援と定着策が必要である。"
+    },
+    {
+      "from": "node_pattern_hybrid",
+      "to": "node_risk_fallback",
+      "relationship": "requires",
+      "description": "長期並行運用では障害時のフォールバック設計を明確化する必要がある。"
+    },
+    {
+      "from": "node_risk_sier",
+      "to": "node_delivery_sier",
+      "relationship": "requires",
+      "description": "SIer委託では責任分界を契約に明記しないと移行判断が停滞する。"
+    },
+    {
+      "from": "node_risk_japan_core",
+      "to": "node_pattern_hybrid",
+      "relationship": "complements",
+      "description": "オンプレミス基幹システム残存が強い組織では Hybrid Coexistence が現実解になりやすい。"
+    },
+    {
+      "from": "node_risk_jp_calendar",
+      "to": "node_pattern_app_first",
+      "relationship": "complements",
+      "description": "日本固有の業務要件が強い場合はアプリ単位での段階移行が有効である。"
+    },
+    {
+      "from": "node_delivery_inhouse",
+      "to": "node_pattern_app_first",
+      "relationship": "complements",
+      "description": "内製主導では業務優先度に応じたアプリ単位移行を進めやすい。"
+    },
+    {
+      "from": "node_delivery_msp",
+      "to": "node_phase2",
+      "relationship": "complements",
+      "description": "MSP活用は Multi-Factor Authentication 展開後の定常運用を安定化しやすい。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "移行パターン分類",
+      "summary": "日本企業では Full Cloud よりも Hybrid Coexistence が現実的な主流になる。理由は、オンプレミス基幹システム、ベンダー保守、サーバー管理者運用が長く残るためである。",
+      "evidence_nodes": [
+        "node_pattern_hybrid",
+        "node_risk_japan_core",
+        "node_ad_source"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "Lift & Shift の位置づけ",
+      "summary": "Lift & Shift は移行の到達点ではなく、データセンター更改や期限対応のための延命策として使うべきである。Active Directory の設計問題をそのまま持ち込むため、将来の整理計画が必要になる。",
+      "evidence_nodes": [
+        "node_pattern_lift_shift",
+        "node_azure_vm_ad",
+        "node_ad_source"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "Entra Domain Services の使い方",
+      "summary": "Entra Domain Services は一部のレガシー依存を支える補完技術であり、既存 Active Directory の完全代替として期待しすぎないことが重要である。",
+      "evidence_nodes": [
+        "node_entra_ds",
+        "node_pattern_lift_shift"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "Day 0 で失敗しやすい論点",
+      "summary": "孤立 OU、未使用アカウント、サービスアカウント、グループポリシー依存を放置すると、後続フェーズで例外運用が急増し、移行計画が止まりやすい。",
+      "evidence_nodes": [
+        "node_assess_ad_health",
+        "node_assess_service_accounts",
+        "node_assess_gpo"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Kerberos依存アプリ棚卸し",
+      "summary": "Kerberos依存アプリ棚卸しは、単なる資産管理ではなく、どのアプリが最後まで Active Directory を必要とするかを決める判断材料になる。",
+      "evidence_nodes": [
+        "node_assess_kerberos",
+        "node_risk_ntlm_kerberos",
+        "node_pattern_full_cloud"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "フェーズ1の基本方針",
+      "summary": "フェーズ1は大規模な認証改革ではなく、Entra Connect、Password Hash Synchronization、Entra Hybrid Join によりハイブリッド運用の安定基盤をつくる段階である。",
+      "evidence_nodes": [
+        "node_phase1",
+        "node_entra_connect",
+        "node_phs",
+        "node_hybrid_join"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "フェーズ2の展開順序",
+      "summary": "Conditional Access と Multi-Factor Authentication は技術設定よりも対象整理と利用者教育の成否が大きく、例外条件を先に設計する必要がある。",
+      "evidence_nodes": [
+        "node_phase2",
+        "node_ca",
+        "node_mfa",
+        "node_risk_user_training"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "フェーズ3の狙い",
+      "summary": "LAPS と Just-in-Time の導入は、侵害後の横展開を抑え、ベンダー保守や共有管理者 ID への依存を減らすことに意味がある。",
+      "evidence_nodes": [
+        "node_phase3",
+        "node_laps",
+        "node_jit",
+        "node_risk_vendor_accounts"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "フェーズ4の現実",
+      "summary": "AD フリー化は 24 ヶ月以上の長期テーマになりやすく、端末を Entra Join に移せてもオンプレミス基幹システムや一部サーバー認証は残ることがある。",
+      "evidence_nodes": [
+        "node_phase4",
+        "node_entra_join",
+        "node_risk_japan_core"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "障害時フォールバック",
+      "summary": "同期停止、誤ポリシー配布、MFA 利用不能に備えて、緊急除外アカウント、退避手順、ヘルプデスク導線を事前に定義するべきである。",
+      "evidence_nodes": [
+        "node_risk_fallback",
+        "node_pattern_hybrid",
+        "node_phase2"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "SIer依存構造への対処",
+      "summary": "SIer委託が前提でも、認証方式選定、例外承認、責任分界は社内が保持しないと、例外対応のたびに移行が後退する。",
+      "evidence_nodes": [
+        "node_risk_sier",
+        "node_delivery_sier",
+        "node_delivery_inhouse"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "規模別の概算目安",
+      "summary": "小規模は 3 から 9 ヶ月、中規模は 9 から 18 ヶ月、大規模は 18 から 36 ヶ月以上を見込むべきであり、オンプレミス残存率と例外アプリ数で工期が大きく伸縮する。",
+      "evidence_nodes": [
+        "node_phase1",
+        "node_phase2",
+        "node_phase3",
+        "node_phase4"
+      ],
+      "properties": {
+        "small_org": "小規模: 100人未満、概算 500万から1500万円",
+        "mid_org": "中規模: 100人から500人、概算 1500万から5000万円",
+        "large_org": "大規模: 500人超、概算 5000万円から2億円以上"
+      }
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "実行モデル比較",
+      "summary": "内製主導は標準化に強く、SIer委託は初速に強く、MSP活用は運用平準化に強い。多くの日本企業では三者を役割分担させる混成型が現実的である。",
+      "evidence_nodes": [
+        "node_delivery_inhouse",
+        "node_delivery_sier",
+        "node_delivery_msp"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "ベンダー管理アカウントの扱い",
+      "summary": "保守契約に紐づく共有 ID を放置すると、Multi-Factor Authentication と Just-in-Time の統制が崩れるため、アカウント棚卸しと契約改定を同時に進める必要がある。",
+      "evidence_nodes": [
+        "node_risk_vendor_accounts",
+        "node_assess_service_accounts",
+        "node_jit"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "日本固有の業務要件",
+      "summary": "年号・元号、帳票、旧式クライアントの制約は技術負債として残りやすく、Application-first で対象業務ごとに改修順序を切る方が失敗しにくい。",
+      "evidence_nodes": [
+        "node_risk_jp_calendar",
+        "node_pattern_app_first"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "モダンセキュリティ観点の結論",
+      "summary": "Active Directory から Entra ID への移行は、ディレクトリの置換ではなく、認証強度、特権統制、端末管理、運用責任の再設計として扱うべきである。",
+      "evidence_nodes": [
+        "node_entra_target",
+        "node_ca",
+        "node_mfa",
+        "node_jit",
+        "node_phase4"
+      ]
+    }
+  ]
+}

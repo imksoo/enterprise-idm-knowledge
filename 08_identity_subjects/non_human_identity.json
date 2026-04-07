@@ -1,0 +1,1149 @@
+{
+  "metadata": {
+    "id": "topic_non_human_identity",
+    "title": "非人間IDの分類と管理",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "非人間ID",
+      "サービスアカウント",
+      "グループ管理サービスアカウント",
+      "Azure Managed Identity",
+      "Kubernetes",
+      "HashiCorp Vault",
+      "RPA",
+      "AIエージェント",
+      "シークレット管理",
+      "DevSecOps"
+    ],
+    "related_files": [
+      "../03_identity_architecture/identity_landscape.json",
+      "../04_server_auth/os_auth_methods.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "非人間ID",
+      "object_type": "concept",
+      "description": "機械、サービス、ワークロード、ロボット、エージェントが利用する非対話型の識別子と資格情報の総称。",
+      "properties": {
+        "scope": [
+          "Windows サービス",
+          "バッチ",
+          "CI/CD",
+          "クラウド",
+          "Kubernetes",
+          "RPA",
+          "AIエージェント"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "アーキテクチャ依存設計",
+      "object_type": "pattern",
+      "description": "非人間IDを製品単位ではなく、実行基盤、接続方式、配置形態に応じて選定する設計原則。",
+      "properties": {
+        "decision_axes": [
+          "実行場所",
+          "認証相手",
+          "シークレット保持方式",
+          "監査要件"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "サービスアカウント",
+      "object_type": "concept",
+      "description": "アプリケーションやバックグラウンド処理が実行時に使う非対話型アカウント。",
+      "properties": {
+        "directory_dependency": "Active Directory に集約されやすい",
+        "lifecycle_risk": "用途不明の残存が発生しやすい"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "グループ管理サービスアカウント",
+      "object_type": "product",
+      "description": "Active Directory がパスワード管理を自動化する Windows サービス向けアカウント。一般に gMSA と呼ばれる。",
+      "properties": {
+        "vendor": "Microsoft",
+        "password_rotation_days": 120,
+        "password_management": "automatic"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "固定パスワード サービスアカウント",
+      "object_type": "risk",
+      "description": "手動設定された長寿命パスワードを持つサービスアカウント。停止リスクを恐れて放置されやすい。",
+      "properties": {
+        "risk_level": "high",
+        "common_targets": [
+          "Windows サービス",
+          "IIS",
+          "ジョブスケジューラー",
+          "レガシーアプリ"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "レガシー Windows アプリ",
+      "object_type": "product",
+      "description": "gMSA や現代的シークレット管理に対応できず、固定資格情報に依存しやすい旧来アプリケーション。",
+      "properties": {
+        "constraints": [
+          "対話ログオン前提",
+          "パスワード直書き",
+          "SPN 非対応"
+        ]
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "Windows サービス",
+      "object_type": "product",
+      "description": "Windows 上でバックグラウンド実行される標準サービス実行基盤。",
+      "properties": {
+        "host_platform": "Windows Server"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "IIS",
+      "object_type": "product",
+      "description": "アプリケーションプール ID とバックエンド接続 ID の設計が分離しやすい Web 実行基盤。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "SQL Server",
+      "object_type": "product",
+      "description": "サービス実行主体とデータベース接続認証の両面でサービスアカウント設計が影響するデータベース製品。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "タスク スケジューラー",
+      "object_type": "product",
+      "description": "Windows のジョブ実行基盤。非対話型の実行ユーザーと権限委譲設計が必要になる。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "JP1",
+      "object_type": "product",
+      "description": "日本企業で広く採用されるジョブ管理製品。実行ユーザーの AD 依存が強く残りやすい。",
+      "properties": {
+        "category": "job_scheduler"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Hinemos",
+      "object_type": "product",
+      "description": "統合運用管理製品。ジョブ実行主体と運用管理主体を分けて設計する必要がある。",
+      "properties": {
+        "category": "job_scheduler"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "HULFT",
+      "object_type": "product",
+      "description": "ファイル転送製品。転送先認証と実行 OS アカウントの両方を意識した資格情報管理が必要になる。",
+      "properties": {
+        "category": "file_transfer"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "A-AUTO",
+      "object_type": "product",
+      "description": "日本企業で使われるジョブ管理製品。業務ジョブネットごとに実行アカウントが乱立しやすい。",
+      "properties": {
+        "category": "job_scheduler"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "バッチ実行アカウント",
+      "object_type": "concept",
+      "description": "ジョブネット、スクリプト、ファイル転送が用いる専用の実行主体。",
+      "properties": {
+        "typical_hosts": [
+          "JP1",
+          "Hinemos",
+          "HULFT",
+          "A-AUTO",
+          "タスク スケジューラー"
+        ]
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "バッチ専用 AD OU",
+      "object_type": "pattern",
+      "description": "バッチ実行アカウントや関連サーバーを専用 OU に収容し、委任権限とポリシーを分離する設計。",
+      "properties": {
+        "controls": [
+          "命名規則",
+          "委任管理",
+          "ログオン制限",
+          "グループ分離"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "GitHub Actions",
+      "object_type": "product",
+      "description": "ソース管理と一体化した CI/CD 実行基盤。静的シークレットではなくフェデレーション認証へ寄せやすい。",
+      "properties": {
+        "category": "ci_cd"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "OIDC Federation",
+      "object_type": "protocol",
+      "description": "外部 CI/CD 実行基盤に対して短命トークンでクラウド権限を委譲する連携方式。",
+      "properties": {
+        "token_style": "short-lived",
+        "secret_reduction": true
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "AWS IAM Role",
+      "object_type": "product",
+      "description": "AWS 上で一時的に引き受ける権限単位。GitHub Actions との OIDC Federation に適する。",
+      "properties": {
+        "vendor": "AWS"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "Azure Managed Identity",
+      "object_type": "product",
+      "description": "Azure リソースに付与されるマネージドなワークロード ID。秘密情報の保持を避けやすい。",
+      "properties": {
+        "vendor": "Microsoft",
+        "credential_style": "platform-managed"
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "Jenkins",
+      "object_type": "product",
+      "description": "自己管理型 CI/CD 基盤。サービスアカウント運用か Vault 統合かで設計負債が大きく変わる。",
+      "properties": {
+        "category": "ci_cd"
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "Azure DevOps Service Connection",
+      "object_type": "product",
+      "description": "Azure DevOps から外部クラウドやサブスクリプションへ接続する認証オブジェクト。",
+      "properties": {
+        "category": "ci_cd_connection"
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "シークレット スキャン",
+      "object_type": "pattern",
+      "description": "リポジトリやパイプライン内の接続文字列、API キー、秘密情報混入を検知する統制。",
+      "properties": {
+        "examples": [
+          "git-secrets",
+          "GitGuardian"
+        ]
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "システム割り当て Managed Identity",
+      "object_type": "pattern",
+      "description": "Azure リソース単位で 1 対 1 に紐付く Managed Identity。リソース削除時に一緒に消える。",
+      "properties": {
+        "lifecycle": "resource-coupled"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "ユーザー割り当て Managed Identity",
+      "object_type": "pattern",
+      "description": "複数 Azure リソースから共用可能な Managed Identity。共有先の整理が必要になる。",
+      "properties": {
+        "lifecycle": "resource-decoupled"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "Azure Key Vault",
+      "object_type": "product",
+      "description": "Azure 上の鍵、証明書、シークレット保管サービス。Managed Identity と組み合わせやすい。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "Kubernetes ServiceAccount",
+      "object_type": "product",
+      "description": "Kubernetes Pod が API や外部クラウドと連携する際のワークロード主体。",
+      "properties": {
+        "category": "workload_identity"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "Projected ServiceAccountToken",
+      "object_type": "pattern",
+      "description": "短命トークンを Pod に投影する Kubernetes の ServiceAccountToken 配布方式。",
+      "properties": {
+        "token_rotation": "automatic"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "IRSA",
+      "object_type": "pattern",
+      "description": "Amazon EKS で Kubernetes ServiceAccount と AWS IAM Role を結び付ける方式。",
+      "properties": {
+        "platform": "Amazon EKS"
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "Workload Identity",
+      "object_type": "pattern",
+      "description": "GKE や AKS で Kubernetes ワークロードをクラウド IAM 主体へマップする方式。",
+      "properties": {
+        "platforms": [
+          "GKE",
+          "AKS"
+        ]
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "External Secrets Operator",
+      "object_type": "product",
+      "description": "外部シークレットストアの値を Kubernetes Secret や Pod 利用形態へ同期するコントローラー。",
+      "properties": {
+        "category": "secret_sync"
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "CSI Secrets Store Driver",
+      "object_type": "product",
+      "description": "外部シークレットを Kubernetes Pod へボリュームとして投影するドライバー。",
+      "properties": {
+        "category": "secret_mount"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "Vault Agent Injector",
+      "object_type": "product",
+      "description": "HashiCorp Vault のシークレットを Pod へ注入し、アプリから直接 Vault を扱わずに済ませる仕組み。",
+      "properties": {
+        "category": "secret_injection"
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "HashiCorp Vault",
+      "object_type": "product",
+      "description": "動的資格情報、トークン発行、パスワードローテーションを扱える汎用シークレット基盤。",
+      "properties": {
+        "vendor": "HashiCorp"
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "RPA ロボットアカウント",
+      "object_type": "concept",
+      "description": "RPA 製品の unattended 実行や業務代行を担う非人間ID。",
+      "properties": {
+        "execution_style": [
+          "attended",
+          "unattended"
+        ]
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "UiPath",
+      "object_type": "product",
+      "description": "日本企業でも利用が多い RPA 製品。ロボットアカウントと Orchestrator の権限制御が重要になる。",
+      "properties": {
+        "category": "rpa"
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "Power Automate",
+      "object_type": "product",
+      "description": "Microsoft 系の自動化基盤。コネクタ権限とロボット実行権限の分離が必要になる。",
+      "properties": {
+        "category": "rpa"
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "Orchestrator 資格情報管理",
+      "object_type": "pattern",
+      "description": "RPA 製品の集中管理面でロボット実行資格情報を保管、配布、ローテーションする運用方式。",
+      "properties": {
+        "controls": [
+          "集中保管",
+          "利用ログ",
+          "ローテーション"
+        ]
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "AIエージェント ID",
+      "object_type": "concept",
+      "description": "LLM ベースの自律処理や半自律処理が API、データ、運用操作を行う際に用いる非人間ID。",
+      "properties": {
+        "examples": [
+          "Copilot Agents",
+          "AutoGen"
+        ]
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "人間承認ゲート",
+      "object_type": "pattern",
+      "description": "AIエージェントや自動化処理が高リスク操作を行う前に人間の承認を必須化する制御。",
+      "properties": {
+        "approval_targets": [
+          "本番変更",
+          "権限付与",
+          "データ削除"
+        ]
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "監査証跡",
+      "object_type": "pattern",
+      "description": "非人間IDがいつ、どこで、何を実行したかを追跡するためのログ、相関 ID、証跡管理。",
+      "properties": {
+        "needs": [
+          "発行元",
+          "実行主体",
+          "対象リソース",
+          "承認者"
+        ]
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "最小権限",
+      "object_type": "concept",
+      "description": "非人間IDにも必要最小限の権限だけを与える原則。",
+      "properties": {
+        "applies_to": [
+          "サービスアカウント",
+          "Managed Identity",
+          "Kubernetes",
+          "RPA",
+          "AIエージェント"
+        ]
+      }
+    },
+    {
+      "id": "node_043",
+      "label": "ハードコードされたシークレット",
+      "object_type": "risk",
+      "description": "接続文字列、API キー、パスワードをソースコード、設定ファイル、スクリプトへ埋め込む設計。",
+      "properties": {
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_044",
+      "label": "サービスアカウント棚卸し不備",
+      "object_type": "risk",
+      "description": "利用者、利用システム、依存ジョブが不明なままアカウントだけが残存する状態。",
+      "properties": {
+        "common_causes": [
+          "引継ぎ不足",
+          "委託運用依存",
+          "命名規則不統一"
+        ]
+      }
+    },
+    {
+      "id": "node_045",
+      "label": "ローテーション停止リスク",
+      "object_type": "risk",
+      "description": "資格情報ローテーション時にアプリケーション側の追随不足で停止が発生するリスク。",
+      "properties": {
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_046",
+      "label": "DevSecOps",
+      "object_type": "pattern",
+      "description": "設計、開発、デプロイ、運用の初期段階から非人間IDとシークレット管理を組み込む実践。",
+      "properties": {
+        "focus": [
+          "shift-left",
+          "policy-as-code",
+          "pipeline controls"
+        ]
+      }
+    },
+    {
+      "id": "node_047",
+      "label": "AWS Secrets Manager",
+      "object_type": "product",
+      "description": "AWS 上でシークレットの保管とローテーションを提供するマネージドサービス。",
+      "properties": {
+        "vendor": "AWS"
+      }
+    },
+    {
+      "id": "node_048",
+      "label": "GCP Secret Manager",
+      "object_type": "product",
+      "description": "Google Cloud 上でシークレットを集中管理するサービス。",
+      "properties": {
+        "vendor": "Google Cloud"
+      }
+    },
+    {
+      "id": "node_049",
+      "label": "Sealed Secrets",
+      "object_type": "product",
+      "description": "Kubernetes 環境で暗号化済みシークレットを GitOps フローへ載せるための仕組み。",
+      "properties": {
+        "category": "gitops_secret"
+      }
+    },
+    {
+      "id": "node_050",
+      "label": "環境変数",
+      "object_type": "pattern",
+      "description": "アプリケーション実行時にプロセス環境としてシークレットを注入する方式。",
+      "properties": {
+        "strength": "導入容易",
+        "caution": "プロセスダンプやログ露出"
+      }
+    },
+    {
+      "id": "node_051",
+      "label": "シークレット ファイル マウント",
+      "object_type": "pattern",
+      "description": "ボリュームや一時ファイルとしてシークレットを渡す方式。",
+      "properties": {
+        "strength": "アプリ互換性",
+        "caution": "ファイル権限管理"
+      }
+    },
+    {
+      "id": "node_052",
+      "label": "シークレット API 取得",
+      "object_type": "pattern",
+      "description": "アプリケーションが実行時に API 経由でシークレットを取得する方式。",
+      "properties": {
+        "strength": "取得時点制御",
+        "caution": "ネットワーク依存"
+      }
+    },
+    {
+      "id": "node_053",
+      "label": "シークレット ライフサイクル管理",
+      "object_type": "pattern",
+      "description": "発行、配布、利用、ローテーション、失効、廃棄までを一貫管理する運用設計。",
+      "properties": {
+        "stages": [
+          "発行",
+          "配布",
+          "利用",
+          "ローテーション",
+          "失効",
+          "廃棄"
+        ]
+      }
+    },
+    {
+      "id": "node_054",
+      "label": "特権昇格リスク",
+      "object_type": "risk",
+      "description": "非人間IDへ過剰権限が集中し、侵害時に広範囲へ横展開されるリスク。",
+      "properties": {
+        "risk_level": "high"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "非人間IDの選定は実行アーキテクチャと接続形態に依存する。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "サービスアカウントは非人間IDの代表的な構成要素である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "グループ管理サービスアカウントは管理されたサービスアカウントの代表例である。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_005",
+      "relationship": "mitigates",
+      "description": "グループ管理サービスアカウントは固定パスワードの長期利用を減らす。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "グループ管理サービスアカウントは Windows サービスの実行 ID に適用できる。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "グループ管理サービスアカウントは IIS のアプリケーションプール ID に適用できる。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_009",
+      "relationship": "complements",
+      "description": "グループ管理サービスアカウントは SQL Server 関連サービスの実行主体に適用できる。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_010",
+      "relationship": "complements",
+      "description": "グループ管理サービスアカウントはタスク スケジューラーの実行主体に利用できる場合がある。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_005",
+      "relationship": "requires",
+      "description": "レガシー Windows アプリは固定パスワード サービスアカウントへ依存しやすい。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "gMSA が使えない場合は Vault による外部保管とローテーションで代替しやすい。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "JP1 はジョブネット単位のバッチ実行アカウント設計を必要とする。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "Hinemos では監視主体とジョブ実行主体を分離したアカウント設計が必要になる。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "HULFT は転送処理の実行主体と接続先資格情報の整理が必要になる。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "A-AUTO でもジョブ実行ユーザーが業務ごとに分かれやすい。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "バッチ実行アカウントは専用 OU と委任境界を設けると管理しやすい。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_044",
+      "relationship": "complements",
+      "description": "バッチ実行アカウントは用途不明の残存アカウントになりやすい。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "GitHub Actions は OIDC Federation により静的クラウド秘密情報を減らせる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_019",
+      "relationship": "complements",
+      "description": "OIDC Federation は AWS IAM Role の一時引受けに適する。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "Jenkins は自己管理型であるためサービスアカウント運用に流れやすい。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "Jenkins は Vault と統合してジョブ実行時に動的資格情報を取得しやすい。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "Azure DevOps Service Connection でもフェデレーション型認証を優先しやすい。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_043",
+      "relationship": "mitigates",
+      "description": "シークレット スキャンは埋め込み済みの秘密情報を早期検出する。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_024",
+      "relationship": "example_of",
+      "description": "システム割り当て Managed Identity は Azure Managed Identity の 1 形態である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_025",
+      "relationship": "example_of",
+      "description": "ユーザー割り当て Managed Identity は Azure Managed Identity の 1 形態である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_026",
+      "relationship": "complements",
+      "description": "Azure Managed Identity は Azure Key Vault へのアクセス制御に適する。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_054",
+      "relationship": "complements",
+      "description": "共有利用されるユーザー割り当て Managed Identity は権限集中の温床になりやすい。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_028",
+      "relationship": "requires",
+      "description": "Kubernetes ServiceAccount は Projected ServiceAccountToken の利用が基本になる。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_029",
+      "relationship": "complements",
+      "description": "Amazon EKS では IRSA によりクラウド権限へ接続できる。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_030",
+      "relationship": "complements",
+      "description": "GKE や AKS では Workload Identity によりクラウド IAM へ接続できる。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_034",
+      "relationship": "requires",
+      "description": "External Secrets Operator は外部シークレット基盤を参照して同期する。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "CSI Secrets Store Driver は Vault やクラウド秘密情報基盤をボリュームとして取り込める。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_034",
+      "relationship": "requires",
+      "description": "Vault Agent Injector は HashiCorp Vault を前提にシークレットを注入する。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_036",
+      "relationship": "complements",
+      "description": "UiPath は RPA ロボットアカウントの代表例である。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_037",
+      "relationship": "complements",
+      "description": "Power Automate でも非人間IDとしてのロボット主体管理が必要になる。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_038",
+      "relationship": "requires",
+      "description": "RPA ロボットアカウントは Orchestrator 側の集中資格情報管理を必要とする。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_054",
+      "relationship": "complements",
+      "description": "ロボットアカウントに過剰な業務権限や管理権限を与えると侵害時の影響が大きい。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "RPA の資格情報は Vault と連携してロボット実行系から分離しやすい。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_042",
+      "relationship": "requires",
+      "description": "AIエージェント ID には最小権限の原則を厳格に適用する必要がある。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_040",
+      "relationship": "requires",
+      "description": "高リスク操作は AIエージェント単独で完結させず、人間承認ゲートを通すべきである。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_041",
+      "relationship": "requires",
+      "description": "AIエージェントの判断と実行結果は監査証跡として残す必要がある。"
+    },
+    {
+      "from": "node_043",
+      "to": "node_045",
+      "relationship": "complements",
+      "description": "埋め込み型の資格情報はローテーション時の差し替え漏れで停止を招きやすい。"
+    },
+    {
+      "from": "node_044",
+      "to": "node_045",
+      "relationship": "complements",
+      "description": "所有者不明のアカウントはローテーション計画を立てにくく、停止リスクを高める。"
+    },
+    {
+      "from": "node_046",
+      "to": "node_023",
+      "relationship": "requires",
+      "description": "DevSecOps ではシークレット スキャンをパイプラインへ組み込む。"
+    },
+    {
+      "from": "node_046",
+      "to": "node_053",
+      "relationship": "requires",
+      "description": "DevSecOps ではシークレットの発行から廃棄までを設計段階で定義する。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_026",
+      "relationship": "replaces",
+      "description": "HashiCorp Vault はマルチクラウドやオンプレミスをまたぐ場合に Azure Key Vault の代替候補になる。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_047",
+      "relationship": "replaces",
+      "description": "HashiCorp Vault は AWS Secrets Manager の代替候補にもなりうる。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_048",
+      "relationship": "replaces",
+      "description": "HashiCorp Vault は GCP Secret Manager の代替候補にもなりうる。"
+    },
+    {
+      "from": "node_049",
+      "to": "node_031",
+      "relationship": "complements",
+      "description": "Sealed Secrets は GitOps 配布向きであり、External Secrets Operator と用途が異なる。"
+    },
+    {
+      "from": "node_050",
+      "to": "node_053",
+      "relationship": "complements",
+      "description": "環境変数方式でも発行、露出、更新、失効の管理は必要である。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_053",
+      "relationship": "complements",
+      "description": "ファイル配布方式でも配置先と削除タイミングを含むライフサイクル管理が必要である。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_053",
+      "relationship": "complements",
+      "description": "API 取得方式は取得権限とトークン寿命を含めて管理する必要がある。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_045",
+      "relationship": "mitigates",
+      "description": "計画的なライフサイクル管理はローテーション停止リスクを抑える。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_054",
+      "relationship": "mitigates",
+      "description": "最小権限は非人間IDの侵害時の被害範囲を縮小する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "設計原則",
+      "content": "非人間IDは製品名だけで分類すると運用実態を見失う。Windows サービス、クラウドネイティブ、Kubernetes、RPA、AIエージェントのように実行アーキテクチャごとに整理すると、必要な認証方式と監査要件を決めやすい。",
+      "related_nodes": [
+        "node_001",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "グループ管理サービスアカウントの価値",
+      "content": "グループ管理サービスアカウントは Active Directory がパスワードを自動更新するため、Windows サービスや IIS、SQL Server の固定資格情報依存を減らせる。既定のローテーション周期は 120 日で、運用担当者が平文パスワードを保持しない点が重要である。",
+      "related_nodes": [
+        "node_004",
+        "node_007",
+        "node_008",
+        "node_009"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "gMSA が使えない場合の代替",
+      "content": "レガシー Windows アプリでは gMSA 非対応が残る。この場合は固定パスワードを許容するのではなく、Vault や PAM 製品で資格情報を外出しし、ローテーション時の切替手順まで含めて設計する必要がある。",
+      "related_nodes": [
+        "node_005",
+        "node_006",
+        "node_034"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "日本企業のジョブ管理実態",
+      "content": "JP1、Hinemos、HULFT、A-AUTO では、ジョブネットごとに実行ユーザーが分かれ、さらにファイル転送先や DB 接続先の資格情報が別管理になることが多い。実行ユーザーと接続ユーザーを混同すると棚卸しが破綻する。",
+      "related_nodes": [
+        "node_011",
+        "node_012",
+        "node_013",
+        "node_014",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "バッチ専用 OU の意味",
+      "content": "バッチ実行アカウントを専用 OU へ収容すると、命名規則、ログオン先制限、委任管理、期限管理を一括で適用しやすい。人間用アカウントと混在させるより、運用移管時の責任境界も明確になる。",
+      "related_nodes": [
+        "node_015",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "CI/CD は短命資格情報へ寄せる",
+      "content": "GitHub Actions では OIDC Federation を使って AWS IAM Role を一時引受けする構成が標準的であり、長寿命のアクセスキーをリポジトリへ持ち込むべきではない。Azure 側でも静的クライアントシークレットよりフェデレーション型認証を優先する方がよい。",
+      "related_nodes": [
+        "node_017",
+        "node_018",
+        "node_019"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "Jenkins の設計分岐",
+      "content": "Jenkins は自己管理型であるため、サービスアカウントをサーバーに持たせる設計だと資格情報が蓄積しやすい。Vault と統合してジョブ実行時のみトークンや動的資格情報を取得する構成の方が監査とローテーションに強い。",
+      "related_nodes": [
+        "node_021",
+        "node_003",
+        "node_034"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "Service Connection の見方",
+      "content": "Azure DevOps Service Connection は単なる接続設定ではなく、パイプラインがどの権限を持つかを表す非人間IDの表現である。接続先サブスクリプションやサービス単位で権限を絞り、共有 Connection の乱用を避けるべきである。",
+      "related_nodes": [
+        "node_022",
+        "node_042"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "Managed Identity の使い分け",
+      "content": "システム割り当て Managed Identity は単一リソースに閉じる用途に向き、ライフサイクルも追いやすい。ユーザー割り当て Managed Identity は複数リソースで共用できるが、共有範囲が広がるほど権限集中と依存把握の難しさが増える。",
+      "related_nodes": [
+        "node_020",
+        "node_024",
+        "node_025"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "Key Vault 連携",
+      "content": "Azure Key Vault へは Managed Identity でアクセスさせると、アプリにシークレットを持たせずに済む。接続文字列そのものを減らす設計と、必要最小限の Key Vault 権限を与える設計をセットで考える必要がある。",
+      "related_nodes": [
+        "node_020",
+        "node_026",
+        "node_042"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "Kubernetes の短命トークン化",
+      "content": "Kubernetes では長寿命 Secret として ServiceAccountToken を保持する設計より、Projected ServiceAccountToken による短命トークン利用を基本にした方が安全である。Pod 破棄とトークン寿命を連動させやすい。",
+      "related_nodes": [
+        "node_027",
+        "node_028"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "クラウド IAM との橋渡し",
+      "content": "Amazon EKS では IRSA、GKE や AKS では Workload Identity により Kubernetes ワークロードをクラウド IAM 主体へ橋渡しできる。これによりクラウド秘密情報を Pod に長期保存する必要を減らせる。",
+      "related_nodes": [
+        "node_027",
+        "node_029",
+        "node_030"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "Kubernetes のシークレット配布パターン",
+      "content": "External Secrets Operator は外部ストア同期向き、CSI Secrets Store Driver はファイルマウント向き、Vault Agent Injector は Vault 中心の注入向きであり、同じ Kubernetes でも配布方法はアプリ互換性に応じて選ぶべきである。",
+      "related_nodes": [
+        "node_031",
+        "node_032",
+        "node_033",
+        "node_034"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "RPA の危険な誤解",
+      "content": "RPA ロボットアカウントは『人が使わないから安全』ではない。業務システムへ広い更新権限を持つことが多く、侵害時には特権昇格や不正送金、データ改ざんの踏み台になる。",
+      "related_nodes": [
+        "node_035",
+        "node_054"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "Orchestrator の役割",
+      "content": "UiPath や Power Automate の Orchestrator は、単なるジョブ起動面ではなくロボット資格情報の統制点である。Vault 連携によりパスワードをロボット定義から外出しすると、ロボット自体の持つ秘密情報を減らせる。",
+      "related_nodes": [
+        "node_036",
+        "node_037",
+        "node_038",
+        "node_034"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "AIエージェントの統制",
+      "content": "Copilot Agents や AutoGen のような AIエージェントは、新しい非人間IDとして扱うべきである。読み取り専用、限定 API、短時間トークンを基本にし、本番変更や権限付与は必ず人間承認ゲートを通す設計が望ましい。",
+      "related_nodes": [
+        "node_039",
+        "node_040",
+        "node_042"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "監査証跡の要件",
+      "content": "非人間IDの監査では、誰が作成したかよりも、どのワークフロー、どのパイプライン、どの Pod、どのロボット、どのエージェントが使ったかを関連付ける必要がある。相関 ID と承認履歴がないと事故調査が難しい。",
+      "related_nodes": [
+        "node_041",
+        "node_039",
+        "node_035",
+        "node_017",
+        "node_027"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "統一シークレット戦略",
+      "content": "HashiCorp Vault はマルチクラウドやオンプレミス混在環境で強く、Azure Key Vault、AWS Secrets Manager、GCP Secret Manager は各クラウド内での統合が強い。選定では動的資格情報、監査、ローテーション、自動注入、運用責任範囲を比較すべきである。",
+      "related_nodes": [
+        "node_034",
+        "node_026",
+        "node_047",
+        "node_048"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "配布方式の選択基準",
+      "content": "環境変数は導入しやすいが露出範囲に注意が必要であり、ファイルマウントは既存アプリ互換性に向く。API 取得方式は最も柔軟だが、ネットワーク依存や権限制御設計まで含めて考える必要がある。",
+      "related_nodes": [
+        "node_050",
+        "node_051",
+        "node_052"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "Sealed Secrets の位置付け",
+      "content": "Sealed Secrets は GitOps で暗号化済み設定を安全に配布したい場面に向くが、秘密情報の発行やローテーション自体を担うわけではない。外部ストア連携型の仕組みと補完関係で捉えるべきである。",
+      "related_nodes": [
+        "node_049",
+        "node_031",
+        "node_053"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "棚卸しと停止リスクの関係",
+      "content": "サービスアカウント棚卸し不備が続くと、変更影響が読めないためローテーションが先送りされる。結果として古いパスワードや API キーが残り続け、侵害時の滞留時間が長くなる。",
+      "related_nodes": [
+        "node_044",
+        "node_045",
+        "node_043"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "DevSecOps で前倒しにすべき項目",
+      "content": "新規システムでは設計段階で『このワークロードはどの ID を使うか』『どこからシークレットを取得するか』『どうローテーションするか』『誰が承認するか』を定義する必要がある。後付けにすると非人間IDが散在して統制不能になる。",
+      "related_nodes": [
+        "node_046",
+        "node_001",
+        "node_053"
+      ]
+    }
+  ]
+}

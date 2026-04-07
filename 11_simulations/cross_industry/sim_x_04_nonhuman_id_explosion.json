@@ -1,0 +1,321 @@
+{
+  "metadata": {
+    "scenario_id": "sim_x_04",
+    "title": "非人間IDの爆発：RPA 200本+APIキー1000件+AIエージェント試験導入。誰も管理できない",
+    "industry": "保険業",
+    "company_profile": {
+      "name": "明京保険",
+      "size": "従業員8500人、基幹保険システムと大規模な内製・外部委託開発を併用する大手保険会社",
+      "it_env": "3年間で RPA を200本導入し、マイクロサービス化で API キーが1000件超に増加。AIエージェントも試験導入済み。サービスアカウントのパスワードは3年以上未変更のものが多く、2026年3月に社内 GitHub リポジトリで Azure Storage 接続文字列の漏えい疑惑が発生した。"
+    },
+    "themes": [
+      "非人間IDの棚卸しと責任分界",
+      "RPA とサービスアカウント固定パスワード問題",
+      "gMSA、Managed Identity、Vault 系製品の使い分け",
+      "GitHub 上のシークレット露出と検知体制",
+      "ランサムウェア時代のラテラルムーブメント対策"
+    ],
+    "knowledge_needs": [
+      {
+        "type": "framework",
+        "topic": "gMSA の技術仕様と適用限界",
+        "why_needed": "Windows 系サービスや一部バッチを固定パスワードから外せる一方、RPA やレガシー製品にはそのまま適用できないため、対象選別が必要になるから",
+        "maps_to_file": "08_identity_subjects/non_human_identity.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "Azure Managed Identity の適用パターン",
+        "why_needed": "Azure 上のワークロードを API キーや接続文字列から切り離し、シークレットレスへ移行する判断材料が必要なため",
+        "maps_to_file": "08_identity_subjects/non_human_identity.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "CyberArk Conjur 系機能と HashiCorp Vault の使い分け",
+        "why_needed": "RPA、マイクロサービス、AIエージェント、オンプレミスバッチを同じ製品で一括管理できるとは限らず、用途別の整理が必要なため",
+        "maps_to_file": "03_identity_architecture/pam_tool_comparison.json"
+      },
+      {
+        "type": "process",
+        "topic": "GitHub のシークレットスキャンと漏えい時の即応",
+        "why_needed": "コード管理に埋め込まれた接続文字列や API キーは検知だけでなく失効と追跡が伴わないと意味がないため",
+        "maps_to_file": "08_identity_subjects/non_human_identity.json"
+      },
+      {
+        "type": "framework",
+        "topic": "ランサムウェアのラテラルムーブメントとサービスアカウント悪用",
+        "why_needed": "長寿命サービスアカウントや広権限 API キーが侵害後の横展開を加速する構造を経営へ説明する必要があるため",
+        "maps_to_file": "06_security_hardening/ransomware_defense.json"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p01",
+      "name": "藤原 恒一",
+      "role": "デジタル推進部長",
+      "background": "RPA、API 化、AI 活用を3年で一気に推進。事業部門からの評価は高いが、統制面の後追いが積み上がっている。",
+      "stance": "攻めの IT を止めたくないが、このままでは自分の施策が負債化すると感じ始めている。"
+    },
+    {
+      "id": "p02",
+      "name": "石井 恒一",
+      "role": "情報セキュリティ担当部長",
+      "background": "秘密情報保管庫やサービスアカウント統制を継続提案してきたが、予算化できなかった。",
+      "stance": "今の危機は予見できたと考えており、今回は棚卸しと保管庫導入を外したくない。"
+    },
+    {
+      "id": "p03",
+      "name": "吉田 亮",
+      "role": "RPA担当SE",
+      "background": "UiPath と Power Automate を中心に200本近いロボットを維持。止まらない運用を最優先してきた。",
+      "stance": "パスワード変更やアカウント無効化で業務停止が起きることを最も恐れている。"
+    },
+    {
+      "id": "p04",
+      "name": "加藤 真帆",
+      "role": "クラウドアーキテクト",
+      "background": "Azure 基盤、マイクロサービス、Key Vault、Managed Identity 設計を担当。固定秘密情報を減らす設計を推進してきた。",
+      "stance": "新規系は Managed Identity へ寄せ、残る固定秘密情報は保管庫で囲うべきだと考える。"
+    },
+    {
+      "id": "p05",
+      "name": "小林 恒一",
+      "role": "CISO",
+      "background": "保険業界の委託管理、事故公表、経営報告に詳しい。外部脅威事例を経営判断に落とす役割を担う。",
+      "stance": "サービスアカウント侵害がランサムウェアの横展開を招く現実を、今度こそ経営へ正面から示したい。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "s1",
+      "title": "GitHubシークレットリーク",
+      "setting": "社内 GitHub の監査ログを前に、Azure Storage 接続文字列が含まれたコードの漏えい疑惑を緊急調査する。",
+      "dialogue": [
+        {
+          "speaker": "p02",
+          "text": "昨夜、社内 GitHub の業務アプリ用リポジトリに Azure Storage 接続文字列らしき文字列がコミットされていた形跡を検知しました。公開リポジトリではありませんが、それで安全とは言えません。社内アカウント侵害や誤権限共有があれば横流しされますし、接続文字列はそのまま実体権限です。問題は一件の埋め込みではなく、誰がどのシークレットを持っているか、全社で説明できないことです。",
+          "subtext": "単発事故ではなく統制不備として認識させたい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "正直に言えば、ここまで増えたとは思っていませんでした。API 連携を急いだ結果、開発チームごとに Key Vault、環境変数、設定ファイル、RPA の資格情報保管がバラバラになっています。社内 GitHub だからという甘えもあった。攻めの IT を進めるために現場裁量を広げたつもりが、今は誰も全体像を持たない状態になっているのは否定できません。",
+          "subtext": "推進責任を認めつつ、全面否定は避けたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "外部のランサムウェア事例では、最初の侵入口よりも、その後に奪われたサービスアカウントや共有シークレットのほうが被害を広げています。今回も本当に漏えいしたかだけでは不十分で、同種の接続文字列や API キーがどこに散っているかを洗い出さないと意味がありません。私は経営に『漏えい疑惑』ではなく『横展開可能な構造欠陥』として報告します。",
+          "subtext": "緊急性を経営言語へ変換する。"
+        }
+      ],
+      "issues_surfaced": [
+        "社内 GitHub に Azure Storage 接続文字列が含まれていた疑いがある",
+        "シークレットの保管場所と責任者が分散し全体像が不明",
+        "単発漏えいよりも横展開可能な構造が本質問題である"
+      ],
+      "knowledge_ref": [
+        "08_identity_subjects/non_human_identity.json",
+        "06_security_hardening/ransomware_defense.json"
+      ]
+    },
+    {
+      "scene_id": "s2",
+      "title": "サービスアカウント棚卸しの衝撃",
+      "setting": "初めて全社棚卸し一覧が作られ、620件のサービスアカウントと多数のオーナー不明資産が可視化される。",
+      "dialogue": [
+        {
+          "speaker": "p02",
+          "text": "昨夜から暫定棚卸しを回した結果、Active Directory、ローカル実行 ID、クラウド接続主体を含めてサービスアカウントは620件でした。そのうちオーナー不明が45%、パスワードが3年以上未変更のものが60%です。さらに API キーや接続文字列は別集計で1000件超。これまで『重要システムだけは把握している』つもりでしたが、実態はバッチ、RPA、検証環境、委託先運用が野良増殖しています。",
+          "subtext": "棚卸し不足の深刻さを数字で突き付ける。"
+        },
+        {
+          "speaker": "p03",
+          "text": "数字は重いですが、背景も見てください。RPA は部門から『人手が足りないから今すぐ自動化してほしい』と押されて、短期間で200本まで増えました。Bot 用アカウントも、人事、保全、支払、契約更新で別々に持っています。ここで一気に棚卸しやパスワード変更を掛けると、止まる業務の影響が読めません。現場は危険を分かっていても、止める責任を負えないんです。",
+          "subtext": "防戦しつつも現場事情を理解させたい。"
+        },
+        {
+          "speaker": "p04",
+          "text": "だからこそ、全部を同じやり方で直すのではなく分類が必要です。Windows サービスや IIS、SQL Server で置き換え可能なものは gMSA へ寄せる。Azure の新規ワークロードは Managed Identity に切り替える。レガシーやマルチクラウド、RPA は保管庫で囲ってローテーションと払い出しを制御する。この三層に分けないと、『怖いけど変えられない』が永久に続きます。",
+          "subtext": "技術の切り分けで議論を前に進めたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "サービスアカウント620件、オーナー不明45%、3年以上未変更60%という実態が判明した",
+        "RPA と部門自動化が非人間ID増殖の主要因になっている",
+        "対象分類なしの一括是正は業務停止リスクが高い"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "08_identity_subjects/non_human_identity.json"
+      ]
+    },
+    {
+      "scene_id": "s3",
+      "title": "RPAジレンマ",
+      "setting": "Bot アカウントのパスワード有効期限とローテーション方針を巡り、運用停止リスクが前面に出る。",
+      "dialogue": [
+        {
+          "speaker": "p03",
+          "text": "Bot アカウントに普通のパスワード有効期限を入れればよい、という話ではありません。200本の RPA のうち、どのロボットがどの認証先を使い、夜間に何件の保全処理を回しているかまで正確に追えていないんです。ここで一斉変更すると、保険金支払や契約更新バッチが翌朝止まる可能性がある。止まった瞬間、現場は『セキュリティが業務を壊した』としか見ません。",
+          "subtext": "現場停止への恐怖を正面から示す。"
+        },
+        {
+          "speaker": "p02",
+          "text": "その論理で3年放置した結果が今です。固定パスワードのまま、人もロボットも使っているのか、委託先が知っているのか、ログオン元が限定されているのかも曖昧になった。変更が怖いのは、依存関係を把握していないからです。棚卸しなしに守る方法はありませんし、停止リスクを理由に秘密情報を永久固定する方が、事故コストははるかに大きいです。",
+          "subtext": "停止リスクを言い訳にさせたくない。"
+        },
+        {
+          "speaker": "p05",
+          "text": "ランサムウェアの被害報告を見れば、ここは甘く見られません。攻撃者は高権限の人間 ID だけでなく、監視、バックアップ、RPA、連携バッチのサービスアカウントを足場に横へ広がります。保険会社は夜間処理と大量連携が多いので、一件の Bot アカウント侵害でも契約系、保全系、支払系へ踏み込まれる危険がある。私は『止まるかもしれない』より『侵害されたら広がる』方を重く見ます。",
+          "subtext": "経営判断の重心を事故影響へ寄せる。"
+        }
+      ],
+      "issues_surfaced": [
+        "RPA の依存関係が不明で、単純なパスワード有効期限設定は危険",
+        "停止リスクを理由に固定秘密情報を放置してきた",
+        "サービスアカウントはランサムウェアの横展開経路になりうる"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "08_identity_subjects/non_human_identity.json"
+      ]
+    },
+    {
+      "scene_id": "s4",
+      "title": "技術的解決策の提示",
+      "setting": "加藤が実装順序をホワイトボードに示し、置き換え可能な対象から順に統制へ寄せる段階アプローチを説明する。",
+      "dialogue": [
+        {
+          "speaker": "p04",
+          "text": "解き方は三段階です。第一に、Windows サービス、IIS、SQL Server、定型バッチなど gMSA 対応可能な領域から固定パスワードを外す。第二に、Azure 上の App Service、Functions、コンテナ、ストレージ接続は Managed Identity と Key Vault へ寄せ、接続文字列や API キーを新規発行しない。第三に、それでも残る RPA、レガシー、マルチクラウド、AI エージェントは保管庫で払い出しを制御します。",
+          "subtext": "実行基盤ごとに適材適所を示す。"
+        },
+        {
+          "speaker": "p02",
+          "text": "保管庫候補は二系統で考えるべきです。人の特権統制と一体で見るなら CyberArk 系、特に Secrets Manager や Conjur 系の考え方が有効です。一方で、開発・マイクロサービス・マルチクラウドを広く束ねるなら HashiCorp Vault も比較に値する。重要なのは製品名より、誰がオーナーで、どのワークロードが、どの承認で、どの秘密情報を使うかを台帳化することです。",
+          "subtext": "製品選定論争を運用要件へ引き戻す。"
+        },
+        {
+          "speaker": "p01",
+          "text": "それなら『全部入れ替える』話ではなくなりますね。新規開発は Managed Identity を標準にし、既存 Windows 系は gMSA へ寄せ、動かせないものだけ保管庫で管理する。さらに GitHub 側ではシークレットスキャンと Push 前検査を入れて、漏えい後の失効手順まで定義する。攻めの IT を止めずに、増殖の仕方だけを変えるなら、事業部門にも説明しやすいです。",
+          "subtext": "推進施策を維持しつつ統制へ乗せたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "gMSA、Managed Identity、保管庫を使い分ける段階アプローチが提示された",
+        "CyberArk Conjur 系と HashiCorp Vault は用途別比較が必要",
+        "GitHub 側の検知だけでなく失効手順まで設計する必要がある"
+      ],
+      "knowledge_ref": [
+        "08_identity_subjects/non_human_identity.json",
+        "03_identity_architecture/pam_tool_comparison.json",
+        "04_server_auth/kerberos_cifs_auth.json"
+      ]
+    },
+    {
+      "scene_id": "s5",
+      "title": "経営陣への緊急報告",
+      "setting": "CISO が経営会議で、サービスアカウント侵害の横展開リスクを金額換算付きで説明し、3年ロードマップ承認を求める。",
+      "dialogue": [
+        {
+          "speaker": "p05",
+          "text": "経営向けには単純化して伝えます。サービスアカウント一件の侵害は、単なる一資格情報の漏えいではありません。保全、支払、契約更新、ファイル連携、監視のどこかで横展開の足場になり、夜間処理を跨いで被害が広がる可能性があります。今回の棚卸しでは620件あり、その45%がオーナー不明です。これは『誰の責任か不明な侵入口が数百ある』のとほぼ同義です。",
+          "subtext": "経営に危機の輪郭を端的に示す。"
+        },
+        {
+          "speaker": "p02",
+          "text": "承認いただきたいのは3年ロードマップです。初年度は棚卸し、分類、GitHub シークレットスキャン、緊急失効手順の整備。2年目は gMSA と保管庫導入、RPA とレガシーのローテーション標準化。3年目は新規開発の Managed Identity 標準化と、AI エージェントを含む非人間ID台帳への統合です。単年度対策では、また来年同じ漏えいが起きます。",
+          "subtext": "危機対応を恒久投資へつなげたい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "私からも補足します。これはセキュリティ部門だけの防御投資ではありません。RPA も API も AI エージェントも、今後さらに増えます。今のまま人手で所有者確認と秘密情報配布を回すのは不可能です。攻めの IT を続ける条件として、非人間IDの設計原則を作り直す。その前提であれば、私はデジタル投資側からもこのロードマップを支持します。",
+          "subtext": "攻めと守りの両立条件として承認を取りたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "サービスアカウント侵害を横展開リスクとして経営報告する方針が固まった",
+        "3年ロードマップで棚卸し、保管庫導入、Managed Identity 標準化を進める案が提示された",
+        "非人間ID管理を攻めの IT の前提条件として再定義した"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "08_identity_subjects/non_human_identity.json",
+        "03_identity_architecture/pam_tool_comparison.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "技術",
+      "current": "サービスアカウント、API キー、接続文字列、RPA 資格情報が実行基盤ごとに乱立している",
+      "target": "ワークロード種別ごとに標準認証方式と保管方式が定義されている",
+      "gap": "非人間IDの分類原則がなく、個別案件ごとの場当たり運用になっている",
+      "priority": "high"
+    },
+    {
+      "category": "運用",
+      "current": "サービスアカウント620件のうち45%がオーナー不明、60%が3年以上未変更",
+      "target": "所有者、利用先、ローテーション周期、停止影響が台帳化されている",
+      "gap": "棚卸しと責任分界が未整備",
+      "priority": "high"
+    },
+    {
+      "category": "セキュリティ",
+      "current": "GitHub 内のシークレット露出を事後調査に頼っている",
+      "target": "検知、失効、追跡、再発防止が一連の運用として定着している",
+      "gap": "シークレットスキャンと漏えい時の即応手順が不足",
+      "priority": "high"
+    },
+    {
+      "category": "技術",
+      "current": "RPA とレガシー系は固定パスワード前提で、変更影響が読めない",
+      "target": "gMSA、保管庫、ローテーション手順により固定パスワード依存を段階的に削減できる",
+      "gap": "依存関係の把握不足と停止リスクの過大評価が是正を止めている",
+      "priority": "high"
+    },
+    {
+      "category": "アーキテクチャ",
+      "current": "Azure 上の新規ワークロードでも API キーや接続文字列が残っている",
+      "target": "Managed Identity と Key Vault を標準にし、シークレットレス設計を基本とする",
+      "gap": "クラウドネイティブ設計原則が開発標準へ落ちていない",
+      "priority": "medium"
+    },
+    {
+      "category": "組織",
+      "current": "デジタル推進、セキュリティ、RPA運用、クラウド基盤が別々に増殖を管理している",
+      "target": "非人間IDの統括責任と承認フローが横断で定義されている",
+      "gap": "攻めの IT と統制が別予算・別KPIで動いている",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "action": "サービスアカウント、API キー、接続文字列、RPA 資格情報、AI エージェント用トークンを同一台帳で棚卸しし、所有者・利用先・停止影響を3か月で確定する",
+      "owner": "情報セキュリティ担当部長 + デジタル推進部長",
+      "horizon": "0-3か月",
+      "expected_outcome": "変更不能の理由を可視化し、優先順位付きの是正対象一覧を得られる",
+      "related_knowledge": "07_migration_patterns/ad_to_entra_migration.json"
+    },
+    {
+      "action": "Windows サービス、IIS、SQL Server、定型バッチで gMSA 適用可能なものを分類し、固定パスワードからの置換計画を策定する",
+      "owner": "クラウドアーキテクト + RPA担当SE",
+      "horizon": "2-6か月",
+      "expected_outcome": "人手管理パスワードの主要母集団を段階的に削減できる",
+      "related_knowledge": "08_identity_subjects/non_human_identity.json"
+    },
+    {
+      "action": "Azure の新規ワークロードを Managed Identity と Key Vault 標準へ切り替え、GitHub ではシークレットスキャンと Push 前検査、漏えい時の即時失効手順を実装する",
+      "owner": "クラウドアーキテクト",
+      "horizon": "1-4か月",
+      "expected_outcome": "新規開発で固定秘密情報を増やさない統制線を引ける",
+      "related_knowledge": "08_identity_subjects/non_human_identity.json"
+    },
+    {
+      "action": "RPA、レガシー、マイクロサービス、AI エージェントを対象に、CyberArk Conjur 系機能と HashiCorp Vault を比較した保管庫アーキテクチャを選定する",
+      "owner": "情報セキュリティ担当部長 + クラウドアーキテクト",
+      "horizon": "3-6か月",
+      "expected_outcome": "用途別に無理のないシークレット管理基盤を定められる",
+      "related_knowledge": "03_identity_architecture/pam_tool_comparison.json"
+    }
+  ]
+}

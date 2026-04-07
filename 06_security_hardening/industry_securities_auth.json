@@ -1,0 +1,1401 @@
+{
+  "metadata": {
+    "id": "industry_securities_v1",
+    "title": "証券会社ID管理詳細",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "securities",
+      "finance",
+      "compliance",
+      "japan-critical",
+      "SOD",
+      "trading",
+      "CIAM",
+      "outsourcing"
+    ],
+    "related_files": [
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/ransomware_defense.json",
+      "05_hybrid_scenarios/entra_hybrid_join.json",
+      "07_migration_patterns/japan_security_frameworks.json",
+      "07_migration_patterns/international_security_frameworks.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "証券会社ID管理",
+      "object_type": "concept",
+      "description": "日本の証券会社における人・端末・サービス・外部接続・監査を横断して統制する ID 管理アーキテクチャ全体。",
+      "properties": {
+        "priorities": [
+          "職務分離",
+          "監査証跡",
+          "市場時間中の継続性",
+          "外部委託統制",
+          "顧客向け不正ログイン対策"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "フロントオフィスシステム",
+      "object_type": "concept",
+      "description": "OMS、ディーリング、デリバティブ、引受業務を含む市場直結領域。低遅延と即時性が最優先になりやすい。",
+      "properties": {
+        "examples": [
+          "OMS",
+          "アルゴリズム取引",
+          "デリバティブ取引",
+          "FX 取引",
+          "引受・IPO"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "ミドルオフィスシステム",
+      "object_type": "concept",
+      "description": "リスク管理、コンプライアンス監視、ポジション管理、マージン管理を担う領域。",
+      "properties": {
+        "examples": [
+          "VaR 計算",
+          "ポジション管理",
+          "通話・メール監視",
+          "マージンコール管理"
+        ]
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "バックオフィスシステム",
+      "object_type": "concept",
+      "description": "証券口座管理、決済、照合、信用取引、投資信託管理を担う基幹処理領域。",
+      "properties": {
+        "examples": [
+          "証券口座管理",
+          "DVP/FOP 決済",
+          "信用取引管理",
+          "投資信託管理"
+        ]
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "顧客向け取引チャネル",
+      "object_type": "concept",
+      "description": "インターネット取引、スマートフォンアプリ、IFA ポータル、法人顧客ポータルから成る外部公開チャネル。",
+      "properties": {
+        "examples": [
+          "インターネット取引",
+          "スマートフォンアプリ",
+          "IFA ポータル",
+          "法人顧客ポータル"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "外部接続インフラ",
+      "object_type": "concept",
+      "description": "取引所、清算機関、保管振替機関、資金決済網、海外メッセージング基盤との接続群。",
+      "properties": {
+        "examples": [
+          "arrowhead",
+          "JSCC",
+          "JASDEC",
+          "日銀ネット",
+          "SWIFT",
+          "FIX"
+        ]
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "職務分離",
+      "object_type": "concept",
+      "description": "フロント、ミドル、バック、管理者、監査人の役割を分離し、相互牽制を維持する統制原則。",
+      "properties": {
+        "examples": [
+          "取引執行と決済確認の分離",
+          "申請者と承認者の分離",
+          "運用者と監査者の分離"
+        ]
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "チャイニーズウォール",
+      "object_type": "concept",
+      "description": "インサイダー情報を扱う部門と営業・取引部門の情報流通を制限する統制。",
+      "properties": {
+        "affected_departments": [
+          "投資銀行",
+          "リサーチ",
+          "営業",
+          "自己売買"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "ディーラー特権管理",
+      "object_type": "concept",
+      "description": "市場時間中の即時アクセス要求と不正防止を両立させる証券会社特有の特権運用。",
+      "properties": {
+        "constraints": [
+          "市場オープン中の遅延許容が小さい",
+          "夜間先物や海外市場で 24 時間に近い運用が発生する",
+          "代理操作時も個人責任追跡が必要"
+        ]
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "緊急代理操作",
+      "object_type": "pattern",
+      "description": "トレーダー不在や端末障害時に、承認済み代理人へ限定時間で操作権限を委譲する運用パターン。",
+      "properties": {
+        "controls": [
+          "二者承認",
+          "時間制限",
+          "全操作記録",
+          "事後レビュー"
+        ]
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "監査証跡",
+      "object_type": "concept",
+      "description": "認証、承認、接続、注文、設定変更、照会の全イベントを個人単位で追跡可能にする設計。",
+      "properties": {
+        "required_fields": [
+          "user_id",
+          "session_id",
+          "source_device",
+          "system",
+          "action",
+          "timestamp"
+        ]
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "通話録音ID連携",
+      "object_type": "pattern",
+      "description": "ディーラー、営業、IFA 対応者の音声記録を認証済み個人 ID と紐付ける方式。",
+      "properties": {
+        "use_cases": [
+          "苦情対応",
+          "内部不正調査",
+          "売買審査"
+        ]
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "メールアーカイブID連携",
+      "object_type": "pattern",
+      "description": "電子メール保存・検索基盤と従業員 ID を結び、調査・監査時の証跡として利用する方式。",
+      "properties": {
+        "retention_focus": [
+          "法令保存",
+          "コンプライアンス調査",
+          "訴訟対応"
+        ]
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "取引ログIDトレーサビリティ",
+      "object_type": "pattern",
+      "description": "注文入力、変更、取消、承認、照合、決済確認までのイベントを同一人物または委譲元/委譲先で追跡する設計。",
+      "properties": {
+        "targets": [
+          "OMS",
+          "リスク管理",
+          "口座管理",
+          "決済系"
+        ]
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "外部委託先アクセス管理",
+      "object_type": "concept",
+      "description": "BPO、SIer、データセンター事業者、クラウド事業者に対する契約・認証・監査・終了時失効を統合する管理領域。",
+      "properties": {
+        "outsourcers": [
+          "BPO",
+          "SIer",
+          "データセンター事業者",
+          "クラウド運用事業者"
+        ]
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "BPOアクセス",
+      "object_type": "pattern",
+      "description": "口座事務、照合、帳票作成などを担う外部業務委託先へ限定ロールでアクセスを付与する方式。",
+      "properties": {
+        "controls": [
+          "時間帯制限",
+          "閲覧範囲制限",
+          "承認済み端末",
+          "定期棚卸し"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "SIer保守アクセス",
+      "object_type": "pattern",
+      "description": "システム保守 SIer に対する申請制・作業単位・録画付きの特権アクセス方式。",
+      "properties": {
+        "controls": [
+          "チケット連携",
+          "多要素認証",
+          "踏み台接続",
+          "セッション記録"
+        ]
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "Privileged Access Workstation",
+      "object_type": "pattern",
+      "description": "証券会社の高権限運用者や外部保守員が一般業務端末と分離して使う管理専用端末。",
+      "properties": {
+        "goals": [
+          "フィッシング経由の特権侵害抑止",
+          "管理作業の分離",
+          "市場系接続端末との混在回避"
+        ]
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "個人顧客ID保護",
+      "object_type": "concept",
+      "description": "個人投資家アカウントに対するスタッフィング攻撃、不正出金、不正口座変更を抑止する設計領域。",
+      "properties": {
+        "threats": [
+          "credential stuffing",
+          "phishing",
+          "SIM swap",
+          "bot abuse"
+        ]
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "APIベース連携",
+      "object_type": "concept",
+      "description": "顧客チャネル、法人 API、社内サービス間連携を API 中心で設計し、認可を明示的に扱う方式。",
+      "properties": {
+        "use_cases": [
+          "モバイルアプリ",
+          "IFA 連携",
+          "法人顧客連携",
+          "社内マイクロサービス"
+        ]
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "モバイルアプリ保護",
+      "object_type": "pattern",
+      "description": "モバイル取引アプリに対し、証明書ピンニング、端末完全性確認、トークン保護を組み合わせる設計。",
+      "properties": {
+        "controls": [
+          "証明書ピンニング",
+          "秘密情報の Secure Enclave/Keystore 保護",
+          "不正改造端末対策"
+        ]
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "グローバル証券運用",
+      "object_type": "concept",
+      "description": "ロンドン、ニューヨーク、シンガポール等の拠点を跨ぐ統合 ID・監視・運用モデル。",
+      "properties": {
+        "regions": [
+          "日本",
+          "欧州",
+          "米国",
+          "アジア"
+        ]
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "越境データ転送統制",
+      "object_type": "risk",
+      "description": "監査ログ、取引データ、個人データ、音声記録を海外拠点や海外 SaaS に移転する際の法規制・契約上リスク。",
+      "properties": {
+        "drivers": [
+          "GDPR",
+          "個人情報保護法",
+          "海外規制当局対応"
+        ]
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "24時間SOC連携",
+      "object_type": "pattern",
+      "description": "国内夜間と海外市場時間帯を跨いで認証異常や特権操作を監視する運用パターン。",
+      "properties": {
+        "signals": [
+          "認証失敗急増",
+          "不審端末接続",
+          "特権昇格",
+          "市場系サーバー変更"
+        ]
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "証券会社のオンプレミスサーバー、Windows 端末、ファイル共有、レガシー業務システムの中核となるディレクトリ基盤。",
+      "properties": {
+        "deployment": "on-premises",
+        "common_use": [
+          "Windows ログオン",
+          "サーバー管理",
+          "共有フォルダー認可"
+        ]
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "クラウドアプリ、条件付きアクセス、多要素認証、外部 ID 連携を支えるクラウド ID 基盤。",
+      "properties": {
+        "deployment": "cloud",
+        "common_use": [
+          "Microsoft 365",
+          "SaaS SSO",
+          "リモートアクセス制御"
+        ]
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "SailPoint IdentityNow",
+      "object_type": "product",
+      "description": "職務分離、ライフサイクル管理、アクセス申請、棚卸しを統合する IGA 製品。",
+      "properties": {
+        "category": "IGA",
+        "strengths": [
+          "職務分離ルール",
+          "定期棚卸し",
+          "Joiner/Mover/Leaver"
+        ]
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "CyberArk",
+      "object_type": "product",
+      "description": "保管庫、セッション管理、特権ローテーション、ベンダーアクセス制御を提供する PAM 製品。",
+      "properties": {
+        "category": "PAM"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "BeyondTrust",
+      "object_type": "product",
+      "description": "特権リモートアクセス、パスワード管理、エンドポイント権限管理を統合する PAM 製品。",
+      "properties": {
+        "category": "PAM"
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "Microsoft Sentinel",
+      "object_type": "product",
+      "description": "Entra ID、Active Directory、端末、サーバー、ネットワーク、取引ログの相関分析に使う SIEM/SOAR 基盤。",
+      "properties": {
+        "category": "SIEM"
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "Palo Alto Cortex XSOAR",
+      "object_type": "product",
+      "description": "認証異常や特権操作アラートの調査・封じ込め・通報フローを自動化するオーケストレーション製品。",
+      "properties": {
+        "category": "SOAR"
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "Bloomberg Terminal",
+      "object_type": "product",
+      "description": "ディーラー、営業、リサーチで広く使われる市場情報・取引支援端末。独自 ID とライセンス統制を伴う。",
+      "properties": {
+        "identity_model": "Bloomberg 独自 ID と企業 ID の併用が多い",
+        "cost_note": "高額ライセンスのため退職者・異動者の即時回収が重要"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "Bloomberg SAML Federation",
+      "object_type": "pattern",
+      "description": "Bloomberg 側アカウントと企業 IdP を SAML で連携し、SSO とライフサイクル統制を強化するパターン。",
+      "properties": {
+        "goals": [
+          "退職時の即時無効化",
+          "MFA 統一",
+          "監査一元化"
+        ]
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "SAML",
+      "object_type": "protocol",
+      "description": "証券会社で SaaS、業務ポータル、端末連携に使われるフェデレーション認証プロトコル。",
+      "properties": {
+        "use_cases": [
+          "Bloomberg 連携",
+          "業務ポータル SSO",
+          "コンプライアンス SaaS"
+        ]
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "OpenID Connect",
+      "object_type": "protocol",
+      "description": "モバイルアプリ、Web API、モダン Web アプリの認証に使うプロトコル。",
+      "properties": {
+        "use_cases": [
+          "顧客向けログイン",
+          "法人ポータル",
+          "社内 API"
+        ]
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "OAuth 2.0",
+      "object_type": "protocol",
+      "description": "API アクセス委任、トークン制御、スコープ設計の中核となるプロトコル。",
+      "properties": {
+        "use_cases": [
+          "モバイル API",
+          "IFA API",
+          "法人向け API"
+        ]
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "FIX",
+      "object_type": "protocol",
+      "description": "機関投資家との注文通信で使われる金融メッセージング標準。接続元認証とセッション統制が重要。",
+      "properties": {
+        "focus": [
+          "証明書管理",
+          "セッション管理",
+          "接続先制限"
+        ]
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "SWIFT",
+      "object_type": "protocol",
+      "description": "海外証券決済・送金で使われるメッセージング基盤。強いアクセス統制と MFA が求められる。",
+      "properties": {
+        "focus": [
+          "MFA",
+          "特権統制",
+          "監査ログ"
+        ]
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "arrowhead",
+      "object_type": "product",
+      "description": "東京証券取引所の売買システム。参加者側では厳密な接続経路、証明書、運用統制が必要になる。",
+      "properties": {
+        "type": "exchange connectivity"
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "JSCC",
+      "object_type": "product",
+      "description": "日本証券クリアリング機構。清算・決済連携では組織単位と担当者単位の識別統制が重要。",
+      "properties": {
+        "type": "clearing"
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "JASDEC",
+      "object_type": "product",
+      "description": "証券保管振替機構。振替・保管系操作の承認・照会履歴を個人単位で追跡する必要がある。",
+      "properties": {
+        "type": "custody and settlement"
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "日銀ネット",
+      "object_type": "product",
+      "description": "資金決済インフラ。接続 ID、証明書、担当者承認の厳格管理が必要。",
+      "properties": {
+        "type": "payment settlement"
+      }
+    },
+    {
+      "id": "node_043",
+      "label": "Bloomberg B-PIPE",
+      "object_type": "product",
+      "description": "マーケットデータ供給サービス。受信基盤の接続資格情報、配信先サーバー、利用範囲の統制が必要。",
+      "properties": {
+        "type": "market data feed"
+      }
+    },
+    {
+      "id": "node_044",
+      "label": "多要素認証",
+      "object_type": "concept",
+      "description": "特権操作、外部公開チャネル、SWIFT 接続、ベンダー接続で必須となる認証強化手段。",
+      "properties": {
+        "factors": [
+          "FIDO",
+          "証明書",
+          "トークン",
+          "生体"
+        ]
+      }
+    },
+    {
+      "id": "node_045",
+      "label": "条件付きアクセス",
+      "object_type": "pattern",
+      "description": "ユーザー、端末、場所、リスク、アプリに応じてアクセス可否や追加認証を制御する方式。",
+      "properties": {
+        "signals": [
+          "デバイス準拠",
+          "地理的異常",
+          "高リスクサインイン",
+          "アプリ重要度"
+        ]
+      }
+    },
+    {
+      "id": "node_046",
+      "label": "サービスアカウント",
+      "object_type": "concept",
+      "description": "OMS、決済、ファイル連携、バッチ、監視で使われる非人間 ID。棚卸しとローテーションが重要。",
+      "properties": {
+        "examples": [
+          "Windows サービス",
+          "バッチ ID",
+          "連携用 ID",
+          "監視 ID"
+        ]
+      }
+    },
+    {
+      "id": "node_047",
+      "label": "グループ管理サービスアカウント",
+      "object_type": "pattern",
+      "description": "Active Directory 管理下でパスワード自動更新を行うサービスアカウント方式。Windows 系連携で有効。",
+      "properties": {
+        "benefits": [
+          "自動ローテーション",
+          "パスワード秘匿",
+          "運用負荷低減"
+        ]
+      }
+    },
+    {
+      "id": "node_048",
+      "label": "証明書認証",
+      "object_type": "protocol",
+      "description": "取引所接続、FIX、日銀ネット、モバイルアプリ通信などで使われる証明書ベースの認証方式。",
+      "properties": {
+        "use_cases": [
+          "mTLS",
+          "端末証明書",
+          "接続先認証"
+        ]
+      }
+    },
+    {
+      "id": "node_049",
+      "label": "フィッシング耐性認証",
+      "object_type": "pattern",
+      "description": "FIDO2、パスキー、証明書ベース認証など、リレー型フィッシングに強い認証方式。",
+      "properties": {
+        "examples": [
+          "Passkey",
+          "FIDO2 Security Key",
+          "証明書ベース MFA"
+        ]
+      }
+    },
+    {
+      "id": "node_050",
+      "label": "特権アクセス管理",
+      "object_type": "concept",
+      "description": "ディーラー、運用者、外部委託先、基盤管理者の高権限アクセスを制御・記録・回収する管理領域。",
+      "properties": {
+        "focus": [
+          "常時特権の削減",
+          "申請承認",
+          "セッション記録",
+          "外部接続統制"
+        ]
+      }
+    },
+    {
+      "id": "node_051",
+      "label": "FISC安全対策基準",
+      "object_type": "regulation",
+      "description": "金融機関のシステム安全対策で広く参照される業界標準。証券会社の ID 管理・監査・外部委託統制にも強く影響する。",
+      "properties": {
+        "issuer": "FISC",
+        "latest_confirmed": "第13版"
+      }
+    },
+    {
+      "id": "node_052",
+      "label": "金融庁金融分野サイバーセキュリティガイドライン",
+      "object_type": "regulation",
+      "description": "金融庁が示す金融分野向けサイバーセキュリティガイドライン。利用者識別、特権管理、ログ、第三者リスクを要求する。",
+      "properties": {
+        "issuer": "金融庁",
+        "latest_confirmed": "2025 年 7 月改正版"
+      }
+    },
+    {
+      "id": "node_053",
+      "label": "日本証券業協会インターネット取引不正アクセス防止ガイドライン",
+      "object_type": "regulation",
+      "description": "インターネット取引の不正アクセス対策を示す日本証券業協会のガイドライン。フィッシング耐性 MFA と監視を重視する。",
+      "properties": {
+        "issuer": "日本証券業協会",
+        "latest_confirmed": "2025 年 10 月改正版"
+      }
+    },
+    {
+      "id": "node_054",
+      "label": "SWIFT Customer Security Controls Framework",
+      "object_type": "regulation",
+      "description": "SWIFT 接続組織に対して MFA、論理アクセス制御、トークン管理、ログ保全を求める統制フレームワーク。",
+      "properties": {
+        "issuer": "SWIFT",
+        "latest_confirmed": "v2025"
+      }
+    },
+    {
+      "id": "node_055",
+      "label": "EU DORA",
+      "object_type": "regulation",
+      "description": "EU 域内金融機関と ICT サードパーティに適用されるデジタル運用レジリエンス規則。2025 年 1 月 17 日に適用開始。",
+      "properties": {
+        "issuer": "EU",
+        "effective_date": "2025-01-17"
+      }
+    },
+    {
+      "id": "node_056",
+      "label": "MiFID II",
+      "object_type": "regulation",
+      "description": "欧州の金融商品市場指令。通話録音、電子通信記録、取引監督に関する要求が証券会社の ID 紐付け設計へ影響する。",
+      "properties": {
+        "issuer": "EU",
+        "scope": "EU 投資サービス"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "証券会社の ID 管理は職務分離を中核制御として前提にする。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "業務監査と事故調査のため、個人単位の監査証跡が必須となる。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "外部委託先を含めた ID 統制が証券会社の実運用では不可欠である。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_025",
+      "relationship": "complements",
+      "description": "オンプレミス残存システムでは Active Directory が依然として重要な実装基盤になる。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_026",
+      "relationship": "complements",
+      "description": "クラウド側の認証・条件付き制御では Entra ID が中核になりやすい。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "フロントオフィスでは市場時間中の即応性を考慮した特権管理が必要である。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_032",
+      "relationship": "requires",
+      "description": "フロントオフィスの情報取得やコミュニケーションで Bloomberg Terminal の統制が重要になる。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_043",
+      "relationship": "complements",
+      "description": "マーケットデータ配信基盤として Bloomberg B-PIPE が補完的に使われる。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "ミドルオフィスでは監査・コンプライアンス監視に十分な証跡が必要である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "リスク計測やインサイダー調査のため、取引ログの個人紐付けが必要となる。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "バックオフィスでは照合・決済確認の責任追跡にトレーサビリティが必要である。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_046",
+      "relationship": "requires",
+      "description": "基幹連携や夜間バッチでは多数のサービスアカウントが使われる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "外部公開チャネルでは顧客 ID 保護が最優先の設計論点となる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_020",
+      "relationship": "requires",
+      "description": "モバイルや外部連携のため、API ベース連携が不可欠になる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "スマートフォン取引を安全にするにはモバイルアプリ保護が必要である。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_048",
+      "relationship": "requires",
+      "description": "取引所や決済網への接続では証明書認証が多用される。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "外部接続インフラでは接続者、接続端末、操作内容の監査が必要である。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "職務分離の一部として、部門間の情報遮断をチャイニーズウォールで補完する。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_027",
+      "relationship": "requires",
+      "description": "職務分離違反の検知と棚卸しには IGA 製品が有効である。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "情報壁の有効性を検証するにはアクセス・通信・照会の監査証跡が必要である。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_050",
+      "relationship": "requires",
+      "description": "ディーラーの高権限操作も特権アクセス管理の枠組みで制御する必要がある。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_044",
+      "relationship": "requires",
+      "description": "市場時間中でも特権操作には多要素認証を適用する必要がある。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "障害時や不在時に備えて、緊急代理操作のパターンを事前定義する必要がある。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "代理操作では委譲元・委譲先・承認者を含む詳細な記録が必須となる。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "営業・トレーダーの音声調査まで含めるには通話録音 ID 連携が必要である。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_013",
+      "relationship": "requires",
+      "description": "電子メール証跡を一元調査するにはメールアーカイブ ID 連携が必要である。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "取引イベントを個人に帰属させるためトレーサビリティが必要である。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "外部委託先管理には BPO 向けの限定ロール設計が必要である。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "保守 SIer のアクセスは別パターンで厳格に制御する必要がある。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "高権限委託先の端末分離には Privileged Access Workstation が有効である。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_044",
+      "relationship": "requires",
+      "description": "個人顧客アカウント保護では多要素認証が前提となる。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_049",
+      "relationship": "requires",
+      "description": "フィッシング被害が大きい証券業では耐性の高い認証方式が望ましい。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_035",
+      "relationship": "requires",
+      "description": "顧客向け・社内向け API 認証では OpenID Connect が中核になる。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_036",
+      "relationship": "requires",
+      "description": "API のアクセス委任とスコープ管理には OAuth 2.0 が必要である。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_048",
+      "relationship": "complements",
+      "description": "モバイルアプリ保護ではサーバー証明書や mTLS 設計が補完的に使われる。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_023",
+      "relationship": "requires",
+      "description": "海外拠点運用では越境データ転送統制を避けて通れない。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_024",
+      "relationship": "requires",
+      "description": "タイムゾーンを跨ぐ監視のため 24 時間 SOC 連携が必要になる。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_055",
+      "relationship": "regulates",
+      "description": "EU 拠点を持つ場合、越境データ転送統制は DORA の影響を受ける。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_030",
+      "relationship": "requires",
+      "description": "24 時間監視を実現するには SIEM による相関分析が必要である。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_031",
+      "relationship": "complements",
+      "description": "調査・封じ込めの標準化では SOAR が補完的に有効である。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_026",
+      "relationship": "complements",
+      "description": "証券会社では Active Directory と Entra ID のハイブリッド運用が多い。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_046",
+      "relationship": "requires",
+      "description": "オンプレミス連携では Active Directory 配下のサービスアカウントが残存しやすい。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_047",
+      "relationship": "complements",
+      "description": "Windows 系サービス連携ではグループ管理サービスアカウントが有効である。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_045",
+      "relationship": "implements",
+      "description": "Entra ID は条件付きアクセスの実装基盤となる。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_044",
+      "relationship": "complements",
+      "description": "Entra ID はクラウド側の多要素認証統制を補完する。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_007",
+      "relationship": "implements",
+      "description": "SailPoint IdentityNow は職務分離ルール管理と違反検知を実装できる。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "IGA により証券会社全体のアクセス申請と棚卸しを標準化できる。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_050",
+      "relationship": "implements",
+      "description": "CyberArk は特権アクセス管理の主要実装手段である。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_017",
+      "relationship": "implements",
+      "description": "CyberArk は保守 SIer のセッション制御と記録を実装できる。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_050",
+      "relationship": "implements",
+      "description": "BeyondTrust も特権アクセス管理の主要実装手段である。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_017",
+      "relationship": "implements",
+      "description": "BeyondTrust はリモート保守アクセスの制御と記録を提供する。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "Microsoft Sentinel は認証・操作・通信ログの相関分析を実装できる。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_024",
+      "relationship": "implements",
+      "description": "Cortex XSOAR は 24 時間 SOC の対応フロー自動化を実装できる。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_033",
+      "relationship": "complements",
+      "description": "Bloomberg Terminal の統制強化では企業 IdP との SAML 連携が有効である。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_034",
+      "relationship": "requires",
+      "description": "Bloomberg 側とのフェデレーションには SAML を用いる。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_026",
+      "relationship": "complements",
+      "description": "Bloomberg 連携では Entra ID を IdP として用いる構成が現実的である。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_048",
+      "relationship": "requires",
+      "description": "FIX 接続では証明書や接続元制御を伴う認証設計が重要である。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_044",
+      "relationship": "requires",
+      "description": "SWIFT では多要素認証が要求される。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_048",
+      "relationship": "requires",
+      "description": "arrowhead 接続では証明書ベースの接続統制が重要である。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_048",
+      "relationship": "requires",
+      "description": "日銀ネット接続では証明書と担当者識別の厳格管理が必要である。"
+    },
+    {
+      "from": "node_046",
+      "to": "node_047",
+      "relationship": "complements",
+      "description": "Windows 系の一部サービスアカウントはグループ管理サービスアカウントで代替できる。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_007",
+      "relationship": "regulates",
+      "description": "FISC は利用者識別とアクセス管理を要求する。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_011",
+      "relationship": "regulates",
+      "description": "FISC は操作ログと監査証跡の保全を要求する。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_015",
+      "relationship": "regulates",
+      "description": "FISC は外部委託先へのアクセス統制を要求する。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_050",
+      "relationship": "regulates",
+      "description": "FISC は特権アカウント管理と申請承認の統制を求める。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_011",
+      "relationship": "regulates",
+      "description": "金融庁ガイドラインは個人識別可能なログ取得を求める。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_015",
+      "relationship": "regulates",
+      "description": "金融庁ガイドラインは第三者リスク管理を要求する。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_024",
+      "relationship": "regulates",
+      "description": "金融庁ガイドラインは監視・検知・対応の一体運用を求める。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_050",
+      "relationship": "regulates",
+      "description": "金融庁ガイドラインは特権アカウント管理と JIT 的統制を重視する。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_019",
+      "relationship": "regulates",
+      "description": "JSDA ガイドラインは顧客アカウント保護を直接要求する。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_044",
+      "relationship": "regulates",
+      "description": "JSDA ガイドラインは MFA 実装を要求する。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_049",
+      "relationship": "regulates",
+      "description": "JSDA ガイドラインはフィッシング耐性認証への移行を重視する。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_011",
+      "relationship": "regulates",
+      "description": "JSDA ガイドラインはリアルタイム監視とログ記録を要求する。"
+    },
+    {
+      "from": "node_054",
+      "to": "node_038",
+      "relationship": "regulates",
+      "description": "SWIFT CSCF は SWIFT 接続組織のアクセス統制を直接規律する。"
+    },
+    {
+      "from": "node_054",
+      "to": "node_044",
+      "relationship": "regulates",
+      "description": "SWIFT CSCF は SWIFT システムへの MFA を要求する。"
+    },
+    {
+      "from": "node_054",
+      "to": "node_050",
+      "relationship": "regulates",
+      "description": "SWIFT CSCF は特権アクセスの識別・管理・レビューを要求する。"
+    },
+    {
+      "from": "node_055",
+      "to": "node_023",
+      "relationship": "regulates",
+      "description": "DORA は越境を含む ICT リスクと第三者管理に影響する。"
+    },
+    {
+      "from": "node_055",
+      "to": "node_024",
+      "relationship": "regulates",
+      "description": "DORA は検知・通報・レジリエンス運用を求める。"
+    },
+    {
+      "from": "node_055",
+      "to": "node_015",
+      "relationship": "regulates",
+      "description": "DORA は ICT サードパーティのアクセスと責任分界を厳格化する。"
+    },
+    {
+      "from": "node_056",
+      "to": "node_012",
+      "relationship": "regulates",
+      "description": "MiFID II は通話録音と担当者識別の管理に影響する。"
+    },
+    {
+      "from": "node_056",
+      "to": "node_013",
+      "relationship": "regulates",
+      "description": "MiFID II は電子通信記録の保存と追跡性に影響する。"
+    },
+    {
+      "from": "node_056",
+      "to": "node_014",
+      "relationship": "regulates",
+      "description": "MiFID II は取引監督のための個人紐付けログを要求する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k_001",
+      "topic": "証券会社のID管理は業務系分離から始める",
+      "content": "日本の証券会社ではフロント、ミドル、バックをまたぐ運用権限の整理が不十分なまま製品導入を進めると、職務分離違反を温存しやすい。設計の出発点は組織図ではなく、注文、承認、照合、決済、監視の責任線である。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_002",
+      "topic": "ADグループだけで職務分離を表現するのは限界がある",
+      "content": "多くの現場では Active Directory グループでアクセスを寄せ集めているが、証券会社の職務分離は部門、業務、時間帯、代理操作、監査例外を含むため、単純なグループ設計では説明責任を果たしにくい。IGA で職務分離ルールと申請履歴を扱う設計が必要になる。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_003",
+      "topic": "ディーラー特権管理ではJITだけでは足りない",
+      "content": "市場時間中に毎回の昇格承認を求める方式は、執行遅延や現場の迂回運用を招きやすい。証券会社では事前承認済みロール、限定時間、端末制限、行為監視、事後レビューを組み合わせた準リアルタイム型の特権運用が現実的である。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_004",
+      "topic": "代理操作権限は平時に設計しておく必要がある",
+      "content": "障害時に口頭で代理操作を認める運用は、後から責任追跡ができず、内部不正調査にも耐えない。代理人候補、発動条件、承認者、ログ項目、解除手順まで事前定義する必要がある。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_005",
+      "topic": "Bloomberg端末はライセンスとIDの二重統制が必要",
+      "content": "Bloomberg Terminal は高額ライセンス資産であり、退職や異動後の放置はコスト超過と情報流出の両面で問題になる。人事異動、企業 ID、Bloomberg 側アカウント、端末割当、設置場所を同じライフサイクルに乗せるべきである。",
+      "evidence_level": "medium",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_006",
+      "topic": "Bloombergの企業SSO連携は退職者対策に有効",
+      "content": "Bloomberg 独自 ID を完全に廃止できない場合でも、企業 IdP と SAML 連携して認証強度や停止タイミングを統一すると、退職者や委託先の残存アカウントを減らしやすい。",
+      "evidence_level": "medium",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_007",
+      "topic": "通話録音とメール保存はID管理の一部として扱うべき",
+      "content": "コンプライアンス領域では、録音やメール保存は単なる保存機能ではなく、調査可能な本人紐付け基盤である。ディレクトリ ID と別体系のまま運用すると、インサイダー調査や苦情対応で証跡統合に時間がかかる。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_008",
+      "topic": "取引ログは人IDとサービスIDの両方を追跡する",
+      "content": "証券会社の事故は人間の誤操作だけでなく、バッチ、インターフェース、照合ジョブの不整合でも起こる。注文者・承認者・確認者に加えて、実行したサービスアカウントまで追跡できる設計が必要である。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_009",
+      "topic": "外部委託先は属性ベースより契約単位の管理が重要",
+      "content": "BPO や SIer は同じ会社でも契約ごとにアクセス可能範囲や責任分界が異なる。委託先 ID は所属会社だけでなく、契約番号、業務範囲、作業時間帯、監督責任者を属性として持つ方が実務に合う。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_010",
+      "topic": "保守SIerのアクセスは共有IDから個人IDへ移すべき",
+      "content": "共有管理者 ID やベンダー共通 VPN アカウントは、証券会社の説明責任と相性が悪い。個人 ID、MFA、踏み台、録画、チケット連携をセットで設計し、契約終了時に即時無効化できるようにするべきである。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_011",
+      "topic": "ネット証券では認証強度より不正検知速度が差になる",
+      "content": "ログイン MFA を導入しても、出金先変更、高額出金、初回端末、API キー発行の監視が弱いと被害を防ぎ切れない。不正ログイン対策は認証、行動分析、取引制限の組み合わせで考える必要がある。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_012",
+      "topic": "JSDAガイドラインはフィッシング耐性認証を重視している",
+      "content": "2025 年改正版では、従来の SMS OTP やアプリ OTP だけに依存する設計より、パスキーや証明書ベースの認証を優先する方向が明確になっている。特にネット証券の顧客認証では移行計画が必要である。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_013",
+      "topic": "APIファースト設計ではOpenID ConnectとOAuth 2.0を分けて考える",
+      "content": "顧客向けチャネルではログインと API 認可を同じ議論にしがちだが、OpenID Connect は認証、OAuth 2.0 は認可委任であり、トークン寿命、スコープ、リフレッシュ、PKCE を別々に設計すべきである。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_014",
+      "topic": "モバイルアプリは証明書ピンニングだけでは不十分",
+      "content": "証明書ピンニングは中間者攻撃抑止に有効だが、改造端末対策、デバイスバインディング、トークン保護、異常取引検知と組み合わせないと、実運用上の不正対策としては弱い。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_015",
+      "topic": "FIXや取引所接続は人認証と機械認証を分ける必要がある",
+      "content": "FIX、arrowhead、日銀ネットのような接続では、担当者の承認プロセスと、機械的な接続認証に使う証明書やサービス ID を分けて管理しないと、更新漏れや責任所在不明が起きやすい。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_016",
+      "topic": "サービスアカウントの棚卸しはバックオフィスから始めるとよい",
+      "content": "証券会社では夜間バッチや基幹連携が多く、バックオフィスが最もサービスアカウントの密度が高い。まず口座管理、決済、照合、ファイル連携を可視化し、その後フロント系と監視系へ広げるのが現実的である。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_017",
+      "topic": "gMSAはWindows系バッチの改善に有効",
+      "content": "Windows サーバー中心の連携では、パスワード固定のサービスアカウントをグループ管理サービスアカウントへ置き換えることで、ローテーション漏れを大きく減らせる。ただし非 Windows 系や古いミドルウェアは別対策が必要になる。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_018",
+      "topic": "Privileged Access Workstationは市場系でも有効",
+      "content": "特権管理端末を一般業務端末から分離すると、メールや Web 経由の侵害が市場系サーバー管理へ直結するリスクを下げられる。証券会社ではディーラー端末と管理端末を混在させない設計が特に重要である。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_019",
+      "topic": "SentinelとSOARは監査だけでなく封じ込めにも使う",
+      "content": "認証異常や特権操作アラートを出すだけでは不十分で、夜間や海外市場時間帯に自動でセッション停止、アカウント無効化、端末隔離、ベンダー接続遮断まで進める設計が重要である。",
+      "evidence_level": "medium",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_020",
+      "topic": "SWIFT統制は証券会社でも銀行並みに厳格化している",
+      "content": "外国証券決済や海外送金を扱う証券会社では、SWIFT 接続系に対して MFA、トークン管理、特権レビュー、ログ保全を銀行同等に実施する必要がある。委託先経由アクセスも管理対象に含めるべきである。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_021",
+      "topic": "EU拠点を持つ証券会社はDORAを無視できない",
+      "content": "ロンドンや EU 域内拠点を持つグローバル証券会社では、DORA の第三者管理、検知、レジリエンス要求が日本本社の ID・監視設計にも波及する。日本だけのローカル最適では整合が取れなくなる。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    },
+    {
+      "id": "k_022",
+      "topic": "提案の現実解はEntra ID単独化ではなく段階統合である",
+      "content": "大手・準大手証券ではオンプレミス残存、Bloomberg 独自 ID、外部接続証明書、レガシー基幹があるため、短期で単一基盤へ統合するのは非現実的である。実務上は Active Directory と Entra ID のハイブリッド、IGA、PAM、SIEM を段階統合する形が提案しやすい。",
+      "evidence_level": "high",
+      "japan_specific": true,
+      "securities_specific": true
+    }
+  ]
+}

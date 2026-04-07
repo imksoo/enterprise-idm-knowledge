@@ -1,0 +1,3313 @@
+{
+  "metadata": {
+    "id": "identity_subject_master_v1",
+    "title": "ID主体完全分類マスター",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "description": "日本の大企業ITシステムに登場するID主体を5軸83分類で整理",
+    "tags": [
+      "taxonomy",
+      "master",
+      "all-subjects"
+    ]
+  },
+  "categories": [
+    {
+      "id": "cat_A",
+      "label": "社内人間（Internal Human）",
+      "subjects": [
+        {
+          "id": "A-01",
+          "label": "正社員（常勤・フルタイム）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-02",
+          "label": "契約社員・嘱託",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-03",
+          "label": "パート・アルバイト",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-04",
+          "label": "派遣社員（他社から受け入れ）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。 受入部門と委託元の双方で責任分界を明文化しないと棚卸しが破綻する。"
+        },
+        {
+          "id": "A-05",
+          "label": "出向受け入れ（グループ会社・取引先から）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-06",
+          "label": "出向者（自社から他社へ）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID",
+            "Partner IdP"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-07",
+          "label": "役員・取締役・監査役",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "高権限のまま恒常運用されやすい",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-08",
+          "label": "内部監査員",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "高権限のまま恒常運用されやすい",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-09",
+          "label": "グループ会社・子会社社員",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID",
+            "Okta"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-10",
+          "label": "定年再雇用・嘱託",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "人事システム連携で発行",
+            "change": "異動・兼務・役職変更で権限を再計算",
+            "deprovisioning": "退職日または契約終了日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-11",
+          "label": "休職者（育休・病休）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "在籍情報を維持したまま休職フラグを連携",
+            "change": "長期不在期間はアクセス範囲を縮小",
+            "deprovisioning": "退職確定時に通常退職フローへ移行"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-12",
+          "label": "退職予定者（オフボーディング中）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "在籍中IDを継続利用",
+            "change": "引継ぎ開始時に権限を段階縮小",
+            "deprovisioning": "最終出社日または退職日で自動無効化"
+          },
+          "typical_issues": [
+            "異動・兼務で旧権限が残存",
+            "人事イベントとID停止の連携遅延"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        },
+        {
+          "id": "A-13",
+          "label": "退職後アカウント残存（問題ケース）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "SAML",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "本来は発生させない例外ケース",
+            "change": "残存理由を緊急調査して関係システムを特定",
+            "deprovisioning": "即時停止と監査証跡保全を実施"
+          },
+          "typical_issues": [
+            "無効化漏れで不正利用の温床になる",
+            "監査時に残存理由を説明できない"
+          ],
+          "recommended_controls": [
+            "定期アクセスレビュー",
+            "IGA統合",
+            "Joiner/Mover/Leaver自動化"
+          ],
+          "japan_specific_notes": "日本企業では人事、総務、情報システム、委託先運用の分断によりJoiner/Mover/Leaverの同期が崩れやすい。"
+        }
+      ]
+    },
+    {
+      "id": "cat_B",
+      "label": "外部人間（External Human）",
+      "subjects": [
+        {
+          "id": "B-01",
+          "label": "SIer常駐SE（社内常駐でADアカウント付与）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。 受入部門と委託元の双方で責任分界を明文化しないと棚卸しが破綻する。"
+        },
+        {
+          "id": "B-02",
+          "label": "SIer非常駐SE（VPN・踏み台経由リモート）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。 受入部門と委託元の双方で責任分界を明文化しないと棚卸しが破綻する。"
+        },
+        {
+          "id": "B-03",
+          "label": "保守・運用ベンダー作業員（定期保守）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。 受入部門と委託元の双方で責任分界を明文化しないと棚卸しが破綻する。"
+        },
+        {
+          "id": "B-04",
+          "label": "保守・運用ベンダー作業員（緊急対応）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "高権限のまま恒常運用されやすい",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。 受入部門と委託元の双方で責任分界を明文化しないと棚卸しが破綻する。"
+        },
+        {
+          "id": "B-05",
+          "label": "セキュリティ監査員（第三者監査）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "高権限のまま恒常運用されやすい",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-06",
+          "label": "コンサルタント（経営・IT）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-07",
+          "label": "取引先担当者（調達ポータルアクセス）",
+          "id_provider_typical": [
+            "Entra ID",
+            "Partner portal local ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-08",
+          "label": "取引先担当者（EDI操作）",
+          "id_provider_typical": [
+            "Entra ID",
+            "EDI gateway local ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-09",
+          "label": "顧客（法人）- ポータルアクセス",
+          "id_provider_typical": [
+            "Entra ID",
+            "Customer portal local ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-10",
+          "label": "顧客（個人）- インターネットサービス利用",
+          "id_provider_typical": [
+            "Entra ID",
+            "Customer IAM"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-11",
+          "label": "パートナー企業・アライアンス先",
+          "id_provider_typical": [
+            "Entra ID",
+            "Partner IdP"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-12",
+          "label": "官公庁・規制当局の検査員（立入検査）",
+          "id_provider_typical": [
+            "Entra ID",
+            "Temporary guest registry"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-13",
+          "label": "研究機関・大学（共同研究）",
+          "id_provider_typical": [
+            "Entra ID",
+            "Partner IdP"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        },
+        {
+          "id": "B-14",
+          "label": "M&A後の被買収企業社員（統合前）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID",
+            "Acquired company IdP"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。 PMI前は暫定信頼と例外接続が増えやすく、短期例外を恒久化しない統制が必要。"
+        },
+        {
+          "id": "B-15",
+          "label": "インターン・学生",
+          "id_provider_typical": [
+            "Entra ID",
+            "School-issued ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "多要素認証",
+            "VPN"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "スポンサー部門承認と期間設定で発行",
+            "change": "契約更新・作業範囲変更時に権限見直し",
+            "deprovisioning": "契約終了日または作業完了時に停止"
+          },
+          "typical_issues": [
+            "契約更新漏れでアカウントが延命",
+            "スポンサー部門不明で棚卸し不能"
+          ],
+          "recommended_controls": [
+            "スポンサー承認",
+            "有効期限付きアカウント",
+            "多要素認証"
+          ],
+          "japan_specific_notes": "SIer依存や外部委託が多い組織では、受入部門が実質オーナーでもID停止責任が曖昧になりやすい。"
+        }
+      ]
+    },
+    {
+      "id": "cat_C",
+      "label": "非人間（サービスアカウント・機械ID）",
+      "subjects": [
+        {
+          "id": "C-01",
+          "label": "Windowsサービスアカウント（IIS/SQLServer等）",
+          "id_provider_typical": [
+            "Active Directory"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "NTLM"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-02",
+          "label": "gMSA（グループ管理サービスアカウント）",
+          "id_provider_typical": [
+            "Active Directory"
+          ],
+          "auth_methods": [
+            "Kerberos"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-03",
+          "label": "Linuxデーモンアカウント（/etc/passwd システムアカウント）",
+          "id_provider_typical": [
+            "/etc/passwd",
+            "LDAP"
+          ],
+          "auth_methods": [
+            "PAM",
+            "SSH key"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-04",
+          "label": "アプリケーションDB接続アカウント（接続プール）",
+          "id_provider_typical": [
+            "Database local account",
+            "Vault-managed secret"
+          ],
+          "auth_methods": [
+            "Password",
+            "TLS"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-05",
+          "label": "バッチ・スケジューラーアカウント（JP1, Tivoli等）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Scheduler local account"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "Password"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-06",
+          "label": "CI/CDパイプライン ID（GitHub Actions, Jenkins等）",
+          "id_provider_typical": [
+            "GitHub Actions",
+            "Jenkins"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "短期トークン"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-07",
+          "label": "Azure Managed Identity（システム割り当て）",
+          "id_provider_typical": [
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Managed Identity token"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "デプロイ時に基盤側で作成",
+            "change": "権限ポリシー変更とバインド先更新",
+            "deprovisioning": "ワークロード廃止時にロールと関連シークレットを削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-08",
+          "label": "Azure Managed Identity（ユーザー割り当て）",
+          "id_provider_typical": [
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Managed Identity token"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "デプロイ時に基盤側で作成",
+            "change": "権限ポリシー変更とバインド先更新",
+            "deprovisioning": "ワークロード廃止時にロールと関連シークレットを削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-09",
+          "label": "AWS IAMロール（EC2, Lambda等）",
+          "id_provider_typical": [
+            "AWS IAM"
+          ],
+          "auth_methods": [
+            "AWS STS"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "デプロイ時に基盤側で作成",
+            "change": "権限ポリシー変更とバインド先更新",
+            "deprovisioning": "ワークロード廃止時にロールと関連シークレットを削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-10",
+          "label": "GCP Service Account",
+          "id_provider_typical": [
+            "GCP IAM"
+          ],
+          "auth_methods": [
+            "OAuth 2.0",
+            "JWT"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "デプロイ時に基盤側で作成",
+            "change": "権限ポリシー変更とバインド先更新",
+            "deprovisioning": "ワークロード廃止時にロールと関連シークレットを削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-11",
+          "label": "Kubernetes Service Account",
+          "id_provider_typical": [
+            "Kubernetes API server"
+          ],
+          "auth_methods": [
+            "Service account token"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "デプロイ時に基盤側で作成",
+            "change": "権限ポリシー変更とバインド先更新",
+            "deprovisioning": "ワークロード廃止時にロールと関連シークレットを削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-12",
+          "label": "SPIFFE/SPIRE ワークロードID",
+          "id_provider_typical": [
+            "SPIRE server"
+          ],
+          "auth_methods": [
+            "mTLS",
+            "SPIFFE ID"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "デプロイ時に基盤側で作成",
+            "change": "権限ポリシー変更とバインド先更新",
+            "deprovisioning": "ワークロード廃止時にロールと関連シークレットを削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-13",
+          "label": "RPAロボットアカウント（UiPath, Power Automate等）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "Password",
+            "多要素認証"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-14",
+          "label": "AIエージェント（LLMベース自律エージェント）",
+          "id_provider_typical": [
+            "Entra ID",
+            "API gateway"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "OAuth 2.0"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "所有者明確化",
+            "実行記録保存",
+            "スコープ限定トークン"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。 実行主体を人間の代替として扱うのではなく、機械IDとして個別責任を持たせる必要がある。"
+        },
+        {
+          "id": "C-15",
+          "label": "監視エージェント（Zabbix, Datadog, SCOM等）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Local agent registry"
+          ],
+          "auth_methods": [
+            "API key",
+            "mTLS"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-16",
+          "label": "バックアップシステムアカウント（Veeam, NetBackup等）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Backup suite local ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "Password",
+            "Certificate"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "高権限のまま恒常運用されやすい",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-17",
+          "label": "セキュリティスキャナーアカウント（脆弱性スキャン）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Scanner local ID"
+          ],
+          "auth_methods": [
+            "SSH key",
+            "Password",
+            "Certificate"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "高権限のまま恒常運用されやすい",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-18",
+          "label": "ETL/データパイプラインアカウント",
+          "id_provider_typical": [
+            "Active Directory",
+            "Cloud IAM"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "OAuth 2.0",
+            "Password"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-19",
+          "label": "APIクライアント（OAuth2 client_credentials）",
+          "id_provider_typical": [
+            "OAuth 2.0 authorization server"
+          ],
+          "auth_methods": [
+            "OAuth 2.0"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "秘密情報のローテーションが止まりやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        },
+        {
+          "id": "C-20",
+          "label": "EDIトランスポートアカウント（AS2, SFTP等）",
+          "id_provider_typical": [
+            "EDI gateway local ID",
+            "Certificate authority"
+          ],
+          "auth_methods": [
+            "AS2 certificate",
+            "SFTP key",
+            "mTLS"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "アプリ導入・ジョブ登録時に作成",
+            "change": "ジョブ変更やローテーション時に資格情報更新",
+            "deprovisioning": "廃止時に資格情報破棄と参照先削除"
+          },
+          "typical_issues": [
+            "所有者不明のまま運用される",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "シークレット金庫",
+            "短期資格情報",
+            "所有者台帳整備"
+          ],
+          "japan_specific_notes": "基幹系や運用自動化で機械IDが急増する一方、所有者台帳と秘密情報管理は人間IDほど整備されないことが多い。"
+        }
+      ]
+    },
+    {
+      "id": "cat_D",
+      "label": "デバイス・エンドポイント",
+      "subjects": [
+        {
+          "id": "D-01",
+          "label": "会社支給Windows PC（Entra Join / AD Join）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-02",
+          "label": "会社支給Mac（Jamf管理）",
+          "id_provider_typical": [
+            "Jamf",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "多要素認証",
+            "Device certificate"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-03",
+          "label": "BYOD（個人所有スマホ・PC）",
+          "id_provider_typical": [
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "準拠性未達端末の識別が難しい",
+            "退職・端末交換時の企業データ回収が難しい"
+          ],
+          "recommended_controls": [
+            "条件付きアクセス",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-04",
+          "label": "仮想デスクトップ（VDI: Citrix / AVD）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Entra ID"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-05",
+          "label": "シンクライアント端末",
+          "id_provider_typical": [
+            "Active Directory"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "Certificate"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-06",
+          "label": "業務用スマートフォン（MDM管理下）",
+          "id_provider_typical": [
+            "Entra ID",
+            "Intune"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "多要素認証",
+            "Device certificate"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "条件付きアクセス",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-07",
+          "label": "業務用タブレット",
+          "id_provider_typical": [
+            "Entra ID",
+            "Intune"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "多要素認証",
+            "Device certificate"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "条件付きアクセス",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-08",
+          "label": "工場HMI端末（Windows Embedded等）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Local device account"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "Password"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。 停止許容度が低い設備系では更改より前に可視化と分離が先行しやすい。"
+        },
+        {
+          "id": "D-09",
+          "label": "現場作業端末（ハンディターミナル等）",
+          "id_provider_typical": [
+            "Entra ID",
+            "Local device account"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "Password"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-10",
+          "label": "複合機・プリンター（MFP）",
+          "id_provider_typical": [
+            "Active Directory",
+            "Local device account"
+          ],
+          "auth_methods": [
+            "Kerberos",
+            "LDAP",
+            "Password"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-11",
+          "label": "IPカメラ・監視カメラ",
+          "id_provider_typical": [
+            "Local device account",
+            "Certificate authority"
+          ],
+          "auth_methods": [
+            "Password",
+            "Certificate"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。 停止許容度が低い設備系では更改より前に可視化と分離が先行しやすい。"
+        },
+        {
+          "id": "D-12",
+          "label": "IoTセンサー・ゲートウェイ",
+          "id_provider_typical": [
+            "Certificate authority",
+            "Cloud IoT registry"
+          ],
+          "auth_methods": [
+            "mTLS",
+            "Device certificate"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。 停止許容度が低い設備系では更改より前に可視化と分離が先行しやすい。"
+        },
+        {
+          "id": "D-13",
+          "label": "PLC（プログラマブルロジックコントローラー）",
+          "id_provider_typical": [
+            "PLC local account"
+          ],
+          "auth_methods": [
+            "Password",
+            "Certificate"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。 停止許容度が低い設備系では更改より前に可視化と分離が先行しやすい。"
+        },
+        {
+          "id": "D-14",
+          "label": "ネットワーク機器（ルーター/SW/FW）",
+          "id_provider_typical": [
+            "RADIUS",
+            "TACACS+"
+          ],
+          "auth_methods": [
+            "RADIUS",
+            "TACACS+",
+            "多要素認証"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "高権限のまま恒常運用されやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        },
+        {
+          "id": "D-15",
+          "label": "IP電話・UC端末",
+          "id_provider_typical": [
+            "Active Directory",
+            "UC platform local ID"
+          ],
+          "auth_methods": [
+            "SIP digest",
+            "OpenID Connect"
+          ],
+          "risk_level": "medium",
+          "lifecycle": {
+            "provisioning": "資産登録と同時にデバイスIDを発行",
+            "change": "構成変更・所有者変更・再配備で属性更新",
+            "deprovisioning": "廃棄・返却・紛失時に無効化または証明書失効"
+          },
+          "typical_issues": [
+            "棚卸し対象から漏れやすい",
+            "レガシー認証やローカル管理者が残りやすい"
+          ],
+          "recommended_controls": [
+            "デバイス準拠性管理",
+            "証明書ベース認証",
+            "構成ベースライン"
+          ],
+          "japan_specific_notes": "日本の大企業ではPC以外のOT・MFP・ネットワーク機器がID管理の対象外になりやすく、認証統制の空白が生まれる。"
+        }
+      ]
+    },
+    {
+      "id": "cat_E",
+      "label": "外部システム接続（ノードとしてのID）",
+      "subjects": [
+        {
+          "id": "E-01",
+          "label": "EDI（VAN経由：JCA手順、全銀EDI ANSER等）",
+          "id_provider_typical": [
+            "VAN operator registry",
+            "EDI gateway local ID"
+          ],
+          "auth_methods": [
+            "専用線認証",
+            "Password"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-02",
+          "label": "EDI（直接接続：AS2, ebXML, EDIFACT）",
+          "id_provider_typical": [
+            "Certificate authority",
+            "EDI gateway local ID"
+          ],
+          "auth_methods": [
+            "AS2 certificate",
+            "mTLS",
+            "SFTP key"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-03",
+          "label": "金融インフラ（全銀TCP/IP手順）",
+          "id_provider_typical": [
+            "Bank gateway registry",
+            "Certificate authority"
+          ],
+          "auth_methods": [
+            "Certificate",
+            "IP制限"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-04",
+          "label": "金融インフラ（日銀ネット）",
+          "id_provider_typical": [
+            "Bank of Japan registry",
+            "Certificate authority"
+          ],
+          "auth_methods": [
+            "Certificate",
+            "専用回線"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-05",
+          "label": "金融インフラ（SWIFT GPI）",
+          "id_provider_typical": [
+            "SWIFT PKI"
+          ],
+          "auth_methods": [
+            "SWIFT PKI",
+            "mTLS"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-06",
+          "label": "証券インフラ（東証arrowhead/arrownet）",
+          "id_provider_typical": [
+            "Exchange member registry",
+            "Certificate authority"
+          ],
+          "auth_methods": [
+            "Certificate",
+            "Member authentication"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "JIT権限付与",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-07",
+          "label": "証券インフラ（JSCC：日本証券クリアリング機構）",
+          "id_provider_typical": [
+            "JSCC member registry"
+          ],
+          "auth_methods": [
+            "Certificate",
+            "Member authentication"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-08",
+          "label": "証券インフラ（JASDEC：証券保管振替機構）",
+          "id_provider_typical": [
+            "JASDEC participant registry"
+          ],
+          "auth_methods": [
+            "Certificate",
+            "Member authentication"
+          ],
+          "risk_level": "critical",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-09",
+          "label": "官公庁（e-Gov電子申請）",
+          "id_provider_typical": [
+            "Government PKI"
+          ],
+          "auth_methods": [
+            "Government PKI",
+            "Password"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-10",
+          "label": "官公庁（マイナポータルAPI）",
+          "id_provider_typical": [
+            "Government PKI",
+            "OAuth 2.0 authorization server"
+          ],
+          "auth_methods": [
+            "OAuth 2.0",
+            "Government PKI"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-11",
+          "label": "官公庁（e-Tax、eLTAX）",
+          "id_provider_typical": [
+            "Government PKI"
+          ],
+          "auth_methods": [
+            "Government PKI",
+            "Password"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-12",
+          "label": "クラウドSaaS（Salesforce, ServiceNow等）OAuth連携",
+          "id_provider_typical": [
+            "Entra ID",
+            "OAuth 2.0 authorization server"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect",
+            "OAuth 2.0"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-13",
+          "label": "クラウドSaaS（SAP BTP, Oracle Cloud等）",
+          "id_provider_typical": [
+            "Entra ID",
+            "SaaS local ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-14",
+          "label": "iPaaS/統合基盤（MuleSoft, Azure Integration Services等）",
+          "id_provider_typical": [
+            "Entra ID",
+            "OAuth 2.0 authorization server"
+          ],
+          "auth_methods": [
+            "OAuth 2.0",
+            "mTLS"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-15",
+          "label": "市場データ端末（Bloomberg, Refinitiv Eikon）",
+          "id_provider_typical": [
+            "Market data vendor registry"
+          ],
+          "auth_methods": [
+            "Vendor certificate",
+            "Password"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-16",
+          "label": "物流情報連携（JASTPRO, 物流EDI）",
+          "id_provider_typical": [
+            "Logistics EDI registry",
+            "Certificate authority"
+          ],
+          "auth_methods": [
+            "Certificate",
+            "SFTP key"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "対向先要件変更の追従が遅れやすい"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-17",
+          "label": "医療情報連携（レセプト電算, SS-MIX）",
+          "id_provider_typical": [
+            "Healthcare PKI",
+            "Certificate authority"
+          ],
+          "auth_methods": [
+            "Certificate",
+            "Healthcare PKI"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-18",
+          "label": "調達システム（SAP Ariba, Coupa）外部接続",
+          "id_provider_typical": [
+            "Entra ID",
+            "Procurement platform local ID"
+          ],
+          "auth_methods": [
+            "SAML",
+            "OpenID Connect"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-19",
+          "label": "CDN・WAF（Cloudflare, Akamai）管理認証",
+          "id_provider_typical": [
+            "Entra ID",
+            "Cloud platform local ID"
+          ],
+          "auth_methods": [
+            "OpenID Connect",
+            "多要素認証"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        },
+        {
+          "id": "E-20",
+          "label": "SOC・MDRサービス連携（セキュリティ監視外部委託）",
+          "id_provider_typical": [
+            "Entra ID",
+            "Partner SOC registry"
+          ],
+          "auth_methods": [
+            "mTLS",
+            "OpenID Connect",
+            "API key"
+          ],
+          "risk_level": "high",
+          "lifecycle": {
+            "provisioning": "接続先契約と技術審査を経て登録",
+            "change": "証明書更新・接続方式変更時に再承認",
+            "deprovisioning": "契約終了または接続停止時に資格情報失効"
+          },
+          "typical_issues": [
+            "証明書更新漏れで連携停止する",
+            "接続先変更時の影響調査が属人化する"
+          ],
+          "recommended_controls": [
+            "相互TLS",
+            "接続先台帳管理",
+            "証明書ローテーション"
+          ],
+          "japan_specific_notes": "業界VAN、官公庁、金融、調達など対外接続は相手先要件に引きずられ、証明書更新や担当者棚卸しが個別運用になりやすい。"
+        }
+      ]
+    }
+  ],
+  "cross_cutting_issues": [
+    {
+      "id": "issue_001",
+      "title": "退職・契約終了後のアカウント残存",
+      "affected_categories": [
+        "A",
+        "B"
+      ],
+      "severity": "critical",
+      "description": "人事・調達・委託契約の終了情報がID管理に即時反映されず、退職者や契約終了者の資格情報が残存する。",
+      "japan_prevalence": "very_high"
+    },
+    {
+      "id": "issue_002",
+      "title": "兼務・出向・グループ横断での複数ID乱立",
+      "affected_categories": [
+        "A",
+        "B"
+      ],
+      "severity": "high",
+      "description": "兼務、出向、グループ会社兼任、M&A暫定運用で主体ごとに複数IDが作られ、責任分界と監査証跡が曖昧になる。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_003",
+      "title": "外部委託先への過剰権限付与",
+      "affected_categories": [
+        "B",
+        "C",
+        "D"
+      ],
+      "severity": "critical",
+      "description": "保守ベンダーや常駐SEに広い共有権限や特権IDが付与され、委託範囲を超えたアクセスが可能になる。",
+      "japan_prevalence": "very_high"
+    },
+    {
+      "id": "issue_004",
+      "title": "共有アカウント利用による追跡不能",
+      "affected_categories": [
+        "A",
+        "B",
+        "C"
+      ],
+      "severity": "critical",
+      "description": "運用現場で共有IDや代表IDが残り、個人単位の責任追跡と不正検知が困難になる。",
+      "japan_prevalence": "very_high"
+    },
+    {
+      "id": "issue_005",
+      "title": "サービスアカウントの秘密情報固定化",
+      "affected_categories": [
+        "C"
+      ],
+      "severity": "critical",
+      "description": "Windowsサービス、DB接続、バッチ、RPAで固定パスワードや埋め込み秘密情報が長期間放置される。",
+      "japan_prevalence": "very_high"
+    },
+    {
+      "id": "issue_006",
+      "title": "人事マスターとID基盤の属性不整合",
+      "affected_categories": [
+        "A",
+        "B"
+      ],
+      "severity": "high",
+      "description": "所属、雇用区分、役職、委託先情報の更新が遅れ、認可判定と棚卸し結果がずれる。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_007",
+      "title": "特権IDと通常IDの分離不足",
+      "affected_categories": [
+        "A",
+        "B",
+        "C"
+      ],
+      "severity": "critical",
+      "description": "管理者が通常業務端末やメール環境から特権操作を実施し、資格情報窃取の踏み台になる。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_008",
+      "title": "BYODと私物端末の識別・制御不足",
+      "affected_categories": [
+        "D"
+      ],
+      "severity": "high",
+      "description": "個人所有端末と会社支給端末の境界が曖昧で、準拠性評価やデータ持ち出し制御が難しい。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_009",
+      "title": "OT・工場端末のレガシー認証残存",
+      "affected_categories": [
+        "D"
+      ],
+      "severity": "critical",
+      "description": "HMI、PLC、現場端末でローカルIDや共通パスワードが残り、統合ID管理の対象外になりやすい。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_010",
+      "title": "外部接続ノードの証明書・鍵管理不備",
+      "affected_categories": [
+        "E",
+        "C"
+      ],
+      "severity": "critical",
+      "description": "EDI、金融、官公庁、API連携で使う証明書や秘密鍵の更新漏れ、保管不備、共有利用が発生する。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_011",
+      "title": "M&A後の暫定統合長期化",
+      "affected_categories": [
+        "A",
+        "B",
+        "E"
+      ],
+      "severity": "high",
+      "description": "買収先IDを暫定接続したまま標準化が進まず、重複ID、信頼境界不明、例外運用が固定化する。",
+      "japan_prevalence": "medium"
+    },
+    {
+      "id": "issue_012",
+      "title": "調達ポータル・EDIの担当者変更未反映",
+      "affected_categories": [
+        "B",
+        "E"
+      ],
+      "severity": "high",
+      "description": "取引先担当者の異動や退職が購買側に伝わらず、外部ポータルやEDIの利用者が棚卸し漏れになる。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_013",
+      "title": "マシンIDの棚卸し不足",
+      "affected_categories": [
+        "C",
+        "D",
+        "E"
+      ],
+      "severity": "critical",
+      "description": "人間IDに比べて機械IDの台帳整備が弱く、所有者不明のサービスIDやデバイス証明書が増殖する。",
+      "japan_prevalence": "very_high"
+    },
+    {
+      "id": "issue_014",
+      "title": "条件付きアクセス非対応領域の例外増殖",
+      "affected_categories": [
+        "A",
+        "B",
+        "D",
+        "E"
+      ],
+      "severity": "high",
+      "description": "レガシー端末や特殊業務のためにMFAや条件付きアクセスの例外が増え、ゼロトラスト設計が形骸化する。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_015",
+      "title": "SaaSごとのローカルID残存",
+      "affected_categories": [
+        "A",
+        "B",
+        "E"
+      ],
+      "severity": "medium",
+      "description": "統合IdPがあってもSaaS個別アカウントが残り、退職・異動時に横断停止できない。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_016",
+      "title": "監査証跡の主体解決不能",
+      "affected_categories": [
+        "A",
+        "B",
+        "C",
+        "E"
+      ],
+      "severity": "high",
+      "description": "ログにはアカウント名しか残らず、実体の人間、委託先、システム所有者へ遡及できない。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_017",
+      "title": "バックアップ・監視・スキャンIDの過大権限",
+      "affected_categories": [
+        "C",
+        "D"
+      ],
+      "severity": "critical",
+      "description": "横断運用系ツールのアカウントが全サーバー管理権限を持ち、侵害時の爆発半径が大きい。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_018",
+      "title": "休職・長期不在者アカウントの扱い不統一",
+      "affected_categories": [
+        "A"
+      ],
+      "severity": "medium",
+      "description": "休職者や育休者のアカウント停止、メール保持、復職時復元のルールが部門ごとに異なる。",
+      "japan_prevalence": "high"
+    },
+    {
+      "id": "issue_019",
+      "title": "インターン・短期要員の迅速プロビジョニング不足",
+      "affected_categories": [
+        "A",
+        "B"
+      ],
+      "severity": "medium",
+      "description": "短期雇用や実習生で手作業発行が多く、開始日に権限が間に合わない一方で終了時停止も漏れやすい。",
+      "japan_prevalence": "medium"
+    },
+    {
+      "id": "issue_020",
+      "title": "生成AI・自律エージェントの責任境界未整備",
+      "affected_categories": [
+        "C"
+      ],
+      "severity": "high",
+      "description": "AIエージェントがAPIやSaaS権限を実行主体として使うが、所有者、承認者、利用記録の統制が未整備。",
+      "japan_prevalence": "medium"
+    }
+  ],
+  "id_management_matrix": [
+    {
+      "subject_id": "A-01",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-02",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-03",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-04",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-05",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-06",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-07",
+      "identity_provider": "Active Directory",
+      "device_policy": "Privileged Access Workstation",
+      "mfa_required": true,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "A-08",
+      "identity_provider": "Active Directory",
+      "device_policy": "Privileged Access Workstation",
+      "mfa_required": true,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "A-09",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-10",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-11",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-12",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "A-13",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "B-01",
+      "identity_provider": "Active Directory",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "B-02",
+      "identity_provider": "Active Directory",
+      "device_policy": "VPN + 踏み台サーバー",
+      "mfa_required": true,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "B-03",
+      "identity_provider": "Active Directory",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "B-04",
+      "identity_provider": "Active Directory",
+      "device_policy": "VPN + 踏み台サーバー",
+      "mfa_required": true,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "B-05",
+      "identity_provider": "Active Directory",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "B-06",
+      "identity_provider": "Active Directory",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-07",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-08",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-09",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-10",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-11",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-12",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "B-13",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-14",
+      "identity_provider": "Active Directory",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "B-15",
+      "identity_provider": "Entra ID",
+      "device_policy": "ゲスト端末分離",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "C-01",
+      "identity_provider": "Active Directory",
+      "device_policy": "Windows Server",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-02",
+      "identity_provider": "Active Directory",
+      "device_policy": "Windows Server",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-03",
+      "identity_provider": "/etc/passwd",
+      "device_policy": "Linux サーバー",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-04",
+      "identity_provider": "Database local account",
+      "device_policy": "Database workload",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-05",
+      "identity_provider": "Active Directory",
+      "device_policy": "Scheduler server",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-06",
+      "identity_provider": "GitHub Actions",
+      "device_policy": "CI/CD control plane",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-07",
+      "identity_provider": "Entra ID",
+      "device_policy": "Azure workload",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-08",
+      "identity_provider": "Entra ID",
+      "device_policy": "Azure workload",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-09",
+      "identity_provider": "AWS IAM",
+      "device_policy": "AWS workload",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-10",
+      "identity_provider": "GCP IAM",
+      "device_policy": "GCP workload",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-11",
+      "identity_provider": "Kubernetes API server",
+      "device_policy": "Kubernetes cluster",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-12",
+      "identity_provider": "SPIRE server",
+      "device_policy": "Workload mesh",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-13",
+      "identity_provider": "Active Directory",
+      "device_policy": "VDI or unattended VM",
+      "mfa_required": true,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-14",
+      "identity_provider": "Entra ID",
+      "device_policy": "AI runtime sandbox",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-15",
+      "identity_provider": "Active Directory",
+      "device_policy": "Managed server/endpoint",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-16",
+      "identity_provider": "Active Directory",
+      "device_policy": "Backup management server",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-17",
+      "identity_provider": "Active Directory",
+      "device_policy": "Scanning appliance",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "C-18",
+      "identity_provider": "Active Directory",
+      "device_policy": "Data platform",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-19",
+      "identity_provider": "OAuth 2.0 authorization server",
+      "device_policy": "API gateway",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "C-20",
+      "identity_provider": "EDI gateway local ID",
+      "device_policy": "EDI gateway",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "D-01",
+      "identity_provider": "Active Directory",
+      "device_policy": "Entra Hybrid Join",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-02",
+      "identity_provider": "Jamf",
+      "device_policy": "Jamf + Entra registered",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-03",
+      "identity_provider": "Entra ID",
+      "device_policy": "Entra registered",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-04",
+      "identity_provider": "Active Directory",
+      "device_policy": "VDI broker managed",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-05",
+      "identity_provider": "Active Directory",
+      "device_policy": "Thin client lockdown",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-06",
+      "identity_provider": "Entra ID",
+      "device_policy": "MDM managed",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-07",
+      "identity_provider": "Entra ID",
+      "device_policy": "MDM managed",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-08",
+      "identity_provider": "Active Directory",
+      "device_policy": "OT domain segregation",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "D-09",
+      "identity_provider": "Entra ID",
+      "device_policy": "Kiosk or rugged device management",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-10",
+      "identity_provider": "Active Directory",
+      "device_policy": "Print server integrated",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-11",
+      "identity_provider": "Local device account",
+      "device_policy": "IoT network segregation",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-12",
+      "identity_provider": "Certificate authority",
+      "device_policy": "IoT certificate enrollment",
+      "mfa_required": false,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "D-13",
+      "identity_provider": "PLC local account",
+      "device_policy": "OT isolated segment",
+      "mfa_required": false,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "D-14",
+      "identity_provider": "RADIUS",
+      "device_policy": "Network AAA",
+      "mfa_required": true,
+      "privileged": true,
+      "external": false
+    },
+    {
+      "subject_id": "D-15",
+      "identity_provider": "Active Directory",
+      "device_policy": "UC platform managed",
+      "mfa_required": true,
+      "privileged": false,
+      "external": false
+    },
+    {
+      "subject_id": "E-01",
+      "identity_provider": "VAN operator registry",
+      "device_policy": "VAN接続管理",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-02",
+      "identity_provider": "Certificate authority",
+      "device_policy": "B2B gateway",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-03",
+      "identity_provider": "Bank gateway registry",
+      "device_policy": "Bank gateway",
+      "mfa_required": false,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "E-04",
+      "identity_provider": "Bank of Japan registry",
+      "device_policy": "Dedicated banking line",
+      "mfa_required": false,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "E-05",
+      "identity_provider": "SWIFT PKI",
+      "device_policy": "SWIFT secure gateway",
+      "mfa_required": false,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "E-06",
+      "identity_provider": "Exchange member registry",
+      "device_policy": "Exchange connectivity platform",
+      "mfa_required": false,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "E-07",
+      "identity_provider": "JSCC member registry",
+      "device_policy": "Clearing participant gateway",
+      "mfa_required": false,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "E-08",
+      "identity_provider": "JASDEC participant registry",
+      "device_policy": "Settlement participant gateway",
+      "mfa_required": false,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "E-09",
+      "identity_provider": "Government PKI",
+      "device_policy": "Government connector",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-10",
+      "identity_provider": "Government PKI",
+      "device_policy": "API gateway",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-11",
+      "identity_provider": "Government PKI",
+      "device_policy": "Tax connector",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-12",
+      "identity_provider": "Entra ID",
+      "device_policy": "SaaS federation",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-13",
+      "identity_provider": "Entra ID",
+      "device_policy": "SaaS direct integration",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-14",
+      "identity_provider": "Entra ID",
+      "device_policy": "Integration platform",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-15",
+      "identity_provider": "Market data vendor registry",
+      "device_policy": "Market data terminal control",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-16",
+      "identity_provider": "Logistics EDI registry",
+      "device_policy": "Logistics B2B gateway",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-17",
+      "identity_provider": "Healthcare PKI",
+      "device_policy": "Healthcare network gateway",
+      "mfa_required": false,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-18",
+      "identity_provider": "Entra ID",
+      "device_policy": "Procurement federation",
+      "mfa_required": true,
+      "privileged": false,
+      "external": true
+    },
+    {
+      "subject_id": "E-19",
+      "identity_provider": "Entra ID",
+      "device_policy": "Cloud admin plane",
+      "mfa_required": true,
+      "privileged": true,
+      "external": true
+    },
+    {
+      "subject_id": "E-20",
+      "identity_provider": "Entra ID",
+      "device_policy": "SOC secure tunnel",
+      "mfa_required": false,
+      "privileged": true,
+      "external": true
+    }
+  ]
+}

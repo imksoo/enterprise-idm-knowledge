@@ -1,0 +1,895 @@
+{
+  "metadata": {
+    "id": "topic_os_auth_methods",
+    "title": "オンプレミス残存サーバーの OS 認証方式",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "Windows Server 2019",
+      "Windows Server 2022",
+      "Red Hat Enterprise Linux 8",
+      "Red Hat Enterprise Linux 9",
+      "Ubuntu Server LTS",
+      "OS 認証",
+      "Kerberos",
+      "SSSD",
+      "多要素認証",
+      "特権管理",
+      "踏み台サーバー"
+    ],
+    "related_files": [
+      "03_identity_architecture/identity_landscape.json",
+      "03_identity_architecture/ad_current_state.json",
+      "04_server_auth/kerberos_cifs_auth.json",
+      "05_hybrid_scenarios/entra_hybrid_join.json",
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/group_policy_alternatives.json",
+      "06_security_hardening/ransomware_defense.json",
+      "07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "オンプレミス残存サーバー OS 認証",
+      "object_type": "concept",
+      "description": "Windows Server と Linux 系サーバーに対する管理者および運用アカウントの認証方式全体像。",
+      "properties": {
+        "scope": [
+          "Windows Server 2019/2022",
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Windows Server 2019/2022",
+      "object_type": "product",
+      "description": "オンプレミス残存環境で広く利用される Windows Server 系 OS。",
+      "properties": {
+        "vendor": "Microsoft",
+        "platform_family": "Windows"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Red Hat Enterprise Linux 8/9",
+      "object_type": "product",
+      "description": "企業向け Linux として Active Directory 連携や RHEL IdM 連携が多い Linux ディストリビューション。",
+      "properties": {
+        "vendor": "Red Hat",
+        "platform_family": "Linux"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "Ubuntu Server LTS",
+      "object_type": "product",
+      "description": "長期サポート版がサーバー用途で利用される Linux ディストリビューション。",
+      "properties": {
+        "vendor": "Canonical",
+        "platform_family": "Linux"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "ローカル認証",
+      "object_type": "concept",
+      "description": "サーバー単体でアカウント情報を保持し、外部ディレクトリに依存せずにログオンを行う認証方式。",
+      "properties": {
+        "resilience": "外部ディレクトリ障害時のフォールバックになり得る"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "ローカルアカウント",
+      "object_type": "concept",
+      "description": "Windows Server 上で各ホストに個別作成されるローカルユーザーアカウント。",
+      "properties": {
+        "applies_to": [
+          "Windows Server 2019/2022"
+        ]
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "SAM データベース",
+      "object_type": "concept",
+      "description": "Windows のローカルアカウント資格情報を保持する Security Accounts Manager。",
+      "properties": {
+        "storage": "ローカルホスト"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "/etc/passwd",
+      "object_type": "concept",
+      "description": "Linux のアカウント基本情報を保持するファイル。",
+      "properties": {
+        "applies_to": [
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "/etc/shadow",
+      "object_type": "concept",
+      "description": "Linux のパスワードハッシュや有効期限情報を保持するファイル。",
+      "properties": {
+        "protection": "root 権限が必要"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "PAM",
+      "object_type": "protocol",
+      "description": "Linux の認証・アカウント・セッション制御を担う Pluggable Authentication Modules。",
+      "properties": {
+        "applies_to": [
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "ドメイン参加",
+      "object_type": "concept",
+      "description": "サーバーをディレクトリサービスに参加させ、集中管理された ID を用いる方式。",
+      "properties": {
+        "benefit": "アカウント集中管理"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "Windows 中心の企業ディレクトリ基盤。Kerberos とグループポリシーの中核となる。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "Kerberos",
+      "object_type": "protocol",
+      "description": "チケットベースで相互認証を行うエンタープライズ向け認証プロトコル。",
+      "properties": {
+        "primary_use": "ドメイン認証"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "SSSD",
+      "object_type": "product",
+      "description": "Linux で外部ディレクトリ統合、キャッシュ、sudo ルール取得などを提供する System Security Services Daemon。",
+      "properties": {
+        "applies_to": [
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "FreeIPA",
+      "object_type": "product",
+      "description": "Linux 中心の統合認証基盤。IdM 構成で Kerberos、LDAP、証明書管理を提供する。",
+      "properties": {
+        "platform_family": "Linux"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "RHEL IdM",
+      "object_type": "product",
+      "description": "Red Hat Enterprise Linux における IdM 実装。FreeIPA ベースで提供される。",
+      "properties": {
+        "vendor": "Red Hat"
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "realmd",
+      "object_type": "product",
+      "description": "Linux を Active Directory や IdM ドメインへ参加させる設定自動化コンポーネント。",
+      "properties": {
+        "role": "ドメイン参加支援"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "特権管理",
+      "object_type": "concept",
+      "description": "管理者権限の最小化、分離、監査、パスワード保護を行う統制領域。",
+      "properties": {
+        "objective": "最小権限"
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "Microsoft LAPS",
+      "object_type": "product",
+      "description": "Windows のローカル管理者パスワードを端末ごとにランダム化し、定期ローテーションする仕組み。",
+      "properties": {
+        "applies_to": [
+          "Windows Server 2019/2022"
+        ]
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "グループポリシー",
+      "object_type": "product",
+      "description": "Windows ドメイン参加端末へ認証設定やローカル管理者権限制御を配布する管理機構。",
+      "properties": {
+        "applies_to": [
+          "Windows Server 2019/2022"
+        ]
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "sudo",
+      "object_type": "product",
+      "description": "Linux で一般ユーザーへ限定的な特権昇格を与える標準的な仕組み。",
+      "properties": {
+        "applies_to": [
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "sudoers",
+      "object_type": "concept",
+      "description": "sudo の権限制御ポリシーを定義する設定ファイルまたは設定断片。",
+      "properties": {
+        "file_path": "/etc/sudoers"
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "SSSD sudo ルール",
+      "object_type": "concept",
+      "description": "外部ディレクトリから Linux の sudo 権限を集中配布する方式。",
+      "properties": {
+        "delivery": "ディレクトリベース"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "JEA",
+      "object_type": "pattern",
+      "description": "Windows PowerShell の Just Enough Administration。必要最小限のコマンドのみを委任する管理パターン。",
+      "properties": {
+        "applies_to": [
+          "Windows Server 2019/2022"
+        ]
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "PAM 製品",
+      "object_type": "product",
+      "description": "特権セッション制御、資格情報貸与、承認ワークフローを提供する Privileged Access Management 製品群。",
+      "properties": {
+        "applies_to": [
+          "Windows Server 2019/2022",
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "多要素認証",
+      "object_type": "concept",
+      "description": "知識要素に加えて所持要素または生体要素を要求する認証強化方式。",
+      "properties": {
+        "objective": "認証情報窃取対策"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "スマートカード",
+      "object_type": "product",
+      "description": "Windows ログオンで証明書ベース認証を提供する物理トークン。",
+      "properties": {
+        "applies_to": [
+          "Windows Server 2019/2022"
+        ]
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "Windows Hello for Business",
+      "object_type": "product",
+      "description": "PIN とデバイス結合鍵または生体情報を用いた Windows のモダン認証方式。",
+      "properties": {
+        "applies_to": [
+          "Windows Server 2019/2022",
+          "ハイブリッド ID 環境"
+        ]
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "RADIUS",
+      "object_type": "protocol",
+      "description": "Linux の PAM 経由 MFA 連携で利用されることが多い認証中継プロトコル。",
+      "properties": {
+        "primary_use": "外部認証サーバー連携"
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "TOTP",
+      "object_type": "protocol",
+      "description": "時間同期型ワンタイムパスワード。Linux の PAM モジュールや認証アプリで用いられる。",
+      "properties": {
+        "primary_use": "追加要素"
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "PAM + RADIUS",
+      "object_type": "pattern",
+      "description": "Linux ログオンや SSH に対して外部 MFA サービスを組み込む代表的な統合パターン。",
+      "properties": {
+        "applies_to": [
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "PAM + TOTP",
+      "object_type": "pattern",
+      "description": "Google Authenticator 系 PAM モジュール等で Linux ログオンに TOTP を追加する統合パターン。",
+      "properties": {
+        "applies_to": [
+          "Red Hat Enterprise Linux 8/9",
+          "Ubuntu Server LTS"
+        ]
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "踏み台サーバー",
+      "object_type": "pattern",
+      "description": "管理アクセスを中継し、到達経路と監査を集中化する運用パターン。",
+      "properties": {
+        "objective": "直接管理アクセスの削減"
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "Azure Bastion",
+      "object_type": "product",
+      "description": "Azure 上で RDP/SSH をブラウザ経由で中継するマネージド踏み台サービス。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "Jump Server",
+      "object_type": "pattern",
+      "description": "オンプレミス環境で RDP/SSH の入口となる中継サーバー。",
+      "properties": {
+        "deployment": "オンプレミス"
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "Privileged Access Workstation",
+      "object_type": "pattern",
+      "description": "高権限作業専用に分離された管理端末。PAW として特権操作面を分離する。",
+      "properties": {
+        "abbreviation": "PAW"
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "認証情報窃取",
+      "object_type": "risk",
+      "description": "ローカル管理者パスワードや Kerberos チケット、SSH 認証情報が窃取されるリスク。",
+      "properties": {
+        "threats": [
+          "Pass-the-Hash",
+          "Pass-the-Ticket",
+          "キーロギング"
+        ]
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "横展開",
+      "object_type": "risk",
+      "description": "侵害された認証情報や特権を用いて他サーバーへ移動されるリスク。",
+      "properties": {
+        "impact": "ランサムウェア被害拡大"
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "監査証跡",
+      "object_type": "concept",
+      "description": "誰がどの経路で認証し、どの特権操作を実行したかを追跡する記録。",
+      "properties": {
+        "importance": "高"
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "最小権限",
+      "object_type": "concept",
+      "description": "必要最小限の権限のみを付与するアクセス制御原則。",
+      "properties": {
+        "security_principle": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_005",
+      "relationship": "implements",
+      "description": "Windows Server はローカル認証を実装する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_005",
+      "relationship": "implements",
+      "description": "Red Hat Enterprise Linux はローカル認証を実装する。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_005",
+      "relationship": "implements",
+      "description": "Ubuntu Server はローカル認証を実装する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "Windows のローカルアカウントは SAM データベースに依存する。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_006",
+      "relationship": "implements",
+      "description": "Windows におけるローカル認証はローカルアカウントで実現される。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_008",
+      "relationship": "implements",
+      "description": "Linux におけるローカル認証は /etc/passwd を利用する。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_009",
+      "relationship": "implements",
+      "description": "Linux におけるローカル認証は /etc/shadow を利用する。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "Linux のローカル認証制御は PAM に依存する。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "Windows Server は Active Directory へのドメイン参加を実装する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "Red Hat Enterprise Linux は SSSD や realmd を通じたドメイン参加を実装する。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "Ubuntu Server は SSSD や realmd を通じたドメイン参加を実装する。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "Windows と Linux の代表的な集中認証先として Active Directory が利用される。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_013",
+      "relationship": "requires",
+      "description": "ドメイン認証の中核には Kerberos がある。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "SSSD は Linux と Active Directory の連携を補完する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_016",
+      "relationship": "complements",
+      "description": "SSSD は Linux と RHEL IdM の連携を補完する。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_015",
+      "relationship": "example_of",
+      "description": "RHEL IdM は FreeIPA 系実装の一例である。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_014",
+      "relationship": "complements",
+      "description": "realmd は SSSD 設定とドメイン参加作業を補完する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_019",
+      "relationship": "implements",
+      "description": "Windows の特権管理では Microsoft LAPS が使われる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_020",
+      "relationship": "implements",
+      "description": "Windows の管理者制限にはグループポリシーが使われる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_021",
+      "relationship": "implements",
+      "description": "Linux の特権昇格制御では sudo が使われる。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "sudo の権限制御は sudoers に依存する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_023",
+      "relationship": "implements",
+      "description": "SSSD はディレクトリ配布された sudo ルールを取得できる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_023",
+      "relationship": "complements",
+      "description": "Linux の特権管理は SSSD sudo ルールにより集中管理を補完できる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_024",
+      "relationship": "implements",
+      "description": "Windows の委任管理では JEA が使われる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_025",
+      "relationship": "implements",
+      "description": "共通の高統制方式として PAM 製品が使われる。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_027",
+      "relationship": "implements",
+      "description": "Windows の MFA ではスマートカードが利用される。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_028",
+      "relationship": "implements",
+      "description": "Windows の MFA/モダン認証では Windows Hello for Business が利用される。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_031",
+      "relationship": "implements",
+      "description": "Linux の MFA 統合では PAM + RADIUS が代表的である。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_032",
+      "relationship": "implements",
+      "description": "Linux の MFA 統合では PAM + TOTP が代表的である。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "PAM + RADIUS は PAM に依存する。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_029",
+      "relationship": "requires",
+      "description": "PAM + RADIUS は RADIUS に依存する。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "PAM + TOTP は PAM に依存する。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_030",
+      "relationship": "requires",
+      "description": "PAM + TOTP は TOTP に依存する。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_034",
+      "relationship": "example_of",
+      "description": "Azure Bastion は踏み台サーバーパターンの一例である。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_035",
+      "relationship": "example_of",
+      "description": "Jump Server は踏み台サーバーパターンの一例である。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_036",
+      "relationship": "complements",
+      "description": "PAW は踏み台パターンを補完し、特権操作面を分離する。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_037",
+      "relationship": "mitigates",
+      "description": "Microsoft LAPS はローカル管理者パスワードの再利用による認証情報窃取を抑制する。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_037",
+      "relationship": "mitigates",
+      "description": "多要素認証は単一要素の窃取被害を軽減する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_038",
+      "relationship": "mitigates",
+      "description": "特権管理は横展開に必要な過剰権限を削減する。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_038",
+      "relationship": "mitigates",
+      "description": "踏み台サーバーは管理経路を限定することで横展開を抑制する。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "PAM 製品はセッション録画や証跡収集を補完する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_040",
+      "relationship": "implements",
+      "description": "JEA は最小権限の実装手段である。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_040",
+      "relationship": "implements",
+      "description": "sudo は最小権限の実装手段である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_040",
+      "relationship": "implements",
+      "description": "グループポリシーは管理者権限の制限を通じて最小権限を実装する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "title": "Windows ローカル認証は緊急用に限定する",
+      "summary": "Windows Server のローカルアカウントは SAM データベースに依存するため、ディレクトリ障害時のフォールバックには有効だが、運用常用すると資格情報の分散と監査困難を招く。",
+      "category": "ローカル認証",
+      "related_nodes": [
+        "node_006",
+        "node_007",
+        "node_039"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "title": "Linux ローカル認証は PAM 設計で安全性が決まる",
+      "summary": "Red Hat Enterprise Linux と Ubuntu Server のローカル認証では /etc/passwd と /etc/shadow の保護だけでなく、PAM スタック順序と失敗時挙動が認証強度を左右する。",
+      "category": "ローカル認証",
+      "related_nodes": [
+        "node_008",
+        "node_009",
+        "node_010"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "title": "Windows の標準ドメイン認証は Active Directory + Kerberos",
+      "summary": "Windows Server 2019/2022 の集中認証は Active Directory ドメイン参加と Kerberos を中核に据える。管理者の個別ローカルアカウント運用より、個人識別と証跡を取りやすい。",
+      "category": "ドメイン認証",
+      "related_nodes": [
+        "node_011",
+        "node_012",
+        "node_013"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "title": "Linux の Active Directory 連携は SSSD を標準軸にする",
+      "summary": "Linux で Active Directory を使う場合、SSSD による ID 解決、認証キャッシュ、sudo ルール取得を標準軸にし、realmd で参加作業を簡素化するのが保守しやすい。",
+      "category": "ドメイン認証",
+      "related_nodes": [
+        "node_014",
+        "node_017",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "title": "RHEL IdM は Linux 中心の統制に適する",
+      "summary": "Red Hat Enterprise Linux 8/9 では RHEL IdM を採用すると Linux ネイティブなポリシー管理と証明書運用を統合しやすい。Windows 主体環境では Active Directory との役割分担を明確にする必要がある。",
+      "category": "ドメイン認証",
+      "related_nodes": [
+        "node_016",
+        "node_015",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "title": "Ubuntu Server でも SSSD 基盤で整合性を取る",
+      "summary": "Ubuntu Server LTS でも SSSD と realmd の組み合わせにより、Red Hat Enterprise Linux と近い運用モデルへ寄せられる。ディストリビューション差分を吸収しやすく、運用標準化に向く。",
+      "category": "ドメイン認証",
+      "related_nodes": [
+        "node_004",
+        "node_014",
+        "node_017"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "title": "Microsoft LAPS は Windows の最低限の防御線",
+      "summary": "ローカル管理者アカウントを完全廃止できない場合でも、Microsoft LAPS によりホストごとの一意なパスワードとローテーションを確保し、Pass-the-Hash 系リスクを下げるべきである。",
+      "category": "特権管理",
+      "related_nodes": [
+        "node_019",
+        "node_037",
+        "node_038"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "title": "グループポリシーは管理者権限の削減に使う",
+      "summary": "Windows Server のローカル Administrators グループ制御、リモートログオン権限制御、サービスアカウント制限はグループポリシーで整理できる。権限の棚卸しなしに設定だけ配ると例外運用が増える。",
+      "category": "特権管理",
+      "related_nodes": [
+        "node_020",
+        "node_040",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "title": "Linux の sudoers はローカル直書きより集中配布が望ましい",
+      "summary": "sudoers を各サーバーで個別管理すると設定逸脱が起こりやすい。SSSD sudo ルールや構成管理と組み合わせ、権限定義を集中化したほうが監査しやすい。",
+      "category": "特権管理",
+      "related_nodes": [
+        "node_021",
+        "node_022",
+        "node_023"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "title": "JEA は Windows の特権セッションを細分化できる",
+      "summary": "PowerShell ベース運用が残る Windows Server では、JEA によりコマンドレット単位の委任ができる。フル管理者権限を渡さずに定型運用を委譲できるため、日本企業の運用分掌に適合しやすい。",
+      "category": "特権管理",
+      "related_nodes": [
+        "node_024",
+        "node_040",
+        "node_039"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "title": "PAM 製品は共通統制レイヤーとして有効",
+      "summary": "Windows と Linux が混在する環境では、PAM 製品を使うことで資格情報貸与、承認、セッション録画、証跡保全を横断的に揃えやすい。既存運用を大きく変えずに統制を強化できる。",
+      "category": "特権管理",
+      "related_nodes": [
+        "node_025",
+        "node_039",
+        "node_033"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "title": "Windows の MFA は証明書またはデバイス結合を軸にする",
+      "summary": "Windows Server への対話的な高権限ログオンでは、スマートカードや Windows Hello for Business のようなフィッシング耐性の高い方式を優先する。SMS や単純 OTP のみでは十分でない。",
+      "category": "多要素認証",
+      "related_nodes": [
+        "node_027",
+        "node_028",
+        "node_026"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "title": "Linux MFA は PAM 統合の失敗時設計が重要",
+      "summary": "PAM + RADIUS や PAM + TOTP を導入する際は、ネットワーク断や認証基盤障害時の break-glass 経路を定義しないと、自身のロックアウトを招く。root 直 SSH 禁止との整合も必要である。",
+      "category": "多要素認証",
+      "related_nodes": [
+        "node_031",
+        "node_032",
+        "node_010"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "title": "Azure Bastion はインターネット露出削減に向く",
+      "summary": "Azure 上またはハイブリッド接続先の Windows/Linux 管理では、Azure Bastion により RDP/SSH ポート公開を避けられる。クラウド側統制は強いが、オンプレ単独環境では代替設計が必要である。",
+      "category": "踏み台サーバー",
+      "related_nodes": [
+        "node_034",
+        "node_033",
+        "node_038"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "title": "Jump Server は万能ではない",
+      "summary": "オンプレミスの Jump Server は管理入口を集約できる一方、共有管理端末化すると認証情報窃取の集中点になる。多要素認証、クリップボード制御、セッション記録を必須要件として扱うべきである。",
+      "category": "踏み台サーバー",
+      "related_nodes": [
+        "node_035",
+        "node_037",
+        "node_039"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "title": "PAW は高権限作業の分離に最も効果が高い",
+      "summary": "Privileged Access Workstation はメールや Web 閲覧と分離された専用端末として、管理者の認証面を保護する。侵害済み一般端末からの横展開を断つうえで、踏み台サーバーより強い統制を実現しやすい。",
+      "category": "踏み台サーバー",
+      "related_nodes": [
+        "node_036",
+        "node_038",
+        "node_026"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "title": "共通設計原則は最小権限と証跡集中である",
+      "summary": "Windows と Linux の実装差分は大きいが、設計原則は同じである。ローカル認証は例外化し、集中認証、最小権限、多要素認証、踏み台経由、証跡集中の順に成熟度を高めるべきである。",
+      "category": "設計原則",
+      "related_nodes": [
+        "node_001",
+        "node_039",
+        "node_040"
+      ]
+    }
+  ]
+}

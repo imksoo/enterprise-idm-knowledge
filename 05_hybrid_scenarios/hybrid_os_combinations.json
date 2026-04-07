@@ -1,0 +1,1612 @@
+{
+  "metadata": {
+    "id": "hybrid_os_combinations",
+    "title": "ハイブリッドOS環境ID管理パターン集",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "hybrid",
+      "windows-server",
+      "rhel",
+      "aix",
+      "solaris",
+      "sssd",
+      "freeipa",
+      "ad-trust",
+      "Entra ID"
+    ],
+    "related_files": [
+      "../03_identity_architecture/identity_landscape.json",
+      "../04_server_auth/os_auth_methods.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/group_policy_alternatives.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "patterns": [
+    {
+      "pattern_id": "pat_001",
+      "title": "Active Directory中心・RHEL参加型",
+      "prevalence": "very_high",
+      "industries": [
+        "証券",
+        "銀行",
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory",
+        "participating_systems": [
+          "Windows Server 2019/2022",
+          "RHEL 8/9 via SSSD",
+          "Windows Client PC via グループポリシー"
+        ],
+        "cloud_extension": "Entra Connect Sync と Entra ID を併用"
+      },
+      "integration_methods": [
+        "RHEL は realmd と SSSD を用いて Kerberos と LDAP を Active Directory に接続する",
+        "PAM（Linux） と SSSD の組み合わせで対話ログオンと sudo ルール取得を統一する",
+        "Windows 側は グループポリシー、Linux 側は ADsys または Ansible で設定差分を吸収する"
+      ],
+      "logging_and_audit": [
+        "Windows Security Event と RHEL の journald、sssd、sudo ログを SIEM に集約する",
+        "管理者の Linux sudo 証跡と Windows 特権操作を個人単位で突合できるよう UID と UPN の対応表を維持する"
+      ],
+      "configuration_alignment": [
+        "パスワード長、ロックアウト、MFA 前提を Windows と Linux で揃える",
+        "グループポリシーで担っていたローカル権限管理は Linux では SSSD sudo ルール と Ansible に寄せる"
+      ],
+      "known_issues": [
+        "SSSD の offline cache を無秩序に有効化すると退職者や緊急停止アカウントが Linux に残留しやすい",
+        "shortname 変換や idmapping 設計が曖昧だとファイル権限と sudo 判定が崩れる",
+        "ADsys と グループポリシー の責任分界を決めないと Windows と Linux で設定二重化が起きる"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "Windows Server 2012 R2 は 2023-10-10 に延長サポート終了",
+          "RHEL 7 は 2024-06-30 に Maintenance Phase 終了"
+        ],
+        "id_risk": "古いドメイン参加サーバーが残ると AES 優先化、最新 Kerberos 設定、SSSD 標準化が止まり、ID 管理だけ新しくしても認証面が旧仕様に引きずられる"
+      },
+      "risk_if_unchanged": "Windows と Linux の認証設計が別運用のまま固定化し、証跡の相互参照と特権統制が弱いまま残る。",
+      "recommended_transition": "RHEL 8/9 へ寄せつつ SSSD と authselect を標準化し、Entra ID は SaaS と条件付きアクセスの制御面に限定して段階展開する。",
+      "migration_path": "Windows Server 2012 R2 と RHEL 7 を優先更改し、Active Directory を認証源として維持しつつ、Linux は SSSD 標準、Windows は LAPS と JEA、クラウドは Entra Connect Sync と 条件付きアクセス の三層に整理する。",
+      "related_tools": [
+        "SSSD",
+        "realmd",
+        "authselect",
+        "ADsys",
+        "LAPS",
+        "Entra Connect Sync"
+      ],
+      "security_considerations": [
+        "Linux の root 直接ログインを禁止し sudo 経由に統一する",
+        "管理用 SMB 共有と SSH 到達経路を分離しラテラルムーブメントを抑える"
+      ]
+    },
+    {
+      "pattern_id": "pat_002",
+      "title": "Active Directory + AIX 残存型",
+      "prevalence": "medium",
+      "industries": [
+        "銀行",
+        "証券",
+        "製造"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory",
+        "participating_systems": [
+          "AIX 7.2/7.3",
+          "Windows 管理端末",
+          "特権管理製品"
+        ],
+        "cloud_extension": "管理者認証は Entra ID の MFA と踏み台経由で補強"
+      },
+      "integration_methods": [
+        "AIX は LDAP client と Kerberos client を分離管理し IBM GSKIT の暗号設定を明示する",
+        "AIX RBAC と Windows 側の 特権アクセス管理 を対応付け、特権申請から実行証跡まで結ぶ"
+      ],
+      "logging_and_audit": [
+        "AIX の audit subsystem と sudo 相当ログを集約し、Active Directory のログオン記録と紐付ける",
+        "踏み台録画と AIX コマンド監査を同時保管して証券監査要件に備える"
+      ],
+      "configuration_alignment": [
+        "LDAP over TLS 設定をサーバー証明書運用と一体で更新する",
+        "AIX 固有のユーザー属性と Active Directory グループを安易に 1 対 1 対応させない"
+      ],
+      "known_issues": [
+        "古い ldap.client 構成では TLS 1.2 以降の相互接続調整が難しく、証明書更新時に一斉障害になりやすい",
+        "Kerberos 鍵テーブル管理が属人化し、SPN 相当の設計漏れが長期残存しやすい",
+        "AIX RBAC と Active Directory グループを混在運用すると権限レビューが破綻しやすい"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "AIX 7.1 以前の残存は TLS と暗号スイートの更新余地が乏しい",
+          "AIX 7.2 は TL と契約形態で保守差が大きく、標準化を阻害しやすい"
+        ],
+        "id_risk": "OS 更改が遅れるほど LDAP と Kerberos の実装差を吸収する例外設定が増え、集中 ID 管理より個別ホスト調整が支配的になる"
+      },
+      "risk_if_unchanged": "金融系バッチや勘定系周辺の AIX が認証例外の温床となり、特権IDの棚卸しと緊急停止が即時に効かない。",
+      "recommended_transition": "AIX は当面残す前提で認めつつ、接続点を LDAP/Kerberos のみへ限定し、特権制御と監査は外部製品に寄せる。",
+      "migration_path": "AIX 7.3 以上へ統一し、IBM GSKIT ベースの TLS 設定標準、AIX RBAC ロール整理、踏み台強制、将来的な RHEL 置換対象の切り分けを並行実施する。",
+      "related_tools": [
+        "IBM GSKIT",
+        "LDAP client",
+        "Kerberos client",
+        "sudo",
+        "CyberArk"
+      ],
+      "security_considerations": [
+        "AIX の管理経路を業務系ネットワークから分離する",
+        "鍵テーブル、証明書、root 権限を別担当で相互牽制する"
+      ]
+    },
+    {
+      "pattern_id": "pat_003",
+      "title": "Active Directory + Oracle Solaris 残存型",
+      "prevalence": "medium",
+      "industries": [
+        "エネルギー",
+        "製造"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory",
+        "participating_systems": [
+          "Solaris 11.4",
+          "SCADA 周辺サーバー",
+          "Windows 管理端末"
+        ],
+        "cloud_extension": "管理者認証だけ Entra ID と 多要素認証 で補強"
+      },
+      "integration_methods": [
+        "Solaris 11 の Kerberos ネイティブ機能を優先し、旧 nss_ldap と pam_ldap の直接依存を減らす",
+        "LDAP は属性参照中心に絞り、認証は Kerberos を主軸にする"
+      ],
+      "logging_and_audit": [
+        "Solaris BSM 監査と Active Directory ログオン記録を同時保管する",
+        "運転系サーバーは時刻同期を厳密化し、監査時刻の食い違いをなくす"
+      ],
+      "configuration_alignment": [
+        "名前解決、時刻同期、暗号方式を Active Directory 側と一致させる",
+        "Solaris ローカルロールとディレクトリグループの責任分界を明記する"
+      ],
+      "known_issues": [
+        "旧来の nss_ldap と pam_ldap を継続すると暗号方式や証明書更新で事故が起きやすい",
+        "Solaris 専用運用チームが鍵更新と ID 変更を別管理し、切替手順が複雑になりやすい",
+        "古い業務アプリが UID 固定を前提にしていると ID 正規化が進まない"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "Solaris 10 残存はモダン暗号対応と管理自動化の両面で厳しい",
+          "Solaris 11.4 でも SRU 停滞は Kerberos と TLS の更新遅延を招く"
+        ],
+        "id_risk": "Solaris が長期残存すると Active Directory 変更を Solaris 互換性で止める構図になり、認証基盤の更新速度を最も古い OS が決めてしまう"
+      },
+      "risk_if_unchanged": "エネルギー系の停止できないサーバーがあることを理由に、認証方式が旧設計のまま固定化する。",
+      "recommended_transition": "Solaris 上の認証依存を最小化し、アプリ更改時に Linux へ寄せられるよう UID/GID と運用ロールを先に整理する。",
+      "migration_path": "Solaris 11.4 へ統一し、Kerberos 優先、LDAP 属性参照限定、ローカルロール棚卸し、アプリ単位の Linux 置換ロードマップを作る。",
+      "related_tools": [
+        "Kerberos client",
+        "LDAP client",
+        "BSM audit",
+        "sudo"
+      ],
+      "security_considerations": [
+        "ローカル共有アカウントを排除し個人識別可能な管理者IDへ置き換える",
+        "保守ベンダー接続は踏み台と時間制限を必須にする"
+      ]
+    },
+    {
+      "pattern_id": "pat_004",
+      "title": "RHEL IdM + Active Directory Trust 型",
+      "prevalence": "medium",
+      "industries": [
+        "製造",
+        "研究開発",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "RHEL IdM",
+        "participating_systems": [
+          "RHEL/CentOS/Rocky via SSSD",
+          "Active Directory trust users",
+          "Linux 管理者端末"
+        ],
+        "cloud_extension": "Entra ID はユーザー認証基盤、Linux は trust 経由で参照"
+      },
+      "integration_methods": [
+        "RHEL IdM と Active Directory の trust で Linux 側の POSIX 属性制御を分離する",
+        "Kerberos cross-realm ticket を用い、Windows 側 ID を Linux 側で再利用する",
+        "DNS は IdM DNS と Active Directory DNS の権威範囲を明示分割する"
+      ],
+      "logging_and_audit": [
+        "IdM の 389 Directory Server 監査と Kerberos 監査を Windows 側監査と併せて収集する",
+        "trust 障害時に DNS と時刻同期を最優先で切り分けられる監視を置く"
+      ],
+      "configuration_alignment": [
+        "POSIX UID/GID 採番責任を Active Directory に持たせるか IdM に持たせるかを固定する",
+        "sudo ルール、HBAC、SELinux 方針を Linux 標準として確立する"
+      ],
+      "known_issues": [
+        "cross-realm ticket と DNS 逆引きの相互依存で障害調査が難しい",
+        "CentOS 残存を含む混在環境では SSSD バージョン差で trust 動作が不安定になる",
+        "Linux 側権限は IdM、Windows 側権限は Active Directory と割れ、責任境界が曖昧になりやすい"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "CentOS 7 残存は運用標準から外れやすい",
+          "RHEL 8 と 9 の SSSD 差分を吸収しないと trust 標準化が難しい"
+        ],
+        "id_risk": "Linux 側のディストリビューション寿命がそろっていないと IdM trust の標準化が崩れ、ドメイン参加方法がサーバーごとに変わる"
+      },
+      "risk_if_unchanged": "Linux 統制を強めるはずが、trust 設計不備で Active Directory 例外と IdM 例外の二重運用になる。",
+      "recommended_transition": "Linux は RHEL 8/9 と RHEL IdM に寄せ、Windows 側と共有するのは本人識別と最小限のグループだけに限定する。",
+      "migration_path": "RHEL IdM を Linux 用の制御面として確立し、Active Directory trust は共通ID連携に絞り、CentOS/Rocky の扱いを支援OSに限定する。",
+      "related_tools": [
+        "RHEL IdM",
+        "FreeIPA",
+        "SSSD",
+        "HBAC",
+        "DNS"
+      ],
+      "security_considerations": [
+        "trust 先の高権限グループを Linux に流し込み過ぎない",
+        "HBAC と sudo ルールでアクセス範囲をサーバー群単位に制限する"
+      ]
+    },
+    {
+      "pattern_id": "pat_005",
+      "title": "Active Directory + Azure VM リフトアンドシフト型",
+      "prevalence": "high",
+      "industries": [
+        "証券",
+        "銀行",
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory",
+        "participating_systems": [
+          "Azure VM on Windows",
+          "Azure VM on RHEL",
+          "オンプレミス Domain Controller"
+        ],
+        "cloud_extension": "ExpressRoute または VPN と Entra Connect Sync"
+      },
+      "integration_methods": [
+        "Azure VM を既存 Active Directory に参加させ、認証設計を変えずにデータセンター移行を優先する",
+        "SaaS とユーザー認証は Entra ID へ同期し、サーバー認証は当面 Active Directory に残す"
+      ],
+      "logging_and_audit": [
+        "Azure Monitor とオンプレミス SIEM の二重監視を解消し、ID イベントは単一分析基盤に集約する",
+        "Domain Controller 監査と Azure VM の OS 監査を同一保持期間で管理する"
+      ],
+      "configuration_alignment": [
+        "Azure VM の拡張機能と Active Directory ベースの運用を混在させる場合、誰が最終責任を持つか決める",
+        "Windows は グループポリシー、Linux は Ansible に寄せ、Azure 拡張機能に依存し過ぎない"
+      ],
+      "known_issues": [
+        "ドメイン参加は容易でも、時刻同期と DNS 経路が不安定だと Kerberos 障害が頻発する",
+        "Azure 側に Domain Controller を増やすとレプリケーション監視と侵害範囲が広がる",
+        "Entra Join と混同して Azure VM を無理にクラウドネイティブ化すると管理責任が曖昧になる"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "Windows Server 2012 R2 の Azure 延命は ESU 前提の暫定策",
+          "RHEL 7 系 VM はクラウド移行後も認証面の古さをそのまま持ち込む"
+        ],
+        "id_risk": "IaaS 化だけでは古いドメイン参加設計が残り、クラウド移行後も最も古いサーバーの認証要件に全体が拘束される"
+      },
+      "risk_if_unchanged": "データセンター更改は終わっても ID 管理刷新が進まず、クラウド費用だけ増えて運用は旧来のまま残る。",
+      "recommended_transition": "Azure VM はまず延命策と割り切り、管理者認証と SaaS 認証から Entra ID 制御を広げる。",
+      "migration_path": "Lift & Shift 後にサーバーを Active Directory 依存度別に分類し、Hybrid Join 対象、Entra Join 対象、ドメイン残置対象へ分ける。",
+      "related_tools": [
+        "Azure VM",
+        "ExpressRoute",
+        "VPN",
+        "Entra Connect Sync",
+        "Azure Bastion"
+      ],
+      "security_considerations": [
+        "Azure 管理面と OS 管理面の権限を分離する",
+        "インターネット公開 SSH/RDP を避け、踏み台と条件付きアクセスを組み合わせる"
+      ]
+    },
+    {
+      "pattern_id": "pat_006",
+      "title": "Active Directory + Entra Hybrid Join + モバイル共存型",
+      "prevalence": "very_high",
+      "industries": [
+        "証券",
+        "銀行",
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory と Entra ID の併用",
+        "participating_systems": [
+          "Windows PC via Entra Hybrid Join",
+          "Entra Join PC via Microsoft Intune",
+          "iPhone/iPad via MDM"
+        ],
+        "cloud_extension": "Entra Connect Sync、条件付きアクセス、多要素認証"
+      },
+      "integration_methods": [
+        "既存 Windows PC は Entra Hybrid Join、新規 PC は Entra Join に分ける",
+        "モバイルは MDM 管理と アプリ保護ポリシー を基本とし、オンプレミス接続は Always On VPN か Azure Application Proxy で制御する"
+      ],
+      "logging_and_audit": [
+        "Entra ID サインインログ、デバイス準拠性、VPN ログを相関分析する",
+        "Hybrid Join 端末と Entra Join 端末を別管理せず、管理者視点では同じ属性体系へ正規化する"
+      ],
+      "configuration_alignment": [
+        "グループポリシー と Microsoft Intune の競合領域を先に定義する",
+        "社外モバイルからのオンプレミス接続はトンネル方式、MFA、セッション時間で差をつける"
+      ],
+      "known_issues": [
+        "Hybrid Join を恒久運用にすると GPO と Intune の二重統制が固定化する",
+        "モバイル経由のオンプレミス接続を VPN 任せにするとアクセス粒度が粗くなる",
+        "条件付きアクセス の例外が部署単位で増殖しがち"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "Windows 10 のサポート終息計画を PC 更改と連動させる必要がある",
+          "旧型 VPN 装置の RADIUS 実装が MFA 展開を阻害しやすい"
+        ],
+        "id_risk": "端末OS更改とID移行を別計画にすると、Hybrid Join 端末が想定より長く残ってクラウド制御の複雑性が増す"
+      },
+      "risk_if_unchanged": "Hybrid Join が中間策ではなく恒久形になり、デバイス認証と構成管理の責任が分裂する。",
+      "recommended_transition": "既存PCの寿命までは Entra Hybrid Join を許容し、新規更改端末から Entra Join と Microsoft Intune を標準にする。",
+      "migration_path": "フェーズ1で Entra Connect Sync と PHS、フェーズ2で Entra Hybrid Join と Microsoft Intune、フェーズ3で Entra Join へ新規端末移行、モバイルはアプリ単位公開へ寄せる。",
+      "related_tools": [
+        "Entra Hybrid Join",
+        "Entra Connect Sync",
+        "Microsoft Intune",
+        "条件付きアクセス",
+        "Always On VPN",
+        "Azure Application Proxy"
+      ],
+      "security_considerations": [
+        "高権限操作をモバイルから直接許可しない",
+        "端末準拠性を満たさない接続は VPN でも遮断する"
+      ]
+    },
+    {
+      "pattern_id": "pat_007",
+      "title": "Windowsレス・RHEL + FreeIPA 統制型",
+      "prevalence": "medium",
+      "industries": [
+        "製造",
+        "研究開発",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "RHEL IdM または FreeIPA",
+        "participating_systems": [
+          "RHEL 8/9 for Oracle Database",
+          "RHEL 8/9 for SAP HANA",
+          "Linux 管理端末"
+        ],
+        "cloud_extension": "SaaS 認証は Entra ID や SAML を補完利用"
+      },
+      "integration_methods": [
+        "RHEL は SSSD で RHEL IdM または FreeIPA に参加する",
+        "Oracle Database の OS 認証は Kerberos と POSIX 属性整合を前提に設計する",
+        "SAP Single Sign-On は Kerberos を軸にし、アプリ認証と OS 認証の境界を切り分ける"
+      ],
+      "logging_and_audit": [
+        "FreeIPA の監査ログ、sudo ログ、Oracle 監査、SAP 監査を統合する",
+        "OS ID とアプリ ID の対応を CMDB に保持する"
+      ],
+      "configuration_alignment": [
+        "HBAC、sudo ルール、証明書ポリシーを RHEL 標準として管理する",
+        "SAP 用 RHEL と Oracle 用 RHEL の minor version 固定方針を明示する"
+      ],
+      "known_issues": [
+        "Oracle Database の OS 認証は uid/gid と external user 名の設計ミスで障害化しやすい",
+        "SAP HANA 用の厳格な OS バージョン制約が FreeIPA 側更新速度とずれる",
+        "Linux のみで閉じた環境でも個別 sudoers 管理が残ると統制が効かない"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "RHEL 8 と 9 の minor version 互換性を SAP と Oracle のサポート条件で確認する",
+          "FreeIPA 系はディレクトリと証明書の更新をOS更改と切り離せない"
+        ],
+        "id_risk": "業務製品の認定OSに縛られると FreeIPA 側の更新を止めがちで、認証と証明書運用が古いまま残る"
+      },
+      "risk_if_unchanged": "Windows を排したはずが Linux だけの閉鎖運用になり、統制の可視性が低いまま残る。",
+      "recommended_transition": "FreeIPA を Linux 統制面として使い、SaaS や人事起点のライフサイクル連携は別途上位 ID 基盤で束ねる。",
+      "migration_path": "Oracle と SAP の OS 制約を棚卸しし、RHEL minor version の長期固定方針、FreeIPA 更新窓、Kerberos SSO 対応範囲を年次計画に落とす。",
+      "related_tools": [
+        "RHEL IdM",
+        "FreeIPA",
+        "SSSD",
+        "Oracle Database",
+        "SAP Single Sign-On"
+      ],
+      "security_considerations": [
+        "DBA と OS 管理者の権限を分離する",
+        "サービスIDを人の管理IDと共有しない"
+      ]
+    },
+    {
+      "pattern_id": "pat_008",
+      "title": "レガシーUNIX + NIS 廃止移行期",
+      "prevalence": "medium",
+      "industries": [
+        "製造",
+        "エネルギー",
+        "地方金融"
+      ],
+      "architecture": {
+        "core_idp": "NIS から Active Directory または RHEL IdM へ移行中",
+        "participating_systems": [
+          "旧HP-UX",
+          "旧Solaris",
+          "一部 RHEL"
+        ],
+        "cloud_extension": "クラウド連携は原則持ち込まず、まず UID/GID 正規化を優先"
+      },
+      "integration_methods": [
+        "NIS から LDAP または SSSD への移行前に uid/gid 番号体系を棚卸しする",
+        "古い UNIX は一時的にローカルアカウントで固定し、統合対象と延命対象を分ける"
+      ],
+      "logging_and_audit": [
+        "NIS 利用ホストを台帳化し、どの管理者が共有IDを使っているかを先に可視化する",
+        "移行期間は認証ログより変更ログの監査を重視する"
+      ],
+      "configuration_alignment": [
+        "UID/GID の再採番方針を全OS横断で決める",
+        "ホームディレクトリと NFS ACL の整合を事前確認する"
+      ],
+      "known_issues": [
+        "共有IDが多く、個人識別ベースの監査へ直ちに移れない",
+        "NIS マップ依存のスクリプトが想定以上に多い",
+        "LDAP へ単純移行すると同名ユーザーや番号競合が発生する"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "保守切れ UNIX は OS 更改以前に ID 再設計を要する",
+          "古い NIS クライアントは暗号化や監査が不十分"
+        ],
+        "id_risk": "OS が古過ぎるとモダン認証を入れる余地がなく、結局は共有ID温存が続いて内部統制の空白が残る"
+      },
+      "risk_if_unchanged": "NIS 廃止を先送りすると、監査指摘を受けても誰が何をしたかを証明できない。",
+      "recommended_transition": "まず共有IDを解体し、UID/GID とホームディレクトリ移行を済ませてから Active Directory または RHEL IdM へ接続する。",
+      "migration_path": "NIS 利用ホストの棚卸し、UID/GID 番号体系再設計、共有ID分離、延命UNIXの隔離、RHEL 置換の順で進める。",
+      "related_tools": [
+        "NIS",
+        "LDAP",
+        "SSSD",
+        "Ansible"
+      ],
+      "security_considerations": [
+        "NIS サーバーをそのまま境界外へ露出しない",
+        "旧UNIX は踏み台経由のみで接続させる"
+      ]
+    },
+    {
+      "pattern_id": "pat_009",
+      "title": "Kubernetes + サービスアカウント + Workload Identity 型",
+      "prevalence": "medium",
+      "industries": [
+        "証券",
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory と Entra ID の役割分担",
+        "participating_systems": [
+          "AKS または OpenShift",
+          "Pod Service Account",
+          "Vault または Azure Key Vault"
+        ],
+        "cloud_extension": "Azure Workload Identity と Secret Store CSI"
+      },
+      "integration_methods": [
+        "人のIDは Active Directory または Entra ID、ワークロードIDは Kubernetes Service Account に分離する",
+        "Windows コンテナが残る場合のみ gMSA を併用し、Linux Pod には静的秘密情報を置かない"
+      ],
+      "logging_and_audit": [
+        "Kubernetes audit log、クラウド IAM ログ、Secret Store アクセスログを結合する",
+        "ワークロードIDの発行元を GitOps 変更履歴と対応付ける"
+      ],
+      "configuration_alignment": [
+        "Service Account 名とアプリ名を一致させ、共有を禁止する",
+        "Active Directory の サービスアカウント と Kubernetes ワークロードIDを同一管理表で扱わない"
+      ],
+      "known_issues": [
+        "Pod に埋め込んだ長寿命秘密情報が Active Directory 統制の対象外で残る",
+        "gMSA をコンテナ全体の標準として誤用すると Linux ワークロードへ展開できない",
+        "Azure Workload Identity と旧 Pod Identity の設計差を理解しないまま併用しがち"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "古い Kubernetes と CSI ドライバーは秘密情報管理の標準化を阻害する",
+          "Windows コンテナ基盤のOS更改が遅いと gMSA 設計が足かせになる"
+        ],
+        "id_risk": "クラスタとノードOSの寿命がずれると、人のIDは新しくてもワークロードIDだけ旧方式の秘密情報依存が残る"
+      },
+      "risk_if_unchanged": "サービスアカウントが実質的な共有パスワード運用になり、漏えい時の封じ込めが困難になる。",
+      "recommended_transition": "人とワークロードのIDを分離し、クラウド連携は Workload Identity、Windows 特有要件だけ gMSA に限定する。",
+      "migration_path": "静的シークレットを棚卸しし、短命トークン、Vault 連携、Azure Workload Identity、必要最小限の gMSA へ段階移行する。",
+      "related_tools": [
+        "Azure Workload Identity",
+        "Secret Store CSI",
+        "Vault",
+        "Azure Key Vault",
+        "gMSA"
+      ],
+      "security_considerations": [
+        "namespace 単位で権限境界を切る",
+        "CI/CD から本番シークレットへ直接到達させない"
+      ]
+    },
+    {
+      "pattern_id": "pat_010",
+      "title": "SAP + Active Directory + SSO 型",
+      "prevalence": "high",
+      "industries": [
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory",
+        "participating_systems": [
+          "SAP NetWeaver",
+          "SAP GUI 利用端末",
+          "SAP BTP"
+        ],
+        "cloud_extension": "SAP BTP は Entra ID と SAML 連携"
+      },
+      "integration_methods": [
+        "オンプレミス SAP GUI は Kerberos SSO を用いる",
+        "SAP BTP や周辺 SaaS は Entra ID と SAML 連携し、クラウド側の認証強度を統一する",
+        "SAP Single Sign-On の鍵管理と Active Directory の SPN 管理を分離する"
+      ],
+      "logging_and_audit": [
+        "SAP 監査ログ、Active Directory ログオン記録、Entra ID サインインログを突合する",
+        "Basis 作業と Windows 管理作業の監査経路を分ける"
+      ],
+      "configuration_alignment": [
+        "SAP ロールと Active Directory グループの同期責任を明記する",
+        "SAP GUI とブラウザ SSO を同じポリシーで扱わない"
+      ],
+      "known_issues": [
+        "SAP Kerberos SSO は SPN、鍵配布、時刻同期のどれかが崩れると一斉障害になる",
+        "SAP BTP の SAML とオンプレミス Kerberos SSO を同一チームで設計しないと整合が崩れる",
+        "S/4HANA Cloud 連携時にオンプレミス Active Directory 依存を過小評価しがち"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "SAP 認定 OS minor version と Active Directory 側更改速度がずれやすい",
+          "Windows ベース周辺サーバーの旧OS残存が Kerberos SSO 改修を止めやすい"
+        ],
+        "id_risk": "SAP 基盤の更改タイミングが遅いと、社内全体がクラウド認証へ進んでも SAP だけ旧来の Kerberos と手動ロール運用が残る"
+      },
+      "risk_if_unchanged": "製造現場の中核システムを理由に SSO と特権統制の刷新が止まりやすい。",
+      "recommended_transition": "オンプレミス SAP は Kerberos SSO を維持しつつ、SaaS 側は Entra ID に集約し、Basis 管理の証跡を別管理する。",
+      "migration_path": "SAP GUI 利用者は既存 SSO 継続、クラウド拡張は SAML 化、SAP ロール付与と人事イベント連携を別トラックで整理する。",
+      "related_tools": [
+        "SAP Single Sign-On",
+        "Kerberos",
+        "SAML",
+        "Entra ID"
+      ],
+      "security_considerations": [
+        "Basis 特権を一般ドメイン管理者と分離する",
+        "SAP RFC 接続用のサービスIDを個人IDで代替しない"
+      ]
+    },
+    {
+      "pattern_id": "pat_011",
+      "title": "Oracle Database + OS認証 + Active Directory 型",
+      "prevalence": "high",
+      "industries": [
+        "証券",
+        "銀行",
+        "製造"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory",
+        "participating_systems": [
+          "Oracle Database on Windows",
+          "Oracle Database on RHEL",
+          "DBA 管理端末"
+        ],
+        "cloud_extension": "管理者認証強化のみ Entra ID と 多要素認証 を補完"
+      },
+      "integration_methods": [
+        "Windows 版 Oracle は Windows 統合認証、RHEL 版は Kerberos と SSSD を前提にする",
+        "OS 認証で入る DBA とアプリ接続用 サービスアカウント を分離する",
+        "Oracle Database Vault と OS 側特権統制を重ねる"
+      ],
+      "logging_and_audit": [
+        "Oracle 監査と OS ログオン監査を同一セッションIDで追えるよう設計する",
+        "DBA 接続は踏み台録画と SQL 監査の双方を保存する"
+      ],
+      "configuration_alignment": [
+        "external user 命名規則を Active Directory UPN 連携に合わせる",
+        "Windows と RHEL で異なる DBA 権限昇格手順を標準化する"
+      ],
+      "known_issues": [
+        "OS 認証を残したまま shared account を使うと個人識別不能になる",
+        "RHEL 側の SSSD 設定差と Oracle の sqlnet.ora 設定差が障害原因になりやすい",
+        "Oracle Database Vault を入れても OS 側 root や local admin が強過ぎると抜け道が残る"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "古い Oracle 認定 OS へ縛られると SSSD と Kerberos の標準化が進まない",
+          "Windows 版と RHEL 版 Oracle の寿命差で認証標準が二重化しやすい"
+        ],
+        "id_risk": "DB 製品の認定OSを理由に古い認証実装が残ると、ID棚卸しや緊急停止がOSごとに別手順になる"
+      },
+      "risk_if_unchanged": "Oracle 管理だけが特例化し、OS認証、DB認証、PAM の責任が分かれたままになる。",
+      "recommended_transition": "DBA 個人ID、短時間特権、OS 認証の限定利用、DB 側監査強化を同時に進める。",
+      "migration_path": "Oracle Database Vault 導入、DBA shared account 廃止、RHEL 側 SSSD 標準化、Windows 側 local admin 統制の順で進める。",
+      "related_tools": [
+        "Oracle Database Vault",
+        "Oracle Advanced Security",
+        "SSSD",
+        "Kerberos"
+      ],
+      "security_considerations": [
+        "DB バックアップ系の サービスアカウント を人の運用IDと分離する",
+        "TDE とネットワーク暗号化だけで認証統制が済んだと見なさない"
+      ]
+    },
+    {
+      "pattern_id": "pat_012",
+      "title": "証券フロントシステム + Bloomberg 連携型",
+      "prevalence": "medium",
+      "industries": [
+        "証券",
+        "銀行"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory",
+        "participating_systems": [
+          "Bloomberg Terminal",
+          "Bloomberg Server",
+          "Windows PC via Active Directory"
+        ],
+        "cloud_extension": "Bloomberg Anywhere は Entra ID の 条件付きアクセス と MFA で周辺統制"
+      },
+      "integration_methods": [
+        "Bloomberg ID と社内 Active Directory ID は別管理とし、対応表だけを管理する",
+        "端末側は Active Directory で統制し、外部アクセスは Bloomberg Anywhere と周辺MFAで補完する"
+      ],
+      "logging_and_audit": [
+        "Bloomberg 側監査証跡と社内ログオン証跡を利用者単位で紐付ける",
+        "市場部門の例外端末は別台帳で管理し、共通PC運用へ混ぜない"
+      ],
+      "configuration_alignment": [
+        "端末更改、画面制御、USB 制御は Active Directory 側で統一する",
+        "外部IDの失効手順を社内IDの退職フローと接続する"
+      ],
+      "known_issues": [
+        "Bloomberg ID を Active Directory と同一視すると責任分界が崩れる",
+        "端末は Active Directory 管理、外部アクセスは別MFA という二重運用になりやすい",
+        "トレーディング端末の例外設定が標準端末政策を侵食しやすい"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "市場系 Windows 端末の更改遅延は認証強化の足かせになりやすい",
+          "旧型周辺ソフトが modern auth 展開を妨げることがある"
+        ],
+        "id_risk": "端末OS更改が止まると、社内IDは新しくても外部取引系アクセスだけ旧例外運用が残る"
+      },
+      "risk_if_unchanged": "外部サービスIDと社内IDの境界が曖昧なままになり、無効化漏れが重大事故につながる。",
+      "recommended_transition": "ID は分離管理を維持しつつ、証跡統合と退職・異動時の連動無効化を強化する。",
+      "migration_path": "Bloomberg ID 対応表整備、端末準拠性強化、外部アクセスMFA見直し、例外端末の棚卸しを順に進める。",
+      "related_tools": [
+        "Bloomberg Anywhere",
+        "条件付きアクセス",
+        "多要素認証"
+      ],
+      "security_considerations": [
+        "取引端末のローカル管理者権限を常設しない",
+        "外部サービスIDの所有者と承認者を分ける"
+      ]
+    },
+    {
+      "pattern_id": "pat_013",
+      "title": "テレワーク拡大後のハイブリッドアクセス型",
+      "prevalence": "very_high",
+      "industries": [
+        "証券",
+        "銀行",
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "Active Directory と Entra ID の併用",
+        "participating_systems": [
+          "会社PC",
+          "一部 BYOD",
+          "DMZ/NPS",
+          "オンプレミスアプリ"
+        ],
+        "cloud_extension": "Always On VPN、Azure Application Proxy、条件付きアクセス"
+      },
+      "integration_methods": [
+        "サーバー到達が必要な管理端末は Always On VPN と NPS 拡張 MFA を用いる",
+        "Web アプリは Azure Application Proxy 経由へ切り替え、ネットワーク全体の穴開けを避ける",
+        "BYOD は Entra Registered とアプリ単位制御に留める"
+      ],
+      "logging_and_audit": [
+        "VPN、NPS、Entra ID、アプリ側のサインイン記録を時系列で統合する",
+        "社外接続の承認例外を台帳化し、監査で追跡できるようにする"
+      ],
+      "configuration_alignment": [
+        "Always On VPN を必要とする用途と Azure Application Proxy で代替できる用途を区別する",
+        "NPS の RADIUS 応答と 条件付きアクセス 判定の責任を別々に設計する"
+      ],
+      "known_issues": [
+        "VPN があるから条件付きアクセス不要という誤解が残りやすい",
+        "BYOD を VPN に直接収容すると社内ネットワーク境界が曖昧になる",
+        "オンプレミス公開アプリを URL 単位で整理しないと Azure Application Proxy が乱立する"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "旧型 VPN 装置や NPS 周辺の古いOSは MFA 展開の足かせになる",
+          "リモート端末の Windows 更改遅延は準拠性判定の信頼性を下げる"
+        ],
+        "id_risk": "接続装置が古いと認証強化を装置例外で逃がす設計になり、ハイブリッドアクセス全体の強度が最も弱い装置にそろってしまう"
+      },
+      "risk_if_unchanged": "社外接続がネットワーク単位の許可のまま残り、ユーザー・端末・アプリ単位の制御に移れない。",
+      "recommended_transition": "サーバー運用系は VPN、業務アプリは Azure Application Proxy、BYOD はアプリ単位制御に役割分担する。",
+      "migration_path": "VPN 利用業務の棚卸し、NPS MFA 導入、アプリ単位公開、BYOD 制限の順で縮退させる。",
+      "related_tools": [
+        "Always On VPN",
+        "NPS",
+        "RADIUS",
+        "Azure Application Proxy",
+        "条件付きアクセス"
+      ],
+      "security_considerations": [
+        "VPN 接続後もサーバー群をフラットに見せない",
+        "高権限者は PAW か踏み台からのみ接続させる"
+      ]
+    },
+    {
+      "pattern_id": "pat_014",
+      "title": "OT/ICS 隔離ネットワーク型",
+      "prevalence": "medium",
+      "industries": [
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "OT 専用 Active Directory",
+        "participating_systems": [
+          "DCS/PLC 管理PC",
+          "SCADA Server",
+          "IT ネットワークの管理端末"
+        ],
+        "cloud_extension": "原則直接連携せず、必要最小限の中継のみ"
+      },
+      "integration_methods": [
+        "OT はローカル Active Directory で閉じ、IT 側とは一方向ゲートウェイや手順承認で接続する",
+        "OT 管理IDと IT 管理IDを分離し、信頼関係は安易に張らない"
+      ],
+      "logging_and_audit": [
+        "OT の監査ログは遅延転送でもよいので改ざん耐性を重視して外部保全する",
+        "IT 側の申請記録と OT 側の実作業記録を別証跡として保存する"
+      ],
+      "configuration_alignment": [
+        "IEC 62443 の zone/conduit に沿って認証境界を定義する",
+        "OT 側のローカルポリシーと IT 側標準を無理に統合しない"
+      ],
+      "known_issues": [
+        "IT 側の利便性要求で trust を張ると OT 隔離の前提が崩れる",
+        "SCADA 周辺の旧OSが残り、ドメイン全体の更新速度を落としやすい",
+        "保守ベンダー接続の共有IDが残りやすい"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "旧 Windows Embedded や旧 Server 残存は認証設計の制約が大きい",
+          "OT 機器更改周期は 10 年超になりやすい"
+        ],
+        "id_risk": "OT OS の寿命が長いため、IT 側で標準化した認証強化をそのまま適用できず、境界設計そのものが主要統制になる"
+      },
+      "risk_if_unchanged": "IT 側統制を OT にそのまま持ち込めず、結果として OT の共有IDと例外運用が固定化する。",
+      "recommended_transition": "OT は独立運用を前提にし、ID 統合よりも境界管理、ベンダー接続統制、作業証跡強化を優先する。",
+      "migration_path": "OT 資産台帳整備、共有ID削減、踏み台・録画導入、区画境界の再定義、長期更改計画の順で進める。",
+      "related_tools": [
+        "Active Directory",
+        "踏み台サーバー",
+        "IEC 62443"
+      ],
+      "security_considerations": [
+        "IT ドメイン管理者を OT へ直接流用しない",
+        "ベンダー保守は時間制限とワンタイム資格情報を前提にする"
+      ]
+    },
+    {
+      "pattern_id": "pat_015",
+      "title": "M&A 後の Active Directory Forest 統合型",
+      "prevalence": "high",
+      "industries": [
+        "証券",
+        "銀行",
+        "製造",
+        "エネルギー"
+      ],
+      "architecture": {
+        "core_idp": "複数 Active Directory Forest",
+        "participating_systems": [
+          "旧A社 Forest",
+          "旧B社 Forest",
+          "統合先 Forest",
+          "Entra ID"
+        ],
+        "cloud_extension": "最終的に Entra Connect Sync で統合テナントへ集約"
+      },
+      "integration_methods": [
+        "統合期間は Forest Trust で相互参照し、最終的に単一 Forest か 資源 Forest 戦略を決める",
+        "SIDHistory を暫定手段として使うが長期残置しない",
+        "SaaS 側は先行して Entra ID 集約し、オンプレミス SSO を後追い整理する"
+      ],
+      "logging_and_audit": [
+        "統合前後でユーザー識別子の変化を追跡できるよう immutable ID を管理する",
+        "両 Forest の監査ログと権限付与履歴を統合保管する"
+      ],
+      "configuration_alignment": [
+        "命名規則、UPN サフィックス、管理OU、Tier モデルを統一する",
+        "委託運用先が異なる場合は変更管理手順を共通化する"
+      ],
+      "known_issues": [
+        "SIDHistory を長期間残すと権限逸脱の監査が難しい",
+        "Forest Trust 中に両社の古い暗号設定や NTLM 例外が露呈しやすい",
+        "Entra ID 側を先に統合するとオンプレミスの責任境界が曖昧になることがある"
+      ],
+      "os_lifecycle_and_id_management": {
+        "critical_versions": [
+          "古い Domain Controller OS が残る Forest は統合速度を落とす",
+          "委託先ごとの運用標準差が ID ライフサイクル統合を阻害する"
+        ],
+        "id_risk": "最も古い Forest の制約に全体が引きずられ、ユーザー統合後も特権統制やサーバー認証が統一できない"
+      },
+      "risk_if_unchanged": "M&A 後に Forest だけ trust でつなぎ続けると、長期的に権限と監査の責任が不明確になる。",
+      "recommended_transition": "ユーザー認証の見た目統合と、サーバー認証の実体統合を分けて進め、SIDHistory は期限付きで運用する。",
+      "migration_path": "Forest 健全性評価、命名・権限標準の合意、Entra ID 集約、サーバー移送、SIDHistory 廃止の順で進める。",
+      "related_tools": [
+        "Forest Trust",
+        "Entra Connect Sync",
+        "SIDHistory",
+        "LAPS"
+      ],
+      "security_considerations": [
+        "統合期間中の双方向 trust を無制限に広げない",
+        "買収先管理者の恒久特権を残さない"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "ハイブリッドOS環境 ID 管理",
+      "object_type": "concept",
+      "description": "Windows Server、RHEL、AIX、Solaris、クラウド、モバイルが混在する日本企業の ID 管理設計領域。",
+      "properties": {
+        "scope": "hybrid_os",
+        "priority": "high"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "日本企業のサーバー認証で中核に残存しやすいオンプレミス認証基盤。",
+      "properties": {
+        "role": "core_identity"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "SaaS と 条件付きアクセス の制御面となるクラウド ID 基盤。",
+      "properties": {
+        "role": "cloud_identity"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "Entra Connect Sync",
+      "object_type": "product",
+      "description": "Active Directory から Entra ID へのディレクトリ同期コンポーネント。",
+      "properties": {
+        "role": "directory_sync",
+        "legacy_name": "Azure AD Connect"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "SSSD",
+      "object_type": "product",
+      "description": "RHEL 系サーバーの標準的な外部認証統合コンポーネント。",
+      "properties": {
+        "role": "linux_identity_bridge"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "RHEL IdM",
+      "object_type": "product",
+      "description": "Linux サーバー群の認証・権限制御を統合する基盤。",
+      "properties": {
+        "role": "linux_control_plane"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "AIX",
+      "object_type": "product",
+      "description": "金融・製造で残存しやすい UNIX 系 OS。",
+      "properties": {
+        "role": "legacy_unix"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "Oracle Solaris",
+      "object_type": "product",
+      "description": "エネルギー・製造の旧来基盤で残存しやすい UNIX 系 OS。",
+      "properties": {
+        "role": "legacy_unix"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "Azure VM",
+      "object_type": "product",
+      "description": "既存 Active Directory 依存を大きく変えずに移設できる IaaS 基盤。",
+      "properties": {
+        "role": "cloud_infrastructure"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "Entra Hybrid Join",
+      "object_type": "pattern",
+      "description": "既存ドメイン参加端末を活かしたまま Entra ID 制御へ橋渡しする方式。",
+      "properties": {
+        "role": "transition_pattern"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "Microsoft Intune",
+      "object_type": "product",
+      "description": "クラウドベースの端末管理とデバイス準拠性制御を担う。",
+      "properties": {
+        "role": "device_management"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "条件付きアクセス",
+      "object_type": "concept",
+      "description": "ユーザー、端末、場所、リスクに応じてアクセス条件を動的制御する方式。",
+      "properties": {
+        "role": "access_policy"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "Always On VPN",
+      "object_type": "product",
+      "description": "社外端末からオンプレミスへ継続的に安全接続させる VPN パターン。",
+      "properties": {
+        "role": "remote_access"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "Azure Application Proxy",
+      "object_type": "product",
+      "description": "オンプレミス Web アプリをアプリ単位で外部公開するプロキシ方式。",
+      "properties": {
+        "role": "remote_app_access"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "Kubernetes Workload Identity",
+      "object_type": "pattern",
+      "description": "人のIDとワークロードIDを分離するクラウドネイティブ認証設計。",
+      "properties": {
+        "role": "service_identity"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "SAP",
+      "object_type": "product",
+      "description": "製造・エネルギーで中核業務を支える基幹業務システム群。",
+      "properties": {
+        "role": "enterprise_application"
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "Oracle Database",
+      "object_type": "product",
+      "description": "OS 認証との整合が論点になりやすいデータベース製品。",
+      "properties": {
+        "role": "database"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "OT/ICS 環境",
+      "object_type": "concept",
+      "description": "IT と異なる寿命と隔離要件を持つ制御系環境。",
+      "properties": {
+        "role": "isolated_environment"
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "Forest Trust",
+      "object_type": "pattern",
+      "description": "複数 Active Directory Forest を暫定的に相互参照させる方式。",
+      "properties": {
+        "role": "merger_bridge"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "OSライフサイクル依存",
+      "object_type": "risk",
+      "description": "最も古い OS の制約が認証基盤全体の更新速度を決めてしまうリスク。",
+      "properties": {
+        "impact": "high"
+      }
+    },
+    {
+      "id": "node_pat_001",
+      "label": "Active Directory中心・RHEL参加型",
+      "object_type": "pattern",
+      "description": "日本企業で最も一般的な Windows と RHEL の混在パターン。",
+      "properties": {
+        "pattern_id": "pat_001"
+      }
+    },
+    {
+      "id": "node_pat_002",
+      "label": "Active Directory + AIX 残存型",
+      "object_type": "pattern",
+      "description": "金融・製造で残る AIX を Active Directory に接続するパターン。",
+      "properties": {
+        "pattern_id": "pat_002"
+      }
+    },
+    {
+      "id": "node_pat_003",
+      "label": "Active Directory + Oracle Solaris 残存型",
+      "object_type": "pattern",
+      "description": "Solaris 残存を前提に Active Directory と統合するパターン。",
+      "properties": {
+        "pattern_id": "pat_003"
+      }
+    },
+    {
+      "id": "node_pat_004",
+      "label": "RHEL IdM + Active Directory Trust 型",
+      "object_type": "pattern",
+      "description": "Linux 側統制面を RHEL IdM に寄せるパターン。",
+      "properties": {
+        "pattern_id": "pat_004"
+      }
+    },
+    {
+      "id": "node_pat_005",
+      "label": "Active Directory + Azure VM リフトアンドシフト型",
+      "object_type": "pattern",
+      "description": "認証方式を大きく変えずに Azure VM へ移設するパターン。",
+      "properties": {
+        "pattern_id": "pat_005"
+      }
+    },
+    {
+      "id": "node_pat_006",
+      "label": "Active Directory + Entra Hybrid Join + モバイル共存型",
+      "object_type": "pattern",
+      "description": "既存 PC とモバイル、クラウド管理を併存させるパターン。",
+      "properties": {
+        "pattern_id": "pat_006"
+      }
+    },
+    {
+      "id": "node_pat_007",
+      "label": "Windowsレス・RHEL + FreeIPA 統制型",
+      "object_type": "pattern",
+      "description": "Linux 主体の基幹系を RHEL IdM または FreeIPA で統制するパターン。",
+      "properties": {
+        "pattern_id": "pat_007"
+      }
+    },
+    {
+      "id": "node_pat_008",
+      "label": "レガシーUNIX + NIS 廃止移行期",
+      "object_type": "pattern",
+      "description": "NIS を廃止してモダン認証へ移る過渡期パターン。",
+      "properties": {
+        "pattern_id": "pat_008"
+      }
+    },
+    {
+      "id": "node_pat_009",
+      "label": "Kubernetes + サービスアカウント + Workload Identity 型",
+      "object_type": "pattern",
+      "description": "コンテナ基盤のワークロードIDを分離設計するパターン。",
+      "properties": {
+        "pattern_id": "pat_009"
+      }
+    },
+    {
+      "id": "node_pat_010",
+      "label": "SAP + Active Directory + SSO 型",
+      "object_type": "pattern",
+      "description": "SAP のオンプレミス SSO とクラウド連携を併存するパターン。",
+      "properties": {
+        "pattern_id": "pat_010"
+      }
+    },
+    {
+      "id": "node_pat_011",
+      "label": "Oracle Database + OS認証 + Active Directory 型",
+      "object_type": "pattern",
+      "description": "DB と OS の認証責任分界が重要になるパターン。",
+      "properties": {
+        "pattern_id": "pat_011"
+      }
+    },
+    {
+      "id": "node_pat_012",
+      "label": "証券フロントシステム + Bloomberg 連携型",
+      "object_type": "pattern",
+      "description": "外部サービスIDと社内IDを分離管理するパターン。",
+      "properties": {
+        "pattern_id": "pat_012"
+      }
+    },
+    {
+      "id": "node_pat_013",
+      "label": "テレワーク拡大後のハイブリッドアクセス型",
+      "object_type": "pattern",
+      "description": "VPN とアプリ単位公開を併用する社外アクセスパターン。",
+      "properties": {
+        "pattern_id": "pat_013"
+      }
+    },
+    {
+      "id": "node_pat_014",
+      "label": "OT/ICS 隔離ネットワーク型",
+      "object_type": "pattern",
+      "description": "OT 専用 Active Directory を隔離運用するパターン。",
+      "properties": {
+        "pattern_id": "pat_014"
+      }
+    },
+    {
+      "id": "node_pat_015",
+      "label": "M&A 後の Active Directory Forest 統合型",
+      "object_type": "pattern",
+      "description": "複数 Forest を段階統合するパターン。",
+      "properties": {
+        "pattern_id": "pat_015"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "多くの現実パターンは Active Directory を中核に据える。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "クラウド側の認証強化は Entra ID が補完する。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_004",
+      "relationship": "complements",
+      "description": "Active Directory の属性は Entra Connect Sync でクラウドに同期される。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_002",
+      "relationship": "implements",
+      "description": "SSSD は Linux から Active Directory 連携を実装する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "RHEL IdM は Active Directory と trust を組むことがある。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_003",
+      "relationship": "implements",
+      "description": "Entra Hybrid Join は Entra ID のデバイス制御を導入する。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "Microsoft Intune の準拠性は 条件付きアクセス の入力となる。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Always On VPN はオンプレミス認証資産への到達経路を補完する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_003",
+      "relationship": "implements",
+      "description": "Azure Application Proxy は Entra ID 前段でオンプレミスアプリを公開する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "Workload Identity はクラウド ID とアプリ認証の橋渡しを行う。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "SAP のオンプレミス SSO は Active Directory 依存が強い。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "Oracle Database の OS 認証は Active Directory と Kerberos 連携を要することが多い。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_020",
+      "relationship": "example_of",
+      "description": "OT/ICS は OSライフサイクル依存 が強く表れる。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Forest Trust は Active Directory の暫定統合手段である。"
+    },
+    {
+      "from": "node_pat_001",
+      "to": "node_005",
+      "relationship": "requires",
+      "description": "RHEL 参加型の標準部品は SSSD である。"
+    },
+    {
+      "from": "node_pat_002",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "AIX 残存型は AIX 固有の LDAP/Kerberos 運用を要する。"
+    },
+    {
+      "from": "node_pat_003",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "Solaris 残存型は Solaris 固有の統合作法を要する。"
+    },
+    {
+      "from": "node_pat_004",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "Linux trust 型では RHEL IdM が制御面になる。"
+    },
+    {
+      "from": "node_pat_005",
+      "to": "node_009",
+      "relationship": "implements",
+      "description": "リフトアンドシフト型は Azure VM を実行基盤にする。"
+    },
+    {
+      "from": "node_pat_006",
+      "to": "node_010",
+      "relationship": "implements",
+      "description": "モバイル共存型では Entra Hybrid Join が中継点になる。"
+    },
+    {
+      "from": "node_pat_006",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "モバイル共存型では Microsoft Intune が必須に近い。"
+    },
+    {
+      "from": "node_pat_009",
+      "to": "node_015",
+      "relationship": "implements",
+      "description": "Kubernetes 型はワークロードID分離で実現する。"
+    },
+    {
+      "from": "node_pat_010",
+      "to": "node_016",
+      "relationship": "implements",
+      "description": "SAP 型は SAP 基盤を中心に設計される。"
+    },
+    {
+      "from": "node_pat_011",
+      "to": "node_017",
+      "relationship": "implements",
+      "description": "Oracle 型は DB と OS 認証統合が核心である。"
+    },
+    {
+      "from": "node_pat_013",
+      "to": "node_013",
+      "relationship": "complements",
+      "description": "ハイブリッドアクセス型では VPN が一部業務に残る。"
+    },
+    {
+      "from": "node_pat_013",
+      "to": "node_014",
+      "relationship": "replaces",
+      "description": "一部のオンプレミス Web アプリは VPN から Azure Application Proxy へ置き換えられる。"
+    },
+    {
+      "from": "node_pat_014",
+      "to": "node_018",
+      "relationship": "implements",
+      "description": "OT/ICS 隔離ネットワーク型は制御系の独立性を前提にする。"
+    },
+    {
+      "from": "node_pat_015",
+      "to": "node_019",
+      "relationship": "implements",
+      "description": "M&A 統合型では Forest Trust が暫定手段になる。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_001",
+      "relationship": "mitigates",
+      "description": "パターン整理により古いOS起点のIDリスクを可視化できる。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "共通設計原則",
+      "summary": "日本企業のハイブリッドOS環境では、ユーザー認証、サーバー認証、サービス認証、デバイス管理を同時に一つへ統合するより、Active Directory、Entra ID、Linux 側制御面の役割分担を明示した方が失敗しにくい。",
+      "evidence_nodes": [
+        "node_001",
+        "node_002",
+        "node_003",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "OSライフサイクル依存",
+      "summary": "ID 管理の刷新は製品選定よりも、最も古い OS をどこまで残すかで成否が決まる。古い OS が残るほど Kerberos、TLS、監査、特権統制の基準が引き下がる。",
+      "evidence_nodes": [
+        "node_020",
+        "node_pat_002",
+        "node_pat_003",
+        "node_pat_014"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "Entra Connect Sync の位置づけ",
+      "summary": "Entra Connect Sync は旧称 Azure AD Connect だが、役割は同じくオンプレミス Active Directory をクラウドへ同期する橋である。名称変更を機に別製品へ入れ替わったと誤解しないことが重要である。",
+      "evidence_nodes": [
+        "node_004",
+        "node_002",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "Linux 統合の標準軸",
+      "summary": "Windows 主体環境に RHEL を混在させる場合、Linux の Active Directory 連携は SSSD を標準軸にし、例外を減らすことが運用品質を決める。",
+      "evidence_nodes": [
+        "node_005",
+        "node_pat_001",
+        "node_pat_011"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "パターン1のリスクと移行",
+      "summary": "Active Directory中心・RHEL参加型を放置すると Windows と Linux の証跡が分離し、特権統制が弱いまま残る。RHEL 8/9 と SSSD 標準化、LAPS、条件付きアクセス の順で整えるのが現実的である。",
+      "evidence_nodes": [
+        "node_pat_001",
+        "node_005",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "パターン2のリスクと移行",
+      "summary": "AIX 残存型では IBM GSKIT と LDAP/Kerberos 設定が属人化しやすく、特権ID停止が即時に効かない。AIX 7.3 への統一、踏み台強制、外部 PAM（特権アクセス管理）連携が妥当である。",
+      "evidence_nodes": [
+        "node_pat_002",
+        "node_007",
+        "node_020"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "パターン3のリスクと移行",
+      "summary": "Solaris 残存型は古い LDAP モジュール依存が障害原因になりやすい。Kerberos 優先へ寄せ、UID/GID とローカルロールを先に整理して Linux 置換余地を作るべきである。",
+      "evidence_nodes": [
+        "node_pat_003",
+        "node_008",
+        "node_020"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "パターン4のリスクと移行",
+      "summary": "RHEL IdM + Active Directory trust 型は Linux 統制を強めやすいが、DNS と POSIX 属性責任が曖昧だと二重管理になる。共有するのは本人識別だけに絞る方が安定する。",
+      "evidence_nodes": [
+        "node_pat_004",
+        "node_006",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "パターン5のリスクと移行",
+      "summary": "Azure VM リフトアンドシフト型は移行完了形ではなく延命策である。クラウドへ載せた後に Active Directory 依存を分類し直さないと、旧来の ID 管理がそのまま残る。",
+      "evidence_nodes": [
+        "node_pat_005",
+        "node_009",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "パターン6のリスクと移行",
+      "summary": "Entra Hybrid Join は中継点として有効だが、長期固定化すると GPO と Microsoft Intune の二重管理が常態化する。新規端末を Entra Join へ寄せる出口戦略が必要である。",
+      "evidence_nodes": [
+        "node_pat_006",
+        "node_010",
+        "node_011"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "パターン7のリスクと移行",
+      "summary": "Windowsレス・RHEL + FreeIPA 統制型では Oracle と SAP の認定 OS 制約が FreeIPA 更新の足かせになる。アプリ更改計画と認証基盤更新計画を同じ年次ロードマップで管理すべきである。",
+      "evidence_nodes": [
+        "node_pat_007",
+        "node_006",
+        "node_016",
+        "node_017"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "パターン8のリスクと移行",
+      "summary": "NIS 廃止移行期は技術移行より共有IDの解体が先である。uid/gid の再採番を後回しにすると LDAP や SSSD へ移っても統制は改善しない。",
+      "evidence_nodes": [
+        "node_pat_008",
+        "node_020"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "パターン9のリスクと移行",
+      "summary": "Kubernetes 型では サービスアカウント を人のID延長として扱うと事故になる。短命トークン、Workload Identity、秘密情報ストア連携へ寄せるのが推奨である。",
+      "evidence_nodes": [
+        "node_pat_009",
+        "node_015",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "パターン10のリスクと移行",
+      "summary": "SAP + Active Directory + SSO 型は SAP GUI の Kerberos SSO と BTP の SAML を別トラックで考える必要がある。両者を同時最適化しようとすると責任分界が崩れやすい。",
+      "evidence_nodes": [
+        "node_pat_010",
+        "node_016",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "パターン11のリスクと移行",
+      "summary": "Oracle Database + OS認証 型は DBA の shared account と OS 側特権が残ると内部統制が弱い。Oracle Database Vault と個人ID化を同時に進めるべきである。",
+      "evidence_nodes": [
+        "node_pat_011",
+        "node_017",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "パターン12のリスクと移行",
+      "summary": "Bloomberg 連携型では Bloomberg ID と Active Directory ID の分離維持が前提である。重要なのは統合ではなく、証跡連携と退職時の無効化連動である。",
+      "evidence_nodes": [
+        "node_pat_012",
+        "node_002",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "パターン13のリスクと移行",
+      "summary": "テレワーク型は VPN を残す用途と Azure Application Proxy へ置き換える用途を分けるべきである。ネットワーク単位許可からアプリ単位許可へ縮退させることが要点になる。",
+      "evidence_nodes": [
+        "node_pat_013",
+        "node_013",
+        "node_014"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "パターン14のリスクと移行",
+      "summary": "OT/ICS 型では IT と同じID統合を目指すより、OT 専用 Active Directory の運用境界とベンダー保守統制を確立する方が現実的である。",
+      "evidence_nodes": [
+        "node_pat_014",
+        "node_018",
+        "node_020"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "パターン15のリスクと移行",
+      "summary": "M&A Forest 統合型では SIDHistory を恒久運用しないことが重要である。ユーザー見た目統合とサーバー実体統合を分け、期限付きで trust を畳むべきである。",
+      "evidence_nodes": [
+        "node_pat_015",
+        "node_019",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "日本企業特有の構造",
+      "summary": "AIX、Solaris、SAP、Oracle、OT/ICS のような残存資産があるため、日本企業では『クラウドへ移れば Active Directory をすぐ廃止できる』という前提は成り立ちにくい。",
+      "evidence_nodes": [
+        "node_001",
+        "node_007",
+        "node_008",
+        "node_016",
+        "node_018"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "監査設計の原則",
+      "summary": "ハイブリッドOS環境では認証方式の統一より先に、個人単位の識別子、時刻同期、証跡保全形式をそろえることが重要である。これがないと ID 統合後も監査で使えない。",
+      "evidence_nodes": [
+        "node_001",
+        "node_002",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "特権統制の原則",
+      "summary": "人の管理ID、OS の local admin/root、アプリの サービスアカウント、コンテナのワークロードIDを分離しないと、どのパターンでも侵害時の封じ込めが難しい。",
+      "evidence_nodes": [
+        "node_001",
+        "node_015",
+        "node_017",
+        "node_020"
+      ]
+    }
+  ]
+}

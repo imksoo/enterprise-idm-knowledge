@@ -1,0 +1,320 @@
+{
+  "metadata": {
+    "scenario_id": "sim_ene_01",
+    "title": "電力会社のOT/ITネットワーク統合：発電所SCADA制御システムへのAD統合は是か非か",
+    "industry": "energy",
+    "company_profile": {
+      "name": "東海潮流電力",
+      "size": "地方電力会社。従業員約4,800名、火力・水力発電所と送配電拠点を保有",
+      "it_env": "本社ITはActive DirectoryとEntra Hybrid Joinを運用。発電所OTはGE iFIXとOSIsoft PI Systemを中核に、Windows XP/7残存端末、ローカル認証、共有Administratorアカウント、委託業者向けVPNが混在している"
+    },
+    "themes": [
+      "OT/IT統合",
+      "SCADA",
+      "Active Directory",
+      "Privileged Access Management",
+      "Just-in-Time Access",
+      "外部委託アクセス管理",
+      "重要インフラ規制対応"
+    ],
+    "knowledge_needs": [
+      {
+        "type": "regulation",
+        "topic": "電力制御システムセキュリティガイドラインにおける制御システムアクセス管理",
+        "why_needed": "OT側のID管理強化が求められる中で、Active Directory統合そのものではなく、専用ゲートウェイ、最小権限、委託先統制の何が必須かを整理する必要がある",
+        "maps_to_file": "07_migration_patterns/japan_security_frameworks.json"
+      },
+      {
+        "type": "architecture",
+        "topic": "SCADAやレガシーWindows残存環境での現実的な認証境界設計",
+        "why_needed": "GE iFIXとOSIsoft PI Systemの周辺にWindows XP/7が残るため、本社Active Directoryへ無理に統合せず、どこを分離し、どこを入口統制するべきかを判断する必要がある",
+        "maps_to_file": "06_security_hardening/industry_manufacturing_auth.json"
+      },
+      {
+        "type": "control",
+        "topic": "委託業者のリモート保守をPAM（特権アクセス管理）とJust-in-Time Accessで統制する設計",
+        "why_needed": "常時開放VPNと共有アカウントを廃止し、個人単位、承認単位、時間制限付きのアクセスへ移行する判断材料が必要である",
+        "maps_to_file": "06_security_hardening/privileged_access_management.json"
+      },
+      {
+        "type": "risk",
+        "topic": "ランサムウェアを前提にしたOT境界防御と横展開抑止",
+        "why_needed": "本社ITと発電所OTの境界が曖昧なままでは、侵害時に制御系まで影響が波及するため、IDと到達経路の両面から封じ込め策を設計する必要がある",
+        "maps_to_file": "06_security_hardening/ransomware_defense.json"
+      },
+      {
+        "type": "migration",
+        "topic": "Entra Hybrid Joinを維持する本社ITと、統合困難なOTの段階的な役割分担",
+        "why_needed": "全社標準と現場制約を両立するには、どの領域をEntra Hybrid Join配下に残し、どの領域を独立セグメントとして扱うかの整理が必要である",
+        "maps_to_file": "05_hybrid_scenarios/entra_hybrid_join.json"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "ene_p01",
+      "name": "大島設備部長",
+      "role": "設備部長",
+      "background": "51歳。発電所運転と保全を長く担当し、停止リスクが安全と供給責任に直結することを熟知している。",
+      "stance": "発電所のシステムは止めたら終わりであり、セキュリティ対策も運転安定性を損なわない範囲に限定すべきだと考えている。"
+    },
+    {
+      "id": "ene_p02",
+      "name": "藤本IT部長",
+      "role": "IT部長",
+      "background": "46歳。本社のActive Directory、Entra Hybrid Join、標準化施策を主導してきたが、OT領域は所管外で十分な発言力を持てていない。",
+      "stance": "経済産業省ガイドライン対応を進めたいが、OT現場に無理を強いて反発を招くことは避けたい。"
+    },
+    {
+      "id": "ene_p03",
+      "name": "宮崎OTセキュリティSE",
+      "role": "OTセキュリティSE",
+      "background": "38歳。Claroty認定を持ち、制御ネットワークの可視化と保守アクセス統制案件を支援してきた。",
+      "stance": "SCADA本体のActive Directory統合ではなく、OT向けPAMと専用ゲートウェイで人と経路を管理するべきだと考えている。"
+    },
+    {
+      "id": "ene_p04",
+      "name": "工藤コンプライアンス担当",
+      "role": "コンプライアンス担当",
+      "background": "42歳。重要インフラ事業者としての行政説明、事故報告、委託先管理条項の整備を担当する。",
+      "stance": "規制対応は建前では済まず、委託業者を含む個人特定性と証跡保全を早急に整備すべきだと見ている。"
+    },
+    {
+      "id": "ene_p05",
+      "name": "高山委託業者SE",
+      "role": "制御システムベンダーSE",
+      "background": "35歳。GE iFIXとOSIsoft PI Systemの保守を担当し、現場の実運用と裏側の例外経路を熟知している。",
+      "stance": "現場都合で続いてきた常時接続と共有資格情報の危うさを認識しており、現実的に回る代替策があるなら切り替えたい。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "ene_scene_01",
+      "title": "ガイドライン改訂の説明",
+      "setting": "本社会議室。2025年改訂の電力分野サイバーセキュリティ要件を踏まえ、OT側のID管理をどう扱うかを初めて経営層と現場責任者が同席して議論する。",
+      "dialogue": [
+        {
+          "speaker": "工藤コンプライアンス担当",
+          "text": "今回の改訂で重く見られているのは、単なるファイアウォール増設ではありません。制御システムへ誰が、どの経路で、どの承認に基づいて入ったかを説明できることです。重要インフラ指定事業者として、委託先アクセスや保守用IDを『現場の慣行』で済ませる説明は、行政にも監査にも通りにくくなっています。",
+          "subtext": "OTもITと同じ粒度で説明責任を求められる段階に来たと伝えたい。"
+        },
+        {
+          "speaker": "藤本IT部長",
+          "text": "本社ITはActive DirectoryとEntra Hybrid Joinで利用者と端末をある程度追えていますが、発電所のSCADA系は別世界です。こちらから標準化を持ち込もうとしても、『運転継続に責任を持てるのか』で議論が止まってしまう。けれど、今回の改訂でOTのID管理を避け続ける余地はかなり小さくなりました。",
+          "subtext": "規制対応の必要性はあるが、自部門だけでは突破できない。"
+        },
+        {
+          "speaker": "大島設備部長",
+          "text": "規制の趣旨は理解します。ただ、発電所は止めたら売電だけでなく需給調整にも影響が出る。ITの常識で認証方式を変えて、GE iFIXやOSIsoft PI Systemに予期せぬ影響が出たら、責任の所在が曖昧なまま現場が背負うことになります。安定運転を崩す施策は、どんな正論でも受け入れられません。",
+          "subtext": "規制順守よりも、停止リスクの押し付けを強く警戒している。"
+        }
+      ],
+      "issues_surfaced": [
+        "OT側のID管理が規制対象として明確化された",
+        "本社ITの標準化と発電所の運転継続要件が衝突している",
+        "委託先アクセスの説明責任が不足している"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/japan_security_frameworks.json",
+        "05_hybrid_scenarios/entra_hybrid_join.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_02",
+      "title": "発電所現地調査の報告",
+      "setting": "現地調査の報告会。端末資産台帳、認証実態、保守手順の棚卸し結果が共有される。",
+      "dialogue": [
+        {
+          "speaker": "宮崎OTセキュリティSE",
+          "text": "現地を見て分かったのは、議論の前提が想像以上に古いことです。SCADA監視端末にはWindows XPとWindows 7が残り、GE iFIXクライアントの一部は現行ドメイン参加試験すら未実施でした。さらに、夜間対応用として共有Administratorが紙の手順書と一緒に保管され、実際には複数の当番者とベンダーが使い回していました。",
+          "subtext": "Active Directory統合以前に、基礎的な個人識別が崩れている。"
+        },
+        {
+          "speaker": "大島設備部長",
+          "text": "耳が痛い話ですが、現場では動くことが第一です。古い端末を残しているのも、更新検証用の予備機が足りず、定期修繕の短い停止窓でしか差し替えられないからです。共有Administratorも理想ではないが、真夜中に発電制御が乱れた時に誰も入れない方が危険だ、という発想で維持されてきました。",
+          "subtext": "問題は認めるが、現場判断には合理性があると言いたい。"
+        },
+        {
+          "speaker": "藤本IT部長",
+          "text": "本社の感覚だと、共有AdministratorとWindows XP残存は即是正事項です。ただ、今回の調査で見えたのは、単に『古いから直せ』では解けない構造でした。検証環境、保守契約、停止窓、ベンダー責任分界まで含めて整理しないと、統合論は現場から拒絶されるだけだと理解しました。",
+          "subtext": "本社標準の押し付けではなく、制約を前提にした計画へ考えを修正し始めた。"
+        }
+      ],
+      "issues_surfaced": [
+        "SCADA端末にWindows XPとWindows 7が残存している",
+        "共有Administratorアカウントが夜間運用で常態化している",
+        "更新検証環境と停止窓が不足している"
+      ],
+      "knowledge_ref": [
+        "04_server_auth/os_auth_methods.json",
+        "06_security_hardening/industry_manufacturing_auth.json",
+        "06_security_hardening/ransomware_defense.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_03",
+      "title": "委託業者リモートアクセスの実態告白",
+      "setting": "保守委託先も交えた追加ヒアリング。これまで曖昧だったリモート接続実態が明らかになる。",
+      "dialogue": [
+        {
+          "speaker": "高山委託業者SE",
+          "text": "正直に申し上げると、今の運用はかなり危ういです。障害即応を優先して、委託業者向けVPNは実質常時開放で、接続後は共通アカウントか、現地担当者から口頭で聞いた資格情報で入るケースが残っています。作業申請票はありますが、誰が何時にどの端末へ入ったかを、技術的に一意に突合できる状態ではありません。",
+          "subtext": "自分たちも危険性を理解しつつ、代替手段がなく続けてきた。"
+        },
+        {
+          "speaker": "工藤コンプライアンス担当",
+          "text": "それは『契約している会社が入った』という説明にすぎず、個人識別にも作業範囲管理にもなっていません。事故や不正の後で問われるのは、どの会社かではなく、どの人物が、誰の承認で、どの経路から制御系へ到達したかです。現状のままでは行政報告でも監査でも、説明の土台がありません。",
+          "subtext": "委託先管理の不備は法務・監査上の重大論点だと強調したい。"
+        },
+        {
+          "speaker": "大島設備部長",
+          "text": "現場としても、そこまで野放しだとは認識していませんでした。ただ、台風時や深夜障害では、現地要員だけでは復旧できない場面がある。だからこそ、単にVPNを閉じるのではなく、緊急時でも回る代替手段をセットで出してもらわないと、発電所としては現実に動けません。",
+          "subtext": "危険性は認めるが、遮断一辺倒の対策は拒否したい。"
+        }
+      ],
+      "issues_surfaced": [
+        "VPN接続が常時開放に近い",
+        "委託業者の個人識別ができていない",
+        "緊急保守と統制強化の両立策がない"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "08_identity_subjects/identity_subject_master.json",
+        "07_migration_patterns/japan_security_frameworks.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_04",
+      "title": "OT-PAMの提案と抵抗",
+      "setting": "対策案の検討会。宮崎がClaroty SRAとSecureCubeを組み合わせた案を説明し、現場とITが実装条件を詰める。",
+      "dialogue": [
+        {
+          "speaker": "宮崎OTセキュリティSE",
+          "text": "私の提案は、SCADA端末を本社Active Directoryへ無理に統合することではありません。制御セグメントの手前にClaroty SRAとSecureCubeを置き、委託業者も社内運用者も、個人認証と承認を通ったセッションだけを発行する方式です。Just-in-Time Accessで時間を絞り、セッション記録を残せば、既設端末へ触れずに入口統制を先に強化できます。",
+          "subtext": "認証基盤の統合ではなく、到達経路の統制へ論点を移したい。"
+        },
+        {
+          "speaker": "藤本IT部長",
+          "text": "それなら本社のActive DirectoryとEntra Hybrid Joinを使って本人確認を担保しつつ、OT側は独立性を維持できますね。こちらとしても、発電所のWindows XPやGE iFIXの設定をいきなり変えずに、承認、MFA、録画を外側で実装できるなら説明しやすい。ただし、現場運用が煩雑になりすぎない条件は必要です。",
+          "subtext": "本社標準を入口認証に限定し、現場受容性を確保したい。"
+        },
+        {
+          "speaker": "大島設備部長",
+          "text": "考え方は理解しましたが、保守のたびに手続きが重くなり、現場が回らなくなるのは困ります。定期点検、故障切り分け、緊急復旧では必要なスピードが違う。PAM（特権アクセス管理）を入れるなら、平時と災害時で承認経路を分ける、通信断時の代替手順を用意する、といった運転側の条件を先に詰める必要があります。",
+          "subtext": "技術案そのものより、緊急時運用が破綻しないかを見ている。"
+        }
+      ],
+      "issues_surfaced": [
+        "OT向けPAMで入口統制を先行する案が浮上した",
+        "本社の本人確認基盤とOT独立性の役割分担が必要",
+        "災害時と平時で異なる承認経路設計が必要"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "05_hybrid_scenarios/entra_hybrid_join.json",
+        "06_security_hardening/industry_manufacturing_auth.json"
+      ]
+    },
+    {
+      "scene_id": "ene_scene_05",
+      "title": "段階的対応の合意",
+      "setting": "役員説明前の最終整理。短期と中期の対策を分け、各部門の責任範囲を明文化する。",
+      "dialogue": [
+        {
+          "speaker": "工藤コンプライアンス担当",
+          "text": "短期対策としては、委託業者アクセスの棚卸し、共通IDの廃止方針、承認者の明確化、セッション記録の開始を今年度計画へ入れるべきです。これなら規制対応としても筋が通りますし、行政や監査に対して『何を優先し、どこまで是正したか』を説明できます。SCADA更新は中期テーマとして分離した方が現実的です。",
+          "subtext": "規制説明に耐える最小実装をまず確定したい。"
+        },
+        {
+          "speaker": "高山委託業者SE",
+          "text": "ベンダー側としても、個人単位の申請とJust-in-Time Accessに切り替える準備はできます。常時VPNが便利だったのは事実ですが、誰でも入れる状態は現場のためにも良くありません。点検計画と緊急保守の二系統で手順を分けてもらえれば、作業負荷を見ながら段階的に移行できます。",
+          "subtext": "委託先も統制強化に乗れる条件を示して合意を引き出したい。"
+        },
+        {
+          "speaker": "藤本IT部長",
+          "text": "では合意案として、フェーズ1は委託業者アクセスの棚卸し、PAM導入、MFA必須化、共有Administrator縮退、役割分担文書化までを実施します。フェーズ2でSCADA端末更新と検証環境整備を進め、Active Directory統合の可否は設備更改単位で判断する。これなら本社標準と現場制約の両方に説明がつきます。",
+          "subtext": "全面統合の議論をやめ、段階計画で前進させたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "短期は委託業者アクセス統制に集中する方針で合意した",
+        "SCADA端末更新は中期フェーズへ切り分けた",
+        "部門間の責任分担文書化が必要になった"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "04_server_auth/os_auth_methods.json",
+        "07_migration_patterns/japan_security_frameworks.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "OT認証方針",
+      "current": "本社ITはActive DirectoryとEntra Hybrid Joinで統制されている一方、発電所OTは共有Administratorとローカル認証が残り、統合方針も未定である",
+      "target": "SCADA本体は独立性を維持しつつ、入口認証、承認、記録だけは全社説明可能な形へ標準化する",
+      "gap": "Active Directory統合の是非ばかり議論され、入口統制を先行する設計原則が定まっていない",
+      "priority": "high"
+    },
+    {
+      "category": "委託業者アクセス管理",
+      "current": "VPNが実質常時開放で、委託業者の個人識別や承認との突合ができない",
+      "target": "委託業者アクセスを個人単位、承認単位、Just-in-Time Access単位で払い出し、作業後に失効させる",
+      "gap": "専用ゲートウェイ、PAM、作業申請連携、契約条項が整備されていない",
+      "priority": "high"
+    },
+    {
+      "category": "レガシー端末",
+      "current": "Windows XPとWindows 7がSCADA周辺に残り、モダン認証や通常のパッチ運用が困難である",
+      "target": "更新優先度を定めつつ、更新までの間はネットワーク分離、踏み台化、ローカル資格情報縮退でリスクを下げる",
+      "gap": "予備機、検証環境、停止窓、資産台帳の整備が不足している",
+      "priority": "high"
+    },
+    {
+      "category": "監査証跡",
+      "current": "会社単位の契約管理はあるが、個人単位の到達記録、セッション記録、承認履歴が一元化されていない",
+      "target": "誰が、どの承認で、どの制御系資産へ入ったかを時系列で追跡できる状態にする",
+      "gap": "ログ保全基盤、承認プロセス、録画方針、例外時の事後レビューが未整備である",
+      "priority": "high"
+    },
+    {
+      "category": "組織責任分界",
+      "current": "IT部門、設備部、委託先、コンプライアンスの責任が曖昧で、是正の意思決定が止まりやすい",
+      "target": "入口認証はIT、制御継続性は設備部、委託先管理は契約と現場承認で担保する責任分界を明文化する",
+      "gap": "規制対応と運転責任を横断するガバナンス文書がない",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "action": "全発電所で委託業者VPN、共有Administrator、保守端末、承認手順の実態を90日以内に棚卸しする",
+      "timeline": "0-3か月",
+      "owner": "藤本IT部長 + 大島設備部長",
+      "priority": "high"
+    },
+    {
+      "action": "Claroty SRAとSecureCubeを前提にしたOT向けPAMの概念実証を1発電所で実施し、個人認証、MFA、セッション記録、災害時例外フローを検証する",
+      "timeline": "3-6か月",
+      "owner": "宮崎OTセキュリティSE",
+      "priority": "high"
+    },
+    {
+      "action": "委託業者契約へ、個人ID利用、Just-in-Time Access、作業後失効、再委託制限、ログ提供義務を追加する",
+      "timeline": "3-6か月",
+      "owner": "工藤コンプライアンス担当",
+      "priority": "high"
+    },
+    {
+      "action": "共有Administratorを段階的に縮退し、緊急時は二者承認付きの回復用資格情報へ置き換える",
+      "timeline": "6-12か月",
+      "owner": "大島設備部長",
+      "priority": "medium"
+    },
+    {
+      "action": "SCADA端末更新、検証環境整備、Active Directory統合可否判定を設備更改計画へ組み込み、GE iFIXとOSIsoft PI Systemの世代別ロードマップを策定する",
+      "timeline": "12-24か月",
+      "owner": "藤本IT部長 + 高山委託業者SE",
+      "priority": "medium"
+    }
+  ]
+}

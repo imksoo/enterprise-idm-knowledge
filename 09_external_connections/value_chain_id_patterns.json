@@ -1,0 +1,1449 @@
+{
+  "metadata": {
+    "id": "topic_value_chain_id_patterns",
+    "title": "産業別バリューチェーンと外部 ID 接続パターン",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "日本企業",
+      "バリューチェーン",
+      "サプライチェーン",
+      "外部接続",
+      "ID管理基盤",
+      "認証プロトコル",
+      "特権アクセス管理",
+      "ゼロトラスト"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../01_entry/thesaurus_controlled_vocabulary.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json",
+      "../07_migration_patterns/international_security_frameworks.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "バリューチェーン起点設計",
+      "object_type": "concept",
+      "description": "製品や認証機能の都合ではなく、企業間の役割分担、責任境界、接続頻度、停止許容度が ID 管理設計を規定するという考え方。",
+      "properties": {
+        "design_question": [
+          "誰が主体か",
+          "人間か機械か",
+          "どの業務段階か",
+          "接続停止の業務影響は何か"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "製造業バリューチェーン",
+      "object_type": "pattern",
+      "description": "調達から設計、製造、物流、販売、保守まで多数の委託先と長期接続を持つ日本型製造業の外部連携構造。",
+      "properties": {
+        "industries": [
+          "重工",
+          "化学",
+          "自動車",
+          "電機"
+        ],
+        "identity_pressure": "委託先と設備ベンダーが混在し、人間 ID と機械 ID の両方が長期残存しやすい。"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "金融業バリューチェーン",
+      "object_type": "pattern",
+      "description": "市場インフラ、専用回線、規制報告、外部販売網を前提に、接続停止が制度対応や決済継続性へ直結する構造。",
+      "properties": {
+        "industries": [
+          "銀行",
+          "証券",
+          "保険"
+        ],
+        "identity_pressure": "閉域接続の運用統制と外部人材ポータルの統制を同時に求められる。"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "エネルギーバリューチェーン",
+      "object_type": "pattern",
+      "description": "設備保守、系統連携、取引市場、メーター通信、顧客ポータルが併存し、IT と OT の責任分界が難しい構造。",
+      "properties": {
+        "industries": [
+          "電力",
+          "ガス",
+          "石油"
+        ],
+        "identity_pressure": "OT 側のベンダーアクセスと顧客向け認証の要求水準が大きく異なる。"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "流通・小売バリューチェーン",
+      "object_type": "pattern",
+      "description": "仕入、物流、販売、会員サービスの多段接続があり、旧来 EDI とモダン API が同居しやすい構造。",
+      "properties": {
+        "industries": [
+          "総合小売",
+          "専門店",
+          "流通"
+        ],
+        "identity_pressure": "旧来接続を止めずに顧客接点だけモダン化する設計が求められる。"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "EDI型",
+      "object_type": "pattern",
+      "description": "人間の対話ログインを前提とせず、定型データを企業間で交換する機械間接続パターン。",
+      "properties": {
+        "human_involvement": "none",
+        "typical_authentication": [
+          "証明書ベース認証",
+          "固定 IP 許可"
+        ],
+        "transport_examples": [
+          "AS2",
+          "SFTP",
+          "全銀 EDI"
+        ]
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "ポータル型",
+      "object_type": "pattern",
+      "description": "取引先担当者や委託先要員がブラウザ経由で業務ポータルにアクセスする外部人間向け接続パターン。",
+      "properties": {
+        "human_involvement": "high",
+        "typical_authentication": [
+          "多要素認証",
+          "条件付きアクセス"
+        ],
+        "lifecycle_focus": [
+          "入社",
+          "異動",
+          "退職",
+          "契約終了"
+        ]
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "APIゲートウェイ型",
+      "object_type": "pattern",
+      "description": "アプリケーション同士がリアルタイム API で接続し、権限範囲と秘密情報管理が設計の中心となる接続パターン。",
+      "properties": {
+        "human_involvement": "low",
+        "typical_authentication": [
+          "OAuth 2.0",
+          "サービスアカウント"
+        ],
+        "control_focus": [
+          "スコープ設計",
+          "秘密情報ローテーション",
+          "送信元制御"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "フェデレーション型",
+      "object_type": "pattern",
+      "description": "別組織の ID を相互信頼し、SAML や OpenID Connect によるシングルサインオンを実現する接続パターン。",
+      "properties": {
+        "human_involvement": "high",
+        "typical_authentication": [
+          "フェデレーション認証",
+          "SAML",
+          "OpenID Connect"
+        ],
+        "governance_focus": [
+          "信頼関係の棚卸し",
+          "相手先統制評価"
+        ]
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "専用回線型",
+      "object_type": "pattern",
+      "description": "閉域網や専用線の業界インフラ上で接続し、端末統制とオペレーター統制を重視する接続パターン。",
+      "properties": {
+        "human_involvement": "mixed",
+        "typical_authentication": [
+          "固定 IP 許可",
+          "特権アクセス管理"
+        ],
+        "control_focus": [
+          "接続端末管理",
+          "運用者分離",
+          "監査証跡"
+        ]
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "証明書ベース認証",
+      "object_type": "pattern",
+      "description": "企業間接続でクライアント証明書や相互 TLS を用いて相手システムを識別する方式。",
+      "properties": {
+        "identity_subject": "machine",
+        "renewal_risk": "証明書更改忘れが停止要因になる"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "固定 IP 許可",
+      "object_type": "pattern",
+      "description": "送信元 IP や回線セグメントを条件に接続を許可する旧来から多い境界型制御。",
+      "properties": {
+        "identity_subject": "network-origin",
+        "operational_caution": "回線更改や冗長化時に申請漏れが起きやすい"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "多要素認証",
+      "object_type": "concept",
+      "description": "外部人間向け接続で必須化しやすい基本統制。単一パスワード依存を減らす。",
+      "properties": {
+        "identity_subject": "human",
+        "priority": "high"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "OAuth 2.0",
+      "object_type": "protocol",
+      "description": "API アクセス委任の標準であり、アプリ間連携のスコープ設計とトークン管理の中核となる。",
+      "properties": {
+        "identity_subject": "application",
+        "primary_use_case": "API access delegation"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "OpenID Connect",
+      "object_type": "protocol",
+      "description": "外部ポータルやパートナー向け Web 認証で利用しやすいモダンな認証連携方式。",
+      "properties": {
+        "identity_subject": "human-and-application",
+        "primary_use_case": "modern web federation"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "SAML",
+      "object_type": "protocol",
+      "description": "企業間ポータルのシングルサインオンで広く使われる XML ベースの認証連携方式。",
+      "properties": {
+        "identity_subject": "human",
+        "primary_use_case": "enterprise federation"
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "フェデレーション認証",
+      "object_type": "concept",
+      "description": "相手組織の本人確認結果を自社が受け入れる認証モデルで、契約と運用統制が前提となる。",
+      "properties": {
+        "dependency": "counterparty identity governance",
+        "review_cycle": "minimum annual"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "特権アクセス管理",
+      "object_type": "concept",
+      "description": "外部保守、閉域接続、運用端末に関わる高権限操作を制御し、記録、承認、時間制限を加える統制。",
+      "properties": {
+        "focus": [
+          "承認",
+          "録画",
+          "時間制限",
+          "資格情報分離"
+        ]
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "踏み台サーバー",
+      "object_type": "product",
+      "description": "ベンダー保守や外部委託要員が直接対象環境へ入らず、中継点で接続制御と監査を受けるための運用基盤。",
+      "properties": {
+        "control_role": "session brokering",
+        "typical_zone": "DMZ or dedicated admin segment"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "条件付きアクセス",
+      "object_type": "concept",
+      "description": "場所、端末状態、リスク、接続元属性に応じて外部ポータルや API 利用条件を変える制御。",
+      "properties": {
+        "control_dimensions": [
+          "location",
+          "device state",
+          "risk",
+          "session"
+        ]
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "サービスアカウント",
+      "object_type": "concept",
+      "description": "人間ではなくシステムやジョブが利用する ID。外部 API や連携ジョブで棚卸しとローテーションが重要になる。",
+      "properties": {
+        "identity_subject": "workload",
+        "governance_focus": [
+          "owner",
+          "rotation",
+          "scope"
+        ]
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "証明書期限切れ",
+      "object_type": "risk",
+      "description": "機械間接続で証明書の失効や有効期限切れに気付かず、業務停止を招くリスク。",
+      "properties": {
+        "impact": "EDI 停止、物流停止、報告遅延"
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "固定 IP 変更連絡漏れ",
+      "object_type": "risk",
+      "description": "回線更改や DR 切り替え時に接続元更新が反映されず、疎通停止や暫定穴あけを招くリスク。",
+      "properties": {
+        "impact": "可用性低下と例外運用増加"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "担当者アカウント残存",
+      "object_type": "risk",
+      "description": "取引先担当者の異動、退職、契約終了後も外部ポータル ID が削除されないリスク。",
+      "properties": {
+        "impact": "不正閲覧、退職者アクセス、監査指摘"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "多要素認証未適用",
+      "object_type": "risk",
+      "description": "外部人間向けポータルで単一要素認証のままとなり、パスワード窃取で侵害されやすいリスク。",
+      "properties": {
+        "impact": "なりすまし、情報漏えい"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "API キー漏洩",
+      "object_type": "risk",
+      "description": "アプリ間連携で長寿命の秘密情報がコード、端末、委託先環境から流出するリスク。",
+      "properties": {
+        "impact": "大量データ取得、不正送信"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "スコープ過剰付与",
+      "object_type": "risk",
+      "description": "OAuth 2.0 やサービスアカウントに必要以上の権限を持たせ、侵害時の影響を拡大するリスク。",
+      "properties": {
+        "impact": "過剰参照、過剰更新、横展開"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "信頼関係棚卸し不足",
+      "object_type": "risk",
+      "description": "フェデレーション先や委託先との信頼設定が残存し、実態と合わないアクセスが継続するリスク。",
+      "properties": {
+        "impact": "不要な SSO、監査不能"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "接続端末特権濫用",
+      "object_type": "risk",
+      "description": "専用回線端末や保守端末が共有運用となり、実行者追跡や責任分離が失われるリスク。",
+      "properties": {
+        "impact": "不正操作、追跡不能"
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "委託先 VPN 経由侵入",
+      "object_type": "risk",
+      "description": "委託先や保守ベンダーの接続経路が侵害され、自社環境へ横展開されるリスク。",
+      "properties": {
+        "attack_reference": "Kaseya 型",
+        "impact": "管理経路の信頼失墜"
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "BEC 型 ID 偽装",
+      "object_type": "risk",
+      "description": "取引先メールアカウントが侵害され、正規担当者を装って ID 作成や支払先変更を誘導するリスク。",
+      "properties": {
+        "attack_reference": "Business Email Compromise",
+        "impact": "不正口座変更、なりすまし承認"
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "信頼済み送信元悪用",
+      "object_type": "risk",
+      "description": "固定 IP や許可済み送信元を前提にした境界制御が悪用され、正規接続元に見える侵入を許すリスク。",
+      "properties": {
+        "impact": "境界防御の過信"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "ソフトウェアサプライチェーン侵害",
+      "object_type": "risk",
+      "description": "接続ソフトウェアや更新経路を経由して侵害が連鎖し、信頼済み連携が攻撃面へ転化するリスク。",
+      "properties": {
+        "attack_reference": "SolarWinds 型",
+        "impact": "広域侵害、長期潜伏"
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "製造業 調達",
+      "object_type": "concept",
+      "description": "原材料サプライヤーとの発注、納入、請求、購買ポータル接続を扱う段階。",
+      "properties": {
+        "external_counterpart": "supplier",
+        "primary_identity_subject": [
+          "machine",
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "製造業 設計・開発",
+      "object_type": "concept",
+      "description": "外部設計委託先と図面、仕様、部品表を共有する段階。",
+      "properties": {
+        "external_counterpart": "design partner",
+        "primary_identity_subject": [
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "製造業 製造",
+      "object_type": "concept",
+      "description": "設備ベンダー保守や工場システム接続が発生し、OT 越境アクセスを伴う段階。",
+      "properties": {
+        "external_counterpart": "equipment vendor",
+        "primary_identity_subject": [
+          "human",
+          "machine"
+        ]
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "製造業 物流",
+      "object_type": "concept",
+      "description": "3PL や通関関連との在庫、配送、輸出入データ連携を扱う段階。",
+      "properties": {
+        "external_counterpart": "logistics partner",
+        "primary_identity_subject": [
+          "machine"
+        ]
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "製造業 販売",
+      "object_type": "concept",
+      "description": "代理店、販売会社、エンドカスタマー向けポータルを運用する段階。",
+      "properties": {
+        "external_counterpart": "dealer and customer",
+        "primary_identity_subject": [
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "製造業 アフターサービス",
+      "object_type": "concept",
+      "description": "社外フィールドエンジニアや保守委託先が現場システムへアクセスする段階。",
+      "properties": {
+        "external_counterpart": "field service partner",
+        "primary_identity_subject": [
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "金融業 資金調達",
+      "object_type": "concept",
+      "description": "金融インフラや他金融機関との制度的接続を扱う段階。",
+      "properties": {
+        "external_counterpart": "financial institution",
+        "primary_identity_subject": [
+          "machine",
+          "operator"
+        ]
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "金融業 運用",
+      "object_type": "concept",
+      "description": "市場データ、取引先金融機関、外部運用インフラとの接続が集中する段階。",
+      "properties": {
+        "external_counterpart": "market data provider and custodian",
+        "primary_identity_subject": [
+          "machine",
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "金融業 決済",
+      "object_type": "concept",
+      "description": "決済系ネットワークや市場インフラへ高信頼で接続する段階。",
+      "properties": {
+        "external_counterpart": "payment infrastructure",
+        "primary_identity_subject": [
+          "machine",
+          "operator"
+        ]
+      }
+    },
+    {
+      "id": "node_043",
+      "label": "金融業 顧客サービス",
+      "object_type": "concept",
+      "description": "法人顧客や外部販売チャネルが利用するポータル、照会、申込導線を扱う段階。",
+      "properties": {
+        "external_counterpart": "corporate customer and advisor",
+        "primary_identity_subject": [
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_044",
+      "label": "金融業 コンプライアンス",
+      "object_type": "concept",
+      "description": "規制報告や当局提出のために外部制度システムと接続する段階。",
+      "properties": {
+        "external_counterpart": "regulator",
+        "primary_identity_subject": [
+          "machine",
+          "operator"
+        ]
+      }
+    },
+    {
+      "id": "node_045",
+      "label": "エネルギー 発電・採掘",
+      "object_type": "concept",
+      "description": "設備ベンダーや制御系保守要員が関与し、ICS 保守経路が設計課題になる段階。",
+      "properties": {
+        "external_counterpart": "plant vendor",
+        "primary_identity_subject": [
+          "human",
+          "machine"
+        ]
+      }
+    },
+    {
+      "id": "node_046",
+      "label": "エネルギー 送配電・輸送",
+      "object_type": "concept",
+      "description": "系統情報や輸送オペレーションを広域連携する段階。",
+      "properties": {
+        "external_counterpart": "grid and transport operator",
+        "primary_identity_subject": [
+          "machine",
+          "operator"
+        ]
+      }
+    },
+    {
+      "id": "node_047",
+      "label": "エネルギー 取引",
+      "object_type": "concept",
+      "description": "市場取引システムと売買、需給、価格情報をやり取りする段階。",
+      "properties": {
+        "external_counterpart": "market platform",
+        "primary_identity_subject": [
+          "machine",
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_048",
+      "label": "エネルギー 小売",
+      "object_type": "concept",
+      "description": "メーター通信や契約切替のために多数の接続点を扱う段階。",
+      "properties": {
+        "external_counterpart": "meter and field network",
+        "primary_identity_subject": [
+          "machine"
+        ]
+      }
+    },
+    {
+      "id": "node_049",
+      "label": "エネルギー 顧客",
+      "object_type": "concept",
+      "description": "契約者が利用する顧客ポータルや通知サービスを扱う段階。",
+      "properties": {
+        "external_counterpart": "customer",
+        "primary_identity_subject": [
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_050",
+      "label": "流通・小売 仕入",
+      "object_type": "concept",
+      "description": "メーカーや卸との受発注、商品マスタ連携を扱う段階。",
+      "properties": {
+        "external_counterpart": "supplier",
+        "primary_identity_subject": [
+          "machine"
+        ]
+      }
+    },
+    {
+      "id": "node_051",
+      "label": "流通・小売 物流",
+      "object_type": "concept",
+      "description": "倉庫や配送パートナーとの在庫・配送データを連携する段階。",
+      "properties": {
+        "external_counterpart": "warehouse and carrier",
+        "primary_identity_subject": [
+          "machine"
+        ]
+      }
+    },
+    {
+      "id": "node_052",
+      "label": "流通・小売 販売",
+      "object_type": "concept",
+      "description": "EC モール、決済代行、店舗システムとの接続が集中する段階。",
+      "properties": {
+        "external_counterpart": "marketplace and payment partner",
+        "primary_identity_subject": [
+          "machine",
+          "human"
+        ]
+      }
+    },
+    {
+      "id": "node_053",
+      "label": "流通・小売 顧客",
+      "object_type": "concept",
+      "description": "会員、ポイント、ミニアプリなど顧客接点の認証と同意管理を扱う段階。",
+      "properties": {
+        "external_counterpart": "customer",
+        "primary_identity_subject": [
+          "human"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "製造業の外部接続設計はバリューチェーン起点で整理する必要がある。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "金融業では制度接続と外部販売網を分けて扱う必要がある。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "エネルギー業では IT と OT の責任境界が設計起点になる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "流通・小売では旧来連携と顧客チャネルの併存が設計を規定する。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "調達は製造業バリューチェーンの起点である。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "設計・開発は委託先共有が発生する製造業の重要段階である。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "製造段階では設備ベンダー接続が発生する。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "物流段階では 3PL 連携が発生する。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "販売段階では代理店や顧客向け接続が中心になる。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "アフターサービスは社外保守要員の ID 統制が要点になる。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_003",
+      "relationship": "example_of",
+      "description": "資金調達は金融インフラ接続を伴う。"
+    },
+    {
+      "from": "node_041",
+      "to": "node_003",
+      "relationship": "example_of",
+      "description": "運用は市場データやカストディアン接続を伴う。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_003",
+      "relationship": "example_of",
+      "description": "決済は専用回線型の代表的な段階である。"
+    },
+    {
+      "from": "node_043",
+      "to": "node_003",
+      "relationship": "example_of",
+      "description": "顧客サービスは外部担当者向けポータルが中心になる。"
+    },
+    {
+      "from": "node_044",
+      "to": "node_003",
+      "relationship": "example_of",
+      "description": "コンプライアンスは制度報告の認証統制を要する。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "発電・採掘は OT 保守アクセスが設計論点になる。"
+    },
+    {
+      "from": "node_046",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "送配電・輸送は広域連携の可用性要求が高い。"
+    },
+    {
+      "from": "node_047",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "取引は市場接続とオペレーター統制を伴う。"
+    },
+    {
+      "from": "node_048",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "小売は多数機器との機械間接続が発生する。"
+    },
+    {
+      "from": "node_049",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "顧客段階は契約者ポータルの認証設計が中心になる。"
+    },
+    {
+      "from": "node_050",
+      "to": "node_005",
+      "relationship": "example_of",
+      "description": "仕入は旧来 EDI が残りやすい。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_005",
+      "relationship": "example_of",
+      "description": "物流は倉庫と輸送の機械間接続が中心になる。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_005",
+      "relationship": "example_of",
+      "description": "販売はモールや決済事業者との多様な接続が発生する。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_005",
+      "relationship": "example_of",
+      "description": "顧客段階は会員 ID と同意管理を伴う。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "調達では受発注の機械間連携が必要になる。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "購買ポータルでは取引先担当者の対話認証が必要になる。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "設計委託先と長期的に SSO を張る場合はフェデレーション型が適合する。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "設備保守は人間によるリモートアクセスが中心になる。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "工場系では閉域接続や専用端末運用を伴う。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "物流では在庫と配送の定型データ交換が主となる。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "代理店ポータルは外部人間向けの典型例である。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "現場保守ではブラウザや業務アプリへのログインが必要になる。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "保守権限は特権アクセス管理の統制対象である。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "金融インフラ接続は専用回線型が中心である。"
+    },
+    {
+      "from": "node_041",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "市場データや外部運用連携では API 接続が増えやすい。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "決済基盤は閉域と専用端末統制を要求する。"
+    },
+    {
+      "from": "node_043",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "法人顧客や外部販売員はポータル型アクセスをとる。"
+    },
+    {
+      "from": "node_043",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "組織単位での SSO を受け入れる場合はフェデレーション型になる。"
+    },
+    {
+      "from": "node_044",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "制度報告は定型ファイル連携が残りやすい。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "設備ベンダー保守では外部人間のアクセス統制が必要である。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "ICS 系は閉域接続と専用端末の管理を伴う。"
+    },
+    {
+      "from": "node_046",
+      "to": "node_010",
+      "relationship": "requires",
+      "description": "広域系統連携は閉域ネットワーク前提になりやすい。"
+    },
+    {
+      "from": "node_047",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "取引システムとのリアルタイム接続は API 型に近づく。"
+    },
+    {
+      "from": "node_048",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "メーター通信は機械間データ交換が中心である。"
+    },
+    {
+      "from": "node_049",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "顧客マイページは外部人間向けポータルである。"
+    },
+    {
+      "from": "node_050",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "仕入先連携は EDI 型が主流で残存しやすい。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "物流連携は倉庫と輸送の定型交換が多い。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "EC モールや決済連携は API 型が増えている。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "店舗運用や加盟店管理ではポータル型も残る。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "会員向けサービスは顧客ログインが中心になる。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "EDI 型では証明書ベース認証が使われやすい。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "EDI 型では固定 IP 許可も併用されやすい。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_013",
+      "relationship": "requires",
+      "description": "ポータル型では多要素認証が基本統制となる。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_020",
+      "relationship": "requires",
+      "description": "ポータル型では条件付きアクセスで接続条件を分ける。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "API ゲートウェイ型では OAuth 2.0 が標準になりやすい。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "API ゲートウェイ型ではサービスアカウント管理が必要になる。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "フェデレーション型では相手先 ID の信頼受容が前提となる。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_015",
+      "relationship": "implements",
+      "description": "モダンなフェデレーションは OpenID Connect で実装できる。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_016",
+      "relationship": "implements",
+      "description": "企業間 SSO では SAML も依然広く使われる。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "専用回線型では高権限運用者の統制が重要になる。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "閉域接続でも踏み台サーバーでセッション統制する設計が有効である。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_022",
+      "relationship": "complements",
+      "description": "証明書ベース認証は期限管理不備が主な停止リスクになる。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_023",
+      "relationship": "complements",
+      "description": "固定 IP 許可は回線変更時の運用事故を招きやすい。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_024",
+      "relationship": "complements",
+      "description": "ポータル型では担当者アカウント残存が典型リスクになる。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_025",
+      "relationship": "mitigates",
+      "description": "多要素認証は単一要素依存の侵害リスクを抑える。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_026",
+      "relationship": "complements",
+      "description": "OAuth 2.0 利用時も秘密情報漏洩対策が別途必要である。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_027",
+      "relationship": "complements",
+      "description": "トークンスコープの設計を誤ると過剰権限になる。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_028",
+      "relationship": "complements",
+      "description": "フェデレーション認証は信頼関係の棚卸しを要する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_029",
+      "relationship": "mitigates",
+      "description": "特権アクセス管理は共有端末や共有 ID の濫用を抑える。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_030",
+      "relationship": "mitigates",
+      "description": "踏み台サーバーは委託先 VPN からの直接侵入面を狭める。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_032",
+      "relationship": "mitigates",
+      "description": "条件付きアクセスは送信元ネットワークだけに依存しない制御へ移行させる。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_031",
+      "relationship": "complements",
+      "description": "退職者や異動者の残存 ID は BEC 型なりすましと相性が悪い。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_033",
+      "relationship": "complements",
+      "description": "ソフトウェアサプライチェーン侵害ではサービスアカウント悪用が連鎖しやすい。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "設計原則",
+      "summary": "外部接続の ID 設計は、認証製品の機能差ではなく、どの業務段階で誰が何の責任で接続するかから逆算すべきである。",
+      "details": [
+        "同じ製造業でも調達は EDI 型、設計はフェデレーション型、保守は特権アクセス管理が中心になる。",
+        "単一の認証基盤を押し当てると、業務停止リスクか統制不足のどちらかが残る。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_006",
+        "node_007",
+        "node_008",
+        "node_009",
+        "node_010"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "製造業 調達",
+      "summary": "製造業の調達は、機械間 EDI と担当者向け購買ポータルが同居しやすく、機械 ID と人間 ID を分けて管理する必要がある。",
+      "details": [
+        "発注や納入実績は EDI 型で継続運用されやすい。",
+        "価格確認や例外処理はポータル型で残りやすい。"
+      ],
+      "related_nodes": [
+        "node_034",
+        "node_006",
+        "node_007"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "製造業 設計・開発",
+      "summary": "外部設計委託先との図面共有は、単純なファイル共有ではなく、契約単位のアクセス境界と SSO 終了条件を設計論点にするべきである。",
+      "details": [
+        "案件終了後の権限剥奪が遅れると、設計資産が長期間参照可能になる。",
+        "フェデレーション型を採る場合も信頼先の棚卸しを前提とする。"
+      ],
+      "related_nodes": [
+        "node_035",
+        "node_009",
+        "node_028"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "製造業 製造",
+      "summary": "設備ベンダー保守は、ID 連携よりも接続経路とセッション統制が優先されるため、踏み台サーバーと特権アクセス管理が中心になる。",
+      "details": [
+        "OT 側では相手先 IdP よりも実行者追跡と時間制限が重要である。",
+        "委託先 VPN をそのまま信頼しない設計が必要になる。"
+      ],
+      "related_nodes": [
+        "node_036",
+        "node_018",
+        "node_019",
+        "node_030"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "製造業 物流",
+      "summary": "物流連携は停止許容度が低く、固定 IP と証明書に依存した機械間接続が多いため、更改管理の失敗が直接業務停止につながる。",
+      "details": [
+        "3PL 連携は例外的な手作業回避より接続継続性が優先されやすい。",
+        "証明書更新や回線更改の計画通知を ID 運用に組み込む必要がある。"
+      ],
+      "related_nodes": [
+        "node_037",
+        "node_011",
+        "node_012",
+        "node_022",
+        "node_023"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "製造業 販売",
+      "summary": "販売代理店ポータルは社外担当者の異動頻度が高く、取引先企業単位ではなく担当者単位のライフサイクル管理を要する。",
+      "details": [
+        "代理店責任者申請だけに依存すると削除漏れが蓄積する。",
+        "多要素認証と条件付きアクセスを最低限の共通統制にするべきである。"
+      ],
+      "related_nodes": [
+        "node_038",
+        "node_013",
+        "node_020",
+        "node_024"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "製造業 アフターサービス",
+      "summary": "社外フィールドエンジニアの現場アクセスは、本人確認だけでなく、現場、機器、期間を限定した権限設計が必要である。",
+      "details": [
+        "常設アカウントより案件単位の一時権限が適する。",
+        "保守完了後のセッション証跡が重要になる。"
+      ],
+      "related_nodes": [
+        "node_039",
+        "node_018",
+        "node_019"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "金融業 資金調達",
+      "summary": "金融インフラ接続は閉域性だけで十分ではなく、オペレーターの権限分離と接続端末統制が中心論点になる。",
+      "details": [
+        "専用回線型はネットワーク信頼を前提にしやすいため、端末共有運用が残りやすい。",
+        "運用者の職務分掌と監査証跡を別設計として持つ必要がある。"
+      ],
+      "related_nodes": [
+        "node_040",
+        "node_010",
+        "node_018",
+        "node_029"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "金融業 運用",
+      "summary": "市場データや外部金融機関連携は API 化が進んでも、スコープ設計と秘密情報ローテーションが不十分だと運用系連携が攻撃面へ変わる。",
+      "details": [
+        "長寿命秘密情報を端末に保存すると漏洩時の影響が大きい。",
+        "権限を読取専用と発注系で分離する必要がある。"
+      ],
+      "related_nodes": [
+        "node_041",
+        "node_014",
+        "node_026",
+        "node_027"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "金融業 決済",
+      "summary": "決済系は停止コストが高いため、認証強化の導入時も可用性と運用手順を一体で見ないと例外運用が恒常化する。",
+      "details": [
+        "共有端末や共有資格情報を残すと責任追跡が困難になる。",
+        "専用回線型でも特権アクセス管理は必要である。"
+      ],
+      "related_nodes": [
+        "node_042",
+        "node_010",
+        "node_018",
+        "node_029"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "金融業 顧客サービス",
+      "summary": "法人顧客ポータルや外部販売チャネルでは、企業単位の契約管理と担当者単位の認証強度を分離して設計する必要がある。",
+      "details": [
+        "企業契約が有効でも担当者は頻繁に変わる。",
+        "フェデレーション型を使う場合は相手先統制を年次棚卸しするべきである。"
+      ],
+      "related_nodes": [
+        "node_043",
+        "node_007",
+        "node_009",
+        "node_024",
+        "node_028"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "金融業 コンプライアンス",
+      "summary": "規制報告接続は人手審査と定型提出の両方があるため、提出者 ID と送信システム ID を混同しないことが重要である。",
+      "details": [
+        "人の承認履歴と機械送信の真正性を別々に残す必要がある。",
+        "証明書期限切れは制度対応遅延の直接原因になる。"
+      ],
+      "related_nodes": [
+        "node_044",
+        "node_006",
+        "node_011",
+        "node_022"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "エネルギー 発電・採掘",
+      "summary": "設備保守アクセスは、IT 側の SSO 統合よりも、保守対象設備単位でのアクセス許可と即時遮断能力を重視するべきである。",
+      "details": [
+        "OT 側では一度許した接続が長期残存しやすい。",
+        "ベンダー VPN を恒久的に許可すると侵害面が広がる。"
+      ],
+      "related_nodes": [
+        "node_045",
+        "node_018",
+        "node_019",
+        "node_030"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "エネルギー 送配電・輸送",
+      "summary": "広域連携は可用性要件が高く、境界制御の変更が難しいため、固定 IP と専用回線の運用精度そのものが ID 統制の一部になる。",
+      "details": [
+        "回線切替時の連絡漏れは復旧遅延を招く。",
+        "許可済み送信元を盲信しない追加制御が必要になる。"
+      ],
+      "related_nodes": [
+        "node_046",
+        "node_012",
+        "node_023",
+        "node_032"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "エネルギー 取引",
+      "summary": "市場取引は API 化が進みやすいが、取引権限と参照権限を分離しないと侵害時の経済影響が大きい。",
+      "details": [
+        "発注権限付きトークンは厳格に短命化するべきである。",
+        "サービスアカウントの所有者不明は監査不能につながる。"
+      ],
+      "related_nodes": [
+        "node_047",
+        "node_014",
+        "node_021",
+        "node_027"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "エネルギー 小売",
+      "summary": "メーターやフィールド機器との接続は人間 ID ではなく機械 ID の証明性が中心であり、証明書と送信元管理の両方が重要になる。",
+      "details": [
+        "機器更改時の証明書展開失敗は大量障害になりうる。",
+        "機器群の所有者と証明書失効責任を明確にする必要がある。"
+      ],
+      "related_nodes": [
+        "node_048",
+        "node_011",
+        "node_022"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "エネルギー 顧客",
+      "summary": "顧客ポータルは他の段階よりも本人確認とセッション制御が中心であり、内部運用者 ID と顧客 ID を分離した責任設計が必要である。",
+      "details": [
+        "顧客向け認証強度と社内運用者の権限管理を混同しない。",
+        "異常ログイン対策には多要素認証と条件付きアクセスが有効である。"
+      ],
+      "related_nodes": [
+        "node_049",
+        "node_013",
+        "node_020"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "流通・小売 仕入",
+      "summary": "流通の仕入では旧来 EDI が長く残るため、システム更改時も固定 IP と証明書の棚卸しを先に行うべきである。",
+      "details": [
+        "取引先数が多く、連絡漏れが停止事故を招きやすい。",
+        "古い接続を整理しないまま API 化すると運用が二重化する。"
+      ],
+      "related_nodes": [
+        "node_050",
+        "node_006",
+        "node_022",
+        "node_023"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "流通・小売 物流",
+      "summary": "倉庫と輸送の連携は、処理量より停止影響の方が大きいため、ID 強化施策も可用性試験と同時に実施する必要がある。",
+      "details": [
+        "物流停止は売上だけでなく在庫整合性にも波及する。",
+        "機械間接続の監視とアラートを業務時間外まで設計するべきである。"
+      ],
+      "related_nodes": [
+        "node_051",
+        "node_006",
+        "node_011",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "流通・小売 販売",
+      "summary": "EC モールや決済事業者との接続は API とポータルが混在するため、担当部門ごとに分散した秘密情報管理を一元化する必要がある。",
+      "details": [
+        "マーケティング部門と運用部門で異なる連携を持つことが多い。",
+        "API キーを個人端末や共有フォルダで管理すると漏洩しやすい。"
+      ],
+      "related_nodes": [
+        "node_052",
+        "node_008",
+        "node_007",
+        "node_026"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "流通・小売 顧客",
+      "summary": "会員サービスは顧客利便性を優先しやすいが、ポイントや購買履歴を持つため、認証強度と不正利用検知を別々に設計する必要がある。",
+      "details": [
+        "顧客ポータルは社内販売員ポータルと同一統制では足りない。",
+        "認証連携先が増えるほど同意範囲と責任境界の明確化が必要になる。"
+      ],
+      "related_nodes": [
+        "node_053",
+        "node_007",
+        "node_013",
+        "node_020"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "サプライチェーン攻撃の見方",
+      "summary": "サプライチェーン攻撃は単一の技術問題ではなく、どの接続点をどの程度信頼したかの設計問題として扱うべきである。",
+      "details": [
+        "ソフトウェア更新経路はソフトウェアサプライチェーン侵害の起点になりうる。",
+        "委託先 VPN は委託先 VPN 経由侵入の起点になりうる。",
+        "取引先メールは BEC 型 ID 偽装の起点になりうる。",
+        "固定 IP 許可は信頼済み送信元悪用の起点になりうる。"
+      ],
+      "related_nodes": [
+        "node_030",
+        "node_031",
+        "node_032",
+        "node_033"
+      ]
+    }
+  ]
+}

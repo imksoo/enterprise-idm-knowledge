@@ -1,0 +1,331 @@
+{
+  "metadata": {
+    "scenario_id": "sim_x_01",
+    "title": "SIerがCIO/CISOにID管理投資を説得する：ROI議論とリスク可視化",
+    "industry": "製造業",
+    "company_profile": {
+      "name": "東洋精機工業",
+      "size": "従業員8000人、国内外に工場と販売拠点を保有",
+      "it_env": "Windows Server 2016 ベースの Active Directory、SAP ECC、隔離された工場 OT ネットワーク、海外拠点ごとに別フォレスト"
+    },
+    "themes": [
+      "ID管理投資の ROI",
+      "共有アカウントと退職者 ID の是正",
+      "PAM と IGA の比較",
+      "グローバル製造業の認証統制",
+      "5年ロードマップ"
+    ],
+    "knowledge_needs": [
+      {
+        "type": "framework",
+        "topic": "ID管理投資の ROI を定量化する観点",
+        "why_needed": "CIO がコスト削減効果とリスク低減効果を同じ土俵で比較したいから",
+        "maps_to_file": "03_identity_architecture/identity_landscape.json"
+      },
+      {
+        "type": "fact",
+        "topic": "ランサムウェア被害で増える停止損失、復旧コスト、監査対応工数の考え方",
+        "why_needed": "セキュリティ投資を保険ではなく財務インパクトとして示すため",
+        "maps_to_file": "06_security_hardening/ransomware_defense.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "PAM（特権アクセス管理）と IGA の役割分担",
+        "why_needed": "製品比較が先行すると、共有アカウント対策とライフサイクル管理が混同されるため",
+        "maps_to_file": "06_security_hardening/privileged_access_management.json"
+      },
+      {
+        "type": "process",
+        "topic": "Active Directory 残置環境での Day 0 アセスメント項目",
+        "why_needed": "海外フォレスト、SAP ECC、OT 境界を含めた現状診断の優先順位を定めるため",
+        "maps_to_file": "07_migration_patterns/ad_to_entra_migration.json"
+      },
+      {
+        "type": "framework",
+        "topic": "J-SOX と国際フレームワークで求められる ID 証跡",
+        "why_needed": "監査役に対して投資の必要性を内部統制の言葉で説明するため",
+        "maps_to_file": "07_migration_patterns/international_security_frameworks.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "工場 OT を含む製造業でのハイブリッド ID の適用範囲",
+        "why_needed": "全社一律のクラウド移行ではなく、残置と統制の境界を設計するため",
+        "maps_to_file": "05_hybrid_scenarios/entra_hybrid_join.json"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p01",
+      "name": "松本 忠",
+      "role": "CIO",
+      "background": "IT 投資委員会を主導。大型 ERP 更改の経験があり、費用対効果に厳しい。",
+      "stance": "数字で説明できない投資は認めない。"
+    },
+    {
+      "id": "p02",
+      "name": "高橋 理恵",
+      "role": "CISO",
+      "background": "少人数で全社セキュリティを回しており、監査対応と実装の板挟みになっている。",
+      "stance": "必要性は高いが、予算制約の中で通る説明が欲しい。"
+    },
+    {
+      "id": "p03",
+      "name": "木下 修",
+      "role": "SIer営業部長",
+      "background": "製造業向け大型案件を担当。経営層向けのストーリーづくりが得意。",
+      "stance": "短期費用ではなく中期の事業継続価値で投資を通したい。"
+    },
+    {
+      "id": "p04",
+      "name": "林 優",
+      "role": "SIer提案SE",
+      "background": "Active Directory、PAM、IGA、SAP 連携、海外拠点統合を経験。",
+      "stance": "数値とアーキテクチャの両面で説明したい。"
+    },
+    {
+      "id": "p05",
+      "name": "監査役",
+      "role": "監査役",
+      "background": "J-SOX、内部統制、外部監査対応を重視。証跡が残るかどうかを厳しく見る。",
+      "stance": "コストより、説明責任が果たせる設計かを気にする。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "s1",
+      "title": "現状報告",
+      "setting": "役員会議室。木下と林がアセスメント結果を報告し、冒頭から数字を提示する。",
+      "dialogue": [
+        {
+          "speaker": "p03",
+          "text": "診断の結果、共有アカウントが 312 件、退職者アカウントの残存が 47 件、用途不明のサービスアカウントが 128 件ありました。海外拠点フォレストとの同期も拠点ごとに手運用で、SAP ECC の権限申請はメール承認です。個別には小さく見えても、全社では統制コストが膨らんでいます。",
+          "subtext": "数字で危機感を作り、議論の土台を押さえたい。"
+        },
+        {
+          "speaker": "p02",
+          "text": "監査対応のたびに、退職者 ID の残存理由や特権付与の証跡を手作業で集めています。現場は『事故が起きていないから後回し』と言いますが、実際には人件費と監査リスクが毎年積み上がっています。私はもう属人的運用の限界だと感じています。",
+          "subtext": "セキュリティ案件を業務効率の話にもつなげたい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "共有アカウントや残存 ID が多いのは分かった。ただし、それがそのまま投資妥当性にはならない。今の運用で年間いくら損しているのか、どこまで減らせるのかを示してほしい。感覚論では予算委員会を通せません。",
+          "subtext": "危機感だけでは動かず、数字の裏付けを要求している。"
+        }
+      ],
+      "issues_surfaced": [
+        "共有アカウント、退職者 ID、用途不明サービスアカウントが多数残存している",
+        "監査証跡の収集が手作業で高コスト",
+        "課題認識はあるが投資妥当性の数字が不足している"
+      ],
+      "knowledge_ref": [
+        "03_identity_architecture/identity_landscape.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    },
+    {
+      "scene_id": "s2",
+      "title": "リスク可視化",
+      "setting": "林が 5 年累積コストの試算表を映し、事故が起きない場合と起きた場合の差を説明する。",
+      "dialogue": [
+        {
+          "speaker": "p04",
+          "text": "試算では、現状維持でも監査対応、手作業の権限棚卸し、海外拠点連携調整で年間 0.8 人年超を消費しています。加えて、もし特権アカウント侵害で工場 IT が 3 日止まると、直接損失と復旧要員で数億円規模になります。ID 管理は売上を直接増やしませんが、停止損失を避ける投資としては十分比較可能です。",
+          "subtext": "防御投資を財務言語に変換している。"
+        },
+        {
+          "speaker": "p03",
+          "text": "競合他社の公表事例でも、復旧費用より重かったのは、工場停止と監査対応の長期化です。共有アカウントが残っていると、誰の操作か特定できず、復旧と監査が同時に遅れます。これはセキュリティ製品の問題ではなく、ID 統制の欠落です。",
+          "subtext": "リスクを抽象論ではなく運用停止に結び付けたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "内部統制の観点でも、特権付与の承認、権限変更、退職者削除が個人単位で追えないのは厳しいです。J-SOX は必ずしも特定製品を求めませんが、証跡が継続的に再現できることは求めます。今の形は担当者が替わると再現性が落ちます。",
+          "subtext": "監査観点から投資の必要性を裏打ちしている。"
+        }
+      ],
+      "issues_surfaced": [
+        "現状維持でも毎年大きな人件費と監査コストが発生している",
+        "停止損失と監査遅延が ID 統制不備によって増幅される",
+        "証跡の再現性が低く、担当者依存になっている"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "07_migration_patterns/international_security_frameworks.json"
+      ]
+    },
+    {
+      "scene_id": "s3",
+      "title": "投資オプション提示",
+      "setting": "木下が 5 年ロードマップを示し、フェーズ1からフェーズ3までの投資配分を説明する。",
+      "dialogue": [
+        {
+          "speaker": "p03",
+          "text": "提案は三段階です。フェーズ1で棚卸しと特権管理強化、フェーズ2で申請・承認・退職処理の自動化、フェーズ3で海外拠点フォレストと主要アプリの統合です。最初から全部を IGA 製品で包むのではなく、PAM（特権アクセス管理）とライフサイクル管理の優先順位を分けます。",
+          "subtext": "大きく見える投資を分割し、通しやすくしたい。"
+        },
+        {
+          "speaker": "p04",
+          "text": "製造業では、OT や SAP ECC があるため Full Cloud は現実的ではありません。Hybrid Coexistence を前提に、Tier 0 と海外拠点から特権管理を整え、ライフサイクル管理は人事イベントの強い国内から始めるのが無理のない順番です。段階導入なら既存 SIer との役割分担も整理できます。",
+          "subtext": "技術現実に即した道筋で不安を下げたい。"
+        },
+        {
+          "speaker": "p02",
+          "text": "私としては、まず共有アカウント削減と退職者 ID の即時停止を KPI にしたいです。大きな絵は必要ですが、現場が変わったと感じる指標がないと、また『調査だけで終わる案件』になります。",
+          "subtext": "施策の成果を可視化し、予算の継続性を確保したい。"
+        }
+      ],
+      "issues_surfaced": [
+        "PAM とライフサイクル管理を分けて段階投資する必要がある",
+        "製造業では Full Cloud ではなく Hybrid Coexistence が現実的",
+        "フェーズごとの KPI がないと投資継続が難しい"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "05_hybrid_scenarios/entra_hybrid_join.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    },
+    {
+      "scene_id": "s4",
+      "title": "CIOの反論と交渉",
+      "setting": "松本が資料を閉じ、なぜ今やるのか、既存 SIer との棲み分けを問い詰める。",
+      "dialogue": [
+        {
+          "speaker": "p01",
+          "text": "提案は分かったが、なぜ今なのか。Windows Server 2016 の延命、SAP 更改、工場投資が重なる時期に、さらに ID 基盤へ予算を割く理由が必要です。それと、今の SIer でもできることを、なぜ別の体制でやるのかも明確にしてほしい。",
+          "subtext": "投資タイミングと調達正当性を同時に確認したい。"
+        },
+        {
+          "speaker": "p03",
+          "text": "今である理由は三つです。第一に、退職者 ID と共有アカウントは放置コストが毎年積み上がること。第二に、Windows Server 2016 や海外 AD の更改と合わせないと、二度手間になること。第三に、SAP 移行検討の前に権限モデルを整えないと、次の更改でも同じ非効率を持ち込むことです。",
+          "subtext": "他案件との重なりを逆に投資の根拠に変えたい。"
+        },
+        {
+          "speaker": "p04",
+          "text": "既存 SIer との関係は競合ではなく分担です。既存ベンダーが保守している SAP や工場システムには触り過ぎず、我々は ID 統制の共通基盤と棚卸し設計を担います。役割分担を曖昧にすると、結局どこも責任を持たず、また手運用に戻ります。",
+          "subtext": "調達上の懸念を潰し、案件化を前進させたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "監査側から見ても、今のまま周辺案件を進めると、将来の証跡はさらに散らばります。今やる意義は、認証と権限の基準を一度決めて、後続案件の前提にできることです。私は単独案件ではなく、全体統制の土台として評価します。",
+          "subtext": "監査観点からタイミングの妥当性を補強している。"
+        }
+      ],
+      "issues_surfaced": [
+        "今着手する理由を他案件との関係で説明する必要がある",
+        "既存 SIer と新規体制の役割分担を明文化する必要がある",
+        "ID 統制を後回しにすると後続案件の証跡がさらに散在する"
+      ],
+      "knowledge_ref": [
+        "03_identity_architecture/identity_landscape.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    },
+    {
+      "scene_id": "s5",
+      "title": "合意形成",
+      "setting": "最終的に、松本がフェーズ1の条件付き承認を出し、KPI と成果物を明文化する。",
+      "dialogue": [
+        {
+          "speaker": "p01",
+          "text": "フェーズ1に限って予算を認めます。ただし、成果は明確にしてほしい。共有アカウント削減、退職者 ID 停止時間短縮、特権棚卸し完了率、監査証跡の再現性、この四つを KPI にする。半年後に効果が見えなければ、フェーズ2には進めません。",
+          "subtext": "小さく始めて、数字で継続可否を判断したい。"
+        },
+        {
+          "speaker": "p02",
+          "text": "それならセキュリティ部も責任を持てます。KPI を運用指標として月次で出し、監査役とも共有します。投資効果を『事故が起きなかった』ではなく、運用と統制が改善した数字で示します。",
+          "subtext": "予算を次段へつなげるため、測定責任を引き受ける。"
+        },
+        {
+          "speaker": "p03",
+          "text": "承知しました。フェーズ1では製品選定を急がず、まず ID 台帳、特権台帳、申請フロー、SAP 連携、海外フォレスト接続の現状図を出します。そのうえで PAM と IGA の適用範囲を再提案します。",
+          "subtext": "売り込み過多に見せず、信頼を取りにいく。"
+        }
+      ],
+      "issues_surfaced": [
+        "フェーズ1は KPI ベースの条件付き承認となった",
+        "製品選定より前に ID 台帳と現状図が必要",
+        "効果測定を月次運用に組み込む必要がある"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/international_security_frameworks.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "組織",
+      "current": "ID 管理課題が監査、セキュリティ、IT 運用に分散している",
+      "target": "CIO が判断できる共通 KPI と投資指標がある",
+      "gap": "課題は共有されているが、経営向けの数値化が不足している",
+      "priority": "high"
+    },
+    {
+      "category": "技術",
+      "current": "共有アカウントと用途不明サービスアカウントが多く残存している",
+      "target": "所有者、用途、期限が明確な ID 台帳が整備されている",
+      "gap": "ID の棚卸しと継続運用ルールが未整備",
+      "priority": "high"
+    },
+    {
+      "category": "プロセス",
+      "current": "退職者 ID 停止と権限剥奪が手作業で遅延する",
+      "target": "人事イベントと連動して迅速に失効できる",
+      "gap": "ライフサイクル管理と申請承認の自動化が不足",
+      "priority": "high"
+    },
+    {
+      "category": "技術",
+      "current": "特権管理と通常 ID 管理が混同されている",
+      "target": "PAM と IGA の役割分担が明確で、段階導入できる",
+      "gap": "製品選定が先行し、統制設計が後回しになっている",
+      "priority": "medium"
+    },
+    {
+      "category": "規制",
+      "current": "J-SOX や監査対応で証跡収集が人依存",
+      "target": "承認、変更、利用記録を継続的に再現できる",
+      "gap": "証跡の一貫性と再現性が不足",
+      "priority": "medium"
+    },
+    {
+      "category": "組織",
+      "current": "既存 SIer と新規施策の責任分界が曖昧",
+      "target": "アプリ保守と共通 ID 基盤改革の役割が明文化されている",
+      "gap": "責任曖昧さが投資判断の阻害要因になっている",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "action": "共有アカウント、退職者 ID、サービスアカウントの全数棚卸しを実施し、所有者と用途を確定する",
+      "owner": "CISO + IT運用",
+      "horizon": "0-3か月",
+      "expected_outcome": "投資議論の基礎となる ID 台帳が整う",
+      "related_knowledge": "07_migration_patterns/ad_to_entra_migration.json"
+    },
+    {
+      "action": "フェーズ1の KPI を共有アカウント削減率、退職者停止時間、特権棚卸し完了率、証跡再現率で定義する",
+      "owner": "CIO + 監査役 + CISO",
+      "horizon": "1か月",
+      "expected_outcome": "ID 管理投資を財務と統制の両面で評価できる",
+      "related_knowledge": "07_migration_patterns/international_security_frameworks.json"
+    },
+    {
+      "action": "PAM を先行導入し、特権管理と通常ライフサイクル管理の責任分界を整理する",
+      "owner": "IT運用 + SIer提案SE",
+      "horizon": "3-6か月",
+      "expected_outcome": "事故時の横展開リスクを先に下げつつ、後続 IGA の要件を明確化できる",
+      "related_knowledge": "06_security_hardening/privileged_access_management.json"
+    },
+    {
+      "action": "海外フォレスト、SAP ECC、OT 境界を含む Day 0 アセスメントを実施し、5年ロードマップへ反映する",
+      "owner": "SIer提案SE",
+      "horizon": "2-4か月",
+      "expected_outcome": "後続案件と二重投資しない移行計画を策定できる",
+      "related_knowledge": "05_hybrid_scenarios/entra_hybrid_join.json"
+    }
+  ]
+}

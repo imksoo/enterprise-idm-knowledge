@@ -1,0 +1,1748 @@
+{
+  "metadata": {
+    "id": "idp_comparison_v1",
+    "title": "IdP製品比較マトリクス",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "last_verified": "2026-04-07",
+    "tags": [
+      "comparison",
+      "idp",
+      "talk-deck",
+      "identity-management",
+      "japan-market",
+      "sier"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ],
+    "evaluation_scale": {
+      "score_5": "非常に強い。大規模案件での主力候補。",
+      "score_4": "強い。条件が合えば十分有力。",
+      "score_3": "標準的。用途限定で成立。",
+      "score_2": "弱い。補完製品が前提になりやすい。",
+      "score_1": "非推奨または適用範囲外。"
+    },
+    "research_notes": [
+      "2026-04-07 時点で公開されている公式サイト、公式ドキュメント、公式サポート記事、公式価格表を優先して要約した。",
+      "価格は公開価格がない製品では『個別見積』または公開資料ベースの目安として記載した。",
+      "USD建て公開価格の円換算は 2026-04-07 時点の 1 USD ≒ ¥160 の概算であり、実契約価格はCSP、代理店、為替、契約期間で変動する。",
+      "国内金融機関・証券会社の採用実績は公開導入事例、IR資料、イベント登壇情報などの公開情報が確認できた範囲で評価した。",
+      "ForgeRockは現在Ping Identityに統合済みであり、製品評価は既存導入資産の継続利用と新規案件での扱いを分けて解釈する必要がある。"
+    ]
+  },
+  "products": [
+    {
+      "id": "prod_entra",
+      "name": "Microsoft Entra ID",
+      "vendor": "Microsoft",
+      "tier": "enterprise",
+      "japan_ga": true,
+      "japan_dc": true,
+      "pricing_model": "ユーザー/月。公式公開価格は P1: USD 6（概算¥960）、P2: USD 9（概算¥1,440）、Entra Suite: USD 12（概算¥1,920）。日本円請求額は契約形態とCSPにより変動。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "WS-Fed",
+          "Kerberos"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "Entra Connect Sync / Cloud Sync",
+          "scim": "inbound/outbound対応",
+          "ldap": "ネイティブLDAPディレクトリなし。Entra Domain Servicesで補完",
+          "legacy_bridge": "Application Proxy、Entra Domain Services、AD FS共存で補完"
+        },
+        "mfa_methods": [
+          "Microsoft Authenticator Push",
+          "TOTP",
+          "FIDO2 security key",
+          "Passkey",
+          "SMS",
+          "Phone call",
+          "Windows Hello for Business",
+          "Certificate-based authentication"
+        ],
+        "passwordless": [
+          "Windows Hello for Business",
+          "FIDO2",
+          "Passkey",
+          "Temporary Access Pass"
+        ],
+        "on_prem_integration": "high",
+        "saas_connectors": "5000+",
+        "pam_integration": [
+          "CyberArk",
+          "BeyondTrust",
+          "Delinea"
+        ],
+        "iga_integration": [
+          "Entra ID Governance",
+          "SailPoint",
+          "Saviynt",
+          "One Identity"
+        ],
+        "siem_integration": [
+          "Microsoft Sentinel",
+          "Splunk",
+          "IBM QRadar"
+        ]
+      },
+      "strengths": [
+        "Microsoft 365、Intune、Azure、Windows Serverとの一体運用が最も深い",
+        "Conditional AccessとEntra ID Governanceを同一基盤で運用できる",
+        "Kerberos Cloud TrustによりパスワードレスとオンプレミスKerberosの橋渡しができる"
+      ],
+      "weaknesses": [
+        "非Microsoft中心の環境では設計が複雑になりやすい",
+        "LDAPやRADIUSなどレガシープロトコルは周辺製品や補完構成が必要",
+        "ライセンス体系が多層でCIO向け説明に工夫が必要"
+      ],
+      "differentiation": "Windows端末、M365、Azure、PIM、Conditional Accessを一枚で語れる点が最大の差別化要因。オンプレミスActive Directoryの延長線からゼロトラストへ持ち込める。",
+      "japan_notes": "国内大手SIer、CSP、Microsoftパートナーの体制が厚い。金融・製造の大型案件で説明しやすく、FISC文脈でも採用経験が多い。",
+      "evaluation": {
+        "basic_functions": "SSO、MFA、パスワードレス、同期、監査の網羅性は最上位。",
+        "on_prem_integration": "Kerberos Cloud Trust、Hybrid Join、Application Proxyで強い。",
+        "cloud_saas": "Azureとの連続性は最強。AWS/GCPはフェデレーション前提。",
+        "privileged_access": "PIMとJITの説明力が高い。",
+        "governance": "アクセスレビュー、Entitlement Management、監査証跡が強い。",
+        "japan_market": "日本語UI、国内パートナー、導入事例の厚みがある。"
+      },
+      "suitable_for": {
+        "large_enterprise": "高",
+        "mid_market": "中",
+        "securities": "高",
+        "manufacturing": "高"
+      },
+      "cloud_continuum": {
+        "iaas": "Azure VMではManaged IdentityとEntraログインが直結し、オンプレミスADの延長としてWindows/Linuxサーバー管理を整理しやすい。",
+        "paas": "App Service、AKS、Azure Functions、Key VaultでWorkload Identityとシークレットレス設計を取りやすい。",
+        "saas": "M365を起点にSCIM、自動プロビジョニング、Conditional Accessを横展開しやすい。"
+      },
+      "sources": [
+        "https://www.microsoft.com/en-us/security/business/microsoft-entra-pricing",
+        "https://learn.microsoft.com/en-us/entra/identity/authentication/kerberos",
+        "https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-linux",
+        "https://learn.microsoft.com/en-us/azure/active-directory/hybrid/install"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "prod_okta",
+      "name": "Okta Workforce Identity Cloud",
+      "vendor": "Okta",
+      "tier": "enterprise",
+      "japan_ga": true,
+      "japan_dc": true,
+      "pricing_model": "年契約・個別見積が中心。Workforce Identityは最低年間契約あり。Customer Identityは Enterprise base USD 3,000/月 starting price。日本円は別見積。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "WS-Fed",
+          "Kerberos"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "AD Agent / LDAP Agent / Universal Directory",
+          "scim": "広範なSCIM連携",
+          "ldap": "LDAP AgentとLDAP Interfaceで補完",
+          "legacy_bridge": "Okta Access Gatewayでヘッダーベース、Kerberos、レガシーWebを中継"
+        },
+        "mfa_methods": [
+          "Okta Verify Push",
+          "TOTP",
+          "FastPass",
+          "FIDO2 security key",
+          "Passkey",
+          "SMS",
+          "Voice",
+          "Smart card"
+        ],
+        "passwordless": [
+          "Okta FastPass",
+          "FIDO2",
+          "Passkey"
+        ],
+        "on_prem_integration": "high",
+        "saas_connectors": "6500+",
+        "pam_integration": [
+          "CyberArk",
+          "BeyondTrust",
+          "Delinea",
+          "Okta Privileged Access"
+        ],
+        "iga_integration": [
+          "Okta Identity Governance",
+          "SailPoint",
+          "Saviynt"
+        ],
+        "siem_integration": [
+          "Splunk",
+          "Sumo Logic",
+          "Datadog"
+        ]
+      },
+      "strengths": [
+        "マルチクラウド、中立ベンダー、SaaS中心案件で説明しやすい",
+        "Okta Integration Networkの広さとAccess Gatewayによるモダン化導線が強い",
+        "FastPassとデバイス文脈を含むゼロトラスト訴求がしやすい"
+      ],
+      "weaknesses": [
+        "Windows/Active Directoryの深い統合はEntra IDに劣る",
+        "PAM、IGA、Access Gatewayを足すと価格が上がりやすい",
+        "オンプレミスWindowsサーバー認証の将来像は補完製品込みの設計が前提"
+      ],
+      "differentiation": "Microsoft色を避けたい大企業でも採用しやすい中立性が強み。SaaS統合と外部連携の多さ、Access Gatewayによるレガシー救済が競合との差になる。",
+      "japan_notes": "Okta Japanと国内パートナー制度があり、日本リージョン選択肢も確認できる。グローバル企業と先進的な国内企業で提案しやすい。",
+      "evaluation": {
+        "basic_functions": "SSO、MFA、Universal Directory、Lifecycle、Workflowsが強い。",
+        "on_prem_integration": "AD/LDAP/Kerberosには強いが、Windows運用の深さではEntra IDより一段落ちる。",
+        "cloud_saas": "SaaS中心の横展開は最上位クラス。",
+        "privileged_access": "Okta Privileged Accessはあるが、Microsoft PIMほど普及説明しやすくはない。",
+        "governance": "Identity Governanceでアクセスレビューとライフサイクルを補完可能。",
+        "japan_market": "日本語UI、販売パートナー、国内導入体制は整っている。"
+      },
+      "suitable_for": {
+        "large_enterprise": "高",
+        "mid_market": "中",
+        "securities": "中",
+        "manufacturing": "高"
+      },
+      "cloud_continuum": {
+        "iaas": "EC2やGCE、Azure VMへの人のアクセス統制は得意だが、Managed Identity相当のワークロード主役は各クラウドネイティブ機能を使い分ける前提。",
+        "paas": "Workload identity自体は各クラウドサービスに委ね、Oktaは人の認証、管理者アクセス、SaaS連携、SCIM自動化を束ねる役回り。",
+        "saas": "SaaS横断のSSO、ライフサイクル、アクセス制御を中立的に統合しやすい。"
+      },
+      "sources": [
+        "https://www.okta.com/pricing/",
+        "https://help.okta.com/en-us/content/topics/apps/apps-overview-get-started.htm",
+        "https://help.okta.com/oag/ja-jp/content/topics/access-gateway/add-app-kerberos-ref-arch.htm",
+        "https://help.okta.com/oie/en-us/content/topics/identity-engine/authenticators/configure-passkeys.htm"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "prod_ping",
+      "name": "Ping Identity",
+      "vendor": "Ping Identity",
+      "tier": "enterprise",
+      "japan_ga": true,
+      "japan_dc": false,
+      "pricing_model": "PingOneは個別見積。PingFederate、PingDirectory、PingAccessを含むハイブリッド構成は案件別見積。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "WS-Fed",
+          "Kerberos",
+          "LDAP"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "PingOne LDAP Gateway、PingDirectory同期",
+          "scim": "SCIM 2.0対応",
+          "ldap": "PingDirectoryが中核",
+          "legacy_bridge": "PingFederate、PingAccess、PingDirectoryで広く対応"
+        },
+        "mfa_methods": [
+          "PingID Push",
+          "TOTP",
+          "FIDO2",
+          "Passkey",
+          "SMS",
+          "Voice",
+          "Certificate",
+          "Third-party authenticator"
+        ],
+        "passwordless": [
+          "PingID",
+          "FIDO2",
+          "Passkey"
+        ],
+        "on_prem_integration": "high",
+        "saas_connectors": "数千規模",
+        "pam_integration": [
+          "CyberArk",
+          "BeyondTrust",
+          "PingOne for Enterprise JIT"
+        ],
+        "iga_integration": [
+          "Ping Identity Governance",
+          "SailPoint"
+        ],
+        "siem_integration": [
+          "Splunk",
+          "Datadog",
+          "SIEM via logs and APIs"
+        ]
+      },
+      "strengths": [
+        "PingFederate + PingAccess + PingDirectoryでレガシーとモダンの橋渡しが非常に強い",
+        "Kerberos、LDAP、ハイブリッド認証を深く扱う大規模案件に向く",
+        "ForgeRock統合後はIGAやライフサイクルの選択肢も広がった"
+      ],
+      "weaknesses": [
+        "初期設計と運用の難度が高い",
+        "Microsoft 365中心の案件ではEntra IDより説明が一段複雑",
+        "中堅企業にはオーバースペックになりやすい"
+      ],
+      "differentiation": "既存のActive Directory、レガシーWeb、API、B2B、パートナー認証をまとめて捌く設計自由度が最大の強み。『残存資産が重い大企業向け』の説得力が高い。",
+      "japan_notes": "国内では専門パートナー主導になりやすい。グローバル大企業、複雑なフェデレーション案件、金融の個別要件で候補になりやすい。",
+      "evaluation": {
+        "basic_functions": "標準プロトコルの網羅性は高い。",
+        "on_prem_integration": "Kerberos/LDAP/既存Webフェデレーションは最上位クラス。",
+        "cloud_saas": "SaaS接続は十分だが、M365の一体感ではEntra IDに劣る。",
+        "privileged_access": "JITとPAM連携の構成自由度は高い。",
+        "governance": "統合後ロードマップは強いが、提案時は構成説明が必要。",
+        "japan_market": "知見保有SIerは限られる。"
+      },
+      "suitable_for": {
+        "large_enterprise": "高",
+        "mid_market": "低",
+        "securities": "高",
+        "manufacturing": "中"
+      },
+      "cloud_continuum": {
+        "iaas": "人の管理者アクセスやフェデレーションは強いが、ワークロードアイデンティティはクラウドネイティブ機能併用が前提。",
+        "paas": "API保護や認証オーケストレーションは強いが、Managed Identityのような一体機能ではない。",
+        "saas": "大規模B2B/従業員向けSSOとポリシー制御に向く。"
+      },
+      "sources": [
+        "https://www.pingidentity.com/en/product/pingdirectory.html",
+        "https://docs.pingidentity.com/pingfederate/12.2/administrators_reference_guide/pf_kerberos_adapt.html",
+        "https://docs.pingidentity.com/pingone/integrations/p1_ldap_gateways.html",
+        "https://www.pingidentity.com/en/lp/ping-forgerock.html"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "prod_forgerock",
+      "name": "ForgeRock Identity Platform",
+      "vendor": "Ping Identity",
+      "tier": "enterprise",
+      "japan_ga": true,
+      "japan_dc": false,
+      "pricing_model": "新規案件はPingポートフォリオとして個別見積。既存ForgeRock導入資産は継続サポート前提で評価。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "Kerberos",
+          "LDAP"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "IDM経由の同期設計",
+          "scim": "SCIM対応",
+          "ldap": "DSが中核",
+          "legacy_bridge": "AM、IG、IDMで柔軟に対応"
+        },
+        "mfa_methods": [
+          "TOTP",
+          "Push",
+          "FIDO2",
+          "WebAuthn",
+          "Risk-based step-up"
+        ],
+        "passwordless": [
+          "FIDO2",
+          "WebAuthn",
+          "Platform authenticator"
+        ],
+        "on_prem_integration": "high",
+        "saas_connectors": "中規模。DaVinciやPing統合で拡張",
+        "pam_integration": [
+          "CyberArk",
+          "BeyondTrust",
+          "Ping統合で補完"
+        ],
+        "iga_integration": [
+          "IDM",
+          "Identity Governance"
+        ],
+        "siem_integration": [
+          "Common Audit Event",
+          "Kafka/SIEM連携"
+        ]
+      },
+      "strengths": [
+        "高度な認証フロー、関係性の複雑なB2B/B2E、IDライフサイクルに強い",
+        "自己管理型ソフトウェアとしての柔軟性が高い",
+        "既存導入資産では引き続き強い拡張性がある"
+      ],
+      "weaknesses": [
+        "新規案件ではPingポートフォリオとして整理が必要で提案メッセージが複雑",
+        "実装難度が高く、構築スキルのあるSIerが限られる",
+        "日本市場での案件母数はEntra IDやOktaより小さい"
+      ],
+      "differentiation": "人事イベントや複雑な属性変換、B2B関係性、セルフマネージド要件が厳しい案件で強い。新規提案では『既存ForgeRock資産継続』か『Ping統合活用』の整理が必要。",
+      "japan_notes": "既存導入ユーザー向けの延命・高度化案件で有力。新規標準化案件ではPing Identity全体での位置付け説明が前提。",
+      "evaluation": {
+        "basic_functions": "柔軟性は高いが、標準化された導入容易性は低い。",
+        "on_prem_integration": "非常に強い。",
+        "cloud_saas": "クラウドネイティブSaaS連携単体ではOktaやEntra IDほど分かりやすくない。",
+        "privileged_access": "間接的な統合は可能だが、単独での説明力は弱い。",
+        "governance": "ライフサイクル管理は強い。",
+        "japan_market": "専門人材依存が大きい。"
+      },
+      "suitable_for": {
+        "large_enterprise": "高",
+        "mid_market": "低",
+        "securities": "中",
+        "manufacturing": "中"
+      },
+      "cloud_continuum": {
+        "iaas": "オンプレミスや既存IAMの延長としての人の認証統制に向く。",
+        "paas": "APIと認証オーケストレーションは強いが、各クラウドのマネージドID機能は別途設計。",
+        "saas": "SaaS一括標準化より、複雑な認証フロー制御に価値が出る。"
+      },
+      "sources": [
+        "https://docs.pingidentity.com/pingoneaic/latest/product-information/new-name-for-forgerock-identity-cloud.html",
+        "https://backstage.forgerock.com/docs/platform/7.5/sample-setup/platform-7.5-sample-setup.pdf",
+        "https://www.pingidentity.com/en/lp/pingandforgerock.html",
+        "https://docs.pingidentity.com/sdks/latest/authenticator/index.html"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "prod_onelogin",
+      "name": "OneLogin",
+      "vendor": "One Identity",
+      "tier": "upper_mid",
+      "japan_ga": true,
+      "japan_dc": false,
+      "pricing_model": "公式公開価格あり。Basic USD 3（概算¥480）、Essentials USD 6（概算¥960）、Business USD 10（概算¥1,600）、Enterpriseは個別見積。日本円請求は代理店見積。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "WS-Fed",
+          "LDAP",
+          "RADIUS"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "AD Connector / Advanced Directory",
+          "scim": "SCIM対応",
+          "ldap": "VLDAP",
+          "legacy_bridge": "OneLogin Access、RADIUS、VPN統合"
+        },
+        "mfa_methods": [
+          "OneLogin Protect Push",
+          "TOTP",
+          "FIDO2",
+          "Passkey",
+          "SMS",
+          "Voice",
+          "Smart card"
+        ],
+        "passwordless": [
+          "FIDO2",
+          "Passkey",
+          "SmartFactor"
+        ],
+        "on_prem_integration": "medium",
+        "saas_connectors": "6000+",
+        "pam_integration": [
+          "OneLogin PAM Essentials",
+          "CyberArk"
+        ],
+        "iga_integration": [
+          "Lifecycle Management",
+          "HR Directories"
+        ],
+        "siem_integration": [
+          "Splunk",
+          "ELK",
+          "Sumo Logic",
+          "Loggly"
+        ]
+      },
+      "strengths": [
+        "価格と機能のバランスが比較的取りやすい",
+        "6000超のアプリ連携とシンプルな運用メッセージが作りやすい",
+        "One Identity傘下でPAMやIGAとの合わせ提案がしやすくなった"
+      ],
+      "weaknesses": [
+        "大規模金融案件での第一想起にはなりにくい",
+        "Windows/Entra中心の案件では優位性が薄い",
+        "国内実績の可視性はHENNGEやCloudGateより弱い"
+      ],
+      "differentiation": "Oktaより価格の説明がしやすく、One Identity製品群との連携余地を持つ中堅〜上位中堅向け候補。",
+      "japan_notes": "日本語UI、国内代理店、国内電話サポート窓口がある。国内案件では販売パートナー経由が基本。",
+      "evaluation": {
+        "basic_functions": "SSO、MFA、プロビジョニングは十分。",
+        "on_prem_integration": "AD、LDAP、RADIUSはあるが、Kerberos主導の強さはPingやEntra IDに劣る。",
+        "cloud_saas": "SaaS中心で使いやすい。",
+        "privileged_access": "PAM Essentialsはあるが、深い特権統制は外部製品併用が前提。",
+        "governance": "基本的なライフサイクルは可能。",
+        "japan_market": "代理店網はあるが、構築人材の厚みは限定的。"
+      },
+      "suitable_for": {
+        "large_enterprise": "中",
+        "mid_market": "高",
+        "securities": "中",
+        "manufacturing": "中"
+      },
+      "cloud_continuum": {
+        "iaas": "人の認証統制が主。ワークロードアイデンティティはクラウドネイティブ機能併用が前提。",
+        "paas": "アプリ人員管理やSSOに向く。",
+        "saas": "SaaS一元化は比較的得意。"
+      },
+      "sources": [
+        "https://www.onelogin.com/product/pricing",
+        "https://www.onelogin.com/product/app-catalog",
+        "https://support.onelogin.com/ja-jp/essentials/phone-number-listing",
+        "https://www.onelogin.com/jp-ja/partners"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "prod_jumpcloud",
+      "name": "JumpCloud Directory Platform",
+      "vendor": "JumpCloud",
+      "tier": "mid_market",
+      "japan_ga": true,
+      "japan_dc": true,
+      "pricing_model": "公開価格あり。Cloud Directory、MFA、SSO、User Lifecycle は各 USD 3/ユーザー/月（概算¥480）、SSOパッケージは USD 11/ユーザー/月（概算¥1,760）、上位パッケージは個別見積。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "LDAP",
+          "RADIUS"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "ADは主軸ではなく連携対象",
+          "scim": "Custom SCIM対応",
+          "ldap": "Cloud LDAP",
+          "legacy_bridge": "Cloud RADIUS、LDAP、VPN/Wi-Fi連携が強い"
+        },
+        "mfa_methods": [
+          "JumpCloud Protect Push",
+          "TOTP",
+          "FIDO2",
+          "Passwordless"
+        ],
+        "passwordless": [
+          "FIDO2",
+          "Platform biometrics"
+        ],
+        "on_prem_integration": "medium",
+        "saas_connectors": "数百〜1000規模",
+        "pam_integration": [
+          "RADIUS/VPN/SSH統制中心",
+          "外部PAM連携"
+        ],
+        "iga_integration": [
+          "User Lifecycle Management",
+          "HRIS integration"
+        ],
+        "siem_integration": [
+          "Directory Insights",
+          "SIEM export/API"
+        ]
+      },
+      "strengths": [
+        "Cloud LDAP、Cloud RADIUS、Linux、Mac、Windowsを1基盤で扱いやすい",
+        "中堅企業の『ADを増やしたくない』課題に刺さりやすい",
+        "価格の透明性が高く、PoCしやすい"
+      ],
+      "weaknesses": [
+        "大企業の金融ガバナンスや職務分離機能は限定的",
+        "国内大手SIerでの標準スキルはまだ薄い",
+        "M365やAzureの深い統合ではEntra IDに劣る"
+      ],
+      "differentiation": "Cloud LDAP/RADIUSとデバイス管理まで含めた『軽量ディレクトリ再設計』が武器。中堅企業や多OS環境で説明しやすい。",
+      "japan_notes": "日本リージョンの記載があり、APAC窓口もあるが、日本特化ベンダーほどの案件事例可視性は高くない。",
+      "evaluation": {
+        "basic_functions": "SSO/MFA/Directoryは十分。",
+        "on_prem_integration": "AD延長より、AD依存を薄くする設計で強い。",
+        "cloud_saas": "SaaSと端末統合は得意。",
+        "privileged_access": "特権管理の深さは限定的。",
+        "governance": "中堅企業向けには十分だが、大企業向けIGAは不足。",
+        "japan_market": "価格は魅力だが、国内実装人材は少なめ。"
+      },
+      "suitable_for": {
+        "large_enterprise": "中",
+        "mid_market": "高",
+        "securities": "低",
+        "manufacturing": "中"
+      },
+      "cloud_continuum": {
+        "iaas": "Linux/SSH/VPN/Wi-Fiといった管理者アクセス統制に向く。",
+        "paas": "ワークロードアイデンティティより、運用者ID統合が主題。",
+        "saas": "基本的なSSOとライフサイクルは可能。"
+      },
+      "sources": [
+        "https://jumpcloud.com/pricing",
+        "https://jumpcloud.com/platform/cloud-radius",
+        "https://jumpcloud.com/support/provision-and-manage-users-and-groups-in-apps-using-custom-scim-identity-management-integration",
+        "https://jumpcloud.com/support/integrate-with-Workday"
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "prod_duo",
+      "name": "Cisco Duo",
+      "vendor": "Cisco",
+      "tier": "specialist",
+      "japan_ga": true,
+      "japan_dc": false,
+      "pricing_model": "公開価格あり。Essentials USD 3（概算¥480）、Advantage USD 6（概算¥960）、Premier USD 9（概算¥1,440）。日本円請求は代理店見積。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "LDAP",
+          "RADIUS"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "AD Syncあり",
+          "scim": "限定的",
+          "ldap": "Authentication Proxy経由",
+          "legacy_bridge": "RADIUS/LDAP/VPN/SSHとの親和性が高い"
+        },
+        "mfa_methods": [
+          "Duo Push",
+          "TOTP",
+          "FIDO2",
+          "Passkey",
+          "SMS",
+          "Phone call",
+          "Hardware token"
+        ],
+        "passwordless": [
+          "Duo Passwordless",
+          "FIDO2",
+          "Passkey"
+        ],
+        "on_prem_integration": "medium",
+        "saas_connectors": "SSO対象は広いがIdP本流では限定的",
+        "pam_integration": [
+          "CyberArk",
+          "VPN/RDP/SSH保護"
+        ],
+        "iga_integration": [
+          "なし。外部IGA前提"
+        ],
+        "siem_integration": [
+          "Cisco XDR",
+          "Splunk",
+          "Syslog/API"
+        ]
+      },
+      "strengths": [
+        "MFA、フィッシング耐性、VPN/RDP/SSH保護、ZTNA訴求が非常に強い",
+        "既存ADやVPNを変えずに認証強化しやすい",
+        "価格が分かりやすく、短期導入しやすい"
+      ],
+      "weaknesses": [
+        "フル機能IdPやIGAではない",
+        "SCIMやアクセスレビュー、SODなどの統制機能は外部製品依存",
+        "Directory of recordとしては使いづらい"
+      ],
+      "differentiation": "『IdP全面刷新ではなく、まず侵害耐性を上げたい』案件で強い。VPN、RDP、SSH、RADIUS、ADの認証強化に即効性がある。",
+      "japan_notes": "Cisco販売網で提案しやすい。金融よりもまず運用認証強化、製造・流通のVPN保護に刺さる。",
+      "evaluation": {
+        "basic_functions": "MFAとパスワードレスは強いが、ディレクトリとガバナンスは弱い。",
+        "on_prem_integration": "RADIUS/LDAP/VPN/SSHへの差し込みは強い。",
+        "cloud_saas": "SSOは補助的。",
+        "privileged_access": "特権セッションの入口保護に向く。",
+        "governance": "単独では不足。",
+        "japan_market": "Cisco経由で説明しやすい。"
+      },
+      "suitable_for": {
+        "large_enterprise": "中",
+        "mid_market": "高",
+        "securities": "中",
+        "manufacturing": "高"
+      },
+      "cloud_continuum": {
+        "iaas": "管理者アクセス保護に向く。",
+        "paas": "ワークロードアイデンティティ管理は対象外。",
+        "saas": "MFAとSSO強化の補完に向く。"
+      },
+      "sources": [
+        "https://duo.com/editions-and-pricing",
+        "https://duo.com/docs",
+        "https://duo.com/docs/authproxy_reference",
+        "https://duo.com/docs/rdp"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "prod_ibm_verify",
+      "name": "IBM Security Verify",
+      "vendor": "IBM",
+      "tier": "enterprise",
+      "japan_ga": true,
+      "japan_dc": false,
+      "pricing_model": "個別見積。IBM Verify、Verify Governance、Verify Privilege を組み合わせる案件別価格。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "LDAP",
+          "RADIUS"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "Bridge/Gatewayで対応",
+          "scim": "SCIM対応",
+          "ldap": "LDAP/Directory Bridgeあり",
+          "legacy_bridge": "Verify BridgeとIBM既存資産連携"
+        },
+        "mfa_methods": [
+          "Push",
+          "TOTP",
+          "FIDO2",
+          "Passkey",
+          "SMS",
+          "Voice",
+          "QR"
+        ],
+        "passwordless": [
+          "FIDO2",
+          "Passkey"
+        ],
+        "on_prem_integration": "medium",
+        "saas_connectors": "主要SaaSは対応",
+        "pam_integration": [
+          "IBM Verify Privilege",
+          "CyberArk"
+        ],
+        "iga_integration": [
+          "IBM Verify Governance",
+          "Access certification",
+          "Segregation of duties"
+        ],
+        "siem_integration": [
+          "IBM QRadar",
+          "Syslog/API"
+        ]
+      },
+      "strengths": [
+        "IGA、SOD、監査、特権管理まで含めた統制文脈が強い",
+        "IBM QRadarや既存IBM資産との整合性を説明しやすい",
+        "大企業・規制業種でのガバナンス訴求に向く"
+      ],
+      "weaknesses": [
+        "導入設計が重くなりやすい",
+        "SaaS中心の軽量案件では過剰になりがち",
+        "モダンSaaS UXではOktaやEntra IDより軽快さに欠ける場合がある"
+      ],
+      "differentiation": "『アクセス管理』だけでなく『監査・SOD・統制』まで含めて経営層に説明しやすい。既存IBMセキュリティ投資の延長線で提案できる。",
+      "japan_notes": "日本IBM体制と金融・製造の実績文脈で提案しやすい。FISCや内部統制を強く語りたい案件に向く。",
+      "evaluation": {
+        "basic_functions": "十分高い。",
+        "on_prem_integration": "対応可能だが、構成は重い。",
+        "cloud_saas": "標準連携はあるが、運用体験はやや重厚。",
+        "privileged_access": "IBM Verify Privilege連携で強い。",
+        "governance": "アクセスレビューとSODは上位クラス。",
+        "japan_market": "大企業向け提案で強い。"
+      },
+      "suitable_for": {
+        "large_enterprise": "高",
+        "mid_market": "低",
+        "securities": "高",
+        "manufacturing": "中"
+      },
+      "cloud_continuum": {
+        "iaas": "運用者アクセス統制と統制証跡の整備に向く。",
+        "paas": "ワークロードより人の統制主導。",
+        "saas": "ガバナンス中心のSaaS統制に向く。"
+      },
+      "sources": [
+        "https://www.ibm.com/products/verify",
+        "https://www.ibm.com/products/verify-governance",
+        "https://www.ibm.com/downloads/documents/id-id/10a99803c0afd8d8",
+        "https://www.ibm.com/products/qradar-siem"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "prod_hennge",
+      "name": "HENNGE One",
+      "vendor": "HENNGE",
+      "tier": "upper_mid",
+      "japan_ga": true,
+      "japan_dc": true,
+      "pricing_model": "基本は個別見積。国内向けIdentity Edition / Proプランを販売。円建て提案が前提。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "Active Directory連携あり",
+          "scim": "API/プロビジョニング機能あり",
+          "ldap": "ネイティブLDAPディレクトリではない",
+          "legacy_bridge": "HENNGE Connectでオンプレミスアプリ接続を補完"
+        },
+        "mfa_methods": [
+          "ワンタイムパスワード",
+          "デバイス証明書",
+          "アプリ認証",
+          "FIDO2一部対応"
+        ],
+        "passwordless": [
+          "デバイス証明書",
+          "FIDO2一部対応"
+        ],
+        "on_prem_integration": "medium",
+        "saas_connectors": "290+ から 400+ の公開表現あり",
+        "pam_integration": [
+          "外部PAM連携"
+        ],
+        "iga_integration": [
+          "基本的なID管理",
+          "アクセスログ管理"
+        ],
+        "siem_integration": [
+          "ログ出力",
+          "国内監査運用向け活用"
+        ]
+      },
+      "strengths": [
+        "日本市場特化、導入支援、運用説明のしやすさが非常に高い",
+        "M365、Google Workspace、Salesforceなどの国内利用SaaSに合わせやすい",
+        "金融・上場企業・SIerでの公開事例があり、日本語UIと支援が厚い"
+      ],
+      "weaknesses": [
+        "グローバル大企業向けの複雑なIGAやPAMでは外部製品前提",
+        "LDAP、Kerberos、Linux PAMなどの深い基盤置換には向かない",
+        "公開価格の透明性は低い"
+      ],
+      "differentiation": "日本企業の情シスが運用しやすいこと、日本語支援、国内法規や監査説明のしやすさが強み。『迷わず使える国内向けIDaaS』として差別化できる。",
+      "japan_notes": "金融・保険や上場企業の事例が公開されている。JPX総研、トヨタファイナンシャルサービスなどの文脈が提案で使いやすい。",
+      "evaluation": {
+        "basic_functions": "日本企業に必要なSSO/MFA/ID管理は十分。",
+        "on_prem_integration": "AD連携やオンプレ接続は可能だが、深いOS認証統合は限定的。",
+        "cloud_saas": "国内利用SaaSとの親和性が高い。",
+        "privileged_access": "単独では弱い。",
+        "governance": "基本統制は可能だが大企業IGAは不足。",
+        "japan_market": "最上位クラス。"
+      },
+      "suitable_for": {
+        "large_enterprise": "中",
+        "mid_market": "高",
+        "securities": "中",
+        "manufacturing": "高"
+      },
+      "cloud_continuum": {
+        "iaas": "サーバーワークロードより、SaaSとユーザーアクセス統制が主眼。",
+        "paas": "人の利用統制中心。",
+        "saas": "国内SaaSとM365を束ねやすい。"
+      },
+      "sources": [
+        "https://hennge.com/jp/service/one/identity/idaas/",
+        "https://hennge.com/jp/service/one/glossary/what-is-idp/",
+        "https://hennge.com/jp/service/one/glossary/single-sign-on-tool/",
+        "https://hennge.com/jp/service/one/case/toyotaf/"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "prod_keyspider",
+      "name": "Keyspider",
+      "vendor": "AXIO",
+      "tier": "mid_market",
+      "japan_ga": true,
+      "japan_dc": true,
+      "pricing_model": "個別見積。国内案件ごとに要件定義込みで価格提示される前提。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "OAuth 2.0",
+          "LDAP"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "コネクタサーバー + LDAP/LDAPSでActive Directory双方向連携",
+          "scim": "個別連携/API中心",
+          "ldap": "AD連携が主軸",
+          "legacy_bridge": "Keygatewayなど関連製品で補完"
+        },
+        "mfa_methods": [
+          "外部MFA連携中心"
+        ],
+        "passwordless": [
+          "外部連携前提"
+        ],
+        "on_prem_integration": "medium",
+        "saas_connectors": "国内主要SaaSを中心に連携実績",
+        "pam_integration": [
+          "外部PAM/IGA寄り"
+        ],
+        "iga_integration": [
+          "IDガバナンス",
+          "日本企業の人事異動運用",
+          "ロール運用"
+        ],
+        "siem_integration": [
+          "監査ログ活用",
+          "国内統制向け"
+        ]
+      },
+      "strengths": [
+        "日本企業特有の複雑な人事・組織変更に合わせたID管理が強い",
+        "AD連携と国内業務システム連携の現実解として使いやすい",
+        "国内導入支援、個別要件への対応力が高い"
+      ],
+      "weaknesses": [
+        "グローバルSaaSコネクタ数やパスワードレス訴求は外資製品に劣る",
+        "MFAやZTNAの主役製品ではない",
+        "海外標準の比較表では優位性を示しにくい"
+      ],
+      "differentiation": "『日本企業の人事異動・権限付与・AD運用を現実的に回す』ことが主価値。海外製品の横文字機能より、運用部門に刺さる。",
+      "japan_notes": "野村不動産ホールディングス、YKK APなどの公開事例があり、国内大企業でも一定の説得力がある。",
+      "evaluation": {
+        "basic_functions": "ID管理軸は強いが、MFAやパスワードレスは弱い。",
+        "on_prem_integration": "AD双方向連携は強い。",
+        "cloud_saas": "国内主流SaaS中心。",
+        "privileged_access": "単独では弱い。",
+        "governance": "日本型IDガバナンスに強い。",
+        "japan_market": "高い。"
+      },
+      "suitable_for": {
+        "large_enterprise": "中",
+        "mid_market": "高",
+        "securities": "中",
+        "manufacturing": "高"
+      },
+      "cloud_continuum": {
+        "iaas": "ADと社内システムのID整流化が主。",
+        "paas": "ワークロードアイデンティティより人事主導ID管理向け。",
+        "saas": "SaaS権限管理の土台として使いやすい。"
+      },
+      "sources": [
+        "https://www.axio.co.jp/keyspider/faq/input/ad_linkage/p1401.html",
+        "https://www.axio.co.jp/products/keyspider/integrations.html",
+        "https://www.axio.co.jp/products/keyspider/case.html",
+        "https://www.axio.co.jp/keyspider/public/playground_assets/documents8-1500w.pdf"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "prod_trustlogin",
+      "name": "GMO Trust Login",
+      "vendor": "GMO GlobalSign",
+      "tier": "mid_market",
+      "japan_ga": true,
+      "japan_dc": true,
+      "pricing_model": "基本プラン無料。Proプランは 1 IDあたり月額300円の公開記載あり。追加オプションは月額100円から。SaaS管理プランは月額290円の公開リリースあり。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect",
+          "フォームベース認証",
+          "BASIC認証"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "外部ディレクトリ連携あり",
+          "scim": "一部対応",
+          "ldap": "主軸ではない",
+          "legacy_bridge": "フォームベースSSOが実務上の強み"
+        },
+        "mfa_methods": [
+          "OTP",
+          "IP制限",
+          "クライアント証明書",
+          "外部IdP連携"
+        ],
+        "passwordless": [
+          "限定的。FIDO2中心製品ではない"
+        ],
+        "on_prem_integration": "low",
+        "saas_connectors": "5500+",
+        "pam_integration": [
+          "外部PAM前提"
+        ],
+        "iga_integration": [
+          "SaaS管理プラン",
+          "基本的なID連携"
+        ],
+        "siem_integration": [
+          "ログ出力/API"
+        ]
+      },
+      "strengths": [
+        "価格競争力が非常に高い",
+        "日本語UI、無料プラン、国内最多クラスのアプリ数で中堅企業に提案しやすい",
+        "フォームベース認証を含む現実的なSaaS集約に向く"
+      ],
+      "weaknesses": [
+        "大企業向けガバナンス、SOD、特権管理は弱い",
+        "KerberosやLinux PAMなどの深いインフラ統合は弱い",
+        "金融機関のTier 0/Tier 1認証刷新には不足しやすい"
+      ],
+      "differentiation": "『安く・早く・日本語でSSOを始める』には非常に強い。中堅企業やグループ会社展開で差別化しやすい。",
+      "japan_notes": "GMOブランドと国内サポート、円建ての説明しやすさがある。価格の分かりやすさは競争上大きい。",
+      "evaluation": {
+        "basic_functions": "SSOとMFAの基本は十分。",
+        "on_prem_integration": "弱い。",
+        "cloud_saas": "SaaS整理には強い。",
+        "privileged_access": "弱い。",
+        "governance": "大企業統制は不足。",
+        "japan_market": "高い。"
+      },
+      "suitable_for": {
+        "large_enterprise": "低",
+        "mid_market": "高",
+        "securities": "低",
+        "manufacturing": "中"
+      },
+      "cloud_continuum": {
+        "iaas": "対象外寄り。",
+        "paas": "対象外寄り。",
+        "saas": "SaaS SSOと簡易ID管理に強い。"
+      },
+      "sources": [
+        "https://support.trustlogin.com/hc/en-us/articles/231716788-How-Much-Does-It-Cost",
+        "https://support.trustlogin.com/hc/ja/articles/900004344023-多要素認証とは-二要素-二段階認証との違いや導入のメリットなどを徹底解説",
+        "https://news.trustlogin.com/saasmanagement",
+        "https://support.trustlogin.com/hc/ja/articles/360009523913-クラウド型シングルサインオン製品の無料機能を徹底比較"
+      ],
+      "confidence": "medium"
+    },
+    {
+      "id": "prod_cloudgate",
+      "name": "CloudGate UNO",
+      "vendor": "International Systems Research",
+      "tier": "upper_mid",
+      "japan_ga": true,
+      "japan_dc": true,
+      "pricing_model": "基本は個別見積。公開PDFでは外部IdP連携オプションの目安として300 ID環境で年額600,000円、月額50,000円の記載あり。",
+      "features": {
+        "sso_protocols": [
+          "SAML 2.0",
+          "OpenID Connect"
+        ],
+        "directory_features": {
+          "on_prem_ad_sync": "AD連携オプションあり",
+          "scim": "一部対応",
+          "ldap": "ネイティブLDAP製品ではない",
+          "legacy_bridge": "外部IdP連携や既存連携オプションで補完"
+        },
+        "mfa_methods": [
+          "CloudGate Authenticator",
+          "OTP",
+          "FIDO2",
+          "Passkey",
+          "セキュリティキー"
+        ],
+        "passwordless": [
+          "FIDO2",
+          "Passkey",
+          "CloudGate Authenticator"
+        ],
+        "on_prem_integration": "medium",
+        "saas_connectors": "300+",
+        "pam_integration": [
+          "外部PAM連携"
+        ],
+        "iga_integration": [
+          "ID管理",
+          "アクセス制限"
+        ],
+        "siem_integration": [
+          "ログ活用",
+          "国内監査向け"
+        ]
+      },
+      "strengths": [
+        "国内市場でのSSO/MFA実績とブランド認知が高い",
+        "FIDO2/パスキーの国内訴求が強い",
+        "日本語サポートと導入のしやすさでHENNGEと並ぶ有力候補"
+      ],
+      "weaknesses": [
+        "グローバル大企業向けIGA、PAM、ハイブリッドOS認証では不足",
+        "Azure/AWS/GCPのワークロード連続性は弱い",
+        "価格は基本的に見積で、標準比較表では個別確認が必要"
+      ],
+      "differentiation": "国内企業向けに『SSO + MFA + パスキー』を分かりやすく提供できる点が強み。現場導入とヘルプデスク削減の説明がしやすい。",
+      "japan_notes": "国内導入事例、ITreview継続評価、国内サポートで提案しやすい。製造業や中堅大企業に向く。",
+      "evaluation": {
+        "basic_functions": "SSO/MFAは強い。",
+        "on_prem_integration": "中程度。",
+        "cloud_saas": "主要SaaS対応は十分。",
+        "privileged_access": "弱い。",
+        "governance": "基本統制向け。",
+        "japan_market": "高い。"
+      },
+      "suitable_for": {
+        "large_enterprise": "中",
+        "mid_market": "高",
+        "securities": "中",
+        "manufacturing": "高"
+      },
+      "cloud_continuum": {
+        "iaas": "人のアクセス制御に限定的。",
+        "paas": "対象外寄り。",
+        "saas": "SaaSアクセス保護とパスワードレスが主価値。"
+      },
+      "sources": [
+        "https://www.cloudgate.jp/",
+        "https://www.cloudgate.jp/lineup/uno/multifactor-authentication",
+        "https://www.cloudgate.jp/lineup/uno/fido2-passwordless",
+        "https://www.cloudgate.jp/pdf/partner-pricing/20240123_cloudgate-service-pricing-comparison-table.pdf"
+      ],
+      "confidence": "medium"
+    }
+  ],
+  "comparison_matrix": [
+    {
+      "criterion": "SAML 2.0 / OpenID Connect / OAuth 2.0 網羅性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 5,
+        "prod_ping": 5,
+        "prod_forgerock": 5,
+        "prod_onelogin": 5,
+        "prod_jumpcloud": 4,
+        "prod_duo": 3,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 4,
+        "prod_keyspider": 4,
+        "prod_trustlogin": 4,
+        "prod_cloudgate": 4
+      }
+    },
+    {
+      "criterion": "WS-Fed / 旧Microsoft資産対応",
+      "weight": "medium",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 4,
+        "prod_forgerock": 2,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 1,
+        "prod_duo": 1,
+        "prod_ibm_verify": 3,
+        "prod_hennge": 1,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "Kerberos フェデレーション / ブリッジ",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 5,
+        "prod_forgerock": 4,
+        "prod_onelogin": 2,
+        "prod_jumpcloud": 1,
+        "prod_duo": 2,
+        "prod_ibm_verify": 2,
+        "prod_hennge": 1,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "Active Directory Hybrid 連携",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 4,
+        "prod_forgerock": 4,
+        "prod_onelogin": 3,
+        "prod_jumpcloud": 3,
+        "prod_duo": 3,
+        "prod_ibm_verify": 3,
+        "prod_hennge": 4,
+        "prod_keyspider": 4,
+        "prod_trustlogin": 2,
+        "prod_cloudgate": 3
+      }
+    },
+    {
+      "criterion": "SCIM 自動プロビジョニング",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 5,
+        "prod_ping": 4,
+        "prod_forgerock": 4,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 4,
+        "prod_duo": 2,
+        "prod_ibm_verify": 4,
+        "prod_hennge": 3,
+        "prod_keyspider": 3,
+        "prod_trustlogin": 2,
+        "prod_cloudgate": 2
+      }
+    },
+    {
+      "criterion": "LDAP ディレクトリ / 参照互換性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 2,
+        "prod_okta": 3,
+        "prod_ping": 5,
+        "prod_forgerock": 5,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 5,
+        "prod_duo": 3,
+        "prod_ibm_verify": 4,
+        "prod_hennge": 1,
+        "prod_keyspider": 3,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "RADIUS / VPN / Wi-Fi 旧来認証との統合",
+      "weight": "medium",
+      "scores": {
+        "prod_entra": 2,
+        "prod_okta": 4,
+        "prod_ping": 4,
+        "prod_forgerock": 3,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 5,
+        "prod_duo": 5,
+        "prod_ibm_verify": 3,
+        "prod_hennge": 1,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "MFA 方式の幅",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 5,
+        "prod_ping": 5,
+        "prod_forgerock": 4,
+        "prod_onelogin": 5,
+        "prod_jumpcloud": 4,
+        "prod_duo": 5,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 4,
+        "prod_keyspider": 2,
+        "prod_trustlogin": 3,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "パスワードレス成熟度",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 5,
+        "prod_ping": 4,
+        "prod_forgerock": 4,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 4,
+        "prod_duo": 5,
+        "prod_ibm_verify": 4,
+        "prod_hennge": 3,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "Windows Hello / FIDO2 / Passkey 整合性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 4,
+        "prod_forgerock": 3,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 3,
+        "prod_duo": 5,
+        "prod_ibm_verify": 4,
+        "prod_hennge": 3,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "オンプレミス Linux (SSSD / PAM) 統合",
+      "weight": "medium",
+      "scores": {
+        "prod_entra": 3,
+        "prod_okta": 2,
+        "prod_ping": 4,
+        "prod_forgerock": 4,
+        "prod_onelogin": 2,
+        "prod_jumpcloud": 5,
+        "prod_duo": 3,
+        "prod_ibm_verify": 2,
+        "prod_hennge": 1,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "SaaS コネクタ数",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 5,
+        "prod_ping": 4,
+        "prod_forgerock": 3,
+        "prod_onelogin": 5,
+        "prod_jumpcloud": 3,
+        "prod_duo": 2,
+        "prod_ibm_verify": 3,
+        "prod_hennge": 3,
+        "prod_keyspider": 2,
+        "prod_trustlogin": 5,
+        "prod_cloudgate": 3
+      }
+    },
+    {
+      "criterion": "Azure / AWS / GCP 統合深度",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 3,
+        "prod_forgerock": 2,
+        "prod_onelogin": 3,
+        "prod_jumpcloud": 3,
+        "prod_duo": 2,
+        "prod_ibm_verify": 2,
+        "prod_hennge": 2,
+        "prod_keyspider": 2,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "IaaS → PaaS → SaaS ID連続性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 3,
+        "prod_forgerock": 2,
+        "prod_onelogin": 2,
+        "prod_jumpcloud": 2,
+        "prod_duo": 1,
+        "prod_ibm_verify": 2,
+        "prod_hennge": 1,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "PAM 製品連携",
+      "weight": "medium",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 4,
+        "prod_forgerock": 3,
+        "prod_onelogin": 3,
+        "prod_jumpcloud": 2,
+        "prod_duo": 3,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 2,
+        "prod_keyspider": 2,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 2
+      }
+    },
+    {
+      "criterion": "JIT / 特権昇格のネイティブ性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 3,
+        "prod_ping": 4,
+        "prod_forgerock": 3,
+        "prod_onelogin": 2,
+        "prod_jumpcloud": 2,
+        "prod_duo": 1,
+        "prod_ibm_verify": 4,
+        "prod_hennge": 1,
+        "prod_keyspider": 1,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "アクセスレビュー / Entitlement Management",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 4,
+        "prod_forgerock": 4,
+        "prod_onelogin": 3,
+        "prod_jumpcloud": 2,
+        "prod_duo": 1,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 2,
+        "prod_keyspider": 4,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 2
+      }
+    },
+    {
+      "criterion": "SOD（職務分離）チェック",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 3,
+        "prod_okta": 3,
+        "prod_ping": 4,
+        "prod_forgerock": 4,
+        "prod_onelogin": 2,
+        "prod_jumpcloud": 1,
+        "prod_duo": 1,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 1,
+        "prod_keyspider": 4,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 1
+      }
+    },
+    {
+      "criterion": "SIEM 連携",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 4,
+        "prod_forgerock": 4,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 3,
+        "prod_duo": 4,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 3,
+        "prod_keyspider": 3,
+        "prod_trustlogin": 2,
+        "prod_cloudgate": 3
+      }
+    },
+    {
+      "criterion": "日本語UI / 日本語ドキュメント",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 3,
+        "prod_forgerock": 2,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 2,
+        "prod_duo": 3,
+        "prod_ibm_verify": 4,
+        "prod_hennge": 5,
+        "prod_keyspider": 5,
+        "prod_trustlogin": 5,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "日本サポート / 代理店網",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 3,
+        "prod_forgerock": 2,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 2,
+        "prod_duo": 4,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 5,
+        "prod_keyspider": 5,
+        "prod_trustlogin": 5,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "日本データセンター / リージョン選択肢",
+      "weight": "medium",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 2,
+        "prod_forgerock": 2,
+        "prod_onelogin": 2,
+        "prod_jumpcloud": 4,
+        "prod_duo": 2,
+        "prod_ibm_verify": 2,
+        "prod_hennge": 5,
+        "prod_keyspider": 5,
+        "prod_trustlogin": 5,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "国内金融 / 証券への説明適性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 3,
+        "prod_ping": 4,
+        "prod_forgerock": 3,
+        "prod_onelogin": 2,
+        "prod_jumpcloud": 1,
+        "prod_duo": 3,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 4,
+        "prod_keyspider": 3,
+        "prod_trustlogin": 1,
+        "prod_cloudgate": 3
+      }
+    },
+    {
+      "criterion": "大企業（1000人+）適性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 5,
+        "prod_ping": 5,
+        "prod_forgerock": 5,
+        "prod_onelogin": 3,
+        "prod_jumpcloud": 3,
+        "prod_duo": 3,
+        "prod_ibm_verify": 5,
+        "prod_hennge": 3,
+        "prod_keyspider": 3,
+        "prod_trustlogin": 2,
+        "prod_cloudgate": 3
+      }
+    },
+    {
+      "criterion": "中堅企業（100-999人）適性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 3,
+        "prod_okta": 3,
+        "prod_ping": 2,
+        "prod_forgerock": 1,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 5,
+        "prod_duo": 5,
+        "prod_ibm_verify": 2,
+        "prod_hennge": 5,
+        "prod_keyspider": 4,
+        "prod_trustlogin": 5,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "コスト競争力",
+      "weight": "medium",
+      "scores": {
+        "prod_entra": 3,
+        "prod_okta": 2,
+        "prod_ping": 1,
+        "prod_forgerock": 1,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 4,
+        "prod_duo": 4,
+        "prod_ibm_verify": 1,
+        "prod_hennge": 3,
+        "prod_keyspider": 3,
+        "prod_trustlogin": 5,
+        "prod_cloudgate": 3
+      }
+    },
+    {
+      "criterion": "実装複雑度の低さ",
+      "weight": "medium",
+      "scores": {
+        "prod_entra": 3,
+        "prod_okta": 4,
+        "prod_ping": 2,
+        "prod_forgerock": 1,
+        "prod_onelogin": 4,
+        "prod_jumpcloud": 4,
+        "prod_duo": 5,
+        "prod_ibm_verify": 2,
+        "prod_hennge": 5,
+        "prod_keyspider": 3,
+        "prod_trustlogin": 5,
+        "prod_cloudgate": 5
+      }
+    },
+    {
+      "criterion": "日本SIerの構築スキル可用性",
+      "weight": "high",
+      "scores": {
+        "prod_entra": 5,
+        "prod_okta": 4,
+        "prod_ping": 3,
+        "prod_forgerock": 2,
+        "prod_onelogin": 3,
+        "prod_jumpcloud": 2,
+        "prod_duo": 4,
+        "prod_ibm_verify": 4,
+        "prod_hennge": 5,
+        "prod_keyspider": 4,
+        "prod_trustlogin": 4,
+        "prod_cloudgate": 5
+      }
+    }
+  ],
+  "decision_guide": [
+    {
+      "scenario": "既存M365環境 + Kerberos依存オンプレミスアプリ残存",
+      "recommendation": "Microsoft Entra ID",
+      "reason": "M365、Conditional Access、Entra Connect、Kerberos Cloud Trustを一体で説明でき、段階移行の筋が作りやすい。",
+      "runner_up": "Okta Workforce Identity Cloud + Microsoft Entra ID共存"
+    },
+    {
+      "scenario": "Microsoftロックインを避けつつSaaS横断SSOを標準化したい大企業",
+      "recommendation": "Okta Workforce Identity Cloud",
+      "reason": "中立性、SaaSコネクタ数、Access Gateway、Lifecycle Managementが強く、複数クラウド前提でも説明しやすい。",
+      "runner_up": "Ping Identity"
+    },
+    {
+      "scenario": "レガシーWeb、Kerberos、LDAP、複数フェデレーションが残る金融機関",
+      "recommendation": "Ping Identity",
+      "reason": "PingFederate、PingAccess、PingDirectoryで複雑な残存資産を巻き取りやすく、個別要件対応力が高い。",
+      "runner_up": "IBM Security Verify"
+    },
+    {
+      "scenario": "アクセスレビュー、SOD、監査を重視する統制主導の大企業",
+      "recommendation": "IBM Security Verify",
+      "reason": "IGA、SOD、特権管理、QRadarとの統制メッセージが強く、内部監査部門への説明材料を作りやすい。",
+      "runner_up": "Microsoft Entra ID + Entra ID Governance"
+    },
+    {
+      "scenario": "中堅企業でADを増やさずにWindows/Mac/LinuxとSaaSを一元化したい",
+      "recommendation": "JumpCloud Directory Platform",
+      "reason": "Cloud Directory、Cloud LDAP、Cloud RADIUS、SSOをまとめて軽量に導入できる。",
+      "runner_up": "OneLogin"
+    },
+    {
+      "scenario": "VPN、RDP、SSH、Wi-Fiの認証強化を短期で実施したい",
+      "recommendation": "Cisco Duo",
+      "reason": "MFAとパスワードレスの即効性が高く、既存ディレクトリを大きく変えずに侵害耐性を上げられる。",
+      "runner_up": "JumpCloud Directory Platform"
+    },
+    {
+      "scenario": "日本の中堅〜大企業向けに日本語サポート重視でSSO/MFAを入れたい",
+      "recommendation": "HENNGE One",
+      "reason": "日本語UI、導入支援、国内事例、M365中心の利用実態に合わせやすい。",
+      "runner_up": "CloudGate UNO"
+    },
+    {
+      "scenario": "国内企業で人事異動や組織変更に追随するIDガバナンスを重視したい",
+      "recommendation": "Keyspider",
+      "reason": "日本企業特有の組織・人事運用に合わせたID管理の現実解として説明しやすい。",
+      "runner_up": "IBM Security Verify"
+    },
+    {
+      "scenario": "低コストでSaaS SSOを広げたい中堅企業・グループ会社展開",
+      "recommendation": "GMO Trust Login",
+      "reason": "無料プランと低単価の有償プランがあり、導入ハードルが低い。",
+      "runner_up": "CloudGate UNO"
+    },
+    {
+      "scenario": "パスキー主体の日本向けSSO/MFA基盤を構築したい",
+      "recommendation": "CloudGate UNO",
+      "reason": "国内サポートとFIDO2/Passkey訴求の分かりやすさが高い。",
+      "runner_up": "HENNGE One"
+    },
+    {
+      "scenario": "One Identity製品群と合わせてIAM/PAMを中堅企業へ広げたい",
+      "recommendation": "OneLogin",
+      "reason": "One Identity傘下となり、価格と機能のバランスが比較的取りやすい。",
+      "runner_up": "Okta Workforce Identity Cloud"
+    },
+    {
+      "scenario": "既存ForgeRock資産を捨てずに高度認証とIDライフサイクルを継続したい",
+      "recommendation": "ForgeRock Identity Platform",
+      "reason": "既存実装資産の継続価値が高く、Ping統合後も大幅な再構築を避けやすい。",
+      "runner_up": "Ping Identity"
+    }
+  ],
+  "iaas_paas_saas_continuum": {
+    "summary": "IaaS → PaaS → SaaS でID連続性を最も描きやすいのは Microsoft Entra ID であり、Oktaは『人のアイデンティティ統制の中立ハブ』として強い。一方でワークロードアイデンティティ自体は各クラウドのネイティブ機能を併用する設計が現実的である。",
+    "iaas": {
+      "focus": "Azure VM / AWS EC2 / Google Compute Engine における人の認証とワークロード認証の分離",
+      "entra_id": {
+        "managed_identity": "Azure VM は Managed Identity を標準軸にでき、Key Vault、Storage、SQL までシークレットレスに展開しやすい。",
+        "os_auth": "Windows は Entra ID、Hybrid Join、Kerberos Cloud TrustでオンプレミスADからの延長線を引きやすい。Linux は Entra login for Linux VM でAzure VMのSSHサインインを統制可能。",
+        "consulting_message": "『人の管理者ID』と『サーバープロセスID』を分離してゼロトラスト化しやすい。"
+      },
+      "okta": {
+        "human_identity": "OktaはEC2やGCE、Azure VM自体のワークロードIDを提供するのではなく、管理者のSSO、MFA、ライフサイクル、PAM入口統制に強い。",
+        "cloud_native_dependency": "AWSは Instance Profile / IAM Role、GCPは Service Account、Azureは Managed Identity をそのまま使い、Oktaは人の統制レイヤーとして重ねるのが自然。",
+        "consulting_message": "『人のIDはOkta、ワークロードIDはクラウドネイティブ』という責任分界が明確。"
+      },
+      "cloud_native_baseline": {
+        "azure": "Managed Identity",
+        "aws": "EC2 Instance Profile / IAM Role",
+        "gcp": "Service Account"
+      }
+    },
+    "paas": {
+      "focus": "App Service / Azure Functions / AKS / Lambda / EKS / Cloud Run におけるワークロードアイデンティティ",
+      "entra_id": {
+        "workload_identity": "App Service、Functions、AKS では Managed Identity / Workload Identity を使って Key Vault に接続しやすい。",
+        "secret_management": "Key Vault と Entra ID の組み合わせでシークレットレス運用を設計しやすい。",
+        "human_to_workload_bridge": "開発者・運用者の権限は Entra ID、アプリの実行権限は Managed Identity に分離しやすい。"
+      },
+      "okta": {
+        "workload_identity": "OktaはPaaSワークロードの主IDより、管理者ポータル、CI/CD、SaaS管理、SCIM連携に価値がある。",
+        "secret_management": "Secrets Manager、Parameter Store、Google Secret Manager、Vaultなどと組み合わせ、Oktaは人の認証統制とJIT入口を担う構図が現実的。",
+        "spiffe_note": "SPIFFE / SPIREやKubernetes ServiceAccountを使う設計では、Oktaは直接のワークロード発行局ではなく、人の管理者アクセスや周辺統制の役割。"
+      },
+      "cloud_native_baseline": {
+        "azure": "Managed Identity / AKS Workload Identity / Key Vault",
+        "aws": "IAM Role for Service Account / Lambda execution role / Secrets Manager",
+        "gcp": "Workload Identity / Service Account / Secret Manager"
+      }
+    },
+    "saas": {
+      "focus": "Microsoft 365 / Salesforce / ServiceNow / SAP などへのSSO、プロビジョニング、アクセス制御",
+      "entra_id": {
+        "scim_provisioning": "M365を基点に他SaaSへSCIM、自動プロビジョニング、グループベース割り当てを広げやすい。",
+        "conditional_access": "Conditional Access をM365だけでなくSAML/OIDC連携SaaSにも一元展開しやすい。",
+        "governance": "Entra ID Governanceを使えばアクセスレビューやEntitlement Managementまで接続しやすい。"
+      },
+      "okta": {
+        "scim_provisioning": "OINとLifecycle ManagementでSaaS横断のプロビジョニングが強い。",
+        "policy_layer": "アプリごとではなくアイデンティティハブとして一貫した認証ポリシーを適用しやすい。",
+        "neutrality": "M365偏重でない多SaaS環境では一貫した説明がしやすい。"
+      },
+      "consulting_takeaway": [
+        "Entra IDは Azure と M365 を核に『IaaSからSaaSまで一本化』を語りやすい。",
+        "Oktaは『人の認証ハブは一本化、ワークロードは各クラウドの標準に従う』という現実的アーキテクチャを語りやすい。",
+        "金融機関では Tier 0 / Tier 1 のOS認証とSaaS ID管理を一つの製品で完全統一するより、役割分担を明確化した二層設計の方が事故が少ない。"
+      ]
+    },
+    "source_urls": [
+      "https://www.microsoft.com/en-us/security/business/microsoft-entra-pricing",
+      "https://learn.microsoft.com/en-us/entra/identity/authentication/kerberos",
+      "https://learn.microsoft.com/en-us/entra/identity/devices/howto-vm-sign-in-azure-ad-linux",
+      "https://www.okta.com/pricing/",
+      "https://help.okta.com/en-us/content/topics/apps/apps-overview-get-started.htm",
+      "https://help.okta.com/oag/ja-jp/content/topics/access-gateway/add-app-kerberos-ref-arch.htm"
+    ]
+  }
+}

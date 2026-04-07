@@ -1,0 +1,331 @@
+{
+  "metadata": {
+    "scenario_id": "sim_x_02",
+    "title": "DevOpsチームとセキュリティチームの衝突：新APIシステムのOAuth2設計をめぐる議論",
+    "industry": "銀行業",
+    "company_profile": {
+      "name": "北央銀行",
+      "size": "従業員3000人、地方銀行としてデジタル変革を推進中",
+      "it_env": "オンプレミス Active Directory、勘定系システム、外部公開 API を伴う新規スマホアプリ開発"
+    },
+    "themes": [
+      "OAuth 2.0 / OpenID Connect 設計",
+      "AD 属性と JWT クレームの扱い",
+      "ロール管理の責任分界",
+      "Entra External ID の活用",
+      "DevOps とセキュリティの合意形成"
+    ],
+    "knowledge_needs": [
+      {
+        "type": "framework",
+        "topic": "OAuth 2.0 と OpenID Connect の役割分担",
+        "why_needed": "認証と認可を混同すると API 設計と責任分界が曖昧になるため",
+        "maps_to_file": "03_identity_architecture/identity_landscape.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "外部顧客向け ID と社内 Active Directory を分離する設計パターン",
+        "why_needed": "新規スマホアプリで社内ディレクトリを直接公開しないため",
+        "maps_to_file": "05_hybrid_scenarios/entra_hybrid_join.json"
+      },
+      {
+        "type": "process",
+        "topic": "AD 属性をアプリ用クレームへ正規化する方法",
+        "why_needed": "sAMAccountName や組織属性をそのままトークンへ載せる設計を避けるため",
+        "maps_to_file": "07_migration_patterns/ad_to_entra_migration.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "ロール管理を ID 基盤、アプリ、API のどこで持つべきか",
+        "why_needed": "JWT の roles、groups、アプリ DB の権限を混在させないため",
+        "maps_to_file": "06_security_hardening/privileged_access_management.json"
+      },
+      {
+        "type": "framework",
+        "topic": "Entra External ID の適用範囲と社内 ID 基盤との分離原則",
+        "why_needed": "銀行の顧客向け認証を社内 AD から切り離しつつ統制を確保するため",
+        "maps_to_file": "05_hybrid_scenarios/entra_hybrid_join.json"
+      },
+      {
+        "type": "process",
+        "topic": "勘定系に影響を与えずに API 認可を外出しする移行計画",
+        "why_needed": "既存勘定系の認証構造を壊さず、新 API 側だけ先行してモダン化するため",
+        "maps_to_file": "04_server_auth/kerberos_cifs_auth.json"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p01",
+      "name": "青木 翔",
+      "role": "開発リーダー",
+      "background": "デジタル部門でスマホアプリと API 開発を主導。リリース速度を最優先する。",
+      "stance": "顧客向け API に社内 AD の制約を持ち込みたくない。"
+    },
+    {
+      "id": "p02",
+      "name": "前田 誠",
+      "role": "情報セキュリティ担当",
+      "background": "銀行全体の認証統制と監査対応を担う。ID の二重管理を嫌う。",
+      "stance": "新規 API も全社 ID 管理方針の枠内で設計したい。"
+    },
+    {
+      "id": "p03",
+      "name": "岡田 薫",
+      "role": "基幹系担当",
+      "background": "勘定系、行内接続、ベンダー調整を長く担当。変更リスクに慎重。",
+      "stance": "新システムの都合で勘定系認証に手を入れてほしくない。"
+    },
+    {
+      "id": "p04",
+      "name": "外部エンジニア",
+      "role": "OAuth 2.0 / OpenID Connect 専門家",
+      "background": "金融 API とモバイル認証の設計経験があるフリーランス。",
+      "stance": "理想論ではなく、運用できる責任分界を優先する。"
+    },
+    {
+      "id": "p05",
+      "name": "情シス担当",
+      "role": "情報システム担当",
+      "background": "AD 運用とインフラ標準化を担当し、開発とセキュリティの間で調整している。",
+      "stance": "社内統制を守りつつ、開発速度も落としたくない。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "s1",
+      "title": "設計レビュー会議",
+      "setting": "新 API システムの設計レビュー。青木が OpenID Connect ベースの認証案を提示する。",
+      "dialogue": [
+        {
+          "speaker": "p01",
+          "text": "今回のスマホアプリは OpenID Connect でログインし、API はアクセストークンの `scp` と `roles` を見て制御します。顧客向けサービスなので、社内 AD は関係ありません。開発チームとしては、銀行の既存認証基盤に引きずられず、外部向けに独立した設計にしたいです。",
+          "subtext": "速度を守るため、社内標準から距離を置きたい。"
+        },
+        {
+          "speaker": "p02",
+          "text": "独立は分かりますが、『関係ない』は言い過ぎです。顧客向けでも、申込審査、問い合わせ、運用保守は行内システムとつながります。顧客 ID と社員 ID を分けるのは賛成ですが、属性連携や管理責任を最初に決めないと、結局どこかで AD 参照が生えます。",
+          "subtext": "後から野良連携が増えるのを防ぎたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "情シスの立場だと、アプリが増えるたびに別々の ID ストアを持たれるのが一番困ります。顧客 ID と社内 ID は分離してもいい。ただ、運用者、サポート要員、障害対応アカウントの統制まで別になると管理が崩れます。",
+          "subtext": "社内運用の負荷増大を先に止めたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "顧客向け ID と社内 ID を分ける必要はあるが、完全無関係ではいられない",
+        "アプリごとの独自 ID ストア乱立の懸念がある",
+        "運用者アカウントの統制を別途設計する必要がある"
+      ],
+      "knowledge_ref": [
+        "03_identity_architecture/identity_landscape.json",
+        "05_hybrid_scenarios/entra_hybrid_join.json"
+      ]
+    },
+    {
+      "scene_id": "s2",
+      "title": "セキュリティチームの指摘",
+      "setting": "前田が設計書の属性マッピング欄を示し、懸念点を一つずつ確認する。",
+      "dialogue": [
+        {
+          "speaker": "p02",
+          "text": "この案だと、行員向け管理画面の担当部署コードを Active Directory 属性から取り込む前提になっていますね。しかも API がトークン内のグループをそのまま業務権限に使う。AD グループは業務都合で増減するので、JWT の claims とアプリ権限が密結合になりすぎます。",
+          "subtext": "社内の変化がアプリ事故に直結する設計を止めたい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "でも部署コードや担当店コードは既存マスタにありますし、ゼロから属性管理を持つのは無駄ではないですか。`groups` や `roles` を使えば実装も早い。アプリ側で権限表を持つと、むしろ二重管理になる気がします。",
+          "subtext": "追加実装を避け、なるべく ID 基盤へ寄せたい。"
+        },
+        {
+          "speaker": "p03",
+          "text": "勘定系との接続を考えると、部署コードや店番は変換ルールが重要です。行内の組織変更に合わせて API 権限が勝手に変わるのは困る。基幹側から見れば、社内属性をそのままトークンに載せるのは設計が粗いと感じます。",
+          "subtext": "新 API の都合で基幹の安定性が崩れるのを避けたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "AD 属性をそのままクレームに載せると業務権限と密結合になる",
+        "groups claim を直接業務認可に使うと組織変更の影響が大きい",
+        "勘定系連携では変換ルールと安定した意味づけが必要"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    },
+    {
+      "scene_id": "s3",
+      "title": "技術的な深掘り",
+      "setting": "外部エンジニアがホワイトボードに、外部顧客、行員、API、勘定系の責任分界を書き分ける。",
+      "dialogue": [
+        {
+          "speaker": "p04",
+          "text": "整理しましょう。顧客向け認証は Entra External ID の外部テナントで受ける。行員向け管理画面は社内の Entra ID もしくは Active Directory 連携を使う。トークンに入れるのは、API が直接判断に必要な最小 claims だけです。店番や担当部署は API 側で内部マスタを引いて決め、AD 属性を生で外へ出さない。",
+          "subtext": "設計論争を責任分界の話へ戻している。"
+        },
+        {
+          "speaker": "p04",
+          "text": "ロール管理も分けるべきです。プラットフォーム権限はアプリ登録の app roles で表現できますが、業務権限まで全部そこへ押し込むのは危険です。顧客の契約状態や商品別権限は API 側の認可層で評価し、トークンは入口の本人確認と大枠の権限だけに使うほうが長持ちします。",
+          "subtext": "短期実装と中長期保守のバランスを取らせたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "その形なら、情シスとしても受け入れやすいです。社内 AD は運用者と行員の認証基盤として残し、顧客用 ID は分離できる。しかも、顧客認証の問題が社内ディレクトリへ直結しないので、障害切り分けも楽になります。",
+          "subtext": "両陣営が飲める着地点が見えてきた。"
+        }
+      ],
+      "issues_surfaced": [
+        "顧客向け認証と社内認証を分離する設計が必要",
+        "トークンには最小 claims のみを載せ、業務認可は API 側へ寄せるべき",
+        "app roles と業務権限を分けて考える必要がある"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/entra_hybrid_join.json",
+        "03_identity_architecture/identity_landscape.json"
+      ]
+    },
+    {
+      "scene_id": "s4",
+      "title": "組織論的な議論",
+      "setting": "技術案は見えてきたが、OIDC クライアント、シークレット、ロール定義を誰が持つかで再び議論になる。",
+      "dialogue": [
+        {
+          "speaker": "p01",
+          "text": "技術的には納得しました。ただ、開発としてはリリースのたびに情シス承認を待つ運用には戻りたくありません。OIDC クライアント設定や redirect URI 変更まで中央集権だと、開発速度が落ちます。",
+          "subtext": "設計合意の代償として運用統制が重くなるのを警戒している。"
+        },
+        {
+          "speaker": "p02",
+          "text": "逆に、各チームが勝手にクライアントを増やすと、銀行としては誰が何を公開しているか追えなくなります。私は少なくとも、クライアント登録、秘密情報保管、証明書更新、緊急停止の責任者は中央で持つべきだと思います。",
+          "subtext": "最低限の統制ポイントは譲れない。"
+        },
+        {
+          "speaker": "p04",
+          "text": "折衷案があります。アプリ登録と秘密情報管理は中央、スコープ設計と業務ロール定義は開発と業務が持つ。さらに IaC で申請とレビューを自動化すれば、統制と速度を両立できます。人手の承認ではなく、ルール化された変更管理へ寄せるべきです。",
+          "subtext": "組織対立を運用モデルの設計に変換している。"
+        },
+        {
+          "speaker": "p05",
+          "text": "それなら情シスが台帳と監査証跡を持ち、開発は Pull Request ベースで変更できる形にできます。属人的な口頭依頼より、むしろ健全です。",
+          "subtext": "実装できる運用像を提示して対立を収めたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "OIDC クライアント管理を中央集権にし過ぎると開発速度が落ちる",
+        "逆に分散し過ぎると台帳と緊急停止責任が失われる",
+        "IaC と変更管理で統制と速度を両立できる可能性がある"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/international_security_frameworks.json"
+      ]
+    },
+    {
+      "scene_id": "s5",
+      "title": "合意形成",
+      "setting": "会議の最後に、顧客向けは Entra External ID、行員向けは社内基盤維持という二層設計で合意する。",
+      "dialogue": [
+        {
+          "speaker": "p03",
+          "text": "勘定系への影響が最小なら賛成です。顧客認証を外部テナントに分け、勘定系との連携は API の内部認可層で吸収するなら、基幹側の認証を無理に変えずに済みます。段階移行としても現実的です。",
+          "subtext": "基幹系保護の条件が満たされたので歩み寄っている。"
+        },
+        {
+          "speaker": "p02",
+          "text": "セキュリティ部としては、外部 ID と社内 ID の分離、最小 claims、クライアント台帳、秘密情報管理、緊急停止手順、この五点が満たされるなら前進できます。あとは運用設計を先に文書化しましょう。",
+          "subtext": "後から統制を足す失敗を避けたい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "了解です。開発側は Entra External ID 前提で設計を更新し、業務権限は API の認可層で持つ案に直します。速度を落とさない代わりに、変更をコード化して監査可能にするところまで責任を持ちます。",
+          "subtext": "統制を受け入れる代わりに、開発の裁量も確保したい。"
+        }
+      ],
+      "issues_surfaced": [
+        "Entra External ID を使った二層構成で合意した",
+        "業務権限は API 認可層で管理し、トークンは最小 claims とする方針が決まった",
+        "運用設計と IaC 化を初期フェーズに含める必要がある"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/entra_hybrid_join.json",
+        "03_identity_architecture/identity_landscape.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "技術",
+      "current": "顧客向け認証と社内 Active Directory 参照が設計上混在している",
+      "target": "顧客 ID と社内 ID が明確に分離される",
+      "gap": "外部向け ID 基盤の責任分界が未定義",
+      "priority": "high"
+    },
+    {
+      "category": "技術",
+      "current": "AD 属性や groups claim を業務認可へ直接使おうとしている",
+      "target": "トークンは最小 claims、業務認可は API 側で評価する",
+      "gap": "認証と認可の分離が不十分",
+      "priority": "high"
+    },
+    {
+      "category": "プロセス",
+      "current": "OIDC クライアント登録や秘密情報管理の責任者が曖昧",
+      "target": "中央台帳と自動化された変更管理が整備される",
+      "gap": "統制と開発速度を両立する運用モデルが未設計",
+      "priority": "high"
+    },
+    {
+      "category": "組織",
+      "current": "DevOps とセキュリティが対立構造で会話している",
+      "target": "責任分界と KPI が共有された協業体制",
+      "gap": "共通言語がなく、論点が技術論争に偏っている",
+      "priority": "medium"
+    },
+    {
+      "category": "技術",
+      "current": "勘定系との接続方式が新 API の認可設計と切り分けられていない",
+      "target": "基幹系影響を限定した API 認可アーキテクチャが定義される",
+      "gap": "既存連携の制約条件が設計へ十分反映されていない",
+      "priority": "medium"
+    },
+    {
+      "category": "規制",
+      "current": "顧客向け認証フローと行内運用フローの監査証跡設計が未整備",
+      "target": "クライアント変更、権限変更、緊急停止の証跡が追跡できる",
+      "gap": "金融機関に必要な変更管理と証跡保全が不足",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "action": "顧客向け認証を Entra External ID、行員向け認証を社内基盤に分離した二層アーキテクチャを設計する",
+      "owner": "開発リーダー + 情シス担当",
+      "horizon": "0-2か月",
+      "expected_outcome": "社内ディレクトリを外部公開設計から切り離せる",
+      "related_knowledge": "05_hybrid_scenarios/entra_hybrid_join.json"
+    },
+    {
+      "action": "AD 属性を直接トークンへ出さず、API 側で必要最小限の claims と内部マスタ参照へ再設計する",
+      "owner": "外部エンジニア + 開発チーム",
+      "horizon": "1-3か月",
+      "expected_outcome": "組織変更や AD 改修の影響を API 認可から切り離せる",
+      "related_knowledge": "07_migration_patterns/ad_to_entra_migration.json"
+    },
+    {
+      "action": "OIDC クライアント、秘密情報、証明書更新、緊急停止の管理を中央台帳化し、IaC ベースで変更管理する",
+      "owner": "情報セキュリティ担当 + 情シス担当",
+      "horizon": "2-4か月",
+      "expected_outcome": "開発速度を維持しつつ監査可能な運用へ移行できる",
+      "related_knowledge": "06_security_hardening/privileged_access_management.json"
+    },
+    {
+      "action": "勘定系への影響を確認する PoC を実施し、API 認可層と既存基幹連携の境界を明文化する",
+      "owner": "基幹系担当",
+      "horizon": "1-2か月",
+      "expected_outcome": "モダン API と既存勘定系の責任分界が明確になる",
+      "related_knowledge": "04_server_auth/kerberos_cifs_auth.json"
+    }
+  ]
+}

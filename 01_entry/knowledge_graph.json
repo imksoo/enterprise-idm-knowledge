@@ -1,0 +1,1662 @@
+{
+  "metadata": {
+    "id": "idm_knowledge_graph_v1",
+    "title": "エンタープライズIDM知識グラフ",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "次世代ID管理",
+      "オンプレミス残存",
+      "ハイブリッドID",
+      "日本企業",
+      "セキュリティ強化"
+    ],
+    "related_files": [
+      "03_identity_architecture/identity_landscape.json",
+      "03_identity_architecture/idp_comparison.json",
+      "03_identity_architecture/iga_tool_comparison.json",
+      "03_identity_architecture/app_architecture_id_design.json",
+      "03_identity_architecture/iam_product_landscape_japan.json",
+      "03_identity_architecture/zero_trust_architecture.json",
+      "03_identity_architecture/pam_tool_comparison.json",
+      "04_server_auth/os_auth_methods.json",
+      "04_server_auth/kerberos_cifs_auth.json",
+      "04_server_auth/oracle_db_auth.json",
+      "04_server_auth/commercial_unix_survival.json",
+      "04_server_auth/directory_services_lifecycle.json",
+      "05_hybrid_scenarios/entra_hybrid_join.json",
+      "05_hybrid_scenarios/remote_work_id_reality.json",
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/ransomware_defense.json",
+      "06_security_hardening/group_policy_alternatives.json",
+      "06_security_hardening/ops_paradigm_shift.json",
+      "06_security_hardening/sysadmin_access_evolution.json",
+      "06_security_hardening/industry_securities_auth.json",
+      "06_security_hardening/industry_manufacturing_auth.json",
+      "06_security_hardening/industry_energy_auth.json",
+      "06_security_hardening/audit_log_operations.json",
+      "07_migration_patterns/ad_to_entra_migration.json",
+      "11_simulations/securities/sim_sec_03_sier_account_incident.json",
+      "11_simulations/cross_industry/sim_x_03_byod_mdm_conflict.json",
+      "11_simulations/finance/sim_fin_02_oracle_auth_review.json",
+      "11_simulations/cross_industry/sim_x_04_nonhuman_id_explosion.json",
+      "08_identity_subjects/hr_org_lifecycle.json",
+      "08_identity_subjects/identity_subject_master.json",
+      "08_identity_subjects/id_operations_framework.json",
+      "08_identity_subjects/non_human_identity.json",
+      "09_external_connections/value_chain_id_patterns.json",
+      "10_lifecycle/microsoft_idm_product_lifecycle.json",
+      "10_lifecycle/os_lifecycle_id_tools.json",
+      "11_simulations/securities/sim_sec_01_ad_entra_decision.json",
+      "11_simulations/securities/sim_sec_02_ransomware_response.json",
+      "11_simulations/cross_industry/sim_x_01_cio_investment_pitch.json",
+      "11_simulations/cross_industry/sim_x_02_devops_vs_security.json",
+      "11_simulations/finance/sim_fin_01_regional_bank_fisc.json",
+      "11_simulations/manufacturing/sim_mfg_01_ot_it_integration.json",
+      "11_simulations/manufacturing/sim_mfg_02_hp_ux_migration.json",
+      "11_simulations/energy/sim_ene_01_power_zero_trust.json",
+      "11_simulations/energy/sim_ene_01_ot_it_convergence.json",
+      "11_simulations/public/sim_pub_01_gov_identity_reform.json",
+      "03_identity_architecture/iam_capability_product_matrix.json",
+      "08_identity_subjects/machine_identity_modern.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "日本企業でオンプレミス認証の中心に残りやすいディレクトリサービス。",
+      "properties": {
+        "deployment": "on-premises"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "クラウド認証、SaaS連携、アクセス制御の中核となるID基盤。",
+      "properties": {
+        "deployment": "cloud"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Kerberos",
+      "object_type": "protocol",
+      "description": "サーバー認証とサービス認証を支えるチケットベース認証プロトコル。",
+      "properties": {
+        "domain": "authentication"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "LDAP",
+      "object_type": "protocol",
+      "description": "ディレクトリ参照と一部認証連携に使われる標準プロトコル。",
+      "properties": {
+        "domain": "directory"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "OS認証",
+      "object_type": "concept",
+      "description": "Windows Server や Linux サーバーへの直接ログインとローカル認証を扱う領域。",
+      "properties": {
+        "file": "04_server_auth/os_auth_methods.json"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "プロセス認証",
+      "object_type": "concept",
+      "description": "SQL Server、IIS、ファイルサーバーなどのサーバーサイド認証を扱う領域。",
+      "properties": {
+        "file": "04_server_auth/kerberos_cifs_auth.json"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "ハイブリッドID",
+      "object_type": "concept",
+      "description": "Active Directory と Entra ID を長期併存させる設計領域。",
+      "properties": {
+        "file": "05_hybrid_scenarios/entra_hybrid_join.json"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "特権アクセス管理",
+      "object_type": "concept",
+      "description": "高権限アカウントの昇格、分離、監査を統制する管理領域。",
+      "properties": {
+        "file": "06_security_hardening/privileged_access_management.json"
+      }
+    },
+    {
+      "id": "node_008a",
+      "label": "PAM製品比較",
+      "object_type": "concept",
+      "description": "PAM製品群を日本市場、金融統制、機械シークレット対応まで含めて比較する参照領域。",
+      "properties": {
+        "file": "03_identity_architecture/pam_tool_comparison.json"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "ゼロトラスト",
+      "object_type": "concept",
+      "description": "利用者、端末、セッションごとに継続検証する設計思想。",
+      "properties": {
+        "file": "03_identity_architecture/zero_trust_architecture.json"
+      }
+    },
+    {
+      "id": "node_009a",
+      "label": "ゼロトラストアーキテクチャ詳解",
+      "object_type": "concept",
+      "description": "NIST SP 800-207、CISA、日本企業の実装現実、サーバー管理アクセスまで含めて整理した参照領域。",
+      "properties": {
+        "file": "03_identity_architecture/zero_trust_architecture.json"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "グループポリシー代替",
+      "object_type": "concept",
+      "description": "Intune や構成管理ツールでポリシー運用を置き換える領域。",
+      "properties": {
+        "file": "06_security_hardening/group_policy_alternatives.json"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "ランサムウェア対策",
+      "object_type": "concept",
+      "description": "特権封じ込め、分離、復旧性を通じて侵害拡大を抑える設計領域。",
+      "properties": {
+        "file": "06_security_hardening/ransomware_defense.json"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Active Directory から Entra ID への移行",
+      "object_type": "pattern",
+      "description": "オンプレミス依存を見極めながら段階移行する現実的な移行パターン。",
+      "properties": {
+        "file": "07_migration_patterns/ad_to_entra_migration.json"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "人事・組織ライフサイクル",
+      "object_type": "concept",
+      "description": "Joiner、Mover、Leaver と組織改編をID管理に結び付ける領域。",
+      "properties": {
+        "file": "08_identity_subjects/hr_org_lifecycle.json"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "ID主体分類",
+      "object_type": "concept",
+      "description": "人、委託先、サービスなど多様なID主体を分類するマスター領域。",
+      "properties": {
+        "file": "08_identity_subjects/identity_subject_master.json"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "ID運用フレームワーク",
+      "object_type": "concept",
+      "description": "申請、承認、棚卸し、削除、責任分担、KPIを含む運用管理フレームワーク。",
+      "properties": {
+        "file": "08_identity_subjects/id_operations_framework.json"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "最小権限",
+      "object_type": "concept",
+      "description": "必要最小限の権限のみを付与する原則。",
+      "properties": {}
+    },
+    {
+      "id": "node_017",
+      "label": "多要素認証",
+      "object_type": "concept",
+      "description": "認証強度を高める基本制御。",
+      "properties": {}
+    },
+    {
+      "id": "node_018",
+      "label": "Entra Hybrid Join",
+      "object_type": "pattern",
+      "description": "既存ドメイン参加を維持しながらクラウド制御へ橋渡しする方式。",
+      "properties": {}
+    },
+    {
+      "id": "node_019",
+      "label": "サービスアカウント統制",
+      "object_type": "concept",
+      "description": "長寿命資格情報、固定パスワード、棚卸し不足を抑える管理領域。",
+      "properties": {}
+    },
+    {
+      "id": "node_020",
+      "label": "日本型IT組織課題",
+      "object_type": "risk",
+      "description": "情報システム部門への集中、SIer依存、責任分担の曖昧さに起因する構造課題。",
+      "properties": {}
+    },
+    {
+      "id": "node_021",
+      "label": "SIer",
+      "object_type": "concept",
+      "description": "設計、移行、保守、運用を担う外部委託主体。",
+      "properties": {}
+    },
+    {
+      "id": "node_022",
+      "label": "オンプレミス残存",
+      "object_type": "concept",
+      "description": "クラウド移行後もサーバー認証、Kerberos、既存業務システムが残り続ける状態。",
+      "properties": {}
+    },
+    {
+      "id": "node_023",
+      "label": "アプリケーションアーキテクチャ別 ID 設計",
+      "object_type": "concept",
+      "description": "モノリシック、SPA、マイクロサービス、サーバーレス、Kubernetes、レガシー基幹、ETL ごとに認証設計を切り分ける整理軸。",
+      "properties": {
+        "file": "03_identity_architecture/app_architecture_id_design.json"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "証券会社ID管理",
+      "object_type": "concept",
+      "description": "証券会社に特有の職務分離、外部接続、顧客向け認証、監査証跡を統合して扱う業界テーマ。",
+      "properties": {
+        "file": "06_security_hardening/industry_securities_auth.json"
+      }
+    },
+    {
+      "id": "node_024a",
+      "label": "製造業ID管理",
+      "object_type": "concept",
+      "description": "SAP、工場OT、サプライヤー接続、出向・派遣、グローバル子会社統合を横断して扱う業界テーマ。",
+      "properties": {
+        "file": "06_security_hardening/industry_manufacturing_auth.json"
+      }
+    },
+    {
+      "id": "node_024b",
+      "label": "エネルギー産業ID管理",
+      "object_type": "concept",
+      "description": "電力、ガス、石油における OT/IT 境界認証、制御系特権管理、重要インフラ統制を扱う業界テーマ。",
+      "properties": {
+        "file": "06_security_hardening/industry_energy_auth.json"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "非人間ID",
+      "object_type": "concept",
+      "description": "サービス、ワークロード、RPA、AIエージェントが使う非対話型 ID の統制領域。",
+      "properties": {
+        "file": "08_identity_subjects/non_human_identity.json"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "システム管理アクセス進化",
+      "object_type": "concept",
+      "description": "金融機関におけるシステム管理者アクセスの現状、規制、将来像を扱う整理軸。",
+      "properties": {
+        "file": "06_security_hardening/sysadmin_access_evolution.json"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "リモートワーク常態化",
+      "object_type": "concept",
+      "description": "2026年時点で在宅勤務やハイブリッド勤務が平常運用となった状態。",
+      "properties": {
+        "scope": "workstyle"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "IPSec/SSL VPN",
+      "object_type": "pattern",
+      "description": "RADIUS と Active Directory を背後に持つ従来型リモートアクセス方式。",
+      "properties": {
+        "status": "still-dominant"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "SASE",
+      "object_type": "concept",
+      "description": "クラウド接続点でアクセス制御を集約するセキュリティアーキテクチャ。",
+      "properties": {
+        "status": "growing"
+      }
+    },
+    {
+      "id": "node_029a",
+      "label": "IAM製品ランドスケープ（日本市場）",
+      "object_type": "concept",
+      "description": "日本市場におけるディレクトリ、PAM、IdP、IGA、MFA、RADIUS、PKI、MDM/UEMの製品選定軸を扱う参照先。",
+      "properties": {
+        "file": "03_identity_architecture/iam_product_landscape_japan.json"
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "Microsoft Entra Application Proxy",
+      "object_type": "product",
+      "description": "Entra ID 前段で内部 Web アプリを公開する Microsoft の機能。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "ZTNA",
+      "object_type": "concept",
+      "description": "アプリ単位で接続を制御するゼロトラストネットワークアクセス設計。",
+      "properties": {
+        "status": "selective-adoption"
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "デバイスポスチャ",
+      "object_type": "concept",
+      "description": "端末の更新、暗号化、EDR 稼働などの健全性情報。",
+      "properties": {
+        "control_use": "access-decision"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "委託先リモートアクセス",
+      "object_type": "pattern",
+      "description": "SIer や外部ベンダーが顧客環境へ接続する運用シナリオ。",
+      "properties": {
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "外部接続 ID 設計",
+      "object_type": "concept",
+      "description": "取引先、委託先、業界インフラ、顧客チャネルとの接続点をバリューチェーン起点で整理する領域。",
+      "properties": {
+        "file": "09_external_connections/value_chain_id_patterns.json"
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "Microsoft Identity Manager 2016 SP2",
+      "object_type": "product",
+      "description": "オンプレミス中心のID管理製品で、2029-01-09にExtended Supportが終了する。",
+      "properties": {
+        "file": "10_lifecycle/microsoft_idm_product_lifecycle.json"
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "Active Directory フェデレーションサービス",
+      "object_type": "product",
+      "description": "Windows Serverに組み込まれたフェデレーション基盤で、Entra IDへの移行対象になりやすい。",
+      "properties": {
+        "file": "10_lifecycle/microsoft_idm_product_lifecycle.json"
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "Entra ID Governance",
+      "object_type": "product",
+      "description": "アクセスパッケージ、アクセス レビュー、JML自動化、PIMを担うガバナンス基盤。",
+      "properties": {
+        "file": "10_lifecycle/microsoft_idm_product_lifecycle.json"
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "製品ライフサイクル管理",
+      "object_type": "concept",
+      "description": "EOL、後継、移行計画、保守期限を軸にID基盤を評価する整理軸。",
+      "properties": {
+        "file": "10_lifecycle/microsoft_idm_product_lifecycle.json"
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "LDAPディレクトリサービス移行",
+      "object_type": "concept",
+      "description": "OpenLDAP 廃止圧力を起点に、RHDS、Red Hat IdM、Active Directory、Entra ID などへの移行判断を整理する領域。",
+      "properties": {
+        "file": "04_server_auth/directory_services_lifecycle.json"
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "商用UNIX残存",
+      "object_type": "concept",
+      "description": "AIX、Oracle Solaris、HP-UX、IBM iなど、日本企業に残る商用UNIX系基盤の総称。",
+      "properties": {
+        "file": "04_server_auth/commercial_unix_survival.json"
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "IBM Power",
+      "object_type": "product",
+      "description": "AIXおよびIBM iの継続性を支えるサーバープラットフォーム。",
+      "properties": {
+        "vendor": "IBM"
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "対話的OSログインからモダン運用へのパラダイムシフト",
+      "object_type": "concept",
+      "description": "サーバーへ直接ログインする従来運用を、自動化、Infrastructure as Code、GitOps、特権アクセス管理へ段階移行する設計領域。",
+      "properties": {
+        "file": "06_security_hardening/ops_paradigm_shift.json"
+      }
+    },
+    {
+      "id": "node_043",
+      "label": "IGA",
+      "object_type": "concept",
+      "description": "アクセス申請、承認、棚卸、職務分離を統合する ID ガバナンス領域。",
+      "properties": {
+        "file": "03_identity_architecture/iga_tool_comparison.json"
+      }
+    },
+    {
+      "id": "node_044",
+      "label": "SailPoint IdentityNow / IdentityIQ",
+      "object_type": "product",
+      "description": "SaaS 型とオンプレミス型の両方を持つ代表的な IGA 製品群。",
+      "properties": {
+        "vendor": "SailPoint",
+        "deployment": "cloud-and-on-premises"
+      }
+    },
+    {
+      "id": "node_045",
+      "label": "Saviynt Enterprise Identity Cloud",
+      "object_type": "product",
+      "description": "SoD とアプリケーションガバナンスに強い SaaS 型 IGA 製品。",
+      "properties": {
+        "vendor": "Saviynt",
+        "deployment": "cloud"
+      }
+    },
+    {
+      "id": "node_046",
+      "label": "One Identity Manager",
+      "object_type": "product",
+      "description": "IT Shop とハイブリッド連携に強い IGA 製品。",
+      "properties": {
+        "vendor": "Quest Software",
+        "deployment": "cloud-and-on-premises"
+      }
+    },
+    {
+      "id": "node_047",
+      "label": "IBM Security Verify Governance",
+      "object_type": "product",
+      "description": "規制業種向けの承認、棚卸、監査証跡に向く IGA 製品。",
+      "properties": {
+        "vendor": "IBM",
+        "deployment": "cloud-and-on-premises"
+      }
+    },
+    {
+      "id": "node_048",
+      "label": "Omada Identity",
+      "object_type": "product",
+      "description": "ロール管理と監査証跡に強い IGA 製品。",
+      "properties": {
+        "vendor": "Omada",
+        "deployment": "cloud-and-hybrid"
+      }
+    },
+    {
+      "id": "node_049",
+      "label": "Avatier Identity Anywhere",
+      "object_type": "product",
+      "description": "セルフサービス申請とワークフローを重視する IGA 製品。",
+      "properties": {
+        "vendor": "Avatier",
+        "deployment": "cloud-and-on-premises"
+      }
+    },
+    {
+      "id": "node_050",
+      "label": "IdP製品比較マトリクス",
+      "object_type": "concept",
+      "description": "Entra ID、Okta、Ping Identity、国内IDaaSを同一軸で比較し、提案時の選定理由を整理する参照ノード。",
+      "properties": {
+        "file": "03_identity_architecture/idp_comparison.json",
+        "primary_persona": [
+          "SIerコンサルタント",
+          "CIO",
+          "CISO"
+        ]
+      }
+    },
+    {
+      "id": "node_051",
+      "label": "地方銀行FISC特権アクセスシナリオ",
+      "object_type": "pattern",
+      "description": "地方銀行でのFISC、安全対策、PAM、監査証跡、MIM 2016 更改を扱う会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/finance/sim_fin_01_regional_bank_fisc.json"
+      }
+    },
+    {
+      "id": "node_052",
+      "label": "化学メーカーOT/IT境界シナリオ",
+      "object_type": "pattern",
+      "description": "化学メーカーでのIEC 62443、DCS、工場専用Active Directory、境界PAMを扱う会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/manufacturing/sim_mfg_01_ot_it_integration.json"
+      }
+    },
+    {
+      "id": "node_053",
+      "label": "HP-UX移行緊急対応シナリオ",
+      "object_type": "pattern",
+      "description": "HP-UX EOL後の製造業で、Oracle Database支援影響と緊急移行計画を扱う会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/manufacturing/sim_mfg_02_hp_ux_migration.json"
+      }
+    },
+    {
+      "id": "node_054",
+      "label": "電力IT/OTゼロトラスト境界シナリオ",
+      "object_type": "pattern",
+      "description": "電力会社でのNERC CIP、JEAG1111、OT境界PAM、ゼロトラスト適用範囲を扱う会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/energy/sim_ene_01_power_zero_trust.json"
+      }
+    },
+    {
+      "id": "node_055",
+      "label": "監査証跡・ログ分析・アカウント棚卸し",
+      "object_type": "concept",
+      "description": "システム管理ユーザーの証跡取得、SIEM分析、特権ID棚卸し、孤立アカウント検出、長期保管を扱う運用領域。",
+      "properties": {
+        "file": "06_security_hardening/audit_log_operations.json"
+      }
+    },
+    {
+      "id": "node_056",
+      "label": "Oracle Database認証・特権管理",
+      "object_type": "concept",
+      "description": "Oracle Databaseの認証方式、監査、商用UNIX考慮、PAM連携、OCI移行時のID管理変化を扱う領域。",
+      "properties": {
+        "file": "04_server_auth/oracle_db_auth.json"
+      }
+    },
+    {
+      "id": "node_057",
+      "label": "自治体ID改革シナリオ",
+      "object_type": "pattern",
+      "description": "EOL 済み Active Directory、マイナンバー関連ログ保全、LGWAN 制約、ガバメントクラウド移行を同時に扱う自治体向け会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/public/sim_pub_01_gov_identity_reform.json"
+      }
+    },
+    {
+      "id": "node_008b",
+      "label": "IAM機能ケイパビリティ×製品マッピング",
+      "object_type": "concept",
+      "description": "金融機関グレードのIAMケイパビリティを日本市場製品と組み合わせパターンで整理した参照領域。",
+      "properties": {
+        "file": "03_identity_architecture/iam_capability_product_matrix.json"
+      }
+    },
+    {
+      "id": "node_062",
+      "label": "マシンIDモダン管理",
+      "object_type": "concept",
+      "description": "2025-2026年時点の非人間ID、ワークロードID、ゼロシークレット、RPA、AIエージェント、PKI自動化を横断する整理軸。",
+      "properties": {
+        "file": "08_identity_subjects/machine_identity_modern.json"
+      }
+    },
+    {
+      "id": "node_058",
+      "label": "証券会社の委託先アカウント残存シナリオ",
+      "object_type": "pattern",
+      "description": "退職済みSIer要員のVPN IDと踏み台アカウント残存、深夜接続痕跡、FISC対応、PAM導入判断を扱う会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/securities/sim_sec_03_sier_account_incident.json"
+      }
+    },
+    {
+      "id": "node_059",
+      "label": "地方銀行のOracle Database SYSDBA共有シナリオ",
+      "object_type": "pattern",
+      "description": "AIX 7.2上のOracle Database 19cで、共有SYSDBA、Unified Auditing未設定、J-SOX直前対応が争点となる会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/finance/sim_fin_02_oracle_auth_review.json"
+      }
+    },
+    {
+      "id": "node_060",
+      "label": "BYOD現実シミュレーション",
+      "object_type": "pattern",
+      "description": "大手商社で私物スマートフォンと私物Macが常態化し、Microsoft Intune 未整備のまま SharePoint へアクセスしている状況を扱う会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/cross_industry/sim_x_03_byod_mdm_conflict.json"
+      }
+    },
+    {
+      "id": "node_061",
+      "label": "非人間ID爆発シミュレーション",
+      "object_type": "pattern",
+      "description": "保険会社で RPA、APIキー、AIエージェントが増殖し、サービスアカウントとシークレット管理が破綻する状況を扱う会話型シナリオ。",
+      "properties": {
+        "file": "11_simulations/cross_industry/sim_x_04_nonhuman_id_explosion.json"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "Active Directory は Kerberos を中核認証として利用する。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "Active Directory は LDAP による参照や連携を伴う。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "OS認証では Active Directory 連携とローカル認証を併用する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "プロセス認証では Kerberos が主要な土台となる。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_019",
+      "relationship": "complements",
+      "description": "サービスアカウント統制はプロセス認証の安定性と安全性を補完する。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "ハイブリッドIDは Active Directory を直ちには廃止しない。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "ハイブリッドIDは Entra ID を並行利用する。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_018",
+      "relationship": "implements",
+      "description": "ハイブリッドIDの主要パターンの一つが Entra Hybrid Join である。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_017",
+      "relationship": "complements",
+      "description": "Entra Hybrid Join は 多要素認証 と条件付き制御の導入を補完する。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_016",
+      "relationship": "implements",
+      "description": "特権アクセス管理は最小権限の実装手段である。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_011",
+      "relationship": "mitigates",
+      "description": "特権アクセス管理はランサムウェア対策の中核となる。"
+    },
+    {
+      "from": "node_008a",
+      "to": "node_008",
+      "relationship": "deepens",
+      "description": "PAM製品比較は特権アクセス管理の製品選定論点を深掘りする。"
+    },
+    {
+      "from": "node_008a",
+      "to": "node_024",
+      "relationship": "complements",
+      "description": "PAM製品比較は証券会社向けID管理テーマの製品選定を補完する。"
+    },
+    {
+      "from": "node_008a",
+      "to": "node_024a",
+      "relationship": "complements",
+      "description": "PAM製品比較は製造業向けのSAP特権、OT保守、外部委託統制の製品選定を補完する。"
+    },
+    {
+      "from": "node_008a",
+      "to": "node_025",
+      "relationship": "complements",
+      "description": "PAM製品比較では非人間ID向けのVault系製品も併せて評価する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "ゼロトラストでは多要素認証が基本制御となる。"
+    },
+    {
+      "from": "node_009a",
+      "to": "node_009",
+      "relationship": "deepens",
+      "description": "ゼロトラストアーキテクチャ詳解は概念だけでなく、日本企業の実装現実と成熟度差分まで掘り下げる。"
+    },
+    {
+      "from": "node_009a",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "ゼロトラストアーキテクチャ詳解は特権アクセス管理とサーバー管理アクセスの関係を補完する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "グループポリシー代替はハイブリッドID移行の運用課題を補完する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "Active Directory から Entra ID への移行ではハイブリッドIDが現実解になりやすい。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_022",
+      "relationship": "complements",
+      "description": "移行設計ではオンプレミス残存の把握が前提となる。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "人事・組織ライフサイクルはID運用フレームワークの起点データになる。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "ID主体分類は申請対象とレビュー対象の定義を補完する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "ID運用フレームワークは最小権限を前提に設計する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "ID運用フレームワークは特権アクセス管理の運用統制を補完する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_020",
+      "relationship": "mitigates",
+      "description": "責任分担とKPI設計により日本型IT組織課題を緩和する。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_021",
+      "relationship": "complements",
+      "description": "日本型IT組織課題では SIer 依存が主要要素の一つになる。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "オンプレミス残存は OS認証 の長期維持要因となる。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_006",
+      "relationship": "complements",
+      "description": "オンプレミス残存は Kerberos や SMB を使うプロセス認証の継続要因となる。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "オンプレミス残存率が高いほど移行設計は段階化が必要になる。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_006",
+      "relationship": "complements",
+      "description": "アプリケーションアーキテクチャ別 ID 設計はプロセス認証の適用境界整理を補完する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "アプリケーションアーキテクチャ別 ID 設計はハイブリッドIDの適用先整理を補完する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_019",
+      "relationship": "complements",
+      "description": "アプリケーションアーキテクチャ別 ID 設計はサービスアカウント統制の優先度判断を補完する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_008",
+      "relationship": "deepens",
+      "description": "証券会社向けテーマでは特権アクセス管理を市場系運用と外部保守まで深掘りする。"
+    },
+    {
+      "from": "node_024a",
+      "to": "node_008",
+      "relationship": "deepens",
+      "description": "製造業向けテーマではSAP特権、OT保守、協力会社アクセスを含めて特権アクセス管理を具体化する。"
+    },
+    {
+      "from": "node_024a",
+      "to": "node_007",
+      "relationship": "deepens",
+      "description": "製造業向けテーマではSAP BTP、海外子会社、工場残存資産を含むハイブリッドIDを具体化する。"
+    },
+    {
+      "from": "node_024a",
+      "to": "node_015",
+      "relationship": "deepens",
+      "description": "製造業向けテーマでは出向、派遣、構内作業員、サプライヤーの運用統制を具体化する。"
+    },
+    {
+      "from": "node_024a",
+      "to": "node_025",
+      "relationship": "deepens",
+      "description": "製造業向けテーマではPLCやIoTを含むデバイスIDと非人間IDの統制を具体化する。"
+    },
+    {
+      "from": "node_024b",
+      "to": "node_008",
+      "relationship": "deepens",
+      "description": "エネルギー産業向けテーマでは OT の特権アクセス管理と保守接続統制を具体化する。"
+    },
+    {
+      "from": "node_024b",
+      "to": "node_009",
+      "relationship": "complements",
+      "description": "エネルギー産業向けテーマではゼロトラストを OT 境界に限定適用する現実解を補完する。"
+    },
+    {
+      "from": "node_024b",
+      "to": "node_015",
+      "relationship": "deepens",
+      "description": "エネルギー産業向けテーマでは委託先、保守ベンダ、緊急時運用を含む ID 運用フレームワークを具体化する。"
+    },
+    {
+      "from": "node_024b",
+      "to": "node_022",
+      "relationship": "deepens",
+      "description": "エネルギー産業向けテーマでは更新困難な OT 資産を前提にしたオンプレミス残存問題を深掘りする。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_017",
+      "relationship": "deepens",
+      "description": "証券会社向けテーマでは顧客向け認証強化と多要素認証の適用を具体化する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_015",
+      "relationship": "deepens",
+      "description": "証券会社向けテーマでは外部委託統制と監査証跡の運用フレームワークを具体化する。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_019",
+      "relationship": "deepens",
+      "description": "非人間IDトピックはサービスアカウント統制をワークロード全体へ拡張する。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_014",
+      "relationship": "complements",
+      "description": "非人間IDは ID主体分類 の主要カテゴリの一つである。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "非人間IDにも申請、棚卸し、削除を含む運用フレームワークが必要になる。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "システム管理アクセス進化は特権アクセス管理の規制と運用将来像を補完する。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "システム管理アクセス進化では SIer を含む外部委託アクセスの統制が重要である。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "システム管理アクセス進化はオンプレミス残存を前提に議論する必要がある。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_028",
+      "relationship": "complements",
+      "description": "リモートワーク常態化後も VPN は主要な接続方式として残る。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_029",
+      "relationship": "complements",
+      "description": "リモートワーク常態化は SASE 導入需要も押し上げた。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_009",
+      "relationship": "deepens",
+      "description": "SASE はゼロトラストをリモートアクセス制御へ具体化する。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_032",
+      "relationship": "requires",
+      "description": "SASE の実効性には端末健全性評価が必要である。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Microsoft Entra Application Proxy は Entra ID を前段にした内部 Web 公開を補完する。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_022",
+      "relationship": "mitigates",
+      "description": "内部 Web アプリの外部公開により一部のオンプレミス残存依存を減らせる。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_009",
+      "relationship": "deepens",
+      "description": "ZTNA はゼロトラストをアプリ単位接続制御として具体化する。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "委託先リモートアクセスの統制には特権アクセス管理が不可欠である。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "外部接続 ID 設計は委託先や保守ベンダーの特権統制を補完する。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_009",
+      "relationship": "complements",
+      "description": "外部接続 ID 設計は送信元だけに依存しないゼロトラスト設計を補完する。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_019",
+      "relationship": "complements",
+      "description": "外部 API や EDI の連携ではサービスアカウント統制が重要になる。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_020",
+      "relationship": "complements",
+      "description": "日本型IT組織課題では外部委託先との責任分界が外部接続設計へ強く影響する。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "対話的OSログインの見直しは OS認証 の運用設計を再整理する。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "モダン運用への移行は 特権アクセス管理 と密接に結び付く。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "モダン運用では ゼロトラスト の考え方に沿った権限制御が必要となる。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_004",
+      "relationship": "deepens",
+      "description": "LDAPディレクトリサービス移行は FreeIPA / RHEL IdM を Linux 側の認証統合基盤として詳細化する。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "LDAPディレクトリサービス移行は Active Directory を現実的な移行先候補として整理する。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "LDAPディレクトリサービス移行は Entra ID へのクラウド移行シナリオを補完する。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "商用UNIX残存は OS認証 の長期維持要因を補足する。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "商用UNIX残存では特権アクセス管理の再設計が必要になる。"
+    },
+    {
+      "from": "node_041",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "IBM Powerの継続投資はAIXとIBM iの残存を支える。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_037",
+      "relationship": "replaces",
+      "description": "MIM 2016のガバナンス機能はEntra ID Governanceへ分解移行する。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_038",
+      "relationship": "requires",
+      "description": "MIM 2016はEOL対応を含む製品ライフサイクル管理を要する。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_002",
+      "relationship": "replaces",
+      "description": "Active Directory フェデレーションサービスはクラウド向けSSOでEntra IDへ置き換えが進む。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_038",
+      "relationship": "requires",
+      "description": "ADFSはWindows Serverライフサイクルと一体で評価する必要がある。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "Entra ID GovernanceはID運用フレームワークのクラウド実装を補完する。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "製品ライフサイクル管理はActive DirectoryからEntra IDへの移行優先順位を補完する。"
+    },
+    {
+      "from": "node_044",
+      "to": "node_043",
+      "relationship": "implements",
+      "description": "SailPoint 製品群は IGA 機能を提供する。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_043",
+      "relationship": "implements",
+      "description": "Saviynt は SaaS 型 IGA 機能を提供する。"
+    },
+    {
+      "from": "node_046",
+      "to": "node_043",
+      "relationship": "implements",
+      "description": "One Identity Manager は IGA 機能を提供する。"
+    },
+    {
+      "from": "node_047",
+      "to": "node_043",
+      "relationship": "implements",
+      "description": "IBM Security Verify Governance は IGA 機能を提供する。"
+    },
+    {
+      "from": "node_048",
+      "to": "node_043",
+      "relationship": "implements",
+      "description": "Omada Identity は IGA 機能を提供する。"
+    },
+    {
+      "from": "node_049",
+      "to": "node_043",
+      "relationship": "implements",
+      "description": "Avatier Identity Anywhere は IGA 機能を提供する。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_043",
+      "relationship": "implements",
+      "description": "Entra ID Governance は Microsoft 中心の IGA 機能を提供する。"
+    },
+    {
+      "from": "node_050",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "比較マトリクスでは Entra ID を代表的なクラウド型 IdP として扱う。"
+    },
+    {
+      "from": "node_050",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "比較マトリクスはハイブリッドIDの製品選定判断を補完する。"
+    },
+    {
+      "from": "node_050",
+      "to": "node_043",
+      "relationship": "complements",
+      "description": "IdP比較は IGA 比較と組み合わせて説明することで提案の精度が上がる。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_026",
+      "relationship": "example_of",
+      "description": "金融機関の特権アクセス管理論点を会話形式で具体化する。"
+    },
+    {
+      "from": "node_051",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "リモート特権作業の統制に特権アクセス管理を必要とする。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_024a",
+      "relationship": "example_of",
+      "description": "製造業のOT/IT境界管理論点を会話形式で具体化する。"
+    },
+    {
+      "from": "node_052",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "OT境界の保守接続統制に特権アクセス管理を必要とする。"
+    },
+    {
+      "from": "node_053",
+      "to": "node_022",
+      "relationship": "example_of",
+      "description": "商用UNIX残存と更改判断を会話形式で具体化する。"
+    },
+    {
+      "from": "node_054",
+      "to": "node_009",
+      "relationship": "complements",
+      "description": "ゼロトラストの適用範囲を重要インフラ文脈で具体化する。"
+    },
+    {
+      "from": "node_054",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "IT/OT境界の管理接続統制に特権アクセス管理を必要とする。"
+    },
+    {
+      "from": "node_055",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "監査証跡と棚卸し運用は特権アクセス管理を継続統制の面から補完する。"
+    },
+    {
+      "from": "node_055",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "監査証跡と棚卸し運用は ID運用フレームワークの重要な詳細領域である。"
+    },
+    {
+      "from": "node_055",
+      "to": "node_019",
+      "relationship": "deepens",
+      "description": "監査証跡と棚卸し運用はサービスアカウント統制を実務面から深掘りする。"
+    },
+    {
+      "from": "node_056",
+      "to": "node_006",
+      "relationship": "deepens",
+      "description": "Oracle Database認証はプロセス認証のDB固有論点を詳細化する。"
+    },
+    {
+      "from": "node_056",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "Oracle Databaseの共有SYSDBA解消には特権アクセス管理が不可欠である。"
+    },
+    {
+      "from": "node_056",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "AIXやOracle Solaris上のOracle Database運用は商用UNIX残存論点を補完する。"
+    },
+    {
+      "from": "node_056",
+      "to": "node_055",
+      "relationship": "complements",
+      "description": "Oracle Databaseの監査設計は監査証跡・ログ分析・アカウント棚卸し領域と密接に結び付く。"
+    },
+    {
+      "from": "node_057",
+      "to": "node_001",
+      "relationship": "requires",
+      "description": "自治体シナリオでは既存 Active Directory の更改判断が中心論点になる。"
+    },
+    {
+      "from": "node_057",
+      "to": "node_055",
+      "relationship": "requires",
+      "description": "自治体シナリオでは住民情報アクセスログの長期保全が主要論点になる。"
+    },
+    {
+      "from": "node_057",
+      "to": "node_022",
+      "relationship": "example_of",
+      "description": "クラウド方針の一方でオンプレミス認証が残り続ける自治体の実例として位置付ける。"
+    },
+    {
+      "from": "node_008b",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "IAMケイパビリティ比較はID運用フレームワークの製品選定層を補完する。"
+    },
+    {
+      "from": "node_008b",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "IAMケイパビリティ比較はPAMを含む全体製品選定の整理を補完する。"
+    },
+    {
+      "from": "node_029a",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "IAM製品ランドスケープはActive Directoryを含むID基盤の製品選定を補完する。"
+    },
+    {
+      "from": "node_029a",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "IAM製品ランドスケープは特権アクセス管理の実装製品比較を補完する。"
+    },
+    {
+      "from": "node_029a",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "日本市場での製品採用ではSIerと販社のパートナー体制が重要になる。"
+    },
+    {
+      "from": "node_062",
+      "to": "node_025",
+      "relationship": "deepens",
+      "description": "マシンIDモダン管理は既存の非人間IDトピックを2025-2026年の運用論点まで深掘りする。"
+    },
+    {
+      "from": "node_062",
+      "to": "node_019",
+      "relationship": "deepens",
+      "description": "マシンIDモダン管理ではサービスアカウント統制をSecretlessとPKI自動化へ拡張する。"
+    },
+    {
+      "from": "node_062",
+      "to": "node_009",
+      "relationship": "complements",
+      "description": "マシンIDモダン管理はゼロトラストのワークロード認証面を補完する。"
+    },
+    {
+      "from": "node_062",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "AIエージェントやRPAの高権限操作では特権アクセス管理の考え方が必要になる。"
+    },
+    {
+      "from": "node_058",
+      "to": "node_024",
+      "relationship": "example_of",
+      "description": "証券会社における外部委託統制と監査証跡問題を具体化する。"
+    },
+    {
+      "from": "node_058",
+      "to": "node_033",
+      "relationship": "example_of",
+      "description": "委託先リモートアクセスの失効漏れとJIT未整備のリスクを示す。"
+    },
+    {
+      "from": "node_058",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "再発防止にはPAM（特権アクセス管理）と踏み台統制の導入が必要である。"
+    },
+    {
+      "from": "node_059",
+      "to": "node_056",
+      "relationship": "example_of",
+      "description": "Oracle Databaseの共有SYSDBAと監査証跡欠如を巡る実務論点を具体化する。"
+    },
+    {
+      "from": "node_059",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "AIX残存環境におけるDB特権統制の難しさを示す。"
+    },
+    {
+      "from": "node_059",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "共有特権廃止と監査強化には特権アクセス管理設計が必要である。"
+    },
+    {
+      "from": "node_060",
+      "to": "node_027",
+      "relationship": "deepens",
+      "description": "BYOD現実シミュレーションはリモートワーク常態化後の端末統制課題を具体化する。"
+    },
+    {
+      "from": "node_060",
+      "to": "node_010",
+      "relationship": "complements",
+      "description": "BYOD現実シミュレーションは Microsoft Intune とアプリ保護ポリシーの現実的適用境界を補完する。"
+    },
+    {
+      "from": "node_061",
+      "to": "node_025",
+      "relationship": "deepens",
+      "description": "非人間ID爆発シミュレーションはサービスアカウント、APIキー、AIエージェントの増殖問題を具体化する。"
+    },
+    {
+      "from": "node_061",
+      "to": "node_062",
+      "relationship": "deepens",
+      "description": "非人間ID爆発シミュレーションはマシンIDモダン管理の必要性を経営判断レベルで補足する。"
+    },
+    {
+      "from": "node_061",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "非人間ID爆発シミュレーションはランサムウェアの横展開面としてサービスアカウント悪用を補足する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "ハイブリッドIDの製品選定を補完する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "特権アクセス管理の製品選定を補完する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_015",
+      "relationship": "complements",
+      "description": "ID運用フレームワークの製品マッピングを補完する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k_001",
+      "topic": "日本企業ではハイブリッド前提が多い",
+      "content": "オンプレミス認証、ファイル共有、サーバー管理者運用が長く残るため、Entra ID 導入後も Active Directory 併存が現実的である。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_002",
+      "topic": "ID運用は人事イベントと結び付ける必要がある",
+      "content": "Joiner、Mover、Leaver が人事側で確定しても、ID側が別運用だと権限残存と削除遅延が発生しやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_003",
+      "topic": "製品導入だけでは統制は完成しない",
+      "content": "申請、承認、棚卸し、削除、責任分担、KPIの設計がなければ、ID管理は属人化しやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_004",
+      "topic": "特権とサービスアカウントは別軸で管理すべきである",
+      "content": "人間の特権昇格と、サーバープロセスが使う長寿命資格情報は、レビュー周期と統制手段が異なる。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_005",
+      "topic": "SIer依存は責任分界を曖昧にしやすい",
+      "content": "実装委託自体は現実的だが、承認基準、例外判断、削除責任まで外部化すると運用統制が崩れやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_006",
+      "topic": "アーキテクチャごとに認証方式を変える必要性",
+      "content": "モノリシック Web、SPA、マイクロサービス、サーバーレス、Kubernetes、レガシー基幹、ETL では主体、トークン、秘密情報、サービス間認証の前提が異なるため、企業標準を一つだけ決めるより、類型ごとに原則を定義する方が現実的である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_007",
+      "topic": "証券会社向けテーマを追加した",
+      "content": "証券会社では職務分離、外部接続、顧客向け認証、監査証跡が同時に重要になるため、業界特化の入口を独立ファイルとして追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_008",
+      "topic": "非人間IDは設計初期から分けて扱うべきである",
+      "content": "サービスアカウント、CI/CD、Managed Identity、Kubernetes、RPA、AIエージェントは認証方式も監査方法も異なるため、設計初期から非人間IDとして分離整理しないと棚卸しとローテーションが破綻しやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_009",
+      "topic": "金融機関のシステム管理アクセスは場所統制から経路統制へ移行しつつある",
+      "content": "追加した `06_security_hardening/sysadmin_access_evolution.json` では、FISC 第11版を起点にしつつ、2026 年時点の規制環境、PAM による近代化、2036 年の将来像を整理した。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_010",
+      "topic": "リモートアクセス刷新と ID 管理は別問題である",
+      "content": "VPN、SASE、ZTNA の導入は到達経路を変えるが、共有アカウント、特権昇格、退職者削除、委託先統制を自動では改善しない。2026年の日本企業では SaaS 側だけクラウド化し、サーバー運用は従来型のまま残る二層構造が多い。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_011",
+      "topic": "PAM製品比較を追加した",
+      "content": "CyberArk、BeyondTrust、Delinea、HashiCorp Vault、Microsoft、One Identity、senhasegura、WALLIX、ARCONを比較するファイルを追加し、金融・製造の意思決定に必要な日本市場性、統制適合性、機械ID対応を整理した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_012",
+      "topic": "外部接続は業務段階ごとに ID パターンを分ける必要がある",
+      "content": "調達、設計、保守、顧客接点では主体も停止許容度も異なるため、EDI型、ポータル型、APIゲートウェイ型、フェデレーション型、専用回線型を業務段階別に使い分ける方が現実的である。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_013",
+      "topic": "RHEL 8 以降の OpenLDAP サーバー廃止は現実的な移行判断を強制する",
+      "content": "追加した `04_server_auth/directory_services_lifecycle.json` では、RHEL 7 / CentOS Linux 7 上の OpenLDAP から、RHDS、389 Directory Server、Red Hat IdM、Active Directory、Entra ID へどの条件で移るべきかを整理した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_014",
+      "topic": "商用UNIX残存の入口を追加した",
+      "content": "AIX、Oracle Solaris、HP-UX、IBM iの2026年残存状況、サポート期限、ID管理実態、移行先を整理した `04_server_auth/commercial_unix_survival.json` を追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_015",
+      "topic": "サーバー直ログインの削減は運用自動化と特権統制を同時に進める論点である",
+      "content": "追加した `06_security_hardening/ops_paradigm_shift.json` では、対話的OSログインの問題構造、Ansible や Infrastructure as Code による代替、GitOps、JEA、Break Glass、金融業の現実的移行順序を整理した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_015",
+      "topic": "MIM 2016は最優先の更改対象",
+      "content": "MIM 2016は同期、承認、特権、証明書、ロール管理を抱え込むため、一般的なサーバー更改より先に分解移行計画を立てる必要がある。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_016",
+      "topic": "MIMの後継は単一製品ではない",
+      "content": "MIM後継はEntra ID Governance単体ではなく、Entra Connect Sync、Cloud Sync、PIM、SSPR、Intune、PKI再設計を組み合わせる構造になる。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_017",
+      "topic": "ADFS問題はWindows Server問題でもある",
+      "content": "ADFSはWindows Serverライフサイクルに連動するため、OS更改と分離して延命判断はできない。フェデレーション移行はOS更新計画に組み込むべきである。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_018",
+      "topic": "製品ライフサイクル管理はID戦略の一部である",
+      "content": "ID基盤は認証方式だけでなく、各製品の保守期限と後継の有無を踏まえて設計する必要がある。MIM、ADFS、Windows Serverのライフサイクルは移行優先順位を直接左右する。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_019",
+      "topic": "IGA製品比較を追加した",
+      "content": "証券会社の職務分離、アクセス申請、定期棚卸、JSDA/FISC対応を軸に、SailPoint、Saviynt、One Identity、IBM、Omada、Avatier、Entra ID Governanceを比較するファイルを追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_020",
+      "topic": "会話型シミュレーションを追加した",
+      "content": "証券業のEOL判断、ランサムウェア復旧、委託先アカウント残存、銀行業のFISC対応、Oracle Database SYSDBA共有問題、製造業のROI議論、HP-UX移行、電力IT/OT境界を扱う8本のシナリオを追加し、技術、組織、規制、投資判断を横断的に学べるようにした。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_021",
+      "topic": "IdP選定ではSaaS機能だけでなくオンプレミス残存と統制要件を同時に評価すべきである",
+      "content": "日本企業のIdP選定は、SAML/OIDCの見栄えだけでは不十分であり、Kerberos残存、Active Directory連携、アクセスレビュー、国内サポート、SIer実装体制まで含めて比較する必要がある。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_022",
+      "topic": "製造業ID管理の入口を追加した",
+      "content": "SAP認証、SAP特権、工場OT、サプライヤーID、出向・派遣、IEC 62443、ISO/IEC 27001、IoTデバイスIDを統合した `06_security_hardening/industry_manufacturing_auth.json` を追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_023",
+      "topic": "Oracle Database認証の入口を追加した",
+      "content": "金融・製造・公共で残りやすいOracle Databaseを対象に、認証方式、共有SYSDBA問題、Database Vault、Unified Auditing、AVDF、AIX/Oracle Solaris考慮、OCI移行時のID変化を整理した `04_server_auth/oracle_db_auth.json` を追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_024",
+      "topic": "IAM製品ランドスケープを追加した",
+      "content": "追加した `03_identity_architecture/iam_product_landscape_japan.json` では、ディレクトリ、PAM、IdP、IGA、MFA、RADIUS、PKI、MDM/UEMを横断し、日本市場の採用傾向、価格帯、国内サポート、主要パートナー、比較マトリクスを整理した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_020b",
+      "topic": "IAM製品組み合わせマップ",
+      "content": "金融機関グレードのIAMは、IdP、IGA、PAM、SIEM、UEMの組み合わせ設計が前提であり、日本市場では国産ニッチ製品と外資横断製品の補完関係を整理する必要がある。",
+      "related_nodes": [
+        "node_008b",
+        "node_008",
+        "node_015"
+      ]
+    },
+    {
+      "id": "k_025",
+      "topic": "エネルギー産業向け ID 管理の入口を追加した",
+      "content": "電力、ガス、石油では OT/IT 統合、SCADA/DCS、Purdue Model、委託先保守、重要インフラ規制、ブレークグラスが同時に問題になるため、業界特化の入口として `06_security_hardening/industry_energy_auth.json` を追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_026",
+      "topic": "マシンIDモダン管理の入口を追加した",
+      "content": "追加した `08_identity_subjects/machine_identity_modern.json` では、2025-2026年時点の非人間ID、ワークロードID、RPA、AIエージェント、OIDC Federation、Managed Identity、Vault系製品、PKI自動化、証明書失効運用、日本企業の現実的移行順序を整理した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_027",
+      "topic": "BYODと非人間IDの追加シミュレーションを投入した",
+      "content": "大手商社の BYOD 常態化と Microsoft Intune 未整備問題、保険会社の RPA・APIキー・AIエージェント増殖問題を扱う2本の会話型シミュレーションを追加し、法務、営業、CISO、クラウド設計、RPA運用の衝突を学べるようにした。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_028",
+      "topic": "自治体のID改革シナリオを追加した",
+      "content": "Windows Server 2012 R2 の EOL 済み Active Directory、マイナンバー関連ログ3年保全、LGWAN 制約、ベンダー分散運用、ガバメントクラウド移行方針を同時に扱う自治体シナリオを追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_029",
+      "topic": "電力会社のOT/IT統合シナリオを追加した",
+      "content": "発電所SCADAへのActive Directory統合是非、Windows XP/7残存、委託業者VPN常時開放、OT向けPAM、Just-in-Time Access、設備更新を段階的に議論する電力業向けシナリオを追加した。",
+      "evidence_level": "high",
+      "japan_specific": true
+    }
+  ]
+}

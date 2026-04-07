@@ -1,0 +1,1048 @@
+{
+  "metadata": {
+    "id": "topic_iga_tool_comparison",
+    "title": "IGA製品比較",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "IGA",
+      "Identity Governance and Administration",
+      "職務分離",
+      "定期アクセスレビュー",
+      "証券会社",
+      "JSDA",
+      "FISC",
+      "比較"
+    ],
+    "related_files": [
+      "03_identity_architecture/identity_landscape.json",
+      "03_identity_architecture/pam_tool_comparison.json",
+      "06_security_hardening/industry_securities_auth.json",
+      "06_security_hardening/privileged_access_management.json",
+      "07_migration_patterns/japan_security_frameworks.json",
+      "01_entry/knowledge_graph.json",
+      "01_entry/navigation_indices.json"
+    ]
+  },
+  "comparison_scope": {
+    "target_readers": [
+      "証券会社のCIO",
+      "証券会社のCISO",
+      "情報システム部門",
+      "内部監査部門",
+      "SIerアーキテクト"
+    ],
+    "use_case_focus": [
+      "職務分離",
+      "アクセス申請",
+      "定期棚卸",
+      "人事異動反映",
+      "特権申請統制",
+      "監査証跡の整備"
+    ],
+    "rating_scale": {
+      "strong": "標準機能で広く満たしやすく、規制業種でも主力候補になりやすい。",
+      "medium": "主要要件は満たせるが、個別設計、追加開発、運用ルール補完が必要になりやすい。",
+      "limited": "一部要件のみ対応する。別製品や業務設計での補完が前提になる。"
+    },
+    "important_cautions": [
+      "証券会社で重要なのは、機能有無よりも申請者、承認者、レビュアー、例外承認者を個人単位で説明できることにある。",
+      "JSDAやFISCへの適合性は認証取得の有無ではなく、職務分離、最小権限、定期棚卸、特権運用の証跡を監査人に説明しやすいかで評価する。",
+      "日本型人事パッケージ連携は、標準コネクタの有無よりもCSV、DB、APIで人事イベントを吸収できる設計自由度が実務では重要である。",
+      "Entra ID GovernanceはMicrosoft中心範囲では費用対効果が高いが、ERP SoDや全社ロールマイニングでは専業IGAより浅い。"
+    ]
+  },
+  "comparison_axes": [
+    {
+      "id": "axis_01",
+      "label": "アクセス申請ワークフロー",
+      "description": "多段承認、代理承認、業務責任者承認、緊急申請、証跡保持の成熟度。"
+    },
+    {
+      "id": "axis_02",
+      "label": "定期アクセスレビュー",
+      "description": "Certification Campaign、督促、失効、例外記録、レビュー責任分担の設計容易性。"
+    },
+    {
+      "id": "axis_03",
+      "label": "SOD（職務分離）ポリシーと違反検知",
+      "description": "予防的統制、検知的統制、申請時ブロック、例外承認、違反レポートの粒度。"
+    },
+    {
+      "id": "axis_04",
+      "label": "ロールマイニング",
+      "description": "既存権限や利用実績から業務ロール候補を抽出する機能の成熟度。"
+    },
+    {
+      "id": "axis_05",
+      "label": "ロール管理",
+      "description": "ビジネスロール、ITロール、権限束、継承、廃止管理の扱いやすさ。"
+    },
+    {
+      "id": "axis_06",
+      "label": "人事システム連携: SAP HCM",
+      "description": "SAP HCMまたは近接人事モデルをマスタとしてJoiner-Mover-Leaver運用へつなぐ適合性。"
+    },
+    {
+      "id": "axis_07",
+      "label": "人事システム連携: Workday",
+      "description": "Workdayを人事マスタにした属性同期、異動反映、退職者失効の成熟度。"
+    },
+    {
+      "id": "axis_08",
+      "label": "人事システム連携: 日本型人事パッケージ",
+      "description": "COMPANY、POSITIVE、GeneralistなどをCSV、DB、APIで吸収する現実性。"
+    },
+    {
+      "id": "axis_09",
+      "label": "プロビジョニング先カバレッジ",
+      "description": "Active Directory、Entra ID、Salesforce、SAP、SCIM、LDAP、DBなど主要対象への接続範囲。"
+    },
+    {
+      "id": "axis_10",
+      "label": "アナリティクス・リスクスコアリング",
+      "description": "過剰権限、異常権限、違反候補、利用傾向、承認リスクを可視化する能力。"
+    },
+    {
+      "id": "axis_11",
+      "label": "監査証跡とレポート",
+      "description": "誰が申請し、誰が承認し、いつ付与し、いつ棚卸したかを説明しやすいか。"
+    },
+    {
+      "id": "axis_12",
+      "label": "証券会社コンプライアンス適合性",
+      "description": "JSDA、FISC、J-SOXで問われる最小権限、職務分離、棚卸、特権申請説明への適合度。"
+    },
+    {
+      "id": "axis_13",
+      "label": "特権アクセス連携",
+      "description": "PAM（特権アクセス管理）、JIT、緊急特権、管理者申請との接続性。"
+    },
+    {
+      "id": "axis_14",
+      "label": "ハイブリッド環境適合性",
+      "description": "オンプレミス残存、Active Directory、SaaS、基幹業務が混在する前提への適合度。"
+    },
+    {
+      "id": "axis_15",
+      "label": "実装難易度と運用負荷",
+      "description": "初期モデリング、ロール整備、例外処理、運用保守の重さ。"
+    },
+    {
+      "id": "axis_16",
+      "label": "価格帯・ライセンスモデル",
+      "description": "公開価格の有無、サブスクリプションか個別見積中心か、モジュール従量の癖。"
+    },
+    {
+      "id": "axis_17",
+      "label": "日本語対応・日本サポート",
+      "description": "日本語UI、国内サポート、日本の導入パートナー、金融向け実装体制の強さ。"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod_001",
+      "label": "SailPoint IdentityNow / IdentityIQ",
+      "vendor": "SailPoint",
+      "deployment_models": [
+        "SaaS",
+        "on-premises"
+      ],
+      "positioning": "大規模企業と規制業種で定番になりやすいIGA。IdentityNowは標準化向け、IdentityIQは個別要件吸収向け。",
+      "best_fit": [
+        "大手証券",
+        "複雑な承認規程",
+        "ハイブリッド環境",
+        "棚卸とロール管理を重視する案件"
+      ],
+      "axes": {
+        "axis_01": {
+          "assessment": "strong",
+          "note": "申請カタログ、多段承認、例外経路の成熟度が高い。IdentityIQは複雑な例外承認を吸収しやすい。"
+        },
+        "axis_02": {
+          "assessment": "strong",
+          "note": "Certification Campaignの完成度が高く、部門長、データオーナー、監査部門で役割分担しやすい。"
+        },
+        "axis_03": {
+          "assessment": "strong",
+          "note": "SoD統制は強いが、ERPネイティブSoDの前面訴求ではSaviyntが優位になる場面がある。"
+        },
+        "axis_04": {
+          "assessment": "strong",
+          "note": "Role Miningとロール分析の成熟度が高く、既存ADグループや業務権限からロール候補を引き出しやすい。"
+        },
+        "axis_05": {
+          "assessment": "strong",
+          "note": "ビジネスロール、ITロール、ポリシーベース付与を整理しやすい。"
+        },
+        "axis_06": {
+          "assessment": "strong",
+          "note": "SAP HCM連携の実績が多く、Joiner-Mover-Leaverを設計しやすい。"
+        },
+        "axis_07": {
+          "assessment": "strong",
+          "note": "Workday連携の実績が豊富で、属性ベース付与に向く。"
+        },
+        "axis_08": {
+          "assessment": "medium",
+          "note": "日本型人事は標準コネクタよりCSV、DB、API吸収になるが、IdentityIQは柔軟性が高い。"
+        },
+        "axis_09": {
+          "assessment": "strong",
+          "note": "Active Directory、Entra ID、Salesforce、SAP、SCIMなど主要先を広くカバーする。"
+        },
+        "axis_10": {
+          "assessment": "strong",
+          "note": "アクセス分析は強いが、初期データ品質が低いと効果が出にくい。"
+        },
+        "axis_11": {
+          "assessment": "strong",
+          "note": "申請、承認、付与、棚卸の時系列証跡を監査に説明しやすい。"
+        },
+        "axis_12": {
+          "assessment": "strong",
+          "note": "職務分離、棚卸、承認責任を重く見る証券会社で本命候補に入りやすい。"
+        },
+        "axis_13": {
+          "assessment": "medium",
+          "note": "PAM連携前提で強いが、特権アクセス機能を単体で完結する製品ではない。"
+        },
+        "axis_14": {
+          "assessment": "strong",
+          "note": "IdentityIQがオンプレミス残存や個別連携要件を吸収しやすい。"
+        },
+        "axis_15": {
+          "assessment": "medium",
+          "note": "設計自由度が高いぶん、ロールモデリングと権限クレンジングは重くなりやすい。"
+        },
+        "axis_16": {
+          "assessment": "limited",
+          "note": "個別見積中心の高価格帯。SaaSとオンプレミスの併用は役務費も膨らみやすい。"
+        },
+        "axis_17": {
+          "assessment": "strong",
+          "note": "日本語サポート窓口があり、大手案件に載せやすい。"
+        }
+      },
+      "commercial": {
+        "price_band": "high",
+        "license_model": "SaaSサブスクリプションまたはオンプレミス個別見積",
+        "pricing_transparency": "low"
+      },
+      "japan_market": {
+        "japanese_ui": "partial",
+        "japanese_support": "available",
+        "partner_ecosystem": "strong",
+        "notes": "公開事例とパートナー網が比較的厚く、金融案件でも候補に挙げやすい。"
+      },
+      "sources": [
+        "https://documentation.sailpoint.com/saas/help/provisioning/role_assignment.html",
+        "https://documentation.sailpoint.com/identityiq/help/certifications_and_access_reviews/about_certifications.html",
+        "https://www.sailpoint.com/identity-library/access-certifications",
+        "https://www.sailpoint.com/ja/customer-support"
+      ]
+    },
+    {
+      "id": "prod_002",
+      "label": "Saviynt Enterprise Identity Cloud",
+      "vendor": "Saviynt",
+      "deployment_models": [
+        "SaaS"
+      ],
+      "positioning": "SaaS前提でIGAとアプリケーションガバナンスを統合し、ERP文脈のSoD説明で強みを出しやすい。",
+      "best_fit": [
+        "ERP中心の統制",
+        "SoD重視の証券会社",
+        "クラウド標準化を進めたい案件"
+      ],
+      "axes": {
+        "axis_01": {
+          "assessment": "strong",
+          "note": "申請、承認、条件分岐をSaaSで標準化しやすい。"
+        },
+        "axis_02": {
+          "assessment": "strong",
+          "note": "アプリ単位、権限単位、オーナー単位のレビューを組みやすい。"
+        },
+        "axis_03": {
+          "assessment": "strong",
+          "note": "ERP系SoD分析の訴求が強く、申請時統制と違反検知を組み合わせやすい。"
+        },
+        "axis_04": {
+          "assessment": "medium",
+          "note": "Role Miningは実装できるが、ロール分析のわかりやすさではSailPointやOmadaが優位な場面がある。"
+        },
+        "axis_05": {
+          "assessment": "strong",
+          "note": "エンタープライズロール管理とSoDポリシーを結び付けやすい。"
+        },
+        "axis_06": {
+          "assessment": "strong",
+          "note": "SAP系の権限統制と説明責任に強い。"
+        },
+        "axis_07": {
+          "assessment": "strong",
+          "note": "Workdayを含む主要HRとの連携訴求がある。"
+        },
+        "axis_08": {
+          "assessment": "medium",
+          "note": "日本型人事はAPI、CSV、個別実装前提で考えるべきである。"
+        },
+        "axis_09": {
+          "assessment": "strong",
+          "note": "Active Directory、ERP、SaaS、SCIM対象の接続範囲が広い。"
+        },
+        "axis_10": {
+          "assessment": "strong",
+          "note": "アクセスリスク可視化と違反分析が強く、監査部門への説明資料を作りやすい。"
+        },
+        "axis_11": {
+          "assessment": "strong",
+          "note": "統制イベントの証跡は取りやすいが、レポート品質は導入体制の影響を受けやすい。"
+        },
+        "axis_12": {
+          "assessment": "strong",
+          "note": "SoDを監査の中心に置く証券会社と相性がよい。"
+        },
+        "axis_13": {
+          "assessment": "medium",
+          "note": "PAM連携前提で特権申請と棚卸をつなげやすい。"
+        },
+        "axis_14": {
+          "assessment": "medium",
+          "note": "オンプレミス連携は広いが、思想はSaaS標準化寄りである。"
+        },
+        "axis_15": {
+          "assessment": "medium",
+          "note": "SaaS前提で標準化しやすい一方、ERP権限の粒度設計は重くなりやすい。"
+        },
+        "axis_16": {
+          "assessment": "limited",
+          "note": "個別見積中心の高価格帯。機能モジュールの追加で総額が増えやすい。"
+        },
+        "axis_17": {
+          "assessment": "medium",
+          "note": "国内案件は増えているが、日本語対応と導入品質はパートナー依存が比較的大きい。"
+        }
+      },
+      "commercial": {
+        "price_band": "high",
+        "license_model": "SaaSサブスクリプションの個別見積",
+        "pricing_transparency": "low"
+      },
+      "japan_market": {
+        "japanese_ui": "partial",
+        "japanese_support": "partner-centered",
+        "partner_ecosystem": "medium",
+        "notes": "ERP統制を重視する案件では候補に残りやすいが、国内体制は事前確認が必要。"
+      },
+      "sources": [
+        "https://saviynt.com/hubfs/Solution%20Briefs/Saviynt%20for%20SAP%20-%20GRC%20Access%20Control.pdf?hsLang=en",
+        "https://saviynt.com/hubfs/Aug%2016_GT%20SoD%20Services_V1%20%282%29%20%281%29.pdf?hsLang=en"
+      ]
+    },
+    {
+      "id": "prod_003",
+      "label": "One Identity Manager",
+      "vendor": "Quest Software",
+      "deployment_models": [
+        "on-premises",
+        "hosted"
+      ],
+      "positioning": "IT Shop、承認ワークフロー、ハイブリッド接続の柔軟性が高く、日本企業の例外運用を吸収しやすい。",
+      "best_fit": [
+        "オンプレミス基幹が多い証券会社",
+        "例外承認が多い日本企業",
+        "細かいロールモデルを作りたい案件"
+      ],
+      "axes": {
+        "axis_01": {
+          "assessment": "strong",
+          "note": "IT Shopで申請カタログと複雑承認を構成しやすい。"
+        },
+        "axis_02": {
+          "assessment": "strong",
+          "note": "Attestation機能が成熟しており、部門、アプリ、ロール単位の棚卸を設計しやすい。"
+        },
+        "axis_03": {
+          "assessment": "strong",
+          "note": "コンプライアンスルール設計は強いが、ERP専用SoDの訴求ではSaviyntほど前面ではない。"
+        },
+        "axis_04": {
+          "assessment": "medium",
+          "note": "ロール分析は可能で、既存運用からの再整理に向く。"
+        },
+        "axis_05": {
+          "assessment": "strong",
+          "note": "組織、部門、職責、IT権限の階層設計がしやすい。"
+        },
+        "axis_06": {
+          "assessment": "strong",
+          "note": "SAP HCMを含む大企業人事連携の柔軟性が高い。"
+        },
+        "axis_07": {
+          "assessment": "medium",
+          "note": "Workday連携は可能だが、SaaS専業ほど前面訴求ではない。"
+        },
+        "axis_08": {
+          "assessment": "strong",
+          "note": "DB、CSV、APIを使った吸収力が高く、日本型人事パッケージと相性がよい。"
+        },
+        "axis_09": {
+          "assessment": "strong",
+          "note": "Active Directory、Entra ID、SAP、Salesforce、SCIMなどの主要対象を広く扱える。"
+        },
+        "axis_10": {
+          "assessment": "medium",
+          "note": "統制分析は十分だが、最新SaaS型の分析演出よりは地に足が付いた実装寄りである。"
+        },
+        "axis_11": {
+          "assessment": "strong",
+          "note": "承認経路と棚卸結果を監査向けに整理しやすい。"
+        },
+        "axis_12": {
+          "assessment": "strong",
+          "note": "オンプレミス基幹や細かな承認規程が強い証券会社に適合しやすい。"
+        },
+        "axis_13": {
+          "assessment": "medium",
+          "note": "One Identity製品群や外部PAMとの組み合わせで特権統制を組みやすい。"
+        },
+        "axis_14": {
+          "assessment": "strong",
+          "note": "レガシー業務、Active Directory、クラウドが混在する企業に向く。"
+        },
+        "axis_15": {
+          "assessment": "medium",
+          "note": "自由度が高く、初期設計を誤ると運用負荷が上がる。"
+        },
+        "axis_16": {
+          "assessment": "limited",
+          "note": "個別見積中心で、実装役務込みの総額は高くなりやすい。"
+        },
+        "axis_17": {
+          "assessment": "strong",
+          "note": "日本語サポートポータルと国内パートナーがあり、国内運用に乗せやすい。"
+        }
+      },
+      "commercial": {
+        "price_band": "high",
+        "license_model": "個別見積中心",
+        "pricing_transparency": "low"
+      },
+      "japan_market": {
+        "japanese_ui": "partial",
+        "japanese_support": "available",
+        "partner_ecosystem": "strong",
+        "notes": "日本企業の例外運用に合わせやすい点が評価されやすい。"
+      },
+      "sources": [
+        "https://www.oneidentity.com/products/identity-manager/",
+        "https://support.oneidentity.com/pdf/qtsi_200623jp_QuestSoftware_JapanesePortalHowTo_2016Dec.pdf"
+      ]
+    },
+    {
+      "id": "prod_004",
+      "label": "IBM Security Verify Governance",
+      "vendor": "IBM",
+      "deployment_models": [
+        "on-premises",
+        "hosted",
+        "hybrid"
+      ],
+      "positioning": "旧IGI系譜の統制重視IGA。日本IBMや既存IBM系SI体制がある企業では説明責任を組み立てやすい。",
+      "best_fit": [
+        "IBM基盤が多い金融機関",
+        "国内SI体制を重視する案件",
+        "監査レポート重視"
+      ],
+      "axes": {
+        "axis_01": {
+          "assessment": "medium",
+          "note": "標準的な申請と承認フローは十分で、SIで補強しやすい。"
+        },
+        "axis_02": {
+          "assessment": "strong",
+          "note": "Certification運用は成熟しており、監査向け運用に向く。"
+        },
+        "axis_03": {
+          "assessment": "strong",
+          "note": "SoD統制は可能で、規制業種で必要な説明粒度を満たしやすい。"
+        },
+        "axis_04": {
+          "assessment": "medium",
+          "note": "ロールマイニングはあるが、最新の分析機能ではSailPointやOmadaが優位になりやすい。"
+        },
+        "axis_05": {
+          "assessment": "medium",
+          "note": "伝統的なロール管理と承認統制に向く。"
+        },
+        "axis_06": {
+          "assessment": "medium",
+          "note": "SAP HCM連携はSI力と組み合わせて実装しやすい。"
+        },
+        "axis_07": {
+          "assessment": "medium",
+          "note": "Workday連携は可能だが、クラウドネイティブ製品ほど前面には出ていない。"
+        },
+        "axis_08": {
+          "assessment": "strong",
+          "note": "日本IBMや国内SIの実装力を前提に、日本型人事を吸収しやすい。"
+        },
+        "axis_09": {
+          "assessment": "medium",
+          "note": "主要ディレクトリや業務システムに広く対応できる。"
+        },
+        "axis_10": {
+          "assessment": "medium",
+          "note": "統制レポートは強いが、先進的なアクセス分析では専業SaaSより控えめである。"
+        },
+        "axis_11": {
+          "assessment": "strong",
+          "note": "監査向けレポート整備には向く。"
+        },
+        "axis_12": {
+          "assessment": "strong",
+          "note": "既存IBM系の運用、監査、SI体制がある証券会社では説明責任を実装しやすい。"
+        },
+        "axis_13": {
+          "assessment": "medium",
+          "note": "PAM一体感は弱く、外部製品連携が前提になる。"
+        },
+        "axis_14": {
+          "assessment": "strong",
+          "note": "オンプレミス混在前提の企業に向く。"
+        },
+        "axis_15": {
+          "assessment": "medium",
+          "note": "製品単体より導入体制の質が成否を左右しやすい。"
+        },
+        "axis_16": {
+          "assessment": "limited",
+          "note": "個別見積中心で、SI込みの総額は高くなりやすい。"
+        },
+        "axis_17": {
+          "assessment": "strong",
+          "note": "IBMの国内体制を活用しやすく、日本語対応は比較的強い。"
+        }
+      },
+      "commercial": {
+        "price_band": "high",
+        "license_model": "個別見積中心",
+        "pricing_transparency": "low"
+      },
+      "japan_market": {
+        "japanese_ui": "partial",
+        "japanese_support": "available",
+        "partner_ecosystem": "strong",
+        "notes": "IBM系の既存資産が多い企業では調達と運用の整合を取りやすい。"
+      },
+      "sources": [
+        "https://www.ibm.com/products/verify-identity-governance",
+        "https://public.dhe.ibm.com/software/security/products/isim/igi/igi5221_scenarios.pdf"
+      ]
+    },
+    {
+      "id": "prod_005",
+      "label": "Omada Identity",
+      "vendor": "Omada",
+      "deployment_models": [
+        "SaaS",
+        "hybrid"
+      ],
+      "positioning": "監査証跡、ロール管理、Attestationにバランスがよく、近年はIdentity Analyticsでロールマイニングを強化している。",
+      "best_fit": [
+        "棚卸重視",
+        "ロール主導の統治",
+        "SAPを含む権限整流化"
+      ],
+      "axes": {
+        "axis_01": {
+          "assessment": "medium",
+          "note": "申請承認フローは十分で、ロール主導運用と相性がよい。"
+        },
+        "axis_02": {
+          "assessment": "strong",
+          "note": "Attestation運用と監査証跡の整備が得意である。"
+        },
+        "axis_03": {
+          "assessment": "strong",
+          "note": "SoDポリシーをロール管理と結び付けやすい。"
+        },
+        "axis_04": {
+          "assessment": "strong",
+          "note": "Identity AnalyticsでMLベースのRole Miningを強化している。"
+        },
+        "axis_05": {
+          "assessment": "strong",
+          "note": "業務ロール中心の統治を組みやすい。"
+        },
+        "axis_06": {
+          "assessment": "strong",
+          "note": "SAP文脈との親和性が高い。"
+        },
+        "axis_07": {
+          "assessment": "medium",
+          "note": "主要クラウドHRとの連携は可能である。"
+        },
+        "axis_08": {
+          "assessment": "medium",
+          "note": "日本独自人事の標準化は弱く、アダプタや個別連携前提になる。"
+        },
+        "axis_09": {
+          "assessment": "strong",
+          "note": "標準コネクタとSCIM、REST、LDAP、PowerShell、CSV吸収の幅が広い。"
+        },
+        "axis_10": {
+          "assessment": "strong",
+          "note": "ロール分析と可視化の訴求が強い。"
+        },
+        "axis_11": {
+          "assessment": "strong",
+          "note": "監査向けの証跡を作りやすい。"
+        },
+        "axis_12": {
+          "assessment": "strong",
+          "note": "棚卸中心、監査重視、SAP権限整理を行う証券会社で評価しやすい。"
+        },
+        "axis_13": {
+          "assessment": "medium",
+          "note": "CyberArkなど外部PAMとの組み合わせで補完する前提になる。"
+        },
+        "axis_14": {
+          "assessment": "medium",
+          "note": "クラウド中心だが、既存環境を巻き取りながら移行しやすい。"
+        },
+        "axis_15": {
+          "assessment": "medium",
+          "note": "ロール主導で整理できる組織では運用が比較的安定しやすい。"
+        },
+        "axis_16": {
+          "assessment": "medium",
+          "note": "SaaS中心の個別見積。上位リーダーより抑えやすいケースもある。"
+        },
+        "axis_17": {
+          "assessment": "medium",
+          "note": "国内ではパートナー依存が大きく、体制確認が必要である。"
+        }
+      },
+      "commercial": {
+        "price_band": "medium_high",
+        "license_model": "SaaS中心の個別見積",
+        "pricing_transparency": "low"
+      },
+      "japan_market": {
+        "japanese_ui": "partial",
+        "japanese_support": "partner-centered",
+        "partner_ecosystem": "medium",
+        "notes": "製品力は高いが、日本での導入・保守体制は案件ごとに確認すべきである。"
+      },
+      "sources": [
+        "https://omadaidentity.com/wp-content/uploads/2024/09/Omada-Identity-Cloud-Guide.pdf",
+        "https://omadaidentity.com/wp-content/uploads/2024/05/Omada-Configurable-Connectivity-Framework.pdf",
+        "https://omadaidentity.com/wp-content/uploads/2021/05/ESG-Research-Insights-Paper-Omada-Modern-IGA-Apr-2021.pdf"
+      ]
+    },
+    {
+      "id": "prod_006",
+      "label": "Avatier Identity Anywhere",
+      "vendor": "Avatier",
+      "deployment_models": [
+        "SaaS",
+        "on-premises"
+      ],
+      "positioning": "セルフサービスと申請ワークフローは扱いやすいが、大手証券級の厳格SoDではPoC前提で見るべき製品。",
+      "best_fit": [
+        "中堅規模の統制強化",
+        "セルフサービス重視",
+        "コストを抑えたい案件"
+      ],
+      "axes": {
+        "axis_01": {
+          "assessment": "medium",
+          "note": "セルフサービス申請は扱いやすい。"
+        },
+        "axis_02": {
+          "assessment": "medium",
+          "note": "標準的な棚卸運用は構成できる。"
+        },
+        "axis_03": {
+          "assessment": "medium",
+          "note": "SoD機能はあるが、証券業の厳格なルールセットは事前検証が必要である。"
+        },
+        "axis_04": {
+          "assessment": "medium",
+          "note": "ロール分析は可能だが、上位群ほどの深さは見込みにくい。"
+        },
+        "axis_05": {
+          "assessment": "medium",
+          "note": "標準的なロール管理は可能である。"
+        },
+        "axis_06": {
+          "assessment": "medium",
+          "note": "SAP HCM連携は可能でも、実案件では個別確認が必要になりやすい。"
+        },
+        "axis_07": {
+          "assessment": "medium",
+          "note": "Workday連携は可能だが、強みとして前面には出ない。"
+        },
+        "axis_08": {
+          "assessment": "medium",
+          "note": "日本型人事はAPIやファイル連携前提で考えるべきである。"
+        },
+        "axis_09": {
+          "assessment": "medium",
+          "note": "主要対象には対応するが、深い業務権限制御は事前評価が必要である。"
+        },
+        "axis_10": {
+          "assessment": "limited",
+          "note": "先進的なリスクスコアリングでは差がつきやすい。"
+        },
+        "axis_11": {
+          "assessment": "medium",
+          "note": "標準レベルの監査証跡は確保できる。"
+        },
+        "axis_12": {
+          "assessment": "medium",
+          "note": "標準統制には使えるが、大手証券の複雑SoDでは慎重評価が必要である。"
+        },
+        "axis_13": {
+          "assessment": "limited",
+          "note": "特権アクセス連携は可能でも、製品の強みとしては前面に出ない。"
+        },
+        "axis_14": {
+          "assessment": "medium",
+          "note": "SaaSとオンプレミスの両方に対応できる。"
+        },
+        "axis_15": {
+          "assessment": "medium",
+          "note": "導入難易度は上位大手より抑えやすい可能性がある。"
+        },
+        "axis_16": {
+          "assessment": "medium",
+          "note": "個別見積中心だが、最上位群より抑えやすいケースがある。"
+        },
+        "axis_17": {
+          "assessment": "limited",
+          "note": "日本市場での直接体制は限定的で、案件単位の確認が必要である。"
+        }
+      },
+      "commercial": {
+        "price_band": "medium",
+        "license_model": "個別見積中心",
+        "pricing_transparency": "low"
+      },
+      "japan_market": {
+        "japanese_ui": "limited",
+        "japanese_support": "limited",
+        "partner_ecosystem": "limited",
+        "notes": "国内の大規模金融で使う場合はPoCとサポート体制確認を先に置くべきである。"
+      },
+      "sources": [
+        "https://www.avatier.com/",
+        "https://hl.avatier.com/wp-content/uploads/2024/12/IDaaC-FEATURES-MATRIX-WEB.pdf"
+      ]
+    },
+    {
+      "id": "prod_007",
+      "label": "Entra ID Governance",
+      "vendor": "Microsoft",
+      "deployment_models": [
+        "SaaS"
+      ],
+      "positioning": "Entitlement Management、Access Reviews、PIM、Identity Protectionを組み合わせてMicrosoft中心範囲を短期で統制する選択肢。",
+      "components": [
+        "Entitlement Management",
+        "Access Reviews",
+        "Privileged Identity Management",
+        "Identity Protection"
+      ],
+      "best_fit": [
+        "Microsoft 365中心",
+        "Entra ID中心のガバナンス",
+        "短期での統制改善",
+        "公開価格を重視する案件"
+      ],
+      "axes": {
+        "axis_01": {
+          "assessment": "medium",
+          "note": "Access Package中心の申請は扱いやすいが、複雑な例外承認や非Microsoft権限の細粒度統制は弱い。"
+        },
+        "axis_02": {
+          "assessment": "strong",
+          "note": "Access Reviewsは成熟しているが、守備範囲はMicrosoft中心に寄りやすい。"
+        },
+        "axis_03": {
+          "assessment": "limited",
+          "note": "本格的なエンタープライズSoDエンジンではなく、相反職務管理は別製品補完が必要になりやすい。"
+        },
+        "axis_04": {
+          "assessment": "limited",
+          "note": "大規模な業務ロールマイニング機能は限定的である。"
+        },
+        "axis_05": {
+          "assessment": "medium",
+          "note": "Entraロール、グループ、Access Package運用はできるが、全社業務ロール管理には不足が残る。"
+        },
+        "axis_06": {
+          "assessment": "limited",
+          "note": "SAP HCMは個別実装前提になりやすい。"
+        },
+        "axis_07": {
+          "assessment": "strong",
+          "note": "Workdayからのライフサイクル連携は比較的組みやすい。"
+        },
+        "axis_08": {
+          "assessment": "medium",
+          "note": "APIやProvisioningで連携できるが、専業IGAほど吸収力はない。"
+        },
+        "axis_09": {
+          "assessment": "medium",
+          "note": "Active Directory、Entra ID、Salesforce、SCIMには強いが、SAPの細かな業務権限統制は別設計が必要である。"
+        },
+        "axis_10": {
+          "assessment": "medium",
+          "note": "Identity Protectionは強いが、権限ガバナンス分析では専業IGAより浅い。"
+        },
+        "axis_11": {
+          "assessment": "strong",
+          "note": "Microsoft環境内の証跡は取りやすい。"
+        },
+        "axis_12": {
+          "assessment": "medium",
+          "note": "Microsoft中心の範囲なら有効だが、証券会社全社のSoD主軸には不足しやすい。"
+        },
+        "axis_13": {
+          "assessment": "strong",
+          "note": "PIMによるJIT管理者権限統制は強みである。"
+        },
+        "axis_14": {
+          "assessment": "medium",
+          "note": "Entra Connect前提の統制強化には向くが、レガシー業務権限まで深く届きにくい。"
+        },
+        "axis_15": {
+          "assessment": "strong",
+          "note": "Microsoft標準に寄せれば短期間で実装しやすい。"
+        },
+        "axis_16": {
+          "assessment": "strong",
+          "note": "公開ライセンス体系を確認しやすく、Entra Suiteやアドオンの比較が行いやすい。"
+        },
+        "axis_17": {
+          "assessment": "strong",
+          "note": "日本語情報、国内サポート、国内パートナーが最も充実している。"
+        }
+      },
+      "commercial": {
+        "price_band": "medium",
+        "license_model": "ユーザー課金とスイート/アドオン構成",
+        "pricing_transparency": "high"
+      },
+      "japan_market": {
+        "japanese_ui": "strong",
+        "japanese_support": "available",
+        "partner_ecosystem": "very_strong",
+        "notes": "Microsoft中心の環境では調達、実装、運用の障壁が最も低い。"
+      },
+      "sources": [
+        "https://learn.microsoft.com/en-us/entra/id-governance/overview",
+        "https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-overview",
+        "https://learn.microsoft.com/en-us/entra/id-governance/access-reviews-overview",
+        "https://learn.microsoft.com/en-us/entra/id-governance/licensing-fundamentals",
+        "https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-deployment-plan",
+        "https://learn.microsoft.com/en-us/entra/id-protection/overview-identity-protection"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "IGA",
+      "object_type": "concept",
+      "description": "アクセス申請、承認、プロビジョニング、定期棚卸、職務分離、監査証跡を統合的に扱う管理領域。",
+      "properties": {
+        "full_name": "Identity Governance and Administration"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "職務分離",
+      "object_type": "concept",
+      "description": "相反する業務権限を同一人物へ同時付与しない統制原則。",
+      "properties": {}
+    },
+    {
+      "id": "node_003",
+      "label": "定期アクセスレビュー",
+      "object_type": "concept",
+      "description": "権限の妥当性を継続的に確認し、不要権限を失効させる棚卸運用。",
+      "properties": {}
+    },
+    {
+      "id": "node_004",
+      "label": "証券会社ID管理",
+      "object_type": "concept",
+      "description": "証券会社における職務分離、監査証跡、特権統制、外部委託統制を重視したID管理テーマ。",
+      "properties": {
+        "file": "06_security_hardening/industry_securities_auth.json"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "SailPoint IdentityNow / IdentityIQ",
+      "object_type": "product",
+      "description": "SaaSとオンプレミスの両輪で大規模統制に対応しやすいIGA製品群。",
+      "properties": {}
+    },
+    {
+      "id": "node_006",
+      "label": "Saviynt Enterprise Identity Cloud",
+      "object_type": "product",
+      "description": "SoDとアプリケーションガバナンスを強く打ち出すSaaS型IGA。",
+      "properties": {}
+    },
+    {
+      "id": "node_007",
+      "label": "One Identity Manager",
+      "object_type": "product",
+      "description": "IT Shopと柔軟な承認モデルを持つハイブリッド向けIGA。",
+      "properties": {}
+    },
+    {
+      "id": "node_008",
+      "label": "IBM Security Verify Governance",
+      "object_type": "product",
+      "description": "統制重視で既存SI体制と組み合わせやすいIGA。",
+      "properties": {}
+    },
+    {
+      "id": "node_009",
+      "label": "Omada Identity",
+      "object_type": "product",
+      "description": "ロール管理、棚卸、Identity Analyticsに強みを持つIGA。",
+      "properties": {}
+    },
+    {
+      "id": "node_010",
+      "label": "Avatier Identity Anywhere",
+      "object_type": "product",
+      "description": "セルフサービス重視のIGA。",
+      "properties": {}
+    },
+    {
+      "id": "node_011",
+      "label": "Entra ID Governance",
+      "object_type": "product",
+      "description": "Microsoft中心のガバナンス機能群。",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_005",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "SailPoint製品群はIGA機能を実装する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "SaviyntはSaaS型IGAを実装する。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "One Identity Managerはハイブリッド向けIGAを実装する。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "IBM Security Verify Governanceは統制重視のIGAを実装する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "Omada Identityはロール主導のIGAを実装する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "Avatier Identity Anywhereはセルフサービス中心のIGAを実装する。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "Entra ID GovernanceはMicrosoft中心のIGA機能を提供する。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "証券会社ID管理では職務分離が必須になる。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "証券会社ID管理では定期アクセスレビューが必須になる。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_004",
+      "relationship": "complements",
+      "description": "IGAは証券会社ID管理における申請、棚卸、監査証跡を補完する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "証券会社で差が出る論点",
+      "content": "証券会社では、一般企業よりも職務分離、緊急時の例外承認、四半期または半期ごとの棚卸、監査証跡の個人帰属が重く問われる。したがって、単に申請画面があるかではなく、申請者、承認者、レビュー実施者、例外承認者、失効実行者を追跡できる製品が有利になる。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "有力候補の見方",
+      "content": "全社IGAの主力候補はSailPoint、Saviynt、One Identity、Omadaである。SailPointは総合力、SaviyntはSoD訴求、One Identityは日本企業の例外運用吸収、Omadaはロール主導と棚卸の整流化で評価しやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "IBMの位置付け",
+      "content": "IBM Security Verify Governanceは、製品単体の先進性よりも、日本IBMや既存SI体制と組み合わせた説明責任の作りやすさで評価するべきである。IBM基盤が強い金融機関では候補から外しにくい。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "Avatierの位置付け",
+      "content": "Avatierはセルフサービスと導入しやすさで比較対象になるが、大手証券級の厳密なSoD、ERP権限統制、国内支援体制を重く見る場合はPoCを前提に判断するべきである。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Entra ID Governanceの現実的な使いどころ",
+      "content": "Entra ID GovernanceはMicrosoft 365、Entra ID、Azure管理者権限の統制では費用対効果が高い。一方で、SAPを含む全社SoD、複雑な業務ロール管理、日本型人事吸収までを単体で担うには不足が残るため、専業IGAの代替ではなく補完または段階導入の起点として見るのが現実的である。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "価格評価の注意点",
+      "content": "価格はEntra ID Governanceを除き公開情報が限定的で、実際には対象ID数、接続先数、SoDや分析モジュールの有無、導入役務、国内保守体制で大きく変動する。したがって比較時は価格表よりも、必要統制を標準機能でどこまで満たせるかを優先すべきである。",
+      "evidence_level": "high",
+      "japan_specific": false
+    }
+  ]
+}

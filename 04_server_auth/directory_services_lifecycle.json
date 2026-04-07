@@ -1,0 +1,1387 @@
+{
+  "metadata": {
+    "id": "directory_services_lifecycle",
+    "title": "LDAPディレクトリサービスサポートライフサイクルと移行パス",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "OpenLDAP",
+      "Red Hat Directory Server",
+      "Red Hat IdM",
+      "FreeIPA",
+      "389 Directory Server",
+      "LDAP",
+      "directory-service",
+      "RHEL 8 migration",
+      "RHEL 9",
+      "lifecycle"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "./os_auth_methods.json",
+      "./kerberos_cifs_auth.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "directory_services": [
+    {
+      "service_id": "openldap",
+      "name": "OpenLDAP",
+      "vendor": "OpenLDAP Project",
+      "license": "OpenLDAP Public License",
+      "current_version": "2.6.13",
+      "support_model": "community_only",
+      "commercial_support": "Symas Corporation（Symas OpenLDAP）",
+      "product_lineage": [
+        "University of Michigan LDAP",
+        "OpenLDAP Project"
+      ],
+      "version_status": {
+        "2.4": {
+          "status": "historical_in_practice",
+          "notes": "RHEL 7系で広く使われたが、OpenLDAP Projectの現在配布では 2.6系がLTS、2.5系がHistoricとして扱われており、2.4系は既存環境の残存バージョンとして扱うのが実務的。"
+        },
+        "2.5": {
+          "status": "end_of_life_stage",
+          "notes": "OpenLDAP Projectは 2025年1月に 2.6 をLTSへ昇格させ、2.5は 2027-01-15 まで critical fixes のみと告知している。"
+        },
+        "2.6": {
+          "status": "current_lts",
+          "notes": "2025年1月からLTS。推定ライフスパンは5年。"
+        }
+      },
+      "rhel_availability": {
+        "rhel7": "openldap-servers 2.4.x 提供あり",
+        "rhel8": "openldap-servers はサポート対象パッケージから外れ、サーバー用途は非推奨",
+        "rhel9": "openldap-clients / openldap は提供されるが openldap-servers は標準提供されない"
+      },
+      "key_change_for_japanese_enterprise": "RHEL 7 / CentOS Linux 7 で slapd を動かしていた組織は、RHEL 8 以降へ上げるだけではサーバー機能を維持できない。OS更改とディレクトリ更改を同時に設計する必要がある。",
+      "major_features": [
+        "slapd による LDAPv3 サーバー",
+        "syncrepl レプリケーション",
+        "MDB backend / LMDB",
+        "SASL / TLS",
+        "動的設定 cn=config",
+        "lloadd ロードバランサー（2.6系）"
+      ],
+      "new_features_in_current_generation": [
+        "2.6系は current LTS として位置付けられる",
+        "README で significant changes from prior releases とされる",
+        "MDB backend が中核",
+        "Argon2 パスワードハッシュは 2.5系告知以降の現行世代で利用可能",
+        "libargon2 または libsodium 推奨"
+      ],
+      "migration_options": [
+        {
+          "target": "Red Hat IdM",
+          "fit": "RHEL 中心で Linux サーバー認証、sudo、HBAC、DNS、証明書まで統合したい場合",
+          "migration_style": "リスキーマと認証モデル再設計を伴う再構築"
+        },
+        {
+          "target": "Red Hat Directory Server",
+          "fit": "LDAP アプリ互換性を維持しつつ Red Hat サポートへ寄せたい場合",
+          "migration_style": "LDAP データ移行と ACL / プラグイン調整"
+        },
+        {
+          "target": "389 Directory Server",
+          "fit": "RHEL クローン / Fedora 系で最小変更継続したい場合",
+          "migration_style": "OpenLDAP 固有設定から 389 DS 構成へ変換"
+        },
+        {
+          "target": "Active Directory",
+          "fit": "Windows 運用が主で、アプリが AD スキーマ / Kerberos / GPO 周辺と整合する場合",
+          "migration_style": "アプリ属性変換と bind / search テストが中心"
+        },
+        {
+          "target": "Entra ID",
+          "fit": "アプリを SaaS / SAML / OIDC へ更改でき、LDAP を段階廃止できる場合",
+          "migration_style": "ディレクトリ移行ではなく認証方式モダナイズ"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": false,
+        "dns_integration": false,
+        "certificate_authority": false,
+        "sudo_rules": "schema extension で実装可能だが標準統合製品ほど容易ではない",
+        "host_based_access_control": false,
+        "ad_trust": false,
+        "application_directory_fit": "high",
+        "linux_identity_control_plane_fit": "medium_low"
+      },
+      "known_limitations": [
+        "OpenLDAP Project自身は商用サポートを提供しない",
+        "公式配布はソース中心で、Linuxディストリビューション実装差異が大きい",
+        "RHEL 8 / 9 では Red Hat が OpenLDAP サーバーを標準サポートしない",
+        "Kerberos KDC、DNS、CA、HBAC の統合制御は別製品で補う必要がある"
+      ]
+    },
+    {
+      "service_id": "red_hat_directory_server",
+      "name": "Red Hat Directory Server",
+      "vendor": "Red Hat",
+      "license": "commercial_subscription",
+      "current_version": "12.x on RHEL 9 / 11.x on RHEL 8",
+      "support_model": "vendor_supported",
+      "commercial_support": "Red Hat subscription",
+      "product_lineage": [
+        "Netscape Directory Server",
+        "Sun ONE Directory Server",
+        "Fedora Directory Server",
+        "389 Directory Server",
+        "Red Hat Directory Server"
+      ],
+      "upstream_relationship": "389 Directory Server の商用ダウンストリーム",
+      "platform_mapping": {
+        "rhel8": "Red Hat Directory Server 11.x（389-ds-base 1.4.x 系）",
+        "rhel9": "Red Hat Directory Server 12.x（389-ds-base 2.x 系）"
+      },
+      "support_policy": {
+        "overview": "10年ライフサイクル。EUS は対応RHELのライフサイクルに追随。",
+        "rhds11": "GA 2019-11-06。Maintenance support は 2029-05-21 まで。EUS は RHEL 8 に追随。",
+        "rhds12": "GA 2022-05-17。Maintenance support は 2032-05-17 まで。EUS は RHEL 9 に追随。"
+      },
+      "major_features": [
+        "Multi-Supplier Replication",
+        "パスワードポリシー",
+        "アクセス制御 ACI / ACL",
+        "SASL / GSSAPI",
+        "Distributed Numeric Assignment plug-in",
+        "Retro Changelog plug-in",
+        "TLS / FIPS 対応",
+        "Cockpit Web Console 管理"
+      ],
+      "migration_options": [
+        {
+          "target": "Red Hat IdM",
+          "fit": "LDAP 単体から Linux 認証統合基盤へ上げたい場合",
+          "migration_style": "ディレクトリから統合IAMへ昇格"
+        },
+        {
+          "target": "389 Directory Server",
+          "fit": "商用サポート不要で同系統へ寄せる場合",
+          "migration_style": "ダウンストリームからアップストリームへ"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": false,
+        "dns_integration": false,
+        "certificate_authority": false,
+        "sudo_rules": "schema / アプリ連携で対応",
+        "host_based_access_control": false,
+        "ad_trust": false,
+        "application_directory_fit": "high",
+        "linux_identity_control_plane_fit": "medium"
+      },
+      "known_limitations": [
+        "IdM のような統合 KDC / DNS / CA は持たない",
+        "Linux ログイン統制を単体で完結させる製品ではない",
+        "OpenLDAP からの移行では ACL 記法やプラグインモデルの差異吸収が必要"
+      ]
+    },
+    {
+      "service_id": "red_hat_idm",
+      "name": "Red Hat IdM",
+      "vendor": "Red Hat",
+      "license": "commercial_subscription",
+      "current_version": "RHEL bundled",
+      "support_model": "vendor_supported",
+      "commercial_support": "Red Hat subscription",
+      "community_counterpart": "FreeIPA",
+      "core_components": [
+        "389 Directory Server",
+        "MIT Kerberos",
+        "BIND",
+        "Dogtag PKI",
+        "SSSD",
+        "samba-winbind / trust components",
+        "custodia"
+      ],
+      "platform_mapping": {
+        "rhel8": "RHEL 8 ライフサイクルに連動",
+        "rhel9": "RHEL 9 ライフサイクルに連動"
+      },
+      "major_features": [
+        "Kerberos KDC 統合",
+        "Certificate Authority（Dogtag PKI）",
+        "DNS 統合",
+        "sudo rules",
+        "HBAC（Host-based Access Control）",
+        "AD trust",
+        "レプリケーション",
+        "custodia によるシークレット保護"
+      ],
+      "migration_options": [
+        {
+          "target": "Active Directory trust coexistence",
+          "fit": "Windows と Linux を段階統合したい場合",
+          "migration_style": "IdM を Linux 側制御面として追加し AD trust を張る"
+        },
+        {
+          "target": "Entra ID",
+          "fit": "最終的にクラウド寄せしたいが Linux / Kerberos / sudo 制御は当面残る場合",
+          "migration_style": "当面 IdM、長期的にアプリ単位でフェデレーション移行"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": true,
+        "dns_integration": true,
+        "certificate_authority": true,
+        "sudo_rules": true,
+        "host_based_access_control": true,
+        "ad_trust": true,
+        "application_directory_fit": "medium",
+        "linux_identity_control_plane_fit": "high"
+      },
+      "known_limitations": [
+        "OpenLDAP 単体ディレクトリの置き換えというより Linux 統合ID基盤への再設計になる",
+        "Windows クライアント / GPO 中心の世界では Active Directory の代替にはなりにくい",
+        "アプリ専用 LDAP スキーマを大量に持つ場合は設計整理が必要"
+      ]
+    },
+    {
+      "service_id": "389_directory_server",
+      "name": "389 Directory Server",
+      "vendor": "Community / Red Hat led upstream",
+      "license": "GPLv3",
+      "current_version": "3.2.0 upstream",
+      "support_model": "community_only",
+      "commercial_support": "Red Hat Directory Server への移行で商用支援可",
+      "upstream_relationship": "Red Hat Directory Server のアップストリーム",
+      "availability": {
+        "fedora": "Fedora packages で継続提供",
+        "centos_stream": "CentOS Stream 9/10 に 389-ds-base 系が存在",
+        "almalinux_rocky": "RHEL 互換パッケージを利用した運用が実務上可能"
+      },
+      "major_features": [
+        "Asynchronous Multi-Supplier Replication",
+        "ACI",
+        "TLS / SASL",
+        "LDAPv3 compliant server",
+        "オンライン設定変更",
+        "高スループット"
+      ],
+      "migration_options": [
+        {
+          "target": "Red Hat Directory Server",
+          "fit": "商用サポートが必要になった場合",
+          "migration_style": "同系統へのサポート付き移行"
+        },
+        {
+          "target": "FreeIPA / Red Hat IdM",
+          "fit": "Linux 認証制御まで統合したい場合",
+          "migration_style": "ディレクトリ単体から統合認証基盤へ"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": false,
+        "dns_integration": false,
+        "certificate_authority": false,
+        "sudo_rules": "schema / 上位製品経由",
+        "host_based_access_control": false,
+        "ad_trust": false,
+        "application_directory_fit": "high",
+        "linux_identity_control_plane_fit": "medium"
+      },
+      "known_limitations": [
+        "Red Hatサブスクリプションのような製品SLAはない",
+        "RHELクローンでの継続利用は可能だが、ベンダー責任分界を自組織で持つ必要がある"
+      ]
+    },
+    {
+      "service_id": "active_directory_lds",
+      "name": "Active Directory Lightweight Directory Services",
+      "vendor": "Microsoft",
+      "license": "bundled_with_windows_server",
+      "current_version": "Windows Server role",
+      "support_model": "vendor_supported",
+      "commercial_support": "Microsoft support via Windows Server lifecycle",
+      "former_name": "ADAM",
+      "major_features": [
+        "アプリ向け独立LDAPディレクトリ",
+        "独立した naming contexts / application directory partitions",
+        "レプリケーション",
+        "複数インスタンスを同一サーバーで実行可能",
+        "AD API / LDAP API 互換"
+      ],
+      "major_differences_from_ad": [
+        "Windows OS 向けのインフラ機能を含まない",
+        "AD ドメイン / フォレストと独立動作できる",
+        "アプリ専用ディレクトリ用途が中心",
+        "GPO やドメインログオン基盤の代替ではない"
+      ],
+      "migration_options": [
+        {
+          "target": "Active Directory",
+          "fit": "アプリがWindowsドメイン統合へ寄せられる場合",
+          "migration_style": "アプリ属性・認証再設計"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": false,
+        "dns_integration": false,
+        "certificate_authority": false,
+        "sudo_rules": false,
+        "host_based_access_control": false,
+        "ad_trust": false,
+        "application_directory_fit": "high",
+        "linux_identity_control_plane_fit": "low"
+      },
+      "known_limitations": [
+        "Active Directory ドメインサービスの代替ではない",
+        "Windows ログオン統制や GPO を提供しない",
+        "Linux 認証統合基盤としての魅力は限定的"
+      ]
+    },
+    {
+      "service_id": "oracle_directory_server_enterprise_edition",
+      "name": "Oracle Directory Server Enterprise Edition",
+      "vendor": "Oracle",
+      "license": "commercial",
+      "current_version": "legacy_but_supported_for_transition_scenarios",
+      "support_model": "vendor_supported",
+      "commercial_support": "Oracle support",
+      "former_names": [
+        "Sun Java System Directory Server",
+        "Sun Directory Server Enterprise Edition"
+      ],
+      "strategic_successor": "Oracle Unified Directory",
+      "major_features": [
+        "大規模 LDAPv3 データストア",
+        "DSML v2",
+        "細粒度 ACI",
+        "Oracle ミドルウェアとの連携"
+      ],
+      "migration_options": [
+        {
+          "target": "Oracle Unified Directory",
+          "fit": "Oracle Fusion Middleware / WebLogic / Oracle IAM を継続利用する場合",
+          "migration_style": "Oracle公式 Transition to OUD を使用"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": false,
+        "dns_integration": false,
+        "certificate_authority": false,
+        "sudo_rules": false,
+        "host_based_access_control": false,
+        "ad_trust": false,
+        "application_directory_fit": "high",
+        "linux_identity_control_plane_fit": "low"
+      },
+      "known_limitations": [
+        "戦略製品は OUD 側",
+        "Sun 系ディレクトリからの歴史的残存が中心",
+        "日本企業では Solaris / 旧 Java EE 系アプリの残置資産と結び付きやすい"
+      ]
+    },
+    {
+      "service_id": "forgerock_directory_services",
+      "name": "ForgeRock Directory Services",
+      "vendor": "Ping Identity",
+      "license": "commercial",
+      "current_version": "Ping-branded continuation",
+      "support_model": "vendor_supported",
+      "commercial_support": "Ping Identity support and EOL policy",
+      "major_features": [
+        "Java 実装 LDAPv3 ディレクトリ",
+        "RESTful HTTP access",
+        "高可用・高性能ストア",
+        "SaaS / CIAM 統合との親和性"
+      ],
+      "product_history": [
+        "ForgeRock 製品群として提供",
+        "2023年に Ping Identity と ForgeRock が一体化",
+        "2024年以降は Ping ブランドへ再編"
+      ],
+      "migration_options": [
+        {
+          "target": "PingDirectory / Ping ブランド製品群",
+          "fit": "Ping ポートフォリオへ統合したい場合",
+          "migration_style": "ベンダー内再編"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": false,
+        "dns_integration": false,
+        "certificate_authority": false,
+        "sudo_rules": false,
+        "host_based_access_control": false,
+        "ad_trust": false,
+        "application_directory_fit": "high",
+        "linux_identity_control_plane_fit": "low"
+      },
+      "known_limitations": [
+        "Linux OS 認証統制の標準基盤ではなく、顧客 / アプリID基盤寄り",
+        "ブランド変更に伴い名称の読み替えが必要"
+      ]
+    },
+    {
+      "service_id": "edir",
+      "name": "eDirectory",
+      "vendor": "OpenText",
+      "license": "commercial",
+      "current_version": "9.2.x residual deployments",
+      "support_model": "vendor_supported",
+      "commercial_support": "OpenText / former NetIQ support channels",
+      "product_history": [
+        "Novell eDirectory",
+        "NetIQ / Micro Focus eDirectory",
+        "OpenText eDirectory"
+      ],
+      "major_features": [
+        "大規模LDAPディレクトリ",
+        "旧Novell環境との親和性",
+        "REST サービス対応（9.2系）",
+        "PBKDF2 ベースの non-reversible password storage（9.2系）"
+      ],
+      "regional_notes": "日本では製造、公共、教育の旧Novell系基盤で残存しやすい。",
+      "migration_options": [
+        {
+          "target": "Active Directory",
+          "fit": "Windows 主体運用へ寄せる場合",
+          "migration_style": "属性 / 権限モデル / アプリ連携の再設計"
+        },
+        {
+          "target": "Entra ID",
+          "fit": "SaaS とモダン認証中心へ再編する場合",
+          "migration_style": "LDAP からフェデレーションへ"
+        }
+      ],
+      "id_management_capabilities": {
+        "kerberos_kdc": "optional / ecosystem dependent",
+        "dns_integration": false,
+        "certificate_authority": false,
+        "sudo_rules": false,
+        "host_based_access_control": false,
+        "ad_trust": false,
+        "application_directory_fit": "medium_high",
+        "linux_identity_control_plane_fit": "low"
+      },
+      "known_limitations": [
+        "運用人材が減少している",
+        "旧Novell / NetIQ 資産依存が強く、移行時に権限・スキーマ棚卸しが重い",
+        "Windows 主体企業では Active Directory / Entra ID への寄せが進みやすい"
+      ]
+    }
+  ],
+  "comparison_focus": {
+    "openldap_vs_red_hat_idm": {
+      "directory_only_vs_integrated_platform": "OpenLDAP は LDAP サーバー中心、Red Hat IdM は LDAP+Kerberos+DNS+CA+アクセス制御の統合基盤。",
+      "linux_login_control": "OpenLDAP 単体では sudo や HBAC の統制を別設計にする必要がある。Red Hat IdM は標準機能として扱いやすい。",
+      "rhel_supportability": "OpenLDAP サーバーは RHEL 8 / 9 で標準サポートされないが、Red Hat IdM は RHEL ライフサイクルに完全連動する。",
+      "app_compatibility": "既存 LDAP アプリ互換は OpenLDAP / RHDS / 389 DS が有利。Linux 統合認証への転換は Red Hat IdM が有利。"
+    }
+  },
+  "migration_matrix": [
+    {
+      "source": "OpenLDAP on RHEL 7",
+      "target": "Red Hat IdM / FreeIPA",
+      "conditions": [
+        "RHEL 環境中心",
+        "Linux サーバー認証、sudo、HBAC、証明書を統合したい",
+        "Active Directory を Linux 認証の主制御面にしたくない"
+      ],
+      "risk": "中",
+      "effort": "大",
+      "why": "OS更改と同時に ID 基盤を再設計する必要があるため。",
+      "notes": "LDAP 置換ではなく統合IAM導入。既存アプリ LDAP bind の互換確認が必要。"
+    },
+    {
+      "source": "OpenLDAP on RHEL 7",
+      "target": "Active Directory",
+      "conditions": [
+        "Windows 環境あり",
+        "運用組織が Microsoft 系に寄っている",
+        "アプリが AD LDS / AD DS いずれかへ寄せられる"
+      ],
+      "risk": "小",
+      "effort": "中",
+      "why": "日本企業で運用人材と周辺製品が揃いやすいため。",
+      "notes": "Linux クライアントは SSSD / realmd / winbind で参加可能。"
+    },
+    {
+      "source": "OpenLDAP on RHEL 7",
+      "target": "Entra ID",
+      "conditions": [
+        "SaaS 移行方針あり",
+        "LDAP 依存アプリを段階的に廃止またはフェデレーション化できる",
+        "ゼロトラスト / モダン認証へ再設計する意思がある"
+      ],
+      "risk": "小",
+      "effort": "大",
+      "why": "ディレクトリ移行より認証方式モダナイズが中心になるため。",
+      "notes": "必要に応じて中間策として Entra Domain Services や AD を併用する。"
+    },
+    {
+      "source": "OpenLDAP on RHEL 7",
+      "target": "Red Hat Directory Server / 389 Directory Server",
+      "conditions": [
+        "最小変更で継続したい",
+        "LDAP アプリ互換を優先する",
+        "RHEL クローンや Fedora / CentOS Stream を選択可能"
+      ],
+      "risk": "小",
+      "effort": "小",
+      "why": "LDAP サーバー継続という意味では最短距離。",
+      "notes": "ただし OpenLDAP 固有設定をそのまま移せるわけではなく、ACI / レプリケーション / プラグイン差異を吸収する必要がある。"
+    },
+    {
+      "source": "OpenLDAP on RHEL 7",
+      "target": "Symas OpenLDAP",
+      "conditions": [
+        "OpenLDAP 継続が必須",
+        "サードパーティ商用サポートを許容できる",
+        "RHEL 標準外サーバーを明示管理できる"
+      ],
+      "risk": "中",
+      "effort": "小",
+      "why": "構成変更は小さいが Red Hat 標準サポート外の責任分界が残るため。",
+      "notes": "RHEL 8/9 上でも Red Hat 標準機能ではなくなる点を受容する必要がある。"
+    },
+    {
+      "source": "eDirectory",
+      "target": "Active Directory / Entra ID",
+      "conditions": [
+        "Windows 主体",
+        "旧 Novell 資産の比率が下がっている",
+        "教育・公共・製造での長期残存を整理したい"
+      ],
+      "risk": "中",
+      "effort": "大",
+      "why": "属性 / 権限 / アプリ連携の棚卸しが重い。",
+      "notes": "まず Identity Manager 連携、ファイル / プリント、認証の依存関係を可視化する。"
+    }
+  ],
+  "references": [
+    {
+      "id": "ref_001",
+      "title": "OpenLDAP Download",
+      "url": "https://www.openldap.org/software/download/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_002",
+      "title": "OpenLDAP 2.6 LTS announcement discussion",
+      "url": "https://lists.openldap.org/hyperkitty/list/openldap-technical@openldap.org/thread/X46N5MNXEUKOUO3JN2OHH7FGKBPS4ZNQ/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_003",
+      "title": "OpenLDAP 2.5 Announcement",
+      "url": "https://lists.openldap.org/hyperkitty/list/openldap-announce@openldap.org/thread/BH3VDPG6IYYF5L5U6LZGHHKMJY5HFA3L/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_004",
+      "title": "OpenLDAP 2.6 README",
+      "url": "https://www.openldap.org/software/release/readme_lts.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_005",
+      "title": "RHEL 8 considerations in adopting RHEL 8 - packages with removed support",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/considerations_in_adopting_rhel_8/packages-with-removed-support_changes-to-packages",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_006",
+      "title": "RHEL 9 package manifest",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/pdf/package_manifest/Red_Hat_Enterprise_Linux-9-Package_manifest-en-US.pdf",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_007",
+      "title": "CentOS Linux end dates",
+      "url": "https://centos.org/centos-linux/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_008",
+      "title": "Red Hat Directory Server Errata Support Policy",
+      "url": "https://access.redhat.com/support/policy/updates/directory",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_009",
+      "title": "Installing Red Hat Directory Server 12",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_directory_server/12/html-single/installing_red_hat_directory_server/index",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_010",
+      "title": "Red Hat Directory Server 11 release notes",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_directory_server/11/html-single/release_notes/index",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_011",
+      "title": "Red Hat Directory Server 12 configuration and schema reference",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_directory_server/12/html/configuration_and_schema_reference/plug_in_implemented_server_functionality_reference",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_012",
+      "title": "Red Hat Directory Server 11 administration guide - replication and SASL",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_directory_server/11/html/administration_guide/managing_replication",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_013",
+      "title": "FreeIPA main page",
+      "url": "https://www.freeipa.org/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_014",
+      "title": "RHEL 9 Planning Identity Management",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/planning_identity_management/index",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_015",
+      "title": "RHEL 9 Installing trust between IdM and AD",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/installing_trust_between_idm_and_ad/setting-up-a-trust_installing-trust-between-idm-and-ad",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_016",
+      "title": "RHEL 9 considerations in adopting RHEL 9",
+      "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/pdf/considerations_in_adopting_rhel_9/Red_Hat_Enterprise_Linux-9-Considerations_in_adopting_RHEL_9-en-US.pdf",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_017",
+      "title": "389 Directory Server main page",
+      "url": "https://www.port389.org/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_018",
+      "title": "Fedora package 389-ds-base",
+      "url": "https://packages.fedoraproject.org/pkgs/389-ds-base/389-ds-base-devel",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_019",
+      "title": "CentOS Stream 9 package example for 389-ds-base",
+      "url": "https://rpmfind.net/linux/RPM/centos-stream/9/appstream/x86_64/389-ds-base-2.7.0-2.el9.x86_64.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_020",
+      "title": "AlmaLinux 9 package example for 389-ds-base",
+      "url": "https://rpmfind.net/linux/RPM/almalinux/9.6/appstream/x86_64/389-ds-base-2.6.1-8.el9_6.x86_64.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_021",
+      "title": "What Is Active Directory Lightweight Directory Services",
+      "url": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/adam/what-is-active-directory-lightweight-directory-services",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_022",
+      "title": "Using Application Directory Partitions",
+      "url": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/adam/using-application-directory-partitions",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_023",
+      "title": "Oracle Directory Server Enterprise Edition overview",
+      "url": "https://docs.oracle.com/cd/E35622_01/pdf/821-1223.pdf",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_024",
+      "title": "Understanding the Transition to Oracle Unified Directory",
+      "url": "https://docs.oracle.com/en/middleware/idm/unified-directory/14.1.2/oudtg/understanding-transition-oracle-unified-directory.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_025",
+      "title": "Installing and Configuring Oracle Unified Directory",
+      "url": "https://docs.oracle.com/en/middleware/idm/unified-directory/12.2.1.4/oudig/installing-oracle-unified-directory.pdf",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_026",
+      "title": "ForgeRock Directory Services documentation",
+      "url": "https://docs.pingidentity.com/pingds/7.4/index.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_027",
+      "title": "About directories | PingDS",
+      "url": "https://docs.pingidentity.com/pingds/7.4/getting-started/directory-services.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_028",
+      "title": "Ping Identity rename notice for former ForgeRock products",
+      "url": "https://docs.pingidentity.com/pingoneaic/latest/product-information/new-name-for-forgerock-identity-cloud.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_029",
+      "title": "NetIQ eDirectory 9.2 release notes",
+      "url": "https://www.netiq.com/documentation/edirectory-92/edirectory92_releasenotes/data/edirectory92_releasenotes.html",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_030",
+      "title": "NetIQ eDirectory 9.2 documentation portal",
+      "url": "https://www.netiq.com/es-es/documentation/edirectory-92/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_031",
+      "title": "OpenText Identity Manager integrations",
+      "url": "https://www.opentext.com/products/identity-manager",
+      "accessed": "2026-04-07"
+    },
+    {
+      "id": "ref_032",
+      "title": "Symas OpenLDAP packages and support context",
+      "url": "https://www.openldap.org/faq/data/cache/108.html",
+      "accessed": "2026-04-07"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "OpenLDAP",
+      "object_type": "product",
+      "description": "RHEL 7 世代で広く使われたコミュニティLDAPサーバー。",
+      "properties": {
+        "vendor": "OpenLDAP Project",
+        "support_model": "community_only"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "openldap-servers 廃止",
+      "object_type": "risk",
+      "description": "RHEL 8 以降で OpenLDAP サーバー機能が標準サポート対象から外れた構造変化。",
+      "properties": {
+        "impact": "high",
+        "effective_platforms": [
+          "RHEL 8",
+          "RHEL 9"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Red Hat Directory Server",
+      "object_type": "product",
+      "description": "389 Directory Server をベースにした Red Hat 商用LDAP。",
+      "properties": {
+        "vendor": "Red Hat"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "389 Directory Server",
+      "object_type": "product",
+      "description": "Red Hat 系LDAPのアップストリームとなるコミュニティ製品。",
+      "properties": {
+        "vendor": "Community / Red Hat led upstream"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Red Hat IdM",
+      "object_type": "product",
+      "description": "LDAP、Kerberos、DNS、CA を統合する RHEL 向けID基盤。",
+      "properties": {
+        "vendor": "Red Hat"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "FreeIPA",
+      "object_type": "product",
+      "description": "Red Hat IdM のコミュニティ系譜となる統合認証基盤。",
+      "properties": {
+        "vendor": "Community"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "Active Directory Lightweight Directory Services",
+      "object_type": "product",
+      "description": "Windows Server 付属のアプリ向けLDAPディレクトリ。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "Oracle Directory Server Enterprise Edition",
+      "object_type": "product",
+      "description": "Sun 系LDAPの流れを汲む Oracle ディレクトリ。",
+      "properties": {
+        "vendor": "Oracle"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "Oracle Unified Directory",
+      "object_type": "product",
+      "description": "Oracle が推奨する後継ディレクトリ基盤。",
+      "properties": {
+        "vendor": "Oracle"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "ForgeRock Directory Services",
+      "object_type": "product",
+      "description": "現 Ping Identity 系の Java 実装ディレクトリサービス。",
+      "properties": {
+        "vendor": "Ping Identity"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "eDirectory",
+      "object_type": "product",
+      "description": "Novell 系譜のディレクトリサービス。",
+      "properties": {
+        "vendor": "OpenText"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "Windows 主体企業での標準ディレクトリ基盤。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "SaaS とモダン認証へ寄せるクラウドID基盤。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "CentOS Linux 7 EOL",
+      "object_type": "risk",
+      "description": "2024-06-30 の EOL により RHEL 7 世代OpenLDAPの放置が困難になった。",
+      "properties": {
+        "impact": "high"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "mitigates",
+      "description": "openldap-servers 廃止は OpenLDAP サーバー継続の前提を崩した。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_002",
+      "relationship": "deepens",
+      "description": "CentOS Linux 7 EOL は RHEL 8 以降への更改圧力を高め、OpenLDAP サーバー廃止問題を顕在化させた。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "Red Hat Directory Server は 389 Directory Server の商用ダウンストリームである。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "Red Hat IdM はディレクトリ層として 389 Directory Server 系を内部利用する。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_006",
+      "relationship": "implements",
+      "description": "Red Hat IdM は FreeIPA を商用化した系譜にある。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_003",
+      "relationship": "replaces",
+      "description": "RHEL 8/9 では OpenLDAP の代替として RHDS が有力候補になる。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_004",
+      "relationship": "replaces",
+      "description": "最小変更継続では 389 Directory Server が有力候補になる。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_005",
+      "relationship": "replaces",
+      "description": "Linux 認証統合を目指す場合は OpenLDAP から Red Hat IdM へ設計転換する。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_012",
+      "relationship": "replaces",
+      "description": "Windows 主体企業では Active Directory への統合が現実的である。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_013",
+      "relationship": "replaces",
+      "description": "SaaS 中心戦略では LDAP 廃止を伴う Entra ID への移行が最終目標になり得る。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_009",
+      "relationship": "replaces",
+      "description": "Oracle は DSEE / ODSEE から OUD への移行ガイドを提供している。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_012",
+      "relationship": "replaces",
+      "description": "Windows 主体の更改では eDirectory から Active Directory への再編が多い。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_013",
+      "relationship": "replaces",
+      "description": "クラウド化を進める場合 eDirectory から Entra ID への移行が候補となる。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "OpenLDAP 2.6 は current LTS",
+      "summary": "OpenLDAP Project の配布ページでは 2.6.13 が current Long Term Support Release とされる。",
+      "details": [
+        "OpenLDAP Download で current LTS と明示される。",
+        "2026-04-07 時点の current version は 2.6.13。"
+      ],
+      "related_nodes": [
+        "node_001"
+      ],
+      "reference_ids": [
+        "ref_001"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "OpenLDAP 2.5 は終息段階",
+      "summary": "OpenLDAP Project は 2025年1月に 2.6 をLTSへ昇格させ、2.5 は 2027-01-15 まで critical fixes のみとした。",
+      "details": [
+        "2.6 は 2025年1月からLTS。",
+        "2.5 は end of life stage と告知されている。"
+      ],
+      "related_nodes": [
+        "node_001"
+      ],
+      "reference_ids": [
+        "ref_002"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "OpenLDAP 2.5 世代での機能拡張",
+      "summary": "OpenLDAP 2.5 の告知では Argon2 パスワードハッシュや新規モジュール群が紹介されている。",
+      "details": [
+        "argon2 password hashing module を新規モジュールとして告知。",
+        "現行 2.6 LTS でも libargon2 / libsodium 推奨が残る。"
+      ],
+      "related_nodes": [
+        "node_001"
+      ],
+      "reference_ids": [
+        "ref_003",
+        "ref_004"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "RHEL 8 での openldap-servers 廃止",
+      "summary": "RHEL 8 の Considerations 文書では openldap-servers が removed support packages に入る。",
+      "details": [
+        "RHEL 7 で使われた slapd サーバー機能を、RHEL 8 標準サポート前提では持ち越せない。",
+        "これが RHEL 7 からの OS 更改で最大の構造変化である。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_002"
+      ],
+      "reference_ids": [
+        "ref_005"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "RHEL 9 は OpenLDAP クライアント中心",
+      "summary": "RHEL 9 package manifest では openldap-clients や openldap は確認できるが、openldap-servers は標準提供の主役ではない。",
+      "details": [
+        "RHEL 9 ではクライアントやライブラリ用途は継続。",
+        "サーバー用途は RHDS / IdM / 他製品への移行設計が必要。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_002"
+      ],
+      "reference_ids": [
+        "ref_006"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "CentOS Linux 7 EOL は 2024-06-30",
+      "summary": "CentOS Project は CentOS Linux 7 end of life を 2024-06-30 と明示している。",
+      "details": [
+        "RHEL 7 系 OpenLDAP 環境の維持コストとセキュリティリスクを一気に高めた。",
+        "日本企業の OpenLDAP サーバー更改圧力の直接要因になった。"
+      ],
+      "related_nodes": [
+        "node_014",
+        "node_002"
+      ],
+      "reference_ids": [
+        "ref_007"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "RHDS 11 は RHEL 8 に連動",
+      "summary": "Red Hat Directory Server 11 は RHEL 8 系に対応し、EUS も RHEL 8 ライフサイクルに追随する。",
+      "details": [
+        "GA は 2019-11-06。",
+        "Maintenance support は 2029-05-21 まで。"
+      ],
+      "related_nodes": [
+        "node_003"
+      ],
+      "reference_ids": [
+        "ref_008",
+        "ref_010"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "RHDS 12 は RHEL 9 に連動",
+      "summary": "Red Hat Directory Server 12 は RHEL 9 系に対応し、EUS も RHEL 9 ライフサイクルに追随する。",
+      "details": [
+        "GA は 2022-05-17。",
+        "Maintenance support は 2032-05-17 まで。"
+      ],
+      "related_nodes": [
+        "node_003"
+      ],
+      "reference_ids": [
+        "ref_008",
+        "ref_009"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "RHDS は Multi-Supplier Replication を提供",
+      "summary": "Red Hat Directory Server は multi-supplier replication を正式機能として提供する。",
+      "details": [
+        "高可用構成と地理分散で使いやすい。",
+        "OpenLDAP の syncrepl 継続より運用ガイドが豊富。"
+      ],
+      "related_nodes": [
+        "node_003"
+      ],
+      "reference_ids": [
+        "ref_012"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "RHDS の DNA plug-in",
+      "summary": "Distributed Numeric Assignment plug-in は uidNumber / gidNumber などの数値属性を複数サーバーで競合しにくく払い出す。",
+      "details": [
+        "複数サプライヤーで non-overlapping ranges を使う。",
+        "Linux ID の自動採番と相性が良い。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_004"
+      ],
+      "reference_ids": [
+        "ref_011"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "RHDS の Retro Changelog plug-in",
+      "summary": "Retro Changelog plug-in は旧Directory Server 4.x 互換形式の changelog を必要とするクライアント向け機能である。",
+      "details": [
+        "互換性要件がある場合に有効。",
+        "通常の内部 changelog とは別管理になる。"
+      ],
+      "related_nodes": [
+        "node_003"
+      ],
+      "reference_ids": [
+        "ref_012"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "RHDS の SASL / GSSAPI 対応",
+      "summary": "Red Hat Directory Server は GSSAPI を含む SASL mechanism を利用できる。",
+      "details": [
+        "Kerberos 周辺アプリとの連携余地がある。",
+        "ただし KDC 自体は内蔵しない。"
+      ],
+      "related_nodes": [
+        "node_003"
+      ],
+      "reference_ids": [
+        "ref_012"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "FreeIPA は統合認証基盤",
+      "summary": "FreeIPA は 389 Directory Server、MIT Kerberos、DNS、Dogtag、SSSD などを統合する。",
+      "details": [
+        "Linux / UNIX 向け central authentication and authorization を提供。",
+        "multi master replication を持つ。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_006"
+      ],
+      "reference_ids": [
+        "ref_013"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "Red Hat IdM は RHEL に完全連動",
+      "summary": "Red Hat IdM は個別製品よりも RHEL の一部としてサポートされるため、RHEL ライフサイクルに完全連動する。",
+      "details": [
+        "RHEL 8 / 9 のサポート計画の中で扱える。",
+        "RHEL 更改計画と一本化しやすい。"
+      ],
+      "related_nodes": [
+        "node_005"
+      ],
+      "reference_ids": [
+        "ref_014"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "Red Hat IdM は AD trust を持つ",
+      "summary": "IdM は Active Directory forest root と cross-forest trust を張れる。",
+      "details": [
+        "Linux は IdM、Windows は AD の役割分担が可能。",
+        "段階移行で現実的な橋渡しになる。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_012"
+      ],
+      "reference_ids": [
+        "ref_015"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "custodia は RHEL 9 で統合",
+      "summary": "RHEL 9 では custodia パッケージは別サービスではなく IdM に統合された。",
+      "details": [
+        "シークレット保護機能は引き続き利用できる。",
+        "運用者から見ると構成要素の一体化が進んだ。"
+      ],
+      "related_nodes": [
+        "node_005"
+      ],
+      "reference_ids": [
+        "ref_016"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "389 Directory Server は RHDS のアップストリーム",
+      "summary": "port389 と Fedora package 情報から、389 Directory Server は継続的に開発されるアップストリームである。",
+      "details": [
+        "2026-01-13 に 3.2.0 が公開。",
+        "Fedora 44 / Rawhide でも継続提供。"
+      ],
+      "related_nodes": [
+        "node_004"
+      ],
+      "reference_ids": [
+        "ref_017",
+        "ref_018"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "CentOS Stream / AlmaLinux でも 389 DS は使いやすい",
+      "summary": "CentOS Stream 9 や AlmaLinux 9 のパッケージ例から、389-ds-base は RHEL クローンでも実務利用しやすい。",
+      "details": [
+        "RHEL標準製品ではないが、OpenLDAP on RHEL 7 の最小変更移行先として検討価値が高い。",
+        "ただしベンダーサポート境界は要確認。"
+      ],
+      "related_nodes": [
+        "node_004"
+      ],
+      "reference_ids": [
+        "ref_019",
+        "ref_020"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "AD LDS はアプリ向け独立ディレクトリ",
+      "summary": "Microsoft は AD LDS を infrastructure features を除いた Active Directory independent mode と説明する。",
+      "details": [
+        "アプリ専用データストアに向く。",
+        "OS ログオンや GPO のための AD DS 代替ではない。"
+      ],
+      "related_nodes": [
+        "node_007",
+        "node_012"
+      ],
+      "reference_ids": [
+        "ref_021"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "AD LDS は application directory partitions を使う",
+      "summary": "AD LDS のデータは application directory partitions に格納できる。",
+      "details": [
+        "AD DS のドメイン分離とは別の設計軸。",
+        "アプリごとに独立 naming context を持たせやすい。"
+      ],
+      "related_nodes": [
+        "node_007"
+      ],
+      "reference_ids": [
+        "ref_022"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "ODSEE は OUD への移行前提",
+      "summary": "Oracle は DSEE / ODSEE から OUD 14c への transition guide を提供している。",
+      "details": [
+        "ODSEE は legacy の残存製品として扱うべき。",
+        "WebLogic / Oracle Fusion Middleware 周辺では OUD が戦略製品。"
+      ],
+      "related_nodes": [
+        "node_008",
+        "node_009"
+      ],
+      "reference_ids": [
+        "ref_024",
+        "ref_025"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "ForgeRock Directory Services は Ping ブランドへ統合中",
+      "summary": "Ping Identity 文書では 2023 年に Ping と ForgeRock が一体化し、2024 年以降に名称統合が進んでいる。",
+      "details": [
+        "既存ForgeRock製品のブランド読み替えが必要。",
+        "Directory Services 自体は Java ベース LDAP / REST ストアとして継続。"
+      ],
+      "related_nodes": [
+        "node_010"
+      ],
+      "reference_ids": [
+        "ref_026",
+        "ref_027",
+        "ref_028"
+      ]
+    },
+    {
+      "id": "knowledge_023",
+      "topic": "eDirectory 9.2 は残存基盤向けの継続運用色が強い",
+      "summary": "eDirectory 9.2 は RHEL 8、Windows 2019、REST サービス、PBKDF2 を追加したが、主に残存資産の延命文脈で見るのが現実的である。",
+      "details": [
+        "旧Novell / NetIQ 系の運用が残る組織向け。",
+        "新規戦略基盤としての採用より移行元としての重要度が高い。"
+      ],
+      "related_nodes": [
+        "node_011"
+      ],
+      "reference_ids": [
+        "ref_029",
+        "ref_030"
+      ]
+    },
+    {
+      "id": "knowledge_024",
+      "topic": "OpenText Identity Manager は eDirectory 連携を維持",
+      "summary": "OpenText Identity Manager は eDirectory、Active Directory、LDAP v3 directories との統合を引き続き前提にしている。",
+      "details": [
+        "eDirectory 単体ではなく周辺 IAM 製品も残存しているケースがある。",
+        "移行時はディレクトリだけでなく driver / vault 依存を洗う必要がある。"
+      ],
+      "related_nodes": [
+        "node_011",
+        "node_012"
+      ],
+      "reference_ids": [
+        "ref_031"
+      ]
+    },
+    {
+      "id": "knowledge_025",
+      "topic": "Symas は OpenLDAP 商用支援の現実解",
+      "summary": "OpenLDAP Project はソース配布と community support を前提とし、商用支援は Symas など第三者が担う。",
+      "details": [
+        "OpenLDAP 継続が必須な企業では Symas OpenLDAP が選択肢になる。",
+        "ただし RHEL 標準製品へ戻るわけではない。"
+      ],
+      "related_nodes": [
+        "node_001"
+      ],
+      "reference_ids": [
+        "ref_032"
+      ]
+    },
+    {
+      "id": "knowledge_026",
+      "topic": "日本企業における最重要論点",
+      "summary": "2026年の実務では『OpenLDAP 2.6 が良いか』より『RHEL 8/9 上で何を標準基盤にするか』が主論点である。",
+      "details": [
+        "OpenLDAP on RHEL 7 のままでは OS もディレクトリも寿命が切れている。",
+        "RHDS / 389 DS / Red Hat IdM / Active Directory / Entra ID のどれへ寄せるかを、アプリ依存と運用組織で決める必要がある。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_002",
+        "node_003",
+        "node_004",
+        "node_005",
+        "node_012",
+        "node_013"
+      ],
+      "reference_ids": [
+        "ref_005",
+        "ref_006",
+        "ref_007",
+        "ref_008",
+        "ref_014"
+      ]
+    }
+  ]
+}

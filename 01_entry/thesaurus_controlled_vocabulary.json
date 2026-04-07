@@ -1,0 +1,1335 @@
+{
+  "metadata": {
+    "id": "thesaurus_v1",
+    "title": "IDM知識ベース統制語彙",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "standard": "SKOS",
+    "concept_count": 62
+  },
+  "concepts": [
+    {
+      "id": "c_001",
+      "preferred_label": "ID管理基盤",
+      "preferred_label_en": "Identity Management Platform",
+      "broader": [],
+      "narrower": [
+        "ディレクトリサービス",
+        "認証プロトコル",
+        "OS認証",
+        "ハイブリッドID",
+        "特権アクセス管理",
+        "プロセス認証",
+        "ゼロトラスト",
+        "グループポリシー代替"
+      ],
+      "related": [
+        "オンプレミス残存",
+        "基幹システム連携"
+      ],
+      "use_for": [
+        "IDM",
+        "ID基盤",
+        "Identity Platform"
+      ],
+      "scope_note": "企業内の人、デバイス、サービスの認証、認可、管理、監査を統合的に扱う基盤全体。",
+      "domain": "identity_management"
+    },
+    {
+      "id": "c_002",
+      "preferred_label": "ディレクトリサービス",
+      "preferred_label_en": "Directory Service",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "Active Directory",
+        "Entra ID",
+        "LDAP",
+        "ドメインコントローラー"
+      ],
+      "related": [
+        "認証プロトコル",
+        "ハイブリッドID"
+      ],
+      "use_for": [
+        "Directory",
+        "ディレクトリ基盤"
+      ],
+      "scope_note": "識別子、属性、所属情報を体系的に保持し、認証や検索に利用する基盤。",
+      "domain": "identity_provider"
+    },
+    {
+      "id": "c_003",
+      "preferred_label": "認証プロトコル",
+      "preferred_label_en": "Authentication Protocol",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "Kerberos",
+        "LDAP",
+        "RADIUS",
+        "SAML",
+        "OpenID Connect",
+        "OAuth 2.0"
+      ],
+      "related": [
+        "ディレクトリサービス",
+        "OS認証",
+        "プロセス認証"
+      ],
+      "use_for": [
+        "認証方式",
+        "認証連携プロトコル"
+      ],
+      "scope_note": "ユーザー、デバイス、サービスの認証や認可連携を成立させる標準プロトコル群。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_004",
+      "preferred_label": "OS認証",
+      "preferred_label_en": "Operating System Authentication",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "ローカルアカウント",
+        "ドメインアカウント",
+        "サービスアカウント",
+        "グループ管理サービスアカウント",
+        "SSSD",
+        "PAM（Linux）",
+        "Windows Server",
+        "Linux サーバー"
+      ],
+      "related": [
+        "Active Directory",
+        "特権アクセス管理"
+      ],
+      "use_for": [
+        "サーバーOS認証",
+        "OSログオン認証"
+      ],
+      "scope_note": "Windows Server や Linux サーバーへの対話ログオンおよびシステムレベル認証の方式。",
+      "domain": "server_auth"
+    },
+    {
+      "id": "c_005",
+      "preferred_label": "ハイブリッドID",
+      "preferred_label_en": "Hybrid Identity",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "Entra Hybrid Join",
+        "Entra Connect Sync",
+        "Active Directory フェデレーションサービス",
+        "パススルー認証",
+        "パスワードハッシュ同期",
+        "フェデレーション認証"
+      ],
+      "related": [
+        "Active Directory",
+        "Entra ID",
+        "オンプレミス残存"
+      ],
+      "use_for": [
+        "Hybrid Identity",
+        "ハイブリッド認証"
+      ],
+      "scope_note": "オンプレミスとクラウドの認証基盤を共存させる設計および移行アーキテクチャ。",
+      "domain": "hybrid_identity"
+    },
+    {
+      "id": "c_006",
+      "preferred_label": "特権アクセス管理",
+      "preferred_label_en": "Privileged Access Management",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "LAPS",
+        "JEA",
+        "Just-in-Time アクセス",
+        "特権アカウント",
+        "踏み台サーバー",
+        "特権アクセス ワークステーション"
+      ],
+      "related": [
+        "ゼロトラスト",
+        "ラテラルムーブメント",
+        "資格情報窃取"
+      ],
+      "use_for": [
+        "PAM",
+        "Privileged Access Management"
+      ],
+      "scope_note": "高権限アカウントの利用を最小化し、統制、記録、時間制限を加える管理体系。",
+      "domain": "privileged_access"
+    },
+    {
+      "id": "c_007",
+      "preferred_label": "プロセス認証",
+      "preferred_label_en": "Process Authentication",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "Kerberos 制約付き委任",
+        "サービス プリンシパル名",
+        "CIFS",
+        "ファイルサーバー認証",
+        "サービスアカウント",
+        "グループ管理サービスアカウント"
+      ],
+      "related": [
+        "Kerberos",
+        "基幹システム連携"
+      ],
+      "use_for": [
+        "サーバーサイド認証",
+        "アプリケーション間認証"
+      ],
+      "scope_note": "サーバープロセスやサービス同士が相互に認証し、権限委譲するための方式。",
+      "domain": "service_auth"
+    },
+    {
+      "id": "c_008",
+      "preferred_label": "ゼロトラスト",
+      "preferred_label_en": "Zero Trust",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "条件付きアクセス",
+        "多要素認証",
+        "デバイス コンプライアンス"
+      ],
+      "related": [
+        "特権アクセス管理",
+        "Entra ID",
+        "ランサムウェア"
+      ],
+      "use_for": [
+        "Zero Trust",
+        "ZT"
+      ],
+      "scope_note": "ネットワーク境界を信頼せず、ユーザー、デバイス、セッションごとに継続的検証を行う設計思想。",
+      "domain": "security_architecture"
+    },
+    {
+      "id": "c_009",
+      "preferred_label": "グループポリシー代替",
+      "preferred_label_en": "Group Policy Alternatives",
+      "broader": [
+        "ID管理基盤"
+      ],
+      "narrower": [
+        "グループポリシー",
+        "Microsoft Intune",
+        "Ansible",
+        "Chef",
+        "Puppet",
+        "PowerShell Desired State Configuration"
+      ],
+      "related": [
+        "Windows Server",
+        "Linux サーバー",
+        "ハイブリッドID"
+      ],
+      "use_for": [
+        "GP代替",
+        "構成管理代替"
+      ],
+      "scope_note": "従来のグループポリシー依存を減らし、クラウド管理や構成管理へ置き換えるための手段。",
+      "domain": "configuration_management"
+    },
+    {
+      "id": "c_010",
+      "preferred_label": "セキュリティ脅威",
+      "preferred_label_en": "Security Threat",
+      "broader": [],
+      "narrower": [
+        "ランサムウェア",
+        "ラテラルムーブメント",
+        "特権昇格",
+        "資格情報窃取",
+        "ゴールデンチケット攻撃"
+      ],
+      "related": [
+        "特権アクセス管理",
+        "ゼロトラスト"
+      ],
+      "use_for": [
+        "脅威",
+        "攻撃パターン"
+      ],
+      "scope_note": "ID、認証、権限、端末を起点に企業環境へ影響を与える主要攻撃とリスク群。",
+      "domain": "security"
+    },
+    {
+      "id": "c_011",
+      "preferred_label": "日本型ITコンテキスト",
+      "preferred_label_en": "Japanese Enterprise IT Context",
+      "broader": [],
+      "narrower": [
+        "SIer",
+        "オンプレミス残存",
+        "レガシーシステム",
+        "基幹システム連携"
+      ],
+      "related": [
+        "ID管理基盤",
+        "ハイブリッドID"
+      ],
+      "use_for": [
+        "日本企業IT文脈",
+        "Japanese Enterprise Context"
+      ],
+      "scope_note": "日本企業の組織構造、運用慣行、既存投資が ID 管理設計に与える前提条件。",
+      "domain": "enterprise_context"
+    },
+    {
+      "id": "c_012",
+      "preferred_label": "Active Directory",
+      "preferred_label_en": "Active Directory",
+      "broader": [
+        "ディレクトリサービス"
+      ],
+      "narrower": [
+        "Kerberos",
+        "LDAP",
+        "グループポリシー",
+        "ドメインコントローラー",
+        "ドメインアカウント"
+      ],
+      "related": [
+        "Entra ID",
+        "Entra Connect Sync",
+        "Windows Server"
+      ],
+      "use_for": [
+        "AD",
+        "AD DS",
+        "Windows ドメインサービス"
+      ],
+      "scope_note": "Microsoft のオンプレミス向けディレクトリサービス。日本企業の既存 ID 管理基盤の中心であることが多い。",
+      "domain": "identity_provider"
+    },
+    {
+      "id": "c_013",
+      "preferred_label": "Entra ID",
+      "preferred_label_en": "Entra ID",
+      "broader": [
+        "ディレクトリサービス"
+      ],
+      "narrower": [
+        "条件付きアクセス",
+        "多要素認証",
+        "デバイス コンプライアンス"
+      ],
+      "related": [
+        "Active Directory",
+        "OpenID Connect",
+        "OAuth 2.0",
+        "Entra Hybrid Join"
+      ],
+      "use_for": [
+        "Azure AD",
+        "Microsoft Entra ID"
+      ],
+      "scope_note": "Microsoft のクラウド ID サービス。ゼロトラスト、SaaS 連携、デバイス管理連携の中核。",
+      "domain": "identity_provider"
+    },
+    {
+      "id": "c_014",
+      "preferred_label": "LDAP",
+      "preferred_label_en": "LDAP",
+      "broader": [
+        "ディレクトリサービス",
+        "認証プロトコル"
+      ],
+      "narrower": [],
+      "related": [
+        "Active Directory",
+        "Linux サーバー",
+        "SSSD"
+      ],
+      "use_for": [
+        "Lightweight Directory Access Protocol"
+      ],
+      "scope_note": "ディレクトリ検索や属性照会に使われる標準プロトコル。認証周辺でも利用される。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_015",
+      "preferred_label": "Kerberos",
+      "preferred_label_en": "Kerberos",
+      "broader": [
+        "認証プロトコル"
+      ],
+      "narrower": [
+        "Kerberos 制約付き委任",
+        "ゴールデンチケット攻撃"
+      ],
+      "related": [
+        "Active Directory",
+        "サービス プリンシパル名",
+        "CIFS"
+      ],
+      "use_for": [
+        "Kerberos 認証"
+      ],
+      "scope_note": "チケットベースの相互認証プロトコル。Windows ドメインやサーバー間認証で広く使われる。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_016",
+      "preferred_label": "RADIUS",
+      "preferred_label_en": "RADIUS",
+      "broader": [
+        "認証プロトコル"
+      ],
+      "narrower": [],
+      "related": [
+        "多要素認証",
+        "オンプレミス残存"
+      ],
+      "use_for": [
+        "Remote Authentication Dial-In User Service"
+      ],
+      "scope_note": "ネットワーク機器や VPN の集中認証で使われるプロトコル。レガシー装置との共存で残りやすい。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_017",
+      "preferred_label": "SAML",
+      "preferred_label_en": "SAML",
+      "broader": [
+        "認証プロトコル",
+        "フェデレーション認証"
+      ],
+      "narrower": [],
+      "related": [
+        "Active Directory フェデレーションサービス",
+        "Entra ID",
+        "OpenID Connect"
+      ],
+      "use_for": [
+        "SAML 2.0",
+        "Security Assertion Markup Language"
+      ],
+      "scope_note": "企業向け SaaS とのフェデレーション認証で広く利用される XML ベースの標準。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_018",
+      "preferred_label": "OpenID Connect",
+      "preferred_label_en": "OpenID Connect",
+      "broader": [
+        "認証プロトコル",
+        "フェデレーション認証"
+      ],
+      "narrower": [],
+      "related": [
+        "OAuth 2.0",
+        "Entra ID",
+        "SAML"
+      ],
+      "use_for": [
+        "OIDC"
+      ],
+      "scope_note": "OAuth 2.0 上に認証情報を載せるモダンな ID フェデレーション方式。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_019",
+      "preferred_label": "OAuth 2.0",
+      "preferred_label_en": "OAuth 2.0",
+      "broader": [
+        "認証プロトコル"
+      ],
+      "narrower": [],
+      "related": [
+        "OpenID Connect",
+        "Entra ID",
+        "基幹システム連携"
+      ],
+      "use_for": [
+        "OAuth2",
+        "OAuth"
+      ],
+      "scope_note": "API アクセス委任の標準。認可中心だが、現代的な ID 連携で不可欠。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_020",
+      "preferred_label": "ドメインコントローラー",
+      "preferred_label_en": "Domain Controller",
+      "broader": [
+        "Active Directory"
+      ],
+      "narrower": [],
+      "related": [
+        "Kerberos",
+        "LDAP",
+        "ゴールデンチケット攻撃"
+      ],
+      "use_for": [
+        "DC"
+      ],
+      "scope_note": "Active Directory の認証、ディレクトリ、ポリシー配布を担う中核サーバー。",
+      "domain": "identity_provider"
+    },
+    {
+      "id": "c_021",
+      "preferred_label": "グループポリシー",
+      "preferred_label_en": "Group Policy",
+      "broader": [
+        "グループポリシー代替",
+        "Active Directory"
+      ],
+      "narrower": [],
+      "related": [
+        "Windows Server",
+        "Microsoft Intune",
+        "PowerShell Desired State Configuration"
+      ],
+      "use_for": [
+        "GPO",
+        "Group Policy Object"
+      ],
+      "scope_note": "Windows ドメイン参加端末に対して設定を集中適用する管理機構。",
+      "domain": "configuration_management"
+    },
+    {
+      "id": "c_022",
+      "preferred_label": "ローカルアカウント",
+      "preferred_label_en": "Local Account",
+      "broader": [
+        "OS認証"
+      ],
+      "narrower": [],
+      "related": [
+        "LAPS",
+        "Windows Server",
+        "Linux サーバー"
+      ],
+      "use_for": [
+        "ローカルユーザー",
+        "端末ローカルアカウント"
+      ],
+      "scope_note": "個別サーバーや端末内に閉じたアカウント。共有化や固定化がリスクになりやすい。",
+      "domain": "account"
+    },
+    {
+      "id": "c_023",
+      "preferred_label": "ドメインアカウント",
+      "preferred_label_en": "Domain Account",
+      "broader": [
+        "OS認証"
+      ],
+      "narrower": [
+        "特権アカウント"
+      ],
+      "related": [
+        "Active Directory",
+        "Kerberos",
+        "Windows Server"
+      ],
+      "use_for": [
+        "AD アカウント",
+        "ドメインユーザー"
+      ],
+      "scope_note": "Active Directory 上で集中管理されるユーザーまたは管理者アカウント。",
+      "domain": "account"
+    },
+    {
+      "id": "c_024",
+      "preferred_label": "サービスアカウント",
+      "preferred_label_en": "Service Account",
+      "broader": [
+        "OS認証",
+        "プロセス認証"
+      ],
+      "narrower": [
+        "グループ管理サービスアカウント"
+      ],
+      "related": [
+        "サービス プリンシパル名",
+        "Kerberos 制約付き委任"
+      ],
+      "use_for": [
+        "Service ID",
+        "実行アカウント"
+      ],
+      "scope_note": "アプリケーションやサービスがバックグラウンドで実行される際に用いる非対話型アカウント。",
+      "domain": "account"
+    },
+    {
+      "id": "c_025",
+      "preferred_label": "グループ管理サービスアカウント",
+      "preferred_label_en": "Group Managed Service Account",
+      "broader": [
+        "OS認証",
+        "プロセス認証"
+      ],
+      "narrower": [],
+      "related": [
+        "サービスアカウント",
+        "Active Directory",
+        "サービス プリンシパル名"
+      ],
+      "use_for": [
+        "gMSA",
+        "Group Managed Service Account"
+      ],
+      "scope_note": "Active Directory がパスワード管理を自動化する Windows サービス向けアカウント。",
+      "domain": "account"
+    },
+    {
+      "id": "c_026",
+      "preferred_label": "SSSD",
+      "preferred_label_en": "System Security Services Daemon",
+      "broader": [
+        "OS認証"
+      ],
+      "narrower": [],
+      "related": [
+        "LDAP",
+        "Kerberos",
+        "Linux サーバー"
+      ],
+      "use_for": [
+        "System Security Services Daemon"
+      ],
+      "scope_note": "Linux で外部ディレクトリ認証やキャッシュを扱う統合コンポーネント。",
+      "domain": "server_auth"
+    },
+    {
+      "id": "c_027",
+      "preferred_label": "PAM（Linux）",
+      "preferred_label_en": "Pluggable Authentication Modules",
+      "broader": [
+        "OS認証"
+      ],
+      "narrower": [],
+      "related": [
+        "Linux サーバー",
+        "SSSD",
+        "多要素認証"
+      ],
+      "use_for": [
+        "Linux PAM",
+        "Pluggable Authentication Modules"
+      ],
+      "scope_note": "Linux の認証スタックを差し替え可能にする枠組み。OS ログオン制御の要点となる。",
+      "domain": "server_auth"
+    },
+    {
+      "id": "c_028",
+      "preferred_label": "Windows Server",
+      "preferred_label_en": "Windows Server",
+      "broader": [
+        "OS認証"
+      ],
+      "narrower": [],
+      "related": [
+        "Active Directory",
+        "グループポリシー",
+        "LAPS"
+      ],
+      "use_for": [
+        "Windows サーバー"
+      ],
+      "scope_note": "Active Directory との親和性が高い企業向けサーバー OS。管理方式の変化が大きい対象。",
+      "domain": "platform"
+    },
+    {
+      "id": "c_029",
+      "preferred_label": "Linux サーバー",
+      "preferred_label_en": "Linux Server",
+      "broader": [
+        "OS認証"
+      ],
+      "narrower": [],
+      "related": [
+        "SSSD",
+        "PAM（Linux）",
+        "Ansible"
+      ],
+      "use_for": [
+        "Linux",
+        "RHEL サーバー"
+      ],
+      "scope_note": "SSSD や PAM（Linux）を介して外部認証と連携する企業向けサーバー OS 群。",
+      "domain": "platform"
+    },
+    {
+      "id": "c_030",
+      "preferred_label": "Entra Hybrid Join",
+      "preferred_label_en": "Entra Hybrid Join",
+      "broader": [
+        "ハイブリッドID"
+      ],
+      "narrower": [],
+      "related": [
+        "Entra ID",
+        "Active Directory",
+        "デバイス コンプライアンス"
+      ],
+      "use_for": [
+        "Hybrid Azure AD Join",
+        "Hybrid Join"
+      ],
+      "scope_note": "オンプレミス参加端末を Entra ID にも登録し、クラウド制御を段階導入する方式。",
+      "domain": "hybrid_identity"
+    },
+    {
+      "id": "c_031",
+      "preferred_label": "Entra Connect Sync",
+      "preferred_label_en": "Entra Connect Sync",
+      "broader": [
+        "ハイブリッドID"
+      ],
+      "narrower": [],
+      "related": [
+        "Active Directory",
+        "Entra ID",
+        "パスワードハッシュ同期",
+        "パススルー認証"
+      ],
+      "use_for": [
+        "Azure AD Connect",
+        "AAD Connect"
+      ],
+      "scope_note": "オンプレミス AD のユーザーや属性を Entra ID へ同期する基盤コンポーネント。",
+      "domain": "hybrid_identity"
+    },
+    {
+      "id": "c_032",
+      "preferred_label": "Active Directory フェデレーションサービス",
+      "preferred_label_en": "Active Directory Federation Services",
+      "broader": [
+        "ハイブリッドID",
+        "フェデレーション認証"
+      ],
+      "narrower": [],
+      "related": [
+        "SAML",
+        "Active Directory",
+        "パススルー認証"
+      ],
+      "use_for": [
+        "ADFS",
+        "AD FS"
+      ],
+      "scope_note": "オンプレミスでフェデレーション認証を提供する Microsoft 製品。移行時の廃止対象になりやすい。",
+      "domain": "hybrid_identity"
+    },
+    {
+      "id": "c_033",
+      "preferred_label": "パススルー認証",
+      "preferred_label_en": "Pass-through Authentication",
+      "broader": [
+        "ハイブリッドID"
+      ],
+      "narrower": [],
+      "related": [
+        "Entra Connect Sync",
+        "Active Directory",
+        "パスワードハッシュ同期"
+      ],
+      "use_for": [
+        "PTA",
+        "Pass-through Authentication"
+      ],
+      "scope_note": "パスワード検証をオンプレミス AD 側で実施しつつ、クラウドサインインと連携する方式。",
+      "domain": "hybrid_identity"
+    },
+    {
+      "id": "c_034",
+      "preferred_label": "パスワードハッシュ同期",
+      "preferred_label_en": "Password Hash Synchronization",
+      "broader": [
+        "ハイブリッドID"
+      ],
+      "narrower": [],
+      "related": [
+        "Entra Connect Sync",
+        "Entra ID",
+        "パススルー認証"
+      ],
+      "use_for": [
+        "PHS",
+        "Password Hash Sync"
+      ],
+      "scope_note": "オンプレミス AD のパスワードハッシュ派生値を Entra ID に同期し、クラウド側で認証する方式。",
+      "domain": "hybrid_identity"
+    },
+    {
+      "id": "c_035",
+      "preferred_label": "フェデレーション認証",
+      "preferred_label_en": "Federated Authentication",
+      "broader": [
+        "ハイブリッドID"
+      ],
+      "narrower": [
+        "SAML",
+        "OpenID Connect",
+        "Active Directory フェデレーションサービス"
+      ],
+      "related": [
+        "Entra ID",
+        "基幹システム連携"
+      ],
+      "use_for": [
+        "Federation",
+        "連携認証"
+      ],
+      "scope_note": "認証元と利用先を分離し、トークンやアサーションを用いて信頼連携する方式。",
+      "domain": "protocol"
+    },
+    {
+      "id": "c_036",
+      "preferred_label": "LAPS",
+      "preferred_label_en": "Local Administrator Password Solution",
+      "broader": [
+        "特権アクセス管理"
+      ],
+      "narrower": [],
+      "related": [
+        "ローカルアカウント",
+        "Windows Server",
+        "ラテラルムーブメント"
+      ],
+      "use_for": [
+        "Local Administrator Password Solution",
+        "Windows LAPS"
+      ],
+      "scope_note": "ローカル管理者パスワードを個別化、定期変更し、横展開リスクを減らす仕組み。",
+      "domain": "privileged_access"
+    },
+    {
+      "id": "c_037",
+      "preferred_label": "JEA",
+      "preferred_label_en": "Just Enough Administration",
+      "broader": [
+        "特権アクセス管理"
+      ],
+      "narrower": [],
+      "related": [
+        "Just-in-Time アクセス",
+        "Windows Server",
+        "特権アカウント"
+      ],
+      "use_for": [
+        "Just Enough Administration"
+      ],
+      "scope_note": "PowerShell を中心に、必要最小限の管理操作だけを委譲する権限制御モデル。",
+      "domain": "privileged_access"
+    },
+    {
+      "id": "c_038",
+      "preferred_label": "Just-in-Time アクセス",
+      "preferred_label_en": "Just-in-Time Access",
+      "broader": [
+        "特権アクセス管理"
+      ],
+      "narrower": [],
+      "related": [
+        "JEA",
+        "特権アカウント",
+        "条件付きアクセス"
+      ],
+      "use_for": [
+        "JIT",
+        "Just in Time"
+      ],
+      "scope_note": "恒常権限を避け、必要な時間だけ特権を付与する統制手法。",
+      "domain": "privileged_access"
+    },
+    {
+      "id": "c_039",
+      "preferred_label": "特権アカウント",
+      "preferred_label_en": "Privileged Account",
+      "broader": [
+        "特権アクセス管理",
+        "ドメインアカウント"
+      ],
+      "narrower": [],
+      "related": [
+        "踏み台サーバー",
+        "特権昇格",
+        "資格情報窃取"
+      ],
+      "use_for": [
+        "管理者アカウント",
+        "高権限アカウント"
+      ],
+      "scope_note": "サーバー、ディレクトリ、ネットワーク機器に高い権限を持つアカウント。",
+      "domain": "account"
+    },
+    {
+      "id": "c_040",
+      "preferred_label": "踏み台サーバー",
+      "preferred_label_en": "Jump Server",
+      "broader": [
+        "特権アクセス管理"
+      ],
+      "narrower": [],
+      "related": [
+        "特権アクセス ワークステーション",
+        "特権アカウント",
+        "オンプレミス残存"
+      ],
+      "use_for": [
+        "Jump Server",
+        "Bastion Host"
+      ],
+      "scope_note": "管理経路を集約し、特権操作の接点を統制する中継サーバー。",
+      "domain": "privileged_access"
+    },
+    {
+      "id": "c_041",
+      "preferred_label": "特権アクセス ワークステーション",
+      "preferred_label_en": "Privileged Access Workstation",
+      "broader": [
+        "特権アクセス管理"
+      ],
+      "narrower": [],
+      "related": [
+        "踏み台サーバー",
+        "ゼロトラスト",
+        "特権アカウント"
+      ],
+      "use_for": [
+        "PAW",
+        "Privileged Access Workstation"
+      ],
+      "scope_note": "特権操作専用に隔離された管理端末。管理者の攻撃面を減らすために用いる。",
+      "domain": "privileged_access"
+    },
+    {
+      "id": "c_042",
+      "preferred_label": "Kerberos 制約付き委任",
+      "preferred_label_en": "Kerberos Constrained Delegation",
+      "broader": [
+        "プロセス認証"
+      ],
+      "narrower": [],
+      "related": [
+        "Kerberos",
+        "サービス プリンシパル名",
+        "ファイルサーバー認証"
+      ],
+      "use_for": [
+        "KCD",
+        "Kerberos Constrained Delegation"
+      ],
+      "scope_note": "中間サービスが限定範囲でユーザー権限を委任され、バックエンドへアクセスする方式。",
+      "domain": "service_auth"
+    },
+    {
+      "id": "c_043",
+      "preferred_label": "サービス プリンシパル名",
+      "preferred_label_en": "Service Principal Name",
+      "broader": [
+        "プロセス認証"
+      ],
+      "narrower": [],
+      "related": [
+        "Kerberos",
+        "サービスアカウント",
+        "グループ管理サービスアカウント"
+      ],
+      "use_for": [
+        "SPN",
+        "Service Principal Name"
+      ],
+      "scope_note": "Kerberos でサービスインスタンスを一意に識別する名前。重複や誤設定が障害要因になる。",
+      "domain": "service_auth"
+    },
+    {
+      "id": "c_044",
+      "preferred_label": "CIFS",
+      "preferred_label_en": "CIFS",
+      "broader": [
+        "プロセス認証"
+      ],
+      "narrower": [],
+      "related": [
+        "Kerberos",
+        "ファイルサーバー認証",
+        "基幹システム連携"
+      ],
+      "use_for": [
+        "SMB 共有認証",
+        "Common Internet File System"
+      ],
+      "scope_note": "Windows 系ファイル共有アクセスで用いられる方式。認証は Kerberos と深く結びつく。",
+      "domain": "service_auth"
+    },
+    {
+      "id": "c_045",
+      "preferred_label": "ファイルサーバー認証",
+      "preferred_label_en": "File Server Authentication",
+      "broader": [
+        "プロセス認証"
+      ],
+      "narrower": [],
+      "related": [
+        "CIFS",
+        "Kerberos 制約付き委任",
+        "サービス プリンシパル名"
+      ],
+      "use_for": [
+        "共有フォルダ認証",
+        "SMB 認証"
+      ],
+      "scope_note": "ファイル共有や共有フォルダへのアクセス制御を成立させる認証設計。",
+      "domain": "service_auth"
+    },
+    {
+      "id": "c_046",
+      "preferred_label": "条件付きアクセス",
+      "preferred_label_en": "Conditional Access",
+      "broader": [
+        "ゼロトラスト"
+      ],
+      "narrower": [],
+      "related": [
+        "Entra ID",
+        "多要素認証",
+        "デバイス コンプライアンス"
+      ],
+      "use_for": [
+        "Conditional Access Policy"
+      ],
+      "scope_note": "ユーザー、端末、場所、リスクに応じてサインイン条件を動的制御するポリシー。",
+      "domain": "security_architecture"
+    },
+    {
+      "id": "c_047",
+      "preferred_label": "多要素認証",
+      "preferred_label_en": "Multi-Factor Authentication",
+      "broader": [
+        "ゼロトラスト"
+      ],
+      "narrower": [],
+      "related": [
+        "条件付きアクセス",
+        "RADIUS",
+        "PAM（Linux）"
+      ],
+      "use_for": [
+        "MFA",
+        "二要素認証"
+      ],
+      "scope_note": "知識、所持、生体など複数要素を組み合わせて認証強度を高める方式。",
+      "domain": "security_architecture"
+    },
+    {
+      "id": "c_048",
+      "preferred_label": "デバイス コンプライアンス",
+      "preferred_label_en": "Device Compliance",
+      "broader": [
+        "ゼロトラスト"
+      ],
+      "narrower": [],
+      "related": [
+        "Microsoft Intune",
+        "条件付きアクセス",
+        "Entra Hybrid Join"
+      ],
+      "use_for": [
+        "デバイス準拠性",
+        "Compliance"
+      ],
+      "scope_note": "端末状態の準拠判定を行い、アクセス可否の条件として利用する管理概念。",
+      "domain": "security_architecture"
+    },
+    {
+      "id": "c_049",
+      "preferred_label": "Microsoft Intune",
+      "preferred_label_en": "Microsoft Intune",
+      "broader": [
+        "グループポリシー代替"
+      ],
+      "narrower": [],
+      "related": [
+        "Entra ID",
+        "デバイス コンプライアンス",
+        "グループポリシー"
+      ],
+      "use_for": [
+        "Intune",
+        "Microsoft Endpoint Manager"
+      ],
+      "scope_note": "クラウドベースのデバイス管理サービス。GPO 代替やコンプライアンス制御に用いる。",
+      "domain": "configuration_management"
+    },
+    {
+      "id": "c_050",
+      "preferred_label": "Ansible",
+      "preferred_label_en": "Ansible",
+      "broader": [
+        "グループポリシー代替"
+      ],
+      "narrower": [],
+      "related": [
+        "Linux サーバー",
+        "Windows Server",
+        "PowerShell Desired State Configuration"
+      ],
+      "use_for": [
+        "Ansible Automation"
+      ],
+      "scope_note": "エージェントレス構成管理ツール。ハイブリッド環境の設定統制で用いられる。",
+      "domain": "configuration_management"
+    },
+    {
+      "id": "c_051",
+      "preferred_label": "Chef",
+      "preferred_label_en": "Chef",
+      "broader": [
+        "グループポリシー代替"
+      ],
+      "narrower": [],
+      "related": [
+        "Linux サーバー",
+        "Windows Server",
+        "Puppet"
+      ],
+      "use_for": [
+        "Chef Infra"
+      ],
+      "scope_note": "コードとして構成を管理する代表的な構成管理ツールの一つ。",
+      "domain": "configuration_management"
+    },
+    {
+      "id": "c_052",
+      "preferred_label": "Puppet",
+      "preferred_label_en": "Puppet",
+      "broader": [
+        "グループポリシー代替"
+      ],
+      "narrower": [],
+      "related": [
+        "Linux サーバー",
+        "Windows Server",
+        "Chef"
+      ],
+      "use_for": [
+        "Puppet Enterprise"
+      ],
+      "scope_note": "宣言的に構成状態を定義し、継続適用する構成管理ツール。",
+      "domain": "configuration_management"
+    },
+    {
+      "id": "c_053",
+      "preferred_label": "PowerShell Desired State Configuration",
+      "preferred_label_en": "PowerShell Desired State Configuration",
+      "broader": [
+        "グループポリシー代替"
+      ],
+      "narrower": [],
+      "related": [
+        "Windows Server",
+        "グループポリシー",
+        "Ansible"
+      ],
+      "use_for": [
+        "DSC",
+        "PowerShell DSC"
+      ],
+      "scope_note": "Windows を中心に望ましい構成状態をコード化して維持する仕組み。",
+      "domain": "configuration_management"
+    },
+    {
+      "id": "c_054",
+      "preferred_label": "ランサムウェア",
+      "preferred_label_en": "Ransomware",
+      "broader": [
+        "セキュリティ脅威"
+      ],
+      "narrower": [],
+      "related": [
+        "ラテラルムーブメント",
+        "資格情報窃取",
+        "ゼロトラスト"
+      ],
+      "use_for": [
+        "Ransomware"
+      ],
+      "scope_note": "暗号化やデータ公開を通じて業務継続を脅かす攻撃。ID 基盤侵害が拡大要因になる。",
+      "domain": "security"
+    },
+    {
+      "id": "c_055",
+      "preferred_label": "ラテラルムーブメント",
+      "preferred_label_en": "Lateral Movement",
+      "broader": [
+        "セキュリティ脅威"
+      ],
+      "narrower": [],
+      "related": [
+        "ランサムウェア",
+        "LAPS",
+        "特権アカウント"
+      ],
+      "use_for": [
+        "横展開",
+        "横移動"
+      ],
+      "scope_note": "侵害後に認証情報や信頼関係を悪用して他システムへ移動する攻撃行動。",
+      "domain": "security"
+    },
+    {
+      "id": "c_056",
+      "preferred_label": "特権昇格",
+      "preferred_label_en": "Privilege Escalation",
+      "broader": [
+        "セキュリティ脅威"
+      ],
+      "narrower": [],
+      "related": [
+        "特権アカウント",
+        "資格情報窃取",
+        "JEA"
+      ],
+      "use_for": [
+        "Privilege Escalation"
+      ],
+      "scope_note": "攻撃者が本来持たない高権限を獲得する行為。管理者設計不備が原因になりやすい。",
+      "domain": "security"
+    },
+    {
+      "id": "c_057",
+      "preferred_label": "資格情報窃取",
+      "preferred_label_en": "Credential Theft",
+      "broader": [
+        "セキュリティ脅威"
+      ],
+      "narrower": [],
+      "related": [
+        "特権アカウント",
+        "ゴールデンチケット攻撃",
+        "多要素認証"
+      ],
+      "use_for": [
+        "Credential Theft",
+        "認証情報窃取"
+      ],
+      "scope_note": "パスワード、チケット、トークン、秘密鍵などを盗み取り認証を悪用する攻撃。",
+      "domain": "security"
+    },
+    {
+      "id": "c_058",
+      "preferred_label": "ゴールデンチケット攻撃",
+      "preferred_label_en": "Golden Ticket Attack",
+      "broader": [
+        "セキュリティ脅威",
+        "Kerberos"
+      ],
+      "narrower": [],
+      "related": [
+        "Kerberos",
+        "ドメインコントローラー",
+        "資格情報窃取"
+      ],
+      "use_for": [
+        "Golden Ticket",
+        "KRBTGT 悪用"
+      ],
+      "scope_note": "KRBTGT 由来の秘密情報を悪用し、Kerberos チケットを偽造してドメイン支配を狙う攻撃。",
+      "domain": "security"
+    },
+    {
+      "id": "c_059",
+      "preferred_label": "SIer",
+      "preferred_label_en": "System Integrator",
+      "broader": [
+        "日本型ITコンテキスト"
+      ],
+      "narrower": [],
+      "related": [
+        "レガシーシステム",
+        "基幹システム連携",
+        "オンプレミス残存"
+      ],
+      "use_for": [
+        "System Integrator",
+        "外部ベンダー"
+      ],
+      "scope_note": "日本企業のシステム設計、構築、運用を請け負う事業者。依存度が移行設計に影響する。",
+      "domain": "enterprise_context"
+    },
+    {
+      "id": "c_060",
+      "preferred_label": "オンプレミス残存",
+      "preferred_label_en": "On-Premises Residual Environment",
+      "broader": [
+        "日本型ITコンテキスト"
+      ],
+      "narrower": [
+        "レガシーシステム",
+        "基幹システム連携"
+      ],
+      "related": [
+        "Active Directory",
+        "Entra Hybrid Join",
+        "RADIUS"
+      ],
+      "use_for": [
+        "オンプレ残存",
+        "On-Premises Legacy Footprint"
+      ],
+      "scope_note": "クラウド移行後も認証や業務要件の都合でオンプレミス環境が残り続ける状態。",
+      "domain": "enterprise_context"
+    },
+    {
+      "id": "c_061",
+      "preferred_label": "レガシーシステム",
+      "preferred_label_en": "Legacy System",
+      "broader": [
+        "日本型ITコンテキスト",
+        "オンプレミス残存"
+      ],
+      "narrower": [],
+      "related": [
+        "RADIUS",
+        "SAML",
+        "基幹システム連携"
+      ],
+      "use_for": [
+        "Legacy Application",
+        "旧式システム"
+      ],
+      "scope_note": "最新の ID 連携標準に追随しづらく、移行を難しくする既存業務システム。",
+      "domain": "enterprise_context"
+    },
+    {
+      "id": "c_062",
+      "preferred_label": "基幹システム連携",
+      "preferred_label_en": "Core System Integration",
+      "broader": [
+        "日本型ITコンテキスト",
+        "オンプレミス残存"
+      ],
+      "narrower": [],
+      "related": [
+        "プロセス認証",
+        "OAuth 2.0",
+        "フェデレーション認証"
+      ],
+      "use_for": [
+        "基幹連携",
+        "業務システム連携"
+      ],
+      "scope_note": "ERP や会計、人事などの基幹システムと ID 基盤を接続するための連携設計。",
+      "domain": "enterprise_context"
+    }
+  ]
+}

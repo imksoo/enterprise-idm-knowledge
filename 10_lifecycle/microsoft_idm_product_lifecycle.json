@@ -1,0 +1,1192 @@
+{
+  "metadata": {
+    "id": "microsoft_idm_product_lifecycle",
+    "title": "Microsoft ID管理製品ライフサイクルと移行ロードマップ",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "fim",
+      "mim",
+      "adfs",
+      "entra-id",
+      "mim-2016-eol",
+      "lifecycle",
+      "microsoft-entra"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ],
+    "sources": [
+      {
+        "id": "src_mim_lifecycle",
+        "title": "Microsoft Identity Manager 2016 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/microsoft-identity-manager-2016"
+      },
+      {
+        "id": "src_mim_sp2_lifecycle",
+        "title": "Microsoft Identity Manager 2016 Service Pack 2 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/microsoft-identity-manager-2016-service-pack-2"
+      },
+      {
+        "id": "src_fim_lifecycle",
+        "title": "Microsoft Forefront Identity Manager 2010 R2 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/microsoft-forefront-identity-manager-2010-r2"
+      },
+      {
+        "id": "src_ilm_lifecycle",
+        "title": "Microsoft Identity Lifecycle Manager 2007 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/microsoft-identity-lifecycle-manager-2007"
+      },
+      {
+        "id": "src_tmg_lifecycle",
+        "title": "Microsoft Forefront Threat Management Gateway 2010 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/microsoft-forefront-threat-management-gateway-2010"
+      },
+      {
+        "id": "src_cloud_sync_overview",
+        "title": "What is Microsoft Entra Cloud sync?",
+        "url": "https://learn.microsoft.com/en-us/entra/identity/hybrid/cloud-sync/what-is-cloud-sync"
+      },
+      {
+        "id": "src_lifecycle_workflows",
+        "title": "What are lifecycle workflows?",
+        "url": "https://learn.microsoft.com/en-us/entra/id-governance/what-are-lifecycle-workflows"
+      },
+      {
+        "id": "src_permissions_mgmt",
+        "title": "What's Microsoft Entra Permissions Management?",
+        "url": "https://learn.microsoft.com/en-us/previous-versions/entra/permissions-management/overview"
+      },
+      {
+        "id": "src_dmsa",
+        "title": "Setting up delegated Managed Service Accounts (dMSA) in Windows Server 2025",
+        "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/delegated-managed-service-accounts/delegated-managed-service-accounts-set-up-dmsa"
+      },
+      {
+        "id": "src_ws2016_lifecycle",
+        "title": "Windows Server 2016 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2016"
+      },
+      {
+        "id": "src_ws2019_lifecycle",
+        "title": "Windows Server 2019 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2019"
+      },
+      {
+        "id": "src_ws2022_lifecycle",
+        "title": "Windows Server 2022 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2022"
+      },
+      {
+        "id": "src_ws2025_lifecycle",
+        "title": "Windows Server 2025 - Microsoft Lifecycle",
+        "url": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2025"
+      }
+    ],
+    "date_corrections": [
+      {
+        "topic": "MIM 2016 SP2 Extended Support終了日",
+        "requested_value": "2027-01-14",
+        "official_current_value": "2029-01-09",
+        "note": "2026-04-07時点のMicrosoft Lifecycle上では2029-01-09が有効。依頼文の日付は過去の想定または旧認識として扱う。"
+      },
+      {
+        "topic": "Windows Server 2016 ADFSの扱い",
+        "requested_value": "2027年にMainstream Support終了",
+        "official_current_value": "2027-01-12にWindows Server 2016のExtended Support終了",
+        "note": "ADFSはWindows Server内蔵機能のため、実務上はホストOSのライフサイクルに連動する。"
+      },
+      {
+        "topic": "Windows Server 2019 Extended Support終了日",
+        "requested_value": "2030",
+        "official_current_value": "2029-01-09",
+        "note": "ID基盤刷新の波は2030年前後まで継続しうるが、公式終了日は2029-01-09。"
+      },
+      {
+        "topic": "Windows Server 2025 Extended Support終了日",
+        "requested_value": "2033",
+        "official_current_value": "2034-11-14",
+        "note": "Windows Server 2025は2024-11-01開始、2034-11-14終了。"
+      }
+    ]
+  },
+  "products": [
+    {
+      "id": "product_ilm_2007",
+      "name": "Identity Lifecycle Manager 2007",
+      "era": "legacy_eol",
+      "status": "eol",
+      "vendor": "Microsoft",
+      "support_policy": "Fixed Lifecycle",
+      "support_dates": {
+        "start": "2007-06-30",
+        "mainstream_end": "2012-07-10",
+        "extended_end": "2017-07-11"
+      },
+      "core_functions": [
+        "ユーザープロビジョニング",
+        "ディレクトリ同期",
+        "前世代のメタディレクトリ"
+      ],
+      "successor_products": [
+        "Forefront Identity Manager 2010 R2",
+        "Microsoft Identity Manager 2016"
+      ],
+      "migration_direction": "実質的には残存案件のみ。直接の再導入は非推奨で、MIM残存ならMIM縮退またはEntra ID系へ再設計する。",
+      "japan_context": "日本で新規採用はほぼ消滅。FIM移行の痕跡として残るケースが中心。",
+      "source_refs": [
+        "src_ilm_lifecycle"
+      ]
+    },
+    {
+      "id": "product_fim_2010_r2",
+      "name": "Forefront Identity Manager 2010 R2",
+      "era": "legacy_eol",
+      "status": "eol",
+      "vendor": "Microsoft",
+      "support_policy": "Fixed Lifecycle",
+      "support_dates": {
+        "start": "2010-05-18",
+        "mainstream_end": "2015-10-13",
+        "extended_end": "2020-10-13"
+      },
+      "core_functions": [
+        "プロビジョニング",
+        "パスワード同期",
+        "セルフサービス パスワード リセット",
+        "ワークフロー承認"
+      ],
+      "successor_products": [
+        "Microsoft Identity Manager 2016"
+      ],
+      "migration_direction": "まずFIM構成要素を棚卸しし、同期はEntra Connect SyncまたはCloud Sync、セルフサービスはEntra SSPR、承認系はEntra ID Governanceへ機能分解して移行する。",
+      "japan_context": "金融・製造を中心に、ADと人事システム連携や申請承認用途で一定数導入されたと推定される。",
+      "source_refs": [
+        "src_fim_lifecycle"
+      ]
+    },
+    {
+      "id": "product_forefront_family",
+      "name": "Microsoft Forefront製品群",
+      "era": "legacy_eol",
+      "status": "retired_family",
+      "vendor": "Microsoft",
+      "subproducts": [
+        {
+          "name": "Forefront Threat Management Gateway 2010",
+          "support_dates": {
+            "mainstream_end": "2015-04-14",
+            "extended_end": "2020-04-14"
+          },
+          "successor_direction": [
+            "Entra Private Access",
+            "Microsoft Entra Internet Access",
+            "Microsoft Entra アプリケーション プロキシ",
+            "サードパーティZTNA/SWG"
+          ],
+          "source_refs": [
+            "src_tmg_lifecycle"
+          ]
+        },
+        {
+          "name": "Forefront Unified Access Gateway 2010",
+          "support_dates": {
+            "mainstream_end": "2015-04-14",
+            "extended_end": "2020-04-14"
+          },
+          "successor_direction": [
+            "Microsoft Entra アプリケーション プロキシ",
+            "Active Directory フェデレーションサービス",
+            "Microsoft Entra ID"
+          ],
+          "source_refs": []
+        },
+        {
+          "name": "Forefront Endpoint Protection",
+          "support_dates": {
+            "family_status": "retired"
+          },
+          "successor_direction": [
+            "System Center Endpoint Protection",
+            "Microsoft Defender for Endpoint"
+          ],
+          "source_refs": []
+        }
+      ],
+      "migration_direction": "Forefrontは製品群として終息済みで、個別機能をEntra、Defender、System Center、またはZero Trustスタックへ再配置する必要がある。"
+    },
+    {
+      "id": "product_mim_2016_sp2",
+      "name": "Microsoft Identity Manager 2016 SP2",
+      "era": "current_migration_required",
+      "status": "supported_but_declining",
+      "vendor": "Microsoft",
+      "support_policy": "Fixed Lifecycle",
+      "support_dates": {
+        "start": "2018-04-19",
+        "mainstream_end": "2024-01-09",
+        "extended_end": "2029-01-09"
+      },
+      "requested_date_mismatch": {
+        "requested_extended_end": "2027-01-14",
+        "official_current_extended_end": "2029-01-09"
+      },
+      "strategic_position": "オンプレミス後継製品は明示されておらず、Microsoftの投資重心はEntra ID、Entra ID Governance、ハイブリッド同期、クラウドガバナンス側に移っている。",
+      "components": [
+        "MIM同期サービス",
+        "MIM Service & Portal",
+        "MIM Certificate Management",
+        "PAM for AD",
+        "BHOLD Suite"
+      ],
+      "core_functions": [
+        "AD/HR/LDAP同期",
+        "ワークフロー承認",
+        "セルフサービス ID 管理",
+        "証明書ライフサイクル管理",
+        "Active Directory 向け Just-in-Time 特権"
+      ],
+      "migration_direction": "MIM全体をそのまま置換する後継製品はない。同期、ガバナンス、PAM、証明書管理を別サービスへ分解し、Entra ID系と必要に応じてIntune、PKI、CyberArk等を組み合わせる再設計が必要。",
+      "official_guidance_status": "MIMからEntra ID Governanceへの単一の公式移行ガイドは確認できない。公式にはEntra Cloud Sync、ライフサイクル ワークフロー、Entra ID Governance、各種プロビジョニング機能を個別に組み合わせる設計が中心。",
+      "ad_pam_note": "MIM PAM for ADはWindows Server 2016世代のAD PAM機能と組み合わせるJIT特権モデルであり、AD依存の残る特権運用ではForest/信頼関係/Shadow Principal設計が残留課題になる。",
+      "japan_context": "金融・製造・官公庁で、人事連携、権限申請、証明書発行、特権統制のために残存している可能性が高い。",
+      "risk_summary": [
+        "2029-01-09以降はセキュリティ更新停止",
+        "SharePoint依存のPortal構成は更改難度が高い",
+        "独自MAやワークフローが移行の主要ボトルネック",
+        "BHOLDとCMは代替設計の手戻りが大きい"
+      ],
+      "source_refs": [
+        "src_mim_lifecycle",
+        "src_mim_sp2_lifecycle"
+      ]
+    },
+    {
+      "id": "product_entra_connect_sync",
+      "name": "Entra Connect Sync",
+      "era": "current_migration_required",
+      "status": "active",
+      "vendor": "Microsoft",
+      "support_model": "12か月ローリングサポート",
+      "versions": [
+        {
+          "name": "Azure AD Connect v1.x",
+          "status": "eol",
+          "end_of_support": "2022-08-31"
+        },
+        {
+          "name": "Entra Connect Sync v2.x",
+          "status": "current",
+          "note": "最新ビルドから12か月のローリングサポートを前提に、継続更新が必要。"
+        },
+        {
+          "name": "Entra Cloud Sync",
+          "status": "current",
+          "note": "軽量エージェント型。マルチフォレストやクラウド主導の構成に適する。"
+        }
+      ],
+      "core_functions": [
+        "Active Directory から Entra ID への同期",
+        "Password Hash Synchronization",
+        "ハイブリッド ID のブリッジ"
+      ],
+      "migration_direction": "ADFS依存を減らす移行では、PHSまたはPTAを軸にEntra Connect Syncを維持しつつ、適合性が高い環境ではCloud Syncへ段階移行する。",
+      "adfs_transition_role": "ADFSからEntra IDへの移行で、IDソースと属性整備を保つ中核。認証方式切替時も同期品質が失敗点になる。",
+      "source_refs": [
+        "src_cloud_sync_overview"
+      ]
+    },
+    {
+      "id": "product_adfs",
+      "name": "Active Directory フェデレーションサービス",
+      "era": "current_migration_required",
+      "status": "supported_but_strategically_deemphasized",
+      "vendor": "Microsoft",
+      "support_model": "Windows Serverライフサイクル連動",
+      "core_functions": [
+        "SAML/WS-Fedベースのフェデレーション",
+        "オンプレミス アプリケーションのSSO",
+        "クレームルール変換"
+      ],
+      "strategic_position": "2022年以降はMicrosoft Entra IDへの集約メッセージが強く、クラウド向けSSOや条件付きアクセスの観点では新規採用優先度が低い。",
+      "migration_direction": "SAML/OIDC対応アプリはEntra IDへ順次移し、残存するWS-Fedや複雑なクレームルール、デバイス認証依存は例外管理とする。",
+      "hard_parts": [
+        "複雑なカスタムクレームルール",
+        "WS-Fed依存アプリ",
+        "証明書更新と信頼関係調整",
+        "オンプレミスMFAや独自認可ロジック"
+      ],
+      "source_refs": [
+        "src_ws2016_lifecycle",
+        "src_ws2019_lifecycle",
+        "src_ws2022_lifecycle",
+        "src_ws2025_lifecycle"
+      ]
+    },
+    {
+      "id": "product_windows_server_2025_ad",
+      "name": "Windows Server 2025のActive Directory関連変更",
+      "era": "current_migration_required",
+      "status": "current",
+      "vendor": "Microsoft",
+      "support_dates": {
+        "start": "2024-11-01",
+        "mainstream_end": "2029-11-13",
+        "extended_end": "2034-11-14"
+      },
+      "changes": [
+        {
+          "name": "delegated Managed Service Account (dMSA)",
+          "impact": "サービスアカウント移行先として有力。従来の固定パスワード運用からの脱却を促進する。"
+        },
+        {
+          "name": "Kerberos AES256前提の設計強化",
+          "impact": "新規dMSA作成でもAES256が前提設定として現れ、RC4依存資産の整理圧力が高まる。"
+        },
+        {
+          "name": "NTLM縮退の加速",
+          "impact": "Microsoft全体の段階的非推奨方針に沿い、AD/アプリ棚卸しとKerberos化が必須になる。"
+        },
+        {
+          "name": "Windows LAPSの標準化進展",
+          "impact": "ローカル管理者パスワード管理は標準機能寄せが容易になる。"
+        }
+      ],
+      "migration_direction": "ADを残す場合でも、Windows Server 2025世代ではNTLM依存の解消、AES前提、サービスアカウント刷新、LAPS標準化を並行して進める必要がある。",
+      "source_refs": [
+        "src_dmsa",
+        "src_ws2025_lifecycle"
+      ]
+    },
+    {
+      "id": "product_entra_id",
+      "name": "Entra ID",
+      "era": "next_generation",
+      "status": "strategic_target",
+      "vendor": "Microsoft",
+      "licenses": [
+        "Free",
+        "P1",
+        "P2",
+        "Entra ID Governance"
+      ],
+      "p2_capabilities": [
+        "リスクベース条件付きアクセス",
+        "Privileged Identity Management",
+        "Access Reviews"
+      ],
+      "core_functions": [
+        "クラウド認証",
+        "条件付きアクセス",
+        "多要素認証",
+        "アイデンティティ保護",
+        "SaaS SSO"
+      ],
+      "migration_direction": "MIMやADFSを全面置換する単独製品ではなく、認証、ガバナンス、権限レビュー、特権管理をクラウド制御へ寄せる中心基盤。",
+      "source_refs": []
+    },
+    {
+      "id": "product_entra_id_governance",
+      "name": "Entra ID Governance",
+      "era": "next_generation",
+      "status": "strategic_target",
+      "vendor": "Microsoft",
+      "core_functions": [
+        "Entitlement Management",
+        "Access Reviews",
+        "Lifecycle Workflows",
+        "Privileged Identity Management"
+      ],
+      "license_note": "Lifecycle WorkflowsはEntra ID GovernanceまたはEntra Suiteライセンスを要求する。",
+      "migration_direction": "MIM Service/PortalやBHOLDの代替候補。ただし、MIMの細粒度ワークフローや複雑な承認経路は要件再定義が必要。",
+      "source_refs": [
+        "src_lifecycle_workflows"
+      ]
+    },
+    {
+      "id": "product_entra_suite",
+      "name": "Microsoft Entra Suite",
+      "era": "next_generation",
+      "status": "strategic_bundle",
+      "vendor": "Microsoft",
+      "announcement_period": "2024",
+      "included_capabilities": [
+        "Entra ID Governance",
+        "Entra Verified ID",
+        "Entra Private Access",
+        "Entra Internet Access"
+      ],
+      "market_position": {
+        "Private Access": "ZTNA領域でZscaler Private AccessやPrisma Accessと競合",
+        "Internet Access": "SWG/CASB領域でZscaler Internet Accessと競合"
+      },
+      "japan_context": "国内では大企業を中心にゼロトラスト統合スタックとして検討が進むが、価格は契約形態と既存M365/E5保有状況で差が大きく、見積ベース評価が一般的。",
+      "migration_direction": "ADFS/UAG/TMG的なリモートアクセスと認可の一部を、Entra Private AccessとEntra Internet Accessで再設計する流れを生む。",
+      "source_refs": []
+    },
+    {
+      "id": "product_entra_permissions_management",
+      "name": "Microsoft Entra Permissions Management",
+      "era": "next_generation",
+      "status": "ciam_adjacent_retired_service",
+      "vendor": "Microsoft",
+      "origin": "CloudKnox",
+      "category": "CIEM",
+      "core_functions": [
+        "AWS/Azure/GCPの権限可視化",
+        "過剰権限の検出",
+        "JIT権限付与",
+        "Permission Creep Index"
+      ],
+      "lifecycle_note": "2026-04-07時点でLearn上の主要説明は previous versions 側に移っており、長期戦略上の中核製品としては扱いに注意が必要。",
+      "migration_direction": "MIM代替ではなく、クラウドIaaS権限の最小権限化を担う補完製品。AD中心の権限管理とは別レイヤー。",
+      "source_refs": [
+        "src_permissions_mgmt"
+      ]
+    }
+  ],
+  "migration_mapping": [
+    {
+      "mim_function": "MIM同期（HR→AD）",
+      "entra_alternative": [
+        "Entra ID",
+        "API-driven provisioning",
+        "Workday連携",
+        "Entra Cloud Sync"
+      ],
+      "migration_difficulty": "high",
+      "attention_points": [
+        "独自MAの置換が最大論点",
+        "人事属性の正規化とソースオブオーソリティ再定義が必要",
+        "AD向け逆方向プロビジョニングの要件整理が必要"
+      ]
+    },
+    {
+      "mim_function": "セルフサービス パスワード リセット",
+      "entra_alternative": [
+        "Entra SSPR"
+      ],
+      "migration_difficulty": "low",
+      "attention_points": [
+        "認証手段とヘルプデスク運用の見直し",
+        "オンプレミス書き戻し要件を確認"
+      ]
+    },
+    {
+      "mim_function": "ワークフロー承認",
+      "entra_alternative": [
+        "Entitlement Management",
+        "Lifecycle Workflows"
+      ],
+      "migration_difficulty": "medium",
+      "attention_points": [
+        "MIM Portalで作り込んだ多段承認は再設計が必要",
+        "申請単位をアクセスパッケージ中心へ見直す必要がある"
+      ]
+    },
+    {
+      "mim_function": "グループ管理",
+      "entra_alternative": [
+        "Dynamic Groups",
+        "Entitlement Management"
+      ],
+      "migration_difficulty": "medium",
+      "attention_points": [
+        "ADグループとクラウドグループの責任分界を定義する",
+        "ネストと命名規約を再編する"
+      ]
+    },
+    {
+      "mim_function": "ロール管理（BHOLD）",
+      "entra_alternative": [
+        "Privileged Identity Management",
+        "Access Reviews"
+      ],
+      "migration_difficulty": "high",
+      "attention_points": [
+        "BHOLDのロールモデルをそのまま移植できない",
+        "RBAC再設計と職務分掌整理が必要"
+      ]
+    },
+    {
+      "mim_function": "証明書管理（CM）",
+      "entra_alternative": [
+        "Intune",
+        "SCEP",
+        "EST",
+        "Entra ID"
+      ],
+      "migration_difficulty": "high",
+      "attention_points": [
+        "PKI再設計が必要",
+        "スマートカードや既存証明書テンプレート依存の分離が必要"
+      ]
+    },
+    {
+      "mim_function": "PAM for AD（JIT）",
+      "entra_alternative": [
+        "Privileged Identity Management for Groups",
+        "CyberArk"
+      ],
+      "migration_difficulty": "medium",
+      "attention_points": [
+        "AD特権を残すならオンプレミスPAMの併用が必要",
+        "Shadow PrincipalとForest分離を前提とした設計は単純移行できない"
+      ]
+    }
+  ],
+  "timeline_2026_2036": [
+    {
+      "year": 2026,
+      "headline": "MIM残存資産の棚卸しを完了すべき年",
+      "actions": [
+        "MIM同期ルール、独自MA、Portal承認、BHOLD、CM、PAM for ADを分解棚卸しする",
+        "依頼文で想定されている2027-01-14 EOL認識を是正し、公式の2029-01-09を基準に再計画する",
+        "ただし移行難度が高いため、実務上は2026年に設計着手しないと間に合わない"
+      ],
+      "idm_impact": "MIMの一括置換は困難であり、コンポーネント別移行ロードマップが必要。"
+    },
+    {
+      "year": 2027,
+      "headline": "Windows Server 2016系ADFSとPAM残存の危険域",
+      "actions": [
+        "2027-01-12のWindows Server 2016 Extended Support終了を踏まえ、WS2016上のADFSやPAM前提基盤を更改する",
+        "ADFS依存アプリのSAML/OIDC移行優先順位を確定する",
+        "NTLM依存、RC4依存、固定サービスアカウントを重点是正する"
+      ],
+      "idm_impact": "OSライフサイクルとID基盤老朽化が同時に顕在化し、保守不能リスクが高まる。"
+    },
+    {
+      "year": 2028,
+      "headline": "先進企業でEntra ID Governance本格移行が増える年",
+      "actions": [
+        "Lifecycle WorkflowsとEntitlement Managementの標準化を進める",
+        "MIM Portalの承認WFを業務要件単位で削減・再設計する",
+        "Cloud SyncやAPI-driven provisioningを使ったクラウド主導ID運用へ移行する"
+      ],
+      "idm_impact": "MIMの延命ではなく、ガバナンス主導の運用標準化が投資判断の中心になる。"
+    },
+    {
+      "year": 2029,
+      "headline": "MIM 2016 SP2とWindows Server 2019の二重EOL年",
+      "actions": [
+        "2029-01-09までにMIM 2016 SP2の本番撤退またはサポート外受容の判断を完了する",
+        "同日終了のWindows Server 2019更改と一体でID同期・ADFS・証明書・PAMを刷新する",
+        "MIM CMやBHOLDの残存案件は例外管理に切り替える"
+      ],
+      "idm_impact": "日本企業にとって最大の切替波。オンプレミスID管理の再設計を先送りできない。"
+    },
+    {
+      "year": 2030,
+      "headline": "AD刷新の本格波及",
+      "actions": [
+        "2029年末までに更改できなかったAD連携アプリの代替策を完了する",
+        "gMSAやdMSAへの置換を進め、固定資格情報を削減する",
+        "Entra SuiteやサードパーティPAM/ZTNAの併用方針を確定する"
+      ],
+      "idm_impact": "単なるサーバー更改ではなく、認証方式と特権管理モデルの刷新が求められる。"
+    },
+    {
+      "year": 2031,
+      "headline": "Windows Server 2022 Extended Support終了",
+      "actions": [
+        "2022世代の暫定延命構成を解消する",
+        "ADFS残存がある場合は最終撤退の締切として扱う",
+        "Kerberos AES前提、LAPS標準化、Entra条件付きアクセスの完全適用を目指す"
+      ],
+      "idm_impact": "ハイブリッド基盤の暫定構成を整理しきれない企業は運用複雑性が急増する。"
+    },
+    {
+      "year": 2032,
+      "headline": "クラウド主導のJoiner/Mover/Leaverが標準化",
+      "actions": [
+        "人事イベント起点の自動化をEntra ID Governanceに統合する",
+        "Access Reviewsを職務分掌運用へ組み込み、監査証跡を標準化する",
+        "例外管理だけをオンプレミスに残す"
+      ],
+      "idm_impact": "監査対応と統制運用はMIM型ワークフローよりクラウド標準機能へ収斂する。"
+    },
+    {
+      "year": 2033,
+      "headline": "オンプレミス依存の最小化フェーズ",
+      "actions": [
+        "ADに残すのはサーバーOS認証、Kerberos、レガシーアプリ限定とする",
+        "ローカル管理者対策はWindows LAPSを標準化する",
+        "残存Forestを用途別に縮退させる"
+      ],
+      "idm_impact": "ID管理基盤はクラウド中枢、ADは限定的な認証インフラへ役割縮小する。"
+    },
+    {
+      "year": 2034,
+      "headline": "Windows Server 2025 Extended Support終了への準備年",
+      "actions": [
+        "2034-11-14終了を見据え、2025世代に依存したAD設計を次段へ更新する",
+        "dMSAやAES前提化で取り切れなかった例外を除去する",
+        "NTLM残存ゼロを監査項目化する"
+      ],
+      "idm_impact": "2025世代が最終的な長期AD基盤になるとは限らず、次段ロードマップが必要。"
+    },
+    {
+      "year": 2035,
+      "headline": "AD最小残存とゼロトラスト統合の定着",
+      "actions": [
+        "Entra Private AccessとInternet Accessを含む境界レス制御を定着させる",
+        "サーバー向け例外認証だけを明示的に維持する",
+        "CIEMとPIMを統合して権限の棚卸しを自動化する"
+      ],
+      "idm_impact": "権限統制はディレクトリ中心からポリシー中心へ移る。"
+    },
+    {
+      "year": 2036,
+      "headline": "次世代ID運用の平準化",
+      "actions": [
+        "IDガバナンス、自動プロビジョニング、特権昇格、アクセスレビューを単一運用モデルに統合する",
+        "AD残存を例外資産として予算管理する",
+        "後継Windows Server世代またはAD代替設計の評価を継続する"
+      ],
+      "idm_impact": "MIMやADFS前提の運用は過去資産となり、例外維持コストの管理が主題になる。"
+    }
+  ],
+  "japan_specific_context": {
+    "summary": "日本企業では、MIM/FIMの残存は単なるID同期ではなく、人事連携、申請承認、証明書、特権管理、SIer保守運用の複合物として存在しやすい。そのため後継製品比較だけでは不十分で、運用責任分界と監査要件の再設計が必要になる。",
+    "characteristics": [
+      "金融・製造・官公庁ではオンプレミスADと人事システムの結合が強い",
+      "MIM PortalやBHOLDは監査証跡や申請統制の文脈で残存しやすい",
+      "ADFSは社外公開Web SSOよりも一部業務システム例外用途で残ることが多い",
+      "価格は国内公開単価だけで判断しにくく、E5保有状況やEnterprise Agreementが影響する",
+      "Entra SuiteやEntra ID Governanceは日本でも展開されているが、PoCから本番標準化までに業務要件整理が必要"
+    ],
+    "recommended_message_for_japan": "MIM 2016を後継製品へ単純移行する発想ではなく、同期、承認、特権、証明書、リモートアクセスを別レイヤーで再編する前提で計画すべき。",
+    "procurement_note": "Microsoft Entra SuiteやEntra ID Governanceの国内価格は契約条件で変動が大きいため、正式見積前提で比較する。",
+    "adoption_note": "採用業種の記述は公的統計ではなく、国内SIer案件とMicrosoft製品の一般的な残存傾向からの実務推定を含む。"
+  },
+  "nodes": [
+    {
+      "id": "node_mim_2016",
+      "label": "Microsoft Identity Manager 2016 SP2",
+      "object_type": "product",
+      "description": "オンプレミス中心のID管理製品。2029-01-09でExtended Support終了。",
+      "properties": {
+        "priority": "highest",
+        "status": "supported_but_declining"
+      }
+    },
+    {
+      "id": "node_fim_2010_r2",
+      "label": "Forefront Identity Manager 2010 R2",
+      "object_type": "product",
+      "description": "MIMの前世代。2020-10-13で終了済み。",
+      "properties": {
+        "status": "eol"
+      }
+    },
+    {
+      "id": "node_ilm_2007",
+      "label": "Identity Lifecycle Manager 2007",
+      "object_type": "product",
+      "description": "FIM前身製品。2017-07-11で終了済み。",
+      "properties": {
+        "status": "eol"
+      }
+    },
+    {
+      "id": "node_entra_id",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "クラウド中心の認証とポリシー制御基盤。",
+      "properties": {
+        "status": "strategic-target"
+      }
+    },
+    {
+      "id": "node_entra_governance",
+      "label": "Entra ID Governance",
+      "object_type": "product",
+      "description": "アクセスパッケージ、レビュー、JML自動化、PIMを担うガバナンス製品群。",
+      "properties": {
+        "status": "strategic-target"
+      }
+    },
+    {
+      "id": "node_entra_connect_sync",
+      "label": "Entra Connect Sync",
+      "object_type": "product",
+      "description": "オンプレミスADとEntra IDをつなぐ同期基盤。",
+      "properties": {
+        "status": "current"
+      }
+    },
+    {
+      "id": "node_cloud_sync",
+      "label": "Entra Cloud Sync",
+      "object_type": "product",
+      "description": "軽量エージェント型のハイブリッド同期。",
+      "properties": {
+        "status": "current"
+      }
+    },
+    {
+      "id": "node_adfs",
+      "label": "Active Directory フェデレーションサービス",
+      "object_type": "product",
+      "description": "Windows Server連動のフェデレーション基盤。",
+      "properties": {
+        "status": "deemphasized"
+      }
+    },
+    {
+      "id": "node_ws2025",
+      "label": "Windows Server 2025",
+      "object_type": "product",
+      "description": "dMSAやAES前提強化を含む次世代ADホスト基盤。",
+      "properties": {
+        "status": "current"
+      }
+    },
+    {
+      "id": "node_entra_suite",
+      "label": "Microsoft Entra Suite",
+      "object_type": "product",
+      "description": "IDガバナンス、ZTNA、SWG、Verified IDを束ねるスイート。",
+      "properties": {
+        "status": "strategic-bundle"
+      }
+    },
+    {
+      "id": "node_permissions_mgmt",
+      "label": "Microsoft Entra Permissions Management",
+      "object_type": "product",
+      "description": "マルチクラウド権限を可視化するCIEM製品。",
+      "properties": {
+        "status": "supplementary"
+      }
+    },
+    {
+      "id": "node_mim_eol_risk",
+      "label": "MIM 2016 EOLリスク",
+      "object_type": "risk",
+      "description": "セキュリティ更新停止と運用要員希少化が同時進行するリスク。",
+      "properties": {
+        "severity": "high"
+      }
+    },
+    {
+      "id": "node_adfs_migration",
+      "label": "ADFS撤退",
+      "object_type": "pattern",
+      "description": "フェデレーションをEntra ID中心へ集約する移行パターン。",
+      "properties": {
+        "priority": "high"
+      }
+    },
+    {
+      "id": "node_jml_modernization",
+      "label": "Joiner-Mover-Leaver再設計",
+      "object_type": "pattern",
+      "description": "MIMワークフローからクラウド主導JMLへ移す設計。",
+      "properties": {
+        "priority": "high"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_ilm_2007",
+      "to": "node_fim_2010_r2",
+      "relationship": "replaces",
+      "description": "FIM 2010 R2はILM 2007の後継。"
+    },
+    {
+      "from": "node_fim_2010_r2",
+      "to": "node_mim_2016",
+      "relationship": "replaces",
+      "description": "MIM 2016はFIM 2010 R2を置き換えた。"
+    },
+    {
+      "from": "node_mim_2016",
+      "to": "node_mim_eol_risk",
+      "relationship": "requires",
+      "description": "MIM 2016継続利用はEOL対応計画を要する。"
+    },
+    {
+      "from": "node_mim_2016",
+      "to": "node_entra_governance",
+      "relationship": "replaces",
+      "description": "MIMのガバナンス機能はEntra ID Governanceへ分解移行する。"
+    },
+    {
+      "from": "node_mim_2016",
+      "to": "node_entra_connect_sync",
+      "relationship": "complements",
+      "description": "MIM同期を整理する際、Entra Connect Syncが中核同期基盤になる。"
+    },
+    {
+      "from": "node_entra_connect_sync",
+      "to": "node_cloud_sync",
+      "relationship": "complements",
+      "description": "Cloud SyncはConnect Syncの軽量代替または補完として使う。"
+    },
+    {
+      "from": "node_adfs",
+      "to": "node_adfs_migration",
+      "relationship": "requires",
+      "description": "ADFSは段階撤退計画を要する。"
+    },
+    {
+      "from": "node_adfs_migration",
+      "to": "node_entra_id",
+      "relationship": "replaces",
+      "description": "SAML/OIDC中心のSSOはEntra IDへ移す。"
+    },
+    {
+      "from": "node_ws2025",
+      "to": "node_adfs",
+      "relationship": "complements",
+      "description": "ADFSはWindows Serverライフサイクルに依存する。"
+    },
+    {
+      "from": "node_ws2025",
+      "to": "node_entra_id",
+      "relationship": "complements",
+      "description": "ADを残す場合でも、クラウド側制御はEntra IDと組み合わせる。"
+    },
+    {
+      "from": "node_entra_governance",
+      "to": "node_jml_modernization",
+      "relationship": "implements",
+      "description": "Lifecycle WorkflowsとEntitlement ManagementでJML再設計を実装する。"
+    },
+    {
+      "from": "node_entra_suite",
+      "to": "node_entra_governance",
+      "relationship": "complements",
+      "description": "Entra Suiteはガバナンス機能を束ねる。"
+    },
+    {
+      "from": "node_permissions_mgmt",
+      "to": "node_entra_suite",
+      "relationship": "complements",
+      "description": "Permissions ManagementはIaaS権限最適化で補完する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "MIM 2016 SP2の最重要性",
+      "content": "このテーマで最優先なのはMIM 2016 SP2の出口戦略である。MIMは同期、申請、特権、証明書、ロール管理を抱えるため、単純な製品置換ではなく分解移行が必要になる。",
+      "evidence_level": "official_plus_architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "MIM",
+        "EOL",
+        "移行"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "MIM 2016 SP2の公式終了日",
+      "content": "2026-04-07時点のMicrosoft Lifecycleでは、MIM 2016 SP2のExtended Support終了日は2029-01-09である。依頼文の2027-01-14は現在の公式日付とは一致しない。",
+      "evidence_level": "official",
+      "japan_specific": false,
+      "tags": [
+        "MIM",
+        "Lifecycle"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "MIMに単一の後継製品はない",
+      "content": "MIM全体を一つで置き換えるオンプレミス後継製品は明示されていない。実務ではEntra ID、Entra ID Governance、Entra Connect Sync、Intune、PKI、サードパーティPAMへ役割分解する。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "MIM",
+        "後継"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "FIM 2010 R2は完全に終了済み",
+      "content": "FIM 2010 R2は2015-10-13にMainstream Support、2020-10-13にExtended Supportが終了している。残存している場合は例外運用ではなく撤去案件として扱うべきである。",
+      "evidence_level": "official",
+      "japan_specific": false,
+      "tags": [
+        "FIM",
+        "EOL"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "ILM 2007は歴史的資産",
+      "content": "ILM 2007は2017-07-11終了済みであり、新規議論対象ではない。FIMやMIMへ過去移行した設計資産の痕跡を理解するための参照物である。",
+      "evidence_level": "official",
+      "japan_specific": false,
+      "tags": [
+        "ILM",
+        "EOL"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "Forefront製品群の扱い",
+      "content": "Forefront製品群は製品ごとに後継が分散しており、ファミリー全体としては終息している。Forefrontという括りで更改を考えるより、ID、アクセス、エンドポイント、防御を別レイヤーで置き換えるべきである。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "Forefront",
+        "移行"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "UAG/TMG系の現代的後継",
+      "content": "UAG/TMGで担っていた境界アクセス制御は、現在ではEntra アプリケーション プロキシ、Entra Private Access、Entra Internet Access、またはサードパーティZTNA/SWGで再設計する流れに変わっている。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": false,
+      "tags": [
+        "UAG",
+        "TMG",
+        "ZTNA"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "MIM同期の移行が最難関",
+      "content": "MIM同期サービスの最大論点は独自MAと属性変換である。標準コネクタだけならCloud SyncやEntra Connect Syncへ寄せやすいが、HRやLDAP、DB、ファイル連携を組み込んだ独自実装は高難度となる。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "MIM同期",
+        "MA"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "SSPRは比較的移しやすい",
+      "content": "MIMのセルフサービス パスワード リセットは、Entra SSPRへ比較的移行しやすい。主論点は認証手段、ヘルプデスク運用、書き戻し要件である。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": false,
+      "tags": [
+        "SSPR",
+        "MIM"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "MIM Portalの再設計が必要",
+      "content": "MIM Service & Portalの多段承認やSharePoint依存UIは、そのままEntraへ移せない。アクセスパッケージ、レビュー、JML自動化へ業務要求を分解する必要がある。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": true,
+      "tags": [
+        "Portal",
+        "承認"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "BHOLD移行はロール再設計案件",
+      "content": "BHOLD Suiteは単なる機能置換ではなく、RBACと職務分掌の再設計案件になる。Entra PIMとAccess Reviewsで代替できる領域はあるが、既存ロールモデルの整理が先である。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "BHOLD",
+        "RBAC"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "MIM CMはPKI刷新が前提",
+      "content": "MIM Certificate Managementの移行は、Entra機能単体では完結しない。Intune、SCEP/EST、AD CS、スマートカード要件を含めたPKI再設計が必要である。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": false,
+      "tags": [
+        "CM",
+        "PKI"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "MIM PAM for ADの本質",
+      "content": "MIM PAM for ADはWindows Server 2016世代のAD PAM機能に依存したJIT特権モデルである。AD Forest分離やShadow Principalの理解が不足すると移行判断を誤る。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "PAM for AD",
+        "JIT"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "ADFSはOS寿命に縛られる",
+      "content": "ADFSはWindows Server組み込み機能であり、単独製品の長期延命はできない。したがってADFS問題は常にWindows Server更改問題とセットで扱う必要がある。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "ADFS",
+        "Windows Server"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "ADFS撤退の難所",
+      "content": "ADFSからEntra IDへ移る際の難所は、複雑なクレームルール、WS-Fed残存、独自MFA、証明書更新、アプリ側のSAML/OIDC制約である。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "ADFS",
+        "SAML",
+        "OIDC"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "Entra Connect Syncは更新継続が必要",
+      "content": "v2.x系のEntra Connect Syncは、導入して終わりではなく、ローリングサポート前提で継続更新が必要である。同期基盤を放置すると、移行中盤で新たな技術負債になる。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "Entra Connect Sync",
+        "Lifecycle"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "Cloud Syncの位置づけ",
+      "content": "Cloud Syncは軽量エージェント型で、複数の切断フォレストやクラウド主導運用に適する。すべてのConnect Sync機能を置き換えるわけではないため、機能比較が必要である。",
+      "evidence_level": "official",
+      "japan_specific": false,
+      "tags": [
+        "Cloud Sync",
+        "ハイブリッドID"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "Lifecycle Workflowsの意味",
+      "content": "Lifecycle WorkflowsはJoiner/Mover/Leaverをクラウド主導で自動化する重要機能である。MIMワークフローの全再現ではないが、標準化された入社・異動・退職処理の受け皿になる。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "Lifecycle Workflows",
+        "JML"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "Access ReviewsとPIMの役割",
+      "content": "Entra ID Governanceでは、定期棚卸しはAccess Reviews、特権昇格はPIMが担う。BHOLDやMIM PAMの代替として見る場合も、役割は分散している。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": false,
+      "tags": [
+        "Access Reviews",
+        "PIM"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "Entra Suiteの意味",
+      "content": "Entra Suiteは単なるID製品ではなく、IDガバナンスにZTNAとSWGを束ねる構成である。UAG/TMGやVPN的な境界モデルの置換を視野に入れる企業ほど相性が良い。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "Entra Suite",
+        "ZTNA"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "Permissions Managementは補完製品",
+      "content": "Microsoft Entra Permissions ManagementはAWS、Azure、GCPのCIEMであり、MIMやADFSの直接後継ではない。クラウド権限最適化の別レイヤーとして位置付けるべきである。",
+      "evidence_level": "official",
+      "japan_specific": false,
+      "tags": [
+        "Permissions Management",
+        "CIEM"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "Windows Server 2025とdMSA",
+      "content": "Windows Server 2025ではdMSAが実用的な刷新テーマであり、固定パスワードのサービスアカウントを減らす具体策になる。ID管理移行とサービスアカウント刷新を別案件にしない方がよい。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "Windows Server 2025",
+        "dMSA"
+      ]
+    },
+    {
+      "id": "knowledge_023",
+      "topic": "AES前提化の圧力",
+      "content": "Windows Server 2025世代ではAES256前提の設計意識が一段と強くなる。RC4やNTLMに依存するレガシーアプリは、ADそのものの問題ではなくアプリ刷新課題として扱う必要がある。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": false,
+      "tags": [
+        "Kerberos",
+        "AES",
+        "NTLM"
+      ]
+    },
+    {
+      "id": "knowledge_024",
+      "topic": "日本企業でMIMが残る理由",
+      "content": "日本企業では、人事システムとADの属性整備、申請承認、官公庁・金融向け監査証跡、SIer運用引継ぎの事情からMIMが残りやすい。単機能ではなく業務統制の塊として残存する点が特徴である。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "日本企業",
+        "MIM"
+      ]
+    },
+    {
+      "id": "knowledge_025",
+      "topic": "価格評価の実務",
+      "content": "Entra ID GovernanceやEntra Suiteは、単価比較よりも既存M365/E5保有状況、監査要件、ZTNA統合有無で判断すべきである。日本では見積ベースで投資判断されることが多い。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "価格",
+        "日本"
+      ]
+    },
+    {
+      "id": "knowledge_026",
+      "topic": "2029年が切替の山場",
+      "content": "2029-01-09はMIM 2016 SP2とWindows Server 2019の両方のサポート終了日であり、多くの日本企業にとってID基盤更改の最大ピークになる可能性が高い。",
+      "evidence_level": "official_plus_inference",
+      "japan_specific": true,
+      "tags": [
+        "2029",
+        "EOL"
+      ]
+    },
+    {
+      "id": "knowledge_027",
+      "topic": "先送りの危険",
+      "content": "MIMの公式終了日が2029であっても、2028年に設計開始では遅い。要件整理、データ品質改善、承認フロー整理、監査調整、運用委託見直しを考えると2026年着手が現実的である。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "MIM",
+        "計画"
+      ]
+    },
+    {
+      "id": "knowledge_028",
+      "topic": "ADはすぐには消えない",
+      "content": "Entra IDへ移行しても、サーバーOS認証、Kerberos、古い業務アプリ、SMB、SQL Server統合認証のためにADは長期残存しうる。したがってMIM後継検討とAD残存設計は切り離せない。",
+      "evidence_level": "architectural_inference",
+      "japan_specific": true,
+      "tags": [
+        "Active Directory",
+        "残存"
+      ]
+    }
+  ]
+}

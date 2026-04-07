@@ -1,0 +1,1298 @@
+{
+  "metadata": {
+    "id": "topic_international_security_frameworks",
+    "title": "国際的な業種別セキュリティフレームワーク",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "description": "NIST・金融・エネルギー・製造・防衛・共通フレームワークなど国際的なセキュリティ基準のアクセス制御・ID管理要件を網羅したリファレンス集。最低20フレームワーク収録。",
+    "tags": [
+      "NIST",
+      "CSF",
+      "Zero Trust",
+      "PCI DSS",
+      "SWIFT",
+      "DORA",
+      "NERC CIP",
+      "IEC 62443",
+      "CMMC",
+      "TISAX",
+      "ISO 27001",
+      "CIS Controls",
+      "SOC 2",
+      "IAM",
+      "MFA",
+      "特権管理",
+      "アクセス制御",
+      "国際標準"
+    ],
+    "source_note": "2024–2026年時点のWeb公開情報をもとに整理。各フレームワークの最新版URLを参照のこと。",
+    "related_files": [
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json",
+      "../03_identity_architecture/identity_landscape.json"
+    ]
+  },
+  "frameworks": [
+    {
+      "id": "fw_nist_csf_20",
+      "label": "NIST Cybersecurity Framework (CSF) 2.0",
+      "category": "共通フレームワーク",
+      "subcategory": "サイバーセキュリティリスク管理",
+      "issuer": "米国国立標準技術研究所 (NIST)",
+      "latest_version": "2.0（2024年2月26日公開）",
+      "url": "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf",
+      "reference_url": "https://www.nist.gov/cyberframework",
+      "target_industry": ["全業種", "重要インフラ", "政府機関", "民間企業"],
+      "legal_binding": {
+        "us": "連邦機関は推奨適用（一部は大統領令14028等で義務化）",
+        "global": "任意適用（業界標準として広く参照）",
+        "japan": "任意適用。経産省・IPAのサイバーセキュリティ対策実践のためのプラクティス集でも参照"
+      },
+      "functions": ["GV（Govern）", "ID（Identify）", "PR（Protect）", "DE（Detect）", "RS（Respond）", "RC（Recover）"],
+      "access_control_requirements": [
+        {
+          "control_id": "PR.AA-01",
+          "title": "Identity Management（アイデンティティ管理）",
+          "description": "ユーザー・デバイス・サービスのアイデンティティを管理し、認証情報（ID・資格情報）のライフサイクルを制御する"
+        },
+        {
+          "control_id": "PR.AA-02",
+          "title": "Authentication（認証）",
+          "description": "ユーザー・デバイス・サービスの認証を実施し、正当な主体のみがリソースへアクセスできることを確保する"
+        },
+        {
+          "control_id": "PR.AA-03",
+          "title": "User Authentication to Non-organizational Systems",
+          "description": "組織外システムへのアクセスにも同等の認証強度を適用する"
+        },
+        {
+          "control_id": "PR.AA-04",
+          "title": "Identity Assertions（アイデンティティアサーション）",
+          "description": "フェデレーション・SSO環境においてIDアサーションの完全性を保護する"
+        },
+        {
+          "control_id": "PR.AA-05",
+          "title": "Access Permissions and Privileges",
+          "description": "最小権限・職務分離の原則に従いアクセス権を付与・管理・失効する"
+        },
+        {
+          "control_id": "PR.AA-06",
+          "title": "Audit and Monitoring of Access Events",
+          "description": "アカウント活動とアクセスイベントを監査・監視し、不正アクセスを強制排除する（旧PR.AC-1、PR.AC-3を統合）"
+        },
+        {
+          "control_id": "GV.OC-03",
+          "title": "Organizational Context for Cybersecurity",
+          "description": "サイバーセキュリティリスク管理戦略・ポリシーを確立し、IDガバナンスを組織全体で統制する"
+        }
+      ],
+      "mfa_requirements": "PR.AA-02でMFAを含む強固な認証の実施を要求。リスクベース認証アプローチを推奨",
+      "privileged_access_requirements": "PR.AA-05で特権アカウントの最小権限・JIT（Just-In-Time）・PIM（特権IDM）適用を推奨",
+      "logging_requirements": "PR.AA-06・DE.CM（継続的監視）でアクセスログの収集・SIEM連携・リアルタイム分析を要求",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "経産省の「サイバーセキュリティ経営ガイドライン」はCSFをベースに策定",
+          "IPA「情報セキュリティ対策ベンチマーク」でも参照",
+          "日本語版リソースがNISTから提供されている",
+          "金融庁・総務省のガイドラインでも参照規格として記載"
+        ]
+      }
+    },
+    {
+      "id": "fw_nist_sp800_207",
+      "label": "NIST SP 800-207 Zero Trust Architecture",
+      "category": "共通フレームワーク",
+      "subcategory": "ゼロトラストアーキテクチャ",
+      "issuer": "米国国立標準技術研究所 (NIST)",
+      "latest_version": "SP 800-207（2020年8月公開）、SP 800-207A（2023年7月草案）",
+      "url": "https://csrc.nist.gov/pubs/sp/800/207/final",
+      "reference_url": "https://www.nist.gov/publications/zero-trust-architecture",
+      "target_industry": ["全業種", "連邦政府機関", "重要インフラ"],
+      "legal_binding": {
+        "us": "大統領令14028（2021年）・OMB M-22-09によりゼロトラスト移行が連邦機関に義務付け",
+        "global": "任意適用（ゼロトラスト実装の国際的参照基準）",
+        "japan": "任意適用。デジタル庁・NISC等がZTA原則を採用"
+      },
+      "zt_tenets": [
+        "すべてのデータソース・コンピューティングサービスをリソースと見なす",
+        "ネットワーク位置に関わらず通信を保護する",
+        "エンタープライズリソースへのアクセスはセッション単位で付与する",
+        "リソースへのアクセスポリシーは動的で、可能な限り多くの属性を評価する",
+        "すべての資産の完全性・セキュリティ状態を監視・測定する",
+        "リソースの認証・認可はアクセス許可前に動的かつ厳格に実施する",
+        "資産・ネットワークインフラ・通信に関するデータを収集し、セキュリティ改善に活用する"
+      ],
+      "access_control_requirements": [
+        {
+          "control_id": "ZTA-PE",
+          "title": "Policy Engine（ポリシーエンジン）",
+          "description": "主体・リソース・環境属性に基づきアクセス可否を動的に判断するコアコンポーネント"
+        },
+        {
+          "control_id": "ZTA-PA",
+          "title": "Policy Administrator（ポリシー管理）",
+          "description": "ポリシーエンジンの判断を受けセッション確立・廃棄の命令を発行する"
+        },
+        {
+          "control_id": "ZTA-PEP",
+          "title": "Policy Enforcement Point",
+          "description": "実際のアクセス可否を強制するゲートウェイ・プロキシ。すべてのリソースアクセスに配置"
+        },
+        {
+          "control_id": "ZTA-ICAM",
+          "title": "Identity, Credential and Access Management",
+          "description": "ユーザー・デバイス・アプリケーション・サービスアカウントのIDを統合管理。SPIFFE等のワークロードIDも対象"
+        }
+      ],
+      "mfa_requirements": "すべてのリソースアクセスで強固な認証を要求。フィッシング耐性MFAを推奨（FIDO2等）",
+      "privileged_access_requirements": "特権アカウントはより強固な制御・継続的監視・JIT アクセスが必須。PAW（Privileged Access Workstation）推奨",
+      "logging_requirements": "全セッションの認証・認可イベントをリアルタイムで収集しSIEM分析。行動分析（UEBA）との統合推奨",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "デジタル庁「ゼロトラストアーキテクチャ適用方針」でSP 800-207を参照",
+          "NISC「政府機関等のサイバーセキュリティ対策のための統一基準群」でZTA概念を導入",
+          "クラウドファーストポリシーと連動した日本政府機関への適用が進行中",
+          "Microsoft Entra ID・Zscaler等のZTA製品が国内でも広く導入"
+        ]
+      }
+    },
+    {
+      "id": "fw_nist_sp800_63_4",
+      "label": "NIST SP 800-63-4 Digital Identity Guidelines",
+      "category": "共通フレームワーク",
+      "subcategory": "デジタルアイデンティティ",
+      "issuer": "米国国立標準技術研究所 (NIST)",
+      "latest_version": "SP 800-63-4 2nd Public Draft（2024年8月21日）",
+      "url": "https://csrc.nist.gov/pubs/sp/800/63/4/2pd",
+      "reference_url": "https://pages.nist.gov/800-63-4/",
+      "target_industry": ["政府機関", "金融", "医療", "全業種"],
+      "legal_binding": {
+        "us": "連邦機関はSP 800-63準拠が義務（OMB M-19-17等）",
+        "global": "任意適用（国際的なデジタルIDの参照基準）",
+        "japan": "任意参照。マイナンバーカード・公的個人認証サービスの設計に間接影響"
+      },
+      "assurance_levels": {
+        "identity_assurance": ["IAL1（自己申告）", "IAL2（リモート本人確認）", "IAL3（対面本人確認）"],
+        "authenticator_assurance": ["AAL1（単要素）", "AAL2（MFA必須）", "AAL3（フィッシング耐性MFA）"],
+        "federation_assurance": ["FAL1（Basic）", "FAL2（高保証）", "FAL3（最高保証）"]
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "SP800-63B-AAL2",
+          "title": "Authentication Assurance Level 2",
+          "description": "MFAを必須とし、承認された認証器（TOTP・FIDO・PKI証明書等）の使用を要求"
+        },
+        {
+          "control_id": "SP800-63B-AAL3",
+          "title": "Authentication Assurance Level 3",
+          "description": "フィッシング耐性のあるハードウェアセキュリティキー（FIDO2・PIV）による認証を要求"
+        },
+        {
+          "control_id": "SP800-63A-IAL2",
+          "title": "Identity Proofing Level 2",
+          "description": "ビデオセッションや自動化されたリモート本人確認プロセスによるアイデンティティ証明"
+        },
+        {
+          "control_id": "SP800-63C-FAL2",
+          "title": "Federation Assurance Level 2",
+          "description": "フェデレーション時のアサーション保護（署名・暗号化）と検証要件"
+        }
+      ],
+      "mfa_requirements": "AAL2以上でMFA必須。パスワードレス認証（パスキー・FIDO2）をAAL3として位置付け",
+      "privileged_access_requirements": "特権ユーザーはAAL3（フィッシング耐性MFA）を推奨。セッションタイムアウト・再認証要件あり",
+      "logging_requirements": "認証イベント・本人確認プロセスの記録保持。不正試行・アカウントロックアウトの監査ログ要求",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "マイナンバーカード（JPKI）はIAL3・AAL3相当の設計",
+          "総務省「電子政府における調達のために参照すべき暗号のリスト(CRYPTREC)」と相互参照",
+          "民間企業のeKYCサービス設計の参照基準として活用",
+          "SP 800-63-4草案ではパスキー・同期認証器の扱いが2024年に明確化"
+        ]
+      }
+    },
+    {
+      "id": "fw_nist_sp800_53_r5",
+      "label": "NIST SP 800-53 Rev.5 Security and Privacy Controls",
+      "category": "共通フレームワーク",
+      "subcategory": "セキュリティ・プライバシー管理策カタログ",
+      "issuer": "米国国立標準技術研究所 (NIST)",
+      "latest_version": "Rev.5 Update 1（2022年12月）",
+      "url": "https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final",
+      "reference_url": "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final",
+      "target_industry": ["連邦政府機関", "国防", "重要インフラ", "民間企業（参照）"],
+      "legal_binding": {
+        "us": "連邦情報システムは遵守義務（FISMA準拠）",
+        "global": "任意参照（国際的に最も包括的なセキュリティ管理策カタログ）",
+        "japan": "任意参照。IPA・金融庁ガイドラインで参照"
+      },
+      "control_families": {
+        "AC": "Access Control（アクセス制御）",
+        "IA": "Identification and Authentication（識別と認証）",
+        "AU": "Audit and Accountability（監査と説明責任）"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "AC-2",
+          "title": "Account Management",
+          "description": "アカウントタイプ定義・承認プロセス・定期レビュー・無効化・一時アカウント管理を要求"
+        },
+        {
+          "control_id": "AC-3",
+          "title": "Access Enforcement",
+          "description": "RBAC/ABAC/MACに基づくアクセス制御ポリシーの強制実施"
+        },
+        {
+          "control_id": "AC-6",
+          "title": "Least Privilege",
+          "description": "最小権限の原則。特権機能へのアクセスを必要な担当者のみに制限"
+        },
+        {
+          "control_id": "AC-17",
+          "title": "Remote Access",
+          "description": "リモートアクセスの承認・監視・暗号化・MFA要件"
+        },
+        {
+          "control_id": "IA-2",
+          "title": "Identification and Authentication (Organizational Users)",
+          "description": "組織ユーザーの一意識別・認証。IA-2(1)で特権アカウントへのMFA必須"
+        },
+        {
+          "control_id": "IA-2(1)",
+          "title": "MFA to Privileged Accounts",
+          "description": "特権アカウントへのローカル・ネットワークアクセスにMFA必須"
+        },
+        {
+          "control_id": "IA-2(2)",
+          "title": "MFA to Non-Privileged Accounts",
+          "description": "非特権アカウントへのネットワークアクセスにもMFA必須（高インパクト）"
+        },
+        {
+          "control_id": "IA-5",
+          "title": "Authenticator Management",
+          "description": "初期認証器配布・紛失/漏洩時の更新・強度要件・有効期限・再利用禁止"
+        },
+        {
+          "control_id": "AC-2(7)",
+          "title": "Privileged User Accounts",
+          "description": "特権アカウントの専用管理・活動監視・退職/異動時の速やかな失効"
+        }
+      ],
+      "mfa_requirements": "IA-2(1)(2)でMFA必須。高インパクトシステムではフィッシング耐性MFA（FIDO2・PIV）を推奨",
+      "privileged_access_requirements": "AC-6（最小権限）・AC-2(7)（特権アカウント管理）・AC-5（職務分離）・AU-9（監査保護）を組み合わせ適用",
+      "logging_requirements": "AU-2（監査イベント）・AU-3（監査内容）・AU-9（監査情報保護）・AU-12（監査生成）でログ要件を詳細規定",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "IPAの「クラウドサービス安全利用の手引き」でAC/IAファミリーを参照",
+          "日本政府機関の統一基準群はSP 800-53と整合性を確保",
+          "FISMAは日本では適用外だが、民間金融機関・製造業でのリスク管理に広く参照"
+        ]
+      }
+    },
+    {
+      "id": "fw_nist_sp800_82_r3",
+      "label": "NIST SP 800-82 Rev.3 Guide to OT Security",
+      "category": "エネルギー・重要インフラ",
+      "subcategory": "産業用制御システム・OTセキュリティ",
+      "issuer": "米国国立標準技術研究所 (NIST)",
+      "latest_version": "Rev.3（2023年9月公開）",
+      "url": "https://csrc.nist.gov/pubs/sp/800/82/r3/final",
+      "reference_url": "https://csrc.nist.gov/News/2023/nist-publishes-sp-800-82-revision-3",
+      "target_industry": ["エネルギー", "製造", "石油・ガス", "水処理", "交通", "重要インフラ全般"],
+      "legal_binding": {
+        "us": "重要インフラ向け任意適用（NEI・DOE等が参照義務化）",
+        "global": "任意参照（OTセキュリティの国際的参照基準）",
+        "japan": "任意参照。経産省「産業サイバーセキュリティ研究会」で参照"
+      },
+      "ot_control_families": 19,
+      "access_control_requirements": [
+        {
+          "control_id": "OT-AC-2",
+          "title": "OT Account Management",
+          "description": "ICS/SCADA環境でのアカウント管理。エンジニアリングワークステーション・HMI・PLCへのアクセス制御"
+        },
+        {
+          "control_id": "OT-AC-17",
+          "title": "Remote Access to OT",
+          "description": "OT環境へのリモートアクセスは専用VPN・踏み台サーバー経由で制限。ベンダーリモートアクセスも対象"
+        },
+        {
+          "control_id": "OT-IA-2",
+          "title": "OT System Authentication",
+          "description": "OTデバイスへのアクセス認証。レガシーシステムでの実装考慮事項を詳述"
+        },
+        {
+          "control_id": "OT-AC-6",
+          "title": "Least Privilege in OT",
+          "description": "OT環境でのロールベースアクセス制御。オペレータ・エンジニア・管理者の権限分離"
+        }
+      ],
+      "mfa_requirements": "OT環境ではMFA実装に制約がある場合の代替措置（物理アクセス制御・ネットワーク分離）を認める",
+      "privileged_access_requirements": "ベンダー・サードパーティのリモートアクセスは一時的・監視付きで付与。JITアクセス推奨",
+      "logging_requirements": "OT環境では可用性優先のため軽量なログ収集を推奨。セキュリティイベントをIT側SIEMに転送する設計",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "経産省「制御システムのセキュリティリスク分析ガイド」と整合",
+          "IEC 62443と併用してOTセキュリティ対策の設計に活用",
+          "日本のエネルギー・製造業でOT/ITコンバージェンスへの対応指針として参照"
+        ]
+      }
+    },
+    {
+      "id": "fw_swift_cscf_v2024",
+      "label": "SWIFT Customer Security Controls Framework (CSCF) v2024",
+      "category": "金融業",
+      "subcategory": "SWIFTネットワーク参加者セキュリティ",
+      "issuer": "SWIFT（Society for Worldwide Interbank Financial Telecommunication）",
+      "latest_version": "CSCF v2024（2024年）※v2025が最新として2025年に移行中",
+      "url": "https://www.swift.com/myswift/customer-security-programme-csp/customer-security-programme-document-centre",
+      "reference_url": "https://www.swift.com/myswift/customer-security-programme-csp/security-controls",
+      "target_industry": ["金融機関", "銀行", "証券", "資金決済事業者"],
+      "legal_binding": {
+        "us": "SWIFT参加者への義務（非準拠は接続停止リスク）",
+        "global": "SWIFT接続組織すべてに適用（事実上の強制）",
+        "japan": "SWIFT接続日本金融機関に適用。金融庁の監督対象"
+      },
+      "mandatory_controls_count": 23,
+      "advisory_controls_count": 9,
+      "access_control_requirements": [
+        {
+          "control_id": "4.1",
+          "title": "Password Policy（パスワードポリシー）",
+          "description": "SWIFTシステムへのアクセスに強固なパスワードポリシーを適用。最小長・複雑性・有効期限・再利用禁止",
+          "mandatory": true
+        },
+        {
+          "control_id": "4.2",
+          "title": "Multi-Factor Authentication（多要素認証）",
+          "description": "SWIFTシステム・関連アプリケーション・サードパーティサービスプロバイダー経由のアクセスにMFA必須",
+          "mandatory": true
+        },
+        {
+          "control_id": "5.1",
+          "title": "Logical Access Control（論理アクセス制御）",
+          "description": "最小権限の原則に基づくロールベースアクセス制御。職務分離・定期レビュー",
+          "mandatory": true
+        },
+        {
+          "control_id": "5.2",
+          "title": "Token Management（トークン管理）",
+          "description": "ハードウェアトークン・ソフトウェアトークンの発行・失効・棚卸し管理",
+          "mandatory": true
+        },
+        {
+          "control_id": "5.4",
+          "title": "Physical and Logical Password Storage",
+          "description": "認証情報の安全な保管。特権アカウントのパスワードは暗号化・金庫管理",
+          "mandatory": true
+        },
+        {
+          "control_id": "6.5A",
+          "title": "Intrusion Detection（侵入検知）",
+          "description": "SWIFT関連システムへの不正アクセス試行を検知・アラート",
+          "mandatory": true
+        }
+      ],
+      "mfa_requirements": "Control 4.2：SWIFTシステムへのすべてのアクセスにMFA必須。v2024でサードパーティ経由アクセスにも拡大",
+      "privileged_access_requirements": "Control 5.1：特権アカウントの識別・最小権限付与・四半期レビュー・退職時の即時失効",
+      "logging_requirements": "Control 6.4：SWIFT関連システムの操作ログ・認証ログを最低12ヶ月保持。異常検知と連動",
+      "attestation": "年次のセルフアテステーション（一部は独立評価機関によるレビュー必須）",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "国内メガバンク・地銀・証券会社のSWIFT接続組織に直接適用",
+          "金融庁「金融機関のITガバナンス等に関する調査結果」でCSCF準拠状況を確認",
+          "2016年バングラデシュ中央銀行事件以降、日本のSWIFT参加機関で準拠強化が進行"
+        ]
+      }
+    },
+    {
+      "id": "fw_pci_dss_v40",
+      "label": "PCI DSS v4.0",
+      "category": "金融業",
+      "subcategory": "カード会員データセキュリティ",
+      "issuer": "PCI SSC（Payment Card Industry Security Standards Council）",
+      "latest_version": "v4.0（2022年3月公開）→ v4.0.1（2024年6月）。2024年3月31日にv3.2.1廃止",
+      "url": "https://www.pcisecuritystandards.org/document_library/",
+      "reference_url": "https://pcicompliancehub.com/the-12-requirements-of-pci-dss-v4-0-explained/",
+      "target_industry": ["クレジットカード業界", "加盟店", "決済代行業者", "カード発行会社", "PSP"],
+      "legal_binding": {
+        "us": "カードブランド契約により義務（非準拠は罰金・接続停止）",
+        "global": "カード会員データを扱う全世界の組織に適用",
+        "japan": "割賦販売法改正（2018年）でPCI DSS準拠が実質義務化。日本クレジット協会がガイドライン策定"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "7.1",
+          "title": "Processes and Mechanisms for Restricting Access",
+          "description": "ビジネス上の必要性に基づくアクセス制御ポリシーの文書化・実装・メンテナンス"
+        },
+        {
+          "control_id": "7.2",
+          "title": "Access to System Components and Data is Appropriately Defined and Assigned",
+          "description": "最小権限の原則に基づくロールベースアクセス制御。アクセス権の定期レビュー（最低年1回）"
+        },
+        {
+          "control_id": "7.3",
+          "title": "Access to System Components and Data is Managed via Access Control Systems",
+          "description": "アクセス制御システムによる一元管理。デフォルト「deny all」設定"
+        },
+        {
+          "control_id": "8.1",
+          "title": "Processes and Mechanisms for Identifying Users and Authenticating Access",
+          "description": "すべてのユーザーアカウントへの一意ID割当・共有アカウント禁止"
+        },
+        {
+          "control_id": "8.2",
+          "title": "User Identification and Related Accounts",
+          "description": "アカウントライフサイクル管理。退職者の即時無効化・不活性アカウントの90日後削除"
+        },
+        {
+          "control_id": "8.3",
+          "title": "Strong Authentication for Users and Administrators",
+          "description": "サービスプロバイダーおよびカード会員データ環境へのすべてのアクセスにMFA必須（v4.0で拡大）"
+        },
+        {
+          "control_id": "8.4",
+          "title": "MFA for Access into CDE",
+          "description": "カード会員データ環境（CDE）への全アクセスにMFA必須（v4.0新要件）"
+        },
+        {
+          "control_id": "8.6",
+          "title": "Shared and Generic Accounts",
+          "description": "共有・汎用アカウントは原則禁止。使用時は厳格なアクセス制御・ログ要件"
+        }
+      ],
+      "mfa_requirements": "Req.8.3/8.4：CDEへの全アクセスにMFA必須（2024年3月以降完全移行）。コンソールアクセスも対象",
+      "privileged_access_requirements": "Req.7.2/8.2：管理者アカウントの最小権限・職務分離・四半期レビュー・活動ログ",
+      "logging_requirements": "Req.10（ログ管理）：全ユーザーアクセス・管理操作のログを最低12ヶ月保持（3ヶ月はすぐ利用可能な状態）",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "割賦販売法改正によりクレジットカード会社・加盟店にPCI DSS準拠が法的に求められる",
+          "日本クレジット協会（JCCA）がPCI DSS v4.0の日本語ガイドを公開",
+          "QSA（認定セキュリティ評価機関）として国内認定企業が複数存在",
+          "EC事業者・コンビニ決済事業者にも広く適用"
+        ]
+      }
+    },
+    {
+      "id": "fw_eu_dora",
+      "label": "EU DORA（Digital Operational Resilience Act）",
+      "category": "金融業",
+      "subcategory": "デジタル運用レジリエンス",
+      "issuer": "欧州連合（EU）欧州議会・理事会",
+      "latest_version": "Regulation (EU) 2022/2554、2025年1月17日適用開始",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32022R2554",
+      "reference_url": "https://www.digital-operational-resilience-act.com/",
+      "target_industry": ["銀行", "保険", "証券", "決済機関", "クリプト資産サービス", "ICTサードパーティプロバイダー"],
+      "legal_binding": {
+        "eu": "EU規則として直接適用（加盟国の国内法化不要）",
+        "global": "EU域内でサービス提供する金融機関・ICTPに適用（域外適用あり）",
+        "japan": "直接適用外。ただしEU向けサービスを提供する日本金融機関・ITベンダーに実質影響"
+      },
+      "key_pillars": [
+        "ICTリスク管理フレームワーク（Article 5-15）",
+        "ICTインシデント分類・報告（Article 17-23）",
+        "デジタル運用レジリエンステスト（Article 24-27）",
+        "ICTサードパーティリスク管理（Article 28-44）",
+        "情報共有（Article 45）"
+      ],
+      "access_control_requirements": [
+        {
+          "control_id": "DORA-Art.9",
+          "title": "ICT Security – Protection and Prevention",
+          "description": "ICTシステムへのアクセス制御ポリシー策定・実装。最小権限・職務分離・ID管理要件を包含"
+        },
+        {
+          "control_id": "DORA-Art.9(4)(c)",
+          "title": "Access Rights Management",
+          "description": "アクセス権の付与・管理・失効のポリシー。ユーザーIDの一意性・定期レビュー・退職時の即時失効"
+        },
+        {
+          "control_id": "DORA-Art.9(4)(d)",
+          "title": "Authentication Policies",
+          "description": "強固な認証ポリシーの実施。MFA要件・パスワード管理・セッション管理"
+        },
+        {
+          "control_id": "DORA-Art.10",
+          "title": "Detection Capabilities",
+          "description": "異常なアクセスパターン・不正ログイン試行の検知。ログ監視・SIEM要件"
+        },
+        {
+          "control_id": "DORA-Art.9(4)(b)",
+          "title": "Privileged Access Management",
+          "description": "特権アクセスの特定・管理・監視。特権アカウントの定期レビューと活動記録"
+        }
+      ],
+      "mfa_requirements": "Article 9(4)(d)：すべての重要ICTシステムへのアクセスにMFA要求。リモートアクセスは必須",
+      "privileged_access_requirements": "Article 9(4)(b)(c)：特権アカウント管理・最小権限・四半期レビュー・JIT アクセス。EBA RTS細則で詳細規定",
+      "logging_requirements": "Article 10：すべてのICTシステムへのアクセスログ・変更ログを記録・保持。インシデント調査に活用",
+      "japan_applicability": {
+        "applicable": "条件付き",
+        "notes": [
+          "EU域内に子会社・支店を持つ三菱UFJ・みずほ・三井住友等の大手金融グループに直接適用",
+          "EU向けICTサービスを提供する日本ITベンダー（富士通・NTT等）にもサードパーティ規定が影響",
+          "金融庁は2024年にDORA準拠状況のモニタリング開始",
+          "国内規制（金融庁ガイドライン）の将来改訂でDORA要素が取り込まれる見通し"
+        ]
+      }
+    },
+    {
+      "id": "fw_eba_ict_risk",
+      "label": "EBA Guidelines on ICT and Security Risk Management",
+      "category": "金融業",
+      "subcategory": "ICT・セキュリティリスク管理（銀行・PSP）",
+      "issuer": "欧州銀行監督機構（EBA：European Banking Authority）",
+      "latest_version": "EBA/GL/2019/04（2020年6月適用）→ DORA適用に伴い2025年1月以降に一部廃止・縮小",
+      "url": "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/internal-governance/guidelines-ict-and-security-risk-management",
+      "reference_url": "https://www.eba.europa.eu/publications-and-media/press-releases/eba-amends-its-guidelines-ict-and-security-risk-management-measures-context-dora-application",
+      "target_industry": ["信用機関（銀行）", "投資会社", "支払サービスプロバイダー（PSP）", "電子マネー機関"],
+      "legal_binding": {
+        "eu": "EU金融機関への義務（Comply or Explain原則）",
+        "global": "EU域内金融機関のみ適用",
+        "japan": "直接適用外。EU金融機関と取引のある日本金融機関が間接影響を受ける場合あり"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "EBA-ICT-4.3",
+          "title": "ICT Access Control",
+          "description": "ICTシステム・データへのアクセスは業務上の必要性に基づき制限。最小権限・職務分離"
+        },
+        {
+          "control_id": "EBA-ICT-4.3.2",
+          "title": "User Authentication",
+          "description": "認証強度は保護されるデータの機密性・システムの重要性に応じて設定。MFAの広範な適用を要求"
+        },
+        {
+          "control_id": "EBA-ICT-4.3.3",
+          "title": "Access Rights Review",
+          "description": "アクセス権の定期レビュー（少なくとも年1回）・役割変更時の即時更新・退職時の即時失効"
+        }
+      ],
+      "mfa_requirements": "重要システムへのアクセスにMFA要求。リモートアクセスは必須",
+      "privileged_access_requirements": "特権アカウントの識別・監視・定期レビュー・活動ログの保持",
+      "logging_requirements": "ICTシステムへのすべてのアクセスを記録。インシデント調査に必要な期間保持",
+      "dora_relationship": "DORAの適用（2025年1月）によりDORA対象機関ではEBAガイドラインの一部が置き換えられた。信用機関・PSPはDORAが優先適用",
+      "japan_applicability": {
+        "applicable": false,
+        "notes": [
+          "EU域外の日本金融機関には直接適用外",
+          "EU拠点を持つ日本金融グループの欧州子会社には適用",
+          "DORAへの移行によりEBAガイドライン自体の影響は縮小傾向"
+        ]
+      }
+    },
+    {
+      "id": "fw_ny_dfs_500",
+      "label": "NY DFS 23 NYCRR Part 500 Cybersecurity Regulation",
+      "category": "金融業",
+      "subcategory": "ニューヨーク州金融サービス局サイバーセキュリティ規制",
+      "issuer": "New York State Department of Financial Services (NYDFS)",
+      "latest_version": "23 NYCRR 500 第2次改訂（2023年11月1日施行）",
+      "url": "https://www.dfs.ny.gov/system/files/documents/2023/12/rf23_nycrr_part_500_amend02_20231101.pdf",
+      "reference_url": "https://www.dfs.ny.gov/industry_guidance/cybersecurity",
+      "target_industry": ["NY州認可金融機関", "銀行", "保険", "モーゲージ業者", "送金業者"],
+      "legal_binding": {
+        "us": "ニューヨーク州規制として法的拘束力あり（非準拠は罰金・免許取消しリスク）",
+        "global": "NYで営業するすべての金融機関に適用（外国銀行NY支店含む）",
+        "japan": "NY拠点を持つ日本金融機関（三菱UFJ・野村・大和等のNY支店）に直接適用"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "500.7",
+          "title": "Access Privileges and Management",
+          "description": "最小権限の原則に基づくアクセス権管理。定期レビュー（大企業は年2回）・退職時の即時失効・共有アカウント禁止"
+        },
+        {
+          "control_id": "500.12",
+          "title": "Multi-Factor Authentication",
+          "description": "リモートアクセス・特権アカウント・サードパーティアプリケーションへのMFA必須。CISOが書面承認した場合のみ例外あり"
+        },
+        {
+          "control_id": "500.14",
+          "title": "Monitoring and Training",
+          "description": "異常なアクセスパターン・権限昇格の監視。セキュリティ意識向上トレーニングの年次実施"
+        },
+        {
+          "control_id": "500.16",
+          "title": "Incident Response Plan",
+          "description": "サイバーインシデントに対する対応計画。アクセス侵害時の封じ込め・証拠保全手順"
+        }
+      ],
+      "mfa_requirements": "500.12：リモートアクセス・特権アカウント・サードパーティアプリ（NPI処理）に MFA必須。2024年4月29日までに完全準拠",
+      "privileged_access_requirements": "500.7：特権アカウントの最小権限・定期レビュー（大企業年2回）・JITアクセスの考慮",
+      "logging_requirements": "500.6（監査証跡）：サイバーインシデント検知に十分なログを最低3年保持",
+      "reporting_requirement": "重大サイバーインシデントは72時間以内にNYDFSへ報告",
+      "japan_applicability": {
+        "applicable": "条件付き",
+        "notes": [
+          "ニューヨーク拠点を持つ日本金融機関（銀行・証券・保険）の現地法人・支店に直接適用",
+          "三菱UFJ銀行・みずほ銀行・三井住友銀行・野村証券のNY拠点で準拠対応が必要",
+          "米国本社を持つグローバル金融機関と取引のある日本企業はサードパーティ要件で間接影響",
+          "2023年改訂版ではCISO・取締役会報告義務が強化（日本本社のガバナンスにも影響）"
+        ]
+      }
+    },
+    {
+      "id": "fw_sec_cyber_disclosure",
+      "label": "SEC Cybersecurity Disclosure Rules",
+      "category": "金融業",
+      "subcategory": "証券取引委員会サイバーセキュリティ開示規則",
+      "issuer": "米国証券取引委員会（SEC）",
+      "latest_version": "最終規則（2023年7月26日採択、2023年12月18日施行）",
+      "url": "https://www.sec.gov/rules-regulations/2023/07/s7-09-22",
+      "reference_url": "https://www.sec.gov/newsroom/press-releases/2023-139",
+      "target_industry": ["米国上場企業", "外国民間発行会社（日本企業のADR等含む）"],
+      "legal_binding": {
+        "us": "SEC登録企業への開示義務（証券取引所法 §13(a)・§15(d)）",
+        "global": "米国上場の外国企業（Form 20-F提出義務者）にも適用",
+        "japan": "米国上場の日本企業（トヨタ・ソニー・三菱UFJ等のADR発行体）に直接適用"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "SEC-Item1.05",
+          "title": "Material Cybersecurity Incident Disclosure (Form 8-K)",
+          "description": "重要なサイバーインシデント発生後4営業日以内にForm 8-Kで開示義務。アクセス侵害・データ漏洩も対象"
+        },
+        {
+          "control_id": "SEC-Item106(b)",
+          "title": "Cybersecurity Risk Management and Strategy（年次報告）",
+          "description": "Form 10-K/20-FにサイバーリスクプロセスとID/アクセス管理を含むリスク管理戦略の記述義務"
+        },
+        {
+          "control_id": "SEC-Item106(c)",
+          "title": "Cybersecurity Governance Disclosure",
+          "description": "取締役会のサイバー監督体制・CISOの役割・特権アクセス管理ガバナンスの開示"
+        }
+      ],
+      "mfa_requirements": "直接のMFA要件なし。ただし「重要なリスク管理策」の一部としてMFA実施状況の開示が実質的に期待される",
+      "privileged_access_requirements": "特権アクセス管理体制の開示が期待される。インサイダー脅威・特権ID悪用によるインシデントが開示対象",
+      "logging_requirements": "インシデント特定・調査・報告に必要なログ保持体制の整備が実質的に要求される",
+      "japan_applicability": {
+        "applicable": "条件付き",
+        "notes": [
+          "米国ADR発行の日本大企業（トヨタ・ソニー・ホンダ・三菱UFJ等）は Form 20-F提出義務",
+          "2024年以降の年次報告書からサイバーセキュリティガバナンス開示が開始",
+          "日本の有価証券報告書制度（金融商品取引法）へのサイバー開示拡充に影響"
+        ]
+      }
+    },
+    {
+      "id": "fw_bis_basel_oprisk",
+      "label": "BIS/Basel Committee Principles for Operational Risk",
+      "category": "金融業",
+      "subcategory": "オペレーショナルリスク管理（国際決済銀行）",
+      "issuer": "国際決済銀行（BIS）バーゼル銀行監督委員会（BCBS）",
+      "latest_version": "Principles for the Sound Management of Operational Risk（2021年改訂）・Principles for Operational Resilience（2021年）",
+      "url": "https://www.bis.org/bcbs/publ/d515.htm",
+      "reference_url": "https://www.bis.org/press/p210331a.htm",
+      "target_industry": ["国際的に活動する銀行", "G-SIBs（グローバルシステム上重要な銀行）"],
+      "legal_binding": {
+        "global": "各国監督当局を通じた間接適用（日本では金融庁がバーゼルIII規制を国内法制化）",
+        "japan": "銀行法施行規則・金融庁監督指針を通じて国内大手行に適用"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "OR-Principle3",
+          "title": "Risk Governance",
+          "description": "IT・サイバーリスクを含むオペレーショナルリスクのガバナンス体制。アクセス管理は内部統制の重要要素"
+        },
+        {
+          "control_id": "OR-Principle8",
+          "title": "ICT Risk Management",
+          "description": "ICTシステムのアクセス制御・変更管理・インシデント対応を含む包括的ICTリスク管理"
+        },
+        {
+          "control_id": "OR-Resilience4",
+          "title": "Mapping Interconnections and Interdependencies",
+          "description": "重要業務・システム・サードパーティの相互依存関係のマッピング。アクセス経路の可視化"
+        },
+        {
+          "control_id": "OR-Resilience7",
+          "title": "Cyber Security and ICT Resilience",
+          "description": "サイバー攻撃・不正アクセスへの対応力。特権アクセス管理・認証強化を含む"
+        }
+      ],
+      "mfa_requirements": "直接規定なし。各国監督当局（日本では金融庁）の実施指針でMFAが要求される",
+      "privileged_access_requirements": "内部統制・職務分離の一部として特権アクセス管理が間接的に要求される",
+      "logging_requirements": "オペレーショナルリスク事象の記録・損失データ収集。ICTインシデントログの保持",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "三菱UFJ・みずほ・三井住友等の大手行はバーゼルIII国内基準（自己資本比率規制）を通じて間接適用",
+          "金融庁「金融機関のITガバナンス等に関する調査結果」でBCBS原則を参照",
+          "地銀・第二地銀にも規模に応じた適用"
+        ]
+      }
+    },
+    {
+      "id": "fw_nerc_cip",
+      "label": "NERC CIP（Critical Infrastructure Protection Standards）",
+      "category": "エネルギー・重要インフラ",
+      "subcategory": "北米電力信頼性協会 重要インフラ保護標準",
+      "issuer": "NERC（North American Electric Reliability Corporation）",
+      "latest_version": "CIP-002-5.1a ～ CIP-014-3（複数標準体系）。CIP-004-7・CIP-011-3は2024年1月1日施行",
+      "url": "https://www.nerc.com/standards/reliability-standards/cip",
+      "reference_url": "https://www.certrec.com/resources/nerc-primer/nerc-cip-cheatsheet/",
+      "target_industry": ["電力会社", "発電事業者", "送電会社", "変電所運営者（北米）"],
+      "legal_binding": {
+        "us": "FERC（連邦エネルギー規制委員会）が強制力を付与。非準拠は日割罰金（最大$1M/日）",
+        "canada": "カナダ電力系統にも適用",
+        "japan": "直接適用外。ただし日本の電力会社が参照基準として活用"
+      },
+      "standards_covered": {
+        "CIP-004": "人材とトレーニング（アクセス管理・失効手順）",
+        "CIP-005": "電子セキュリティ境界（ESP）",
+        "CIP-006": "物理セキュリティ",
+        "CIP-007": "システムセキュリティ管理（アカウント管理）",
+        "CIP-010": "構成変更管理"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "CIP-004-7 R4",
+          "title": "Access Management Program",
+          "description": "BES（一括電力システム）サイバーシステムへの論理・物理アクセスを管理するプログラムの確立・維持"
+        },
+        {
+          "control_id": "CIP-004-7 R5",
+          "title": "Access Revocation",
+          "description": "退職・異動・必要性消失後のアクセス失効。24時間（非管理員）～7日（管理員）以内"
+        },
+        {
+          "control_id": "CIP-007-6 R5",
+          "title": "System Access Control",
+          "description": "認証方式・パスワードポリシー・アカウントロックアウト・共有アカウント禁止"
+        },
+        {
+          "control_id": "CIP-007-6 R5.7",
+          "title": "Privileged Access Monitoring",
+          "description": "特権ユーザーの活動記録・最小権限の原則適用・定期レビュー"
+        },
+        {
+          "control_id": "CIP-005-7 R2",
+          "title": "Interactive Remote Access Management",
+          "description": "BESサイバーシステムへのリモートアクセスにMFA・暗号化・中間システム（踏み台）を要求"
+        }
+      ],
+      "mfa_requirements": "CIP-005-7 R2.1：BESサイバーシステムへのリモートアクセスにMFA必須",
+      "privileged_access_requirements": "CIP-004-7 R4・CIP-007-6 R5.7：特権アカウントの最小権限・監視・ローテーション。特権PAMツール推奨",
+      "logging_requirements": "CIP-007-6 R4（セキュリティログ管理）：ログイン・失敗認証・特権操作を記録し90日以上保持",
+      "japan_applicability": {
+        "applicable": "参考",
+        "notes": [
+          "電力・ガス取引監視等委員会の「電力制御システムセキュリティガイドライン」でNERC CIPを参照",
+          "東京電力・中部電力・関西電力等の大手電力会社が自主的に参照",
+          "IEC 62443と組み合わせた日本の制御システムセキュリティ対策の参考基準",
+          "日本独自のFACS（Facility Access Control Systems）設計にも応用"
+        ]
+      }
+    },
+    {
+      "id": "fw_iec_62443",
+      "label": "IEC 62443（ISA/IEC 62443 Industrial Cybersecurity Standards）",
+      "category": "エネルギー・重要インフラ",
+      "subcategory": "産業用制御システム（ICS/IACS）セキュリティ",
+      "issuer": "IEC（国際電気標準会議）・ISA（国際自動化学会）",
+      "latest_version": "IEC 62443シリーズ（部分的に更新中）。IEC 62443-3-3:2013 / IEC 62443-2-1:2010など",
+      "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards",
+      "reference_url": "https://en.wikipedia.org/wiki/IEC_62443",
+      "target_industry": ["製造", "エネルギー", "石油・ガス", "水処理", "交通", "ビルオートメーション", "IACS全般"],
+      "legal_binding": {
+        "global": "国際標準として任意適用（EU・米国・日本の規制で参照義務化が進む）",
+        "eu": "NIS2指令・CRA（Cyber Resilience Act）でIEC 62443参照が推奨",
+        "japan": "経産省・IPA「産業サイバーセキュリティに関する研究会」で参照基準として位置付け"
+      },
+      "security_levels": {
+        "SL1": "カジュアルな攻撃者（意図しない侵害）への対策",
+        "SL2": "低リソース・単純手段による意図的攻撃への対策（標準的要件）",
+        "SL3": "高度なリソース・IACS特有の知識を持つ攻撃者への対策",
+        "SL4": "国家レベルの高度攻撃者（APT）への対策"
+      },
+      "foundational_requirements": {
+        "FR1": "Identification and Authentication Control（識別と認証）",
+        "FR2": "Use Control（使用制御・認可）",
+        "FR3": "System Integrity（システム完全性）",
+        "FR4": "Data Confidentiality（データ機密性）",
+        "FR5": "Restricted Data Flow（データフロー制限）",
+        "FR6": "Timely Response to Events（イベント対応）",
+        "FR7": "Resource Availability（可用性）"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "FR1-SR1.1",
+          "title": "Human User Identification and Authentication",
+          "description": "人間ユーザーの一意識別・認証。SL2以上ではMFA推奨"
+        },
+        {
+          "control_id": "FR1-SR1.2",
+          "title": "Software Process and Device Identification",
+          "description": "ソフトウェアプロセス・デバイスのID管理と認証"
+        },
+        {
+          "control_id": "FR2-SR2.1",
+          "title": "Authorization Enforcement",
+          "description": "認証後の認可制御。最小権限・ロールベースアクセス制御の実施"
+        },
+        {
+          "control_id": "FR1-SR1.3",
+          "title": "Account Management",
+          "description": "アカウントライフサイクル管理。不使用アカウントの無効化・共有アカウント制限"
+        },
+        {
+          "control_id": "FR2-SR2.4",
+          "title": "Mobile Code Authorization",
+          "description": "モバイルコード・スクリプトの実行認可制御"
+        }
+      ],
+      "mfa_requirements": "SL2以上でMFAを強く推奨。OT環境の制約（可用性・HMI制限）を考慮した代替手段も認める",
+      "privileged_access_requirements": "FR2-SR2.1：特権アカウントの最小権限・職務分離・不使用時の無効化。エンジニアリングツールへの特別制御",
+      "logging_requirements": "FR6-SR6.1（監査ログ管理）：セキュリティ関連イベントの記録・保護・定期レビュー",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "経産省「産業サイバーセキュリティ研究会 WG1」が IEC 62443を国内標準化の参照基準に",
+          "IPA「制御システムのセキュリティリスク分析ガイド」でIEC 62443を参照",
+          "自動車・製造・エネルギー企業のOTセキュリティ調達要件に採用例あり",
+          "JIS X 5303（IEC 62443の日本語翻訳）が整備中"
+        ]
+      }
+    },
+    {
+      "id": "fw_cmmc_v2",
+      "label": "CMMC（Cybersecurity Maturity Model Certification）v2.0",
+      "category": "製造業・防衛産業",
+      "subcategory": "防衛産業基盤サイバーセキュリティ認証",
+      "issuer": "米国国防総省（DoD）",
+      "latest_version": "CMMC v2.0（2021年11月発表）。最終規則は2024年10月15日公布（32 CFR Part 170・48 CFR改正）",
+      "url": "https://www.federalregister.gov/documents/2024/10/15/2024-22905/cybersecurity-maturity-model-certification-cmmc-program",
+      "reference_url": "https://dodcio.defense.gov/CMMC/",
+      "target_industry": ["防衛産業基盤（DIB）企業", "DoD請負業者", "サプライチェーン企業"],
+      "legal_binding": {
+        "us": "DoD契約要件として法的拘束力あり（FCI・CUI取扱い企業は必須）",
+        "global": "米国防衛調達に参加する外国企業（日本企業を含む）に適用",
+        "japan": "防衛省サプライチェーンへの間接影響。2024年以降日本政府・防衛省の要件強化と連動"
+      },
+      "levels": {
+        "Level1": {
+          "description": "Foundational（基礎的セキュリティ）",
+          "practices": 17,
+          "assessment": "年次セルフアセスメント",
+          "framework": "NIST SP 800-171 Revision 2（一部）"
+        },
+        "Level2": {
+          "description": "Advanced（高度なセキュリティ）",
+          "practices": 110,
+          "assessment": "C3PAOによる第三者評価（最重要CUI取扱い）またはセルフアセスメント",
+          "framework": "NIST SP 800-171 全110プラクティス"
+        },
+        "Level3": {
+          "description": "Expert（専門的セキュリティ）",
+          "practices": 134,
+          "assessment": "DIBCAC（政府評価機関）による評価",
+          "framework": "NIST SP 800-171 + NIST SP 800-172"
+        }
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "AC.1.001",
+          "title": "Authorized Access Control",
+          "description": "認可されたユーザー・プロセス・デバイスのみシステムアクセスを許可（Level 1）"
+        },
+        {
+          "control_id": "AC.1.002",
+          "title": "Transaction and Function Control",
+          "description": "認可されたトランザクション・機能のみを実行許可（Level 1）"
+        },
+        {
+          "control_id": "AC.2.005",
+          "title": "Least Privilege",
+          "description": "最小権限・職務分離の適用（Level 2）"
+        },
+        {
+          "control_id": "AC.2.006",
+          "title": "Non-Privileged Account Use",
+          "description": "非特権アカウントと特権アカウントの分離（Level 2）"
+        },
+        {
+          "control_id": "IA.3.083",
+          "title": "Multifactor Authentication",
+          "description": "CUIへのローカルアクセス・リモートアクセス・特権アカウントへのMFA必須（Level 3）"
+        }
+      ],
+      "mfa_requirements": "IA.3.083（Level 3相当）：CUIシステムへのアクセスにMFA必須。Level 2でも推奨",
+      "privileged_access_requirements": "AC.2.006：特権・非特権アカウントの分離。AC.2.007：特権ユーザーの活動監視・最小権限",
+      "logging_requirements": "AU.2.041（監査ログ）・AU.2.042（ユーザー行為の追跡）：CUI関連システムの監査ログを記録・保護・定期レビュー",
+      "japan_applicability": {
+        "applicable": "条件付き",
+        "notes": [
+          "防衛省は2024年から「防衛産業サイバーセキュリティ基準」をCMMMに準拠させる方針を発表",
+          "三菱重工・川崎重工・IHI等の主要防衛企業はCMMC Level 2相当への対応が実質的に必要",
+          "DoD調達に参加する中小サプライヤーへのサプライチェーン要件として伝播",
+          "NIST SP 800-171が共通基盤のため、CMMC対応は800-171対応から開始"
+        ]
+      }
+    },
+    {
+      "id": "fw_tisax",
+      "label": "TISAX（Trusted Information Security Assessment Exchange）",
+      "category": "製造業・防衛産業",
+      "subcategory": "自動車業界情報セキュリティ評価交換",
+      "issuer": "ENX Association（VDA・自動車業界の委任）",
+      "latest_version": "VDA ISA（Information Security Assessment）v6.0（2023年4月）",
+      "url": "https://enx.com/tisax/",
+      "reference_url": "https://www.vda.de/en/topics/digitization/data/information-security",
+      "target_industry": ["自動車OEM", "Tier 1/2/3サプライヤー", "自動車関連IT・エンジニアリング企業"],
+      "legal_binding": {
+        "global": "自動車OEMとの取引要件として事実上の義務（特欧州系OEM：BMW・VW・Mercedes等）",
+        "japan": "トヨタ・ホンダ等の一部OEMがサプライヤーに要求開始"
+      },
+      "assessment_levels": {
+        "AL1": "通常の情報保護（自己評価）",
+        "AL2": "高度な情報保護（ENX認定審査機関による評価）",
+        "AL3": "非常に高度な情報保護（厳格な評価）",
+        "AL3+Prototype": "試作車保護の特別評価",
+        "AL3+AutomotiveSoftware": "自動車ソフトウェア保護の特別評価"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "ISA-5.1",
+          "title": "Access Control（アクセス制御）",
+          "description": "情報・システムへのアクセスをビジネス要件に基づき制御。最小権限・職務分離・定期レビュー"
+        },
+        {
+          "control_id": "ISA-5.1.1",
+          "title": "User Account Management",
+          "description": "アカウントの申請・承認・プロビジョニング・デプロビジョニングのライフサイクル管理"
+        },
+        {
+          "control_id": "ISA-5.1.2",
+          "title": "Access Rights Review",
+          "description": "アクセス権の定期レビュー（年1回以上）・役割変更時の即時更新"
+        },
+        {
+          "control_id": "ISA-5.1.3",
+          "title": "Privileged Access",
+          "description": "特権アカウントの識別・最小権限付与・強固な認証・活動監視"
+        },
+        {
+          "control_id": "ISA-5.2",
+          "title": "Authentication",
+          "description": "システムアクセスへの認証要件。パスワードポリシー・MFA要件（AL2/AL3）"
+        }
+      ],
+      "mfa_requirements": "ISA-5.2：AL2/AL3でリモートアクセス・特権アカウントへのMFA必須",
+      "privileged_access_requirements": "ISA-5.1.3：特権アカウントの専用管理・最小権限・活動ログ・定期レビュー。PAMツールの使用推奨",
+      "logging_requirements": "ISA-9.3（ログ管理）：アクセスログ・セキュリティイベントの記録・保護・定期分析",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "トヨタ・ホンダが一部の重要サプライヤーにTISAX評価を要求",
+          "欧州系OEMと取引のある日本企業（電子部品・ソフト開発）でAL2評価取得が増加",
+          "日本でのTISAX審査は認定審査機関（デロイト・DNV等）が実施",
+          "JSAC（Japan Security Audit Company）協会との連携も進む",
+          "自動車サイバーセキュリティ法規（UNECE WP.29 R155）との整合性あり"
+        ]
+      }
+    },
+    {
+      "id": "fw_iso_27001_2022",
+      "label": "ISO/IEC 27001:2022 Information Security Management System",
+      "category": "共通フレームワーク",
+      "subcategory": "情報セキュリティ管理システム（ISMS）",
+      "issuer": "ISO（国際標準化機構）・IEC（国際電気標準会議）",
+      "latest_version": "ISO/IEC 27001:2022（2022年10月25日発行）。旧2013年版からの移行期限2025年10月31日",
+      "url": "https://www.iso.org/standard/27001",
+      "reference_url": "https://www.isms.online/iso-27001/",
+      "target_industry": ["全業種・全規模"],
+      "legal_binding": {
+        "global": "任意適用（認証取得は任意だが、取引要件・規制要件として実質義務化が増加）",
+        "japan": "政府調達要件・プライバシーマーク取得要件等で実質的に求められる場面が多い"
+      },
+      "annex_a_access_controls": {
+        "5.15": "アクセス制御（ビジネス要件に基づくアクセス制御ポリシー）",
+        "5.16": "アイデンティティ管理（ユーザーIDのライフサイクル管理）",
+        "5.17": "認証情報（パスワード等の管理方針）",
+        "5.18": "アクセス権（付与・レビュー・失効）"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "5.15",
+          "title": "Access Control",
+          "description": "情報・システムへのアクセス管理の全体ポリシー。最小権限・need-to-know・職務分離"
+        },
+        {
+          "control_id": "5.16",
+          "title": "Identity Management",
+          "description": "ユーザーアイデンティティのライフサイクル管理。一意ID割当・未使用IDの無効化・共有アカウント制限"
+        },
+        {
+          "control_id": "5.17",
+          "title": "Authentication Information",
+          "description": "認証情報の管理プロセス。パスワードポリシー・初期設定変更・安全な配布・定期変更（リスクベース）"
+        },
+        {
+          "control_id": "5.18",
+          "title": "Access Rights",
+          "description": "アクセス権の付与・見直し・失効。役割変更・退職時の適切な対応。定期的権限レビュー"
+        },
+        {
+          "control_id": "8.2",
+          "title": "Privileged Access Rights（技術的管理）",
+          "description": "特権アクセス権の管理・割当制限・使用のログ記録・定期的な割当レビュー"
+        },
+        {
+          "control_id": "8.5",
+          "title": "Secure Authentication",
+          "description": "セキュアな認証手順の実装。MFA・ログイン試行制限・セッションタイムアウト"
+        }
+      ],
+      "mfa_requirements": "Annex A 8.5（Secure Authentication）でMFAを技術的管理策として要求。リスクに応じた強度",
+      "privileged_access_requirements": "Annex A 8.2（Privileged Access Rights）：特権アカウントの最小権限・定期レビュー・活動ログ",
+      "logging_requirements": "Annex A 8.15（Logging）：アクセスログ・エラーログ・特権操作ログの収集・保護・定期レビュー",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "日本国内のISMS認証取得組織数は世界最多水準（JIPDEC管理）",
+          "政府調達要件・個人情報保護法対応の一部としてISMS取得が事実上求められる",
+          "ISO/IEC 27001:2022への移行期限は2025年10月31日（日本での移行対応が急務）",
+          "JIS Q 27001:2023として日本語国家標準化済み"
+        ]
+      }
+    },
+    {
+      "id": "fw_iso_27017",
+      "label": "ISO/IEC 27017:2015 Cloud Services Security Controls",
+      "category": "共通フレームワーク",
+      "subcategory": "クラウドサービス情報セキュリティ管理",
+      "issuer": "ISO（国際標準化機構）・IEC（国際電気標準会議）",
+      "latest_version": "ISO/IEC 27017:2015（2015年12月発行。改訂版準備中）",
+      "url": "https://www.iso.org/standard/43757.html",
+      "reference_url": "https://www.isms.online/iso-27017/",
+      "target_industry": ["クラウドサービスプロバイダー（CSP）", "クラウドサービス顧客（CSC）", "全業種"],
+      "legal_binding": {
+        "global": "任意適用（ISO/IEC 27001の拡張として認証取得可能）",
+        "japan": "政府クラウド調達要件（ISMAP）の参照基準。主要クラウドベンダーが認証取得"
+      },
+      "cloud_specific_controls": 7,
+      "iso27002_extended_controls": 37,
+      "access_control_requirements": [
+        {
+          "control_id": "CLD.9.5.1",
+          "title": "Segregation in Virtual Environments（仮想環境の分離）",
+          "description": "クラウド環境での仮想マシン・コンテナ間のアクセス制御・ネットワーク分離。テナント間の分離確保"
+        },
+        {
+          "control_id": "CLD.9.5.2",
+          "title": "Virtual Machine Hardening",
+          "description": "仮想マシンイメージの強化・不要サービスの無効化・デフォルトアカウントの変更"
+        },
+        {
+          "control_id": "CLD.6.3.1",
+          "title": "Shared Responsibility for Cloud Access",
+          "description": "クラウドサービスのアクセス制御におけるCSPとCSC間の責任分担の明確化"
+        },
+        {
+          "control_id": "9.2",
+          "title": "User Access Management in Cloud",
+          "description": "クラウドサービスのユーザーアカウント管理。CSPによる管理者アクセス制御の透明性"
+        },
+        {
+          "control_id": "9.4",
+          "title": "System and Application Access Control",
+          "description": "クラウドシステム・アプリケーションへのアクセス制御。APIアクセス・サービスアカウント管理"
+        }
+      ],
+      "mfa_requirements": "クラウド管理コンソール・特権操作へのMFA適用（CSP・CSCの両方に要求）",
+      "privileged_access_requirements": "CSPの管理者アクセスの制御・ログ・独立監査。CSCの特権管理はISO 27001 Annex A 8.2を準用",
+      "logging_requirements": "クラウド操作ログの収集・保護・CSCへの提供。テナント間のアクセスログ分離",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "ISMAPに登録するクラウドサービスはISO/IEC 27017取得が事実上の前提",
+          "Azure・AWS・GCPはISO/IEC 27017認証を取得済み",
+          "政府・自治体のクラウド移行時の調達要件として機能",
+          "JIS Q 27017:2016として日本語標準化済み"
+        ]
+      }
+    },
+    {
+      "id": "fw_cis_controls_v8",
+      "label": "CIS Controls v8（Center for Internet Security Critical Security Controls）",
+      "category": "共通フレームワーク",
+      "subcategory": "重要セキュリティ管理策",
+      "issuer": "CIS（Center for Internet Security）",
+      "latest_version": "CIS Controls v8（2021年5月）。v8.1は一部改訂版（2023年）",
+      "url": "https://www.cisecurity.org/controls/",
+      "reference_url": "https://www.cisecurity.org/controls/account-management",
+      "target_industry": ["全業種", "特に実装優先度の高い中小企業向けに有効"],
+      "legal_binding": {
+        "global": "任意適用（ただしNIST CSF・PCI DSS・ISO 27001とのマッピングが整備され広く参照）",
+        "us": "FedRAMP・FISMA対応の補完的フレームワーク",
+        "japan": "任意適用。IPAの実装ガイドで参照"
+      },
+      "implementation_groups": {
+        "IG1": "16Controls（中小企業の最低限実装）",
+        "IG2": "IG1+追加Controls（中規模組織）",
+        "IG3": "全Controls（高度な要件）"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "Control 5",
+          "title": "Account Management",
+          "description": "ユーザーアカウントの作成・割当・管理・失効。共有アカウント禁止・未使用アカウントの30日以内無効化"
+        },
+        {
+          "control_id": "5.1",
+          "title": "Establish and Maintain an Inventory of Accounts",
+          "description": "すべてのアカウント（サービス・管理者・ユーザー）の棚卸しを最低年2回実施"
+        },
+        {
+          "control_id": "5.3",
+          "title": "Disable Dormant Accounts",
+          "description": "45日間使用のないアカウントを無効化（IG1）"
+        },
+        {
+          "control_id": "5.4",
+          "title": "Restrict Administrator Privileges",
+          "description": "管理者権限を持つアカウント数を最小化。専用管理アカウントの使用（IG1）"
+        },
+        {
+          "control_id": "Control 6",
+          "title": "Access Control Management",
+          "description": "アクセス権の作成・割当・管理・失効。ロールベースアクセス制御の実装"
+        },
+        {
+          "control_id": "6.3",
+          "title": "Require MFA for Externally-Exposed Applications",
+          "description": "外部公開アプリケーションへのMFA必須（IG1）"
+        },
+        {
+          "control_id": "6.4",
+          "title": "Require MFA for Remote Network Access",
+          "description": "リモートネットワークアクセスへのMFA必須（IG1）"
+        },
+        {
+          "control_id": "6.5",
+          "title": "Require MFA for Administrative Access",
+          "description": "すべての管理操作へのMFA必須（IG2）"
+        }
+      ],
+      "mfa_requirements": "Control 6.3/6.4/6.5：外部公開アプリ・リモートアクセス・管理アクセスにMFA必須（IG1/IG2）",
+      "privileged_access_requirements": "Control 5.4/5.5：管理者アカウントの最小化・専用管理アカウント・特権操作の監視",
+      "logging_requirements": "Control 8（Audit Log Management）：すべての特権操作・認証イベントのログを最低90日保持・SIEM統合",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "IPAの「サイバーセキュリティ対策実践のためのプラクティス集」でCIS Controlsを参照",
+          "中小企業向けのIG1実装が日本でも現実的な対策として注目",
+          "NIST CSFとのマッピングが整備されており、併用しやすい",
+          "CIS Benchmarks（設定基準）との組み合わせで具体的な実装ガイダンスを提供"
+        ]
+      }
+    },
+    {
+      "id": "fw_soc2_typeii",
+      "label": "SOC 2 Type II（System and Organization Controls 2）",
+      "category": "共通フレームワーク",
+      "subcategory": "サービス組織管理基準",
+      "issuer": "AICPA（米国公認会計士協会）",
+      "latest_version": "Trust Services Criteria（2017年版 with 2022年改訂）",
+      "url": "https://www.aicpa-cima.com/resources/download/2017-trust-services-criteria-with-revised-points-of-focus-2022",
+      "reference_url": "https://secureframe.com/hub/soc-2/common-criteria",
+      "target_industry": ["クラウドサービスプロバイダー", "SaaS企業", "ITサービス企業", "データセンター"],
+      "legal_binding": {
+        "us": "任意（ただしB2B取引要件として事実上必須化が進行）",
+        "global": "グローバルIT企業の信頼性証明として広く要求",
+        "japan": "日本IT企業の海外展開・グローバル顧客獲得に必要。国内でもISMS+SOC 2の組み合わせが増加"
+      },
+      "trust_service_criteria": {
+        "CC1": "Control Environment（統制環境）",
+        "CC2": "Communication and Information（情報と伝達）",
+        "CC3": "Risk Assessment（リスク評価）",
+        "CC4": "Monitoring Activities（監視活動）",
+        "CC5": "Control Activities（統制活動）",
+        "CC6": "Logical and Physical Access Controls（論理・物理アクセス制御）",
+        "CC7": "System Operations（システム運用）",
+        "CC8": "Change Management（変更管理）",
+        "CC9": "Risk Mitigation（リスク軽減）"
+      },
+      "access_control_requirements": [
+        {
+          "control_id": "CC6.1",
+          "title": "Logical Access Security Software",
+          "description": "論理アクセス制御ソフトウェアによるアクセス管理。RBAC・最小権限・承認プロセス"
+        },
+        {
+          "control_id": "CC6.2",
+          "title": "New Internal Users Registration and Authorization",
+          "description": "新規ユーザーの登録・認証・アクセス権付与プロセスの統制"
+        },
+        {
+          "control_id": "CC6.3",
+          "title": "New External Users Registration and Authorization",
+          "description": "外部ユーザー（顧客・パートナー）のアクセス管理統制"
+        },
+        {
+          "control_id": "CC6.4",
+          "title": "Restriction of Privileged Users Access",
+          "description": "特権ユーザーのアクセス制限・最小権限・定期レビュー"
+        },
+        {
+          "control_id": "CC6.6",
+          "title": "Logical Access Security Measures for Outside Access",
+          "description": "外部からのアクセス（リモート・VPN・API）へのセキュリティ統制。MFA必須"
+        },
+        {
+          "control_id": "CC6.7",
+          "title": "Restriction of Unauthorized or Malicious Software",
+          "description": "不正ソフト・マルウェアのアクセス制御。エンドポイントセキュリティとの連携"
+        },
+        {
+          "control_id": "CC6.8",
+          "title": "Physical Access Control",
+          "description": "物理的なアクセス制御（データセンター・サーバールーム）"
+        }
+      ],
+      "mfa_requirements": "CC6.6：外部からのすべてのアクセスにMFA必須（監査人が重要管理策として検証）",
+      "privileged_access_requirements": "CC6.4：特権アカウントの最小権限・定期レビュー（四半期推奨）・活動ログ・JIT アクセス",
+      "logging_requirements": "CC7.1（監視）・CC7.2（セキュリティイベント評価）：すべてのアクセスイベント・特権操作をSIEM等でリアルタイム監視",
+      "audit_period": "Type I：特定時点の設計有効性。Type II：最低6ヶ月（通常12ヶ月）の運用有効性",
+      "japan_applicability": {
+        "applicable": true,
+        "notes": [
+          "国内SaaS企業の海外顧客獲得・グローバル調達に必要",
+          "Salesforce・ServiceNow等の外資系SaaS利用時の信頼性確認に使用",
+          "ISMAP（政府情報システムのためのセキュリティ評価制度）はSOC 2と一部重複するため、SOC 2取得組織はISMAP申請が効率化",
+          "Big 4・国内主要監査法人がSOC 2審査を実施"
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_frameworks": 20,
+    "by_category": {
+      "共通フレームワーク": ["NIST CSF 2.0", "NIST SP 800-207 ZTA", "NIST SP 800-63-4", "NIST SP 800-53 Rev.5", "ISO/IEC 27001:2022", "ISO/IEC 27017", "CIS Controls v8", "SOC 2 Type II"],
+      "金融業": ["SWIFT CSCF v2024", "PCI DSS v4.0", "EU DORA", "EBA ICT Risk Guidelines", "NY DFS 23 NYCRR 500", "SEC Cybersecurity Disclosure Rules", "BIS Basel Operational Risk"],
+      "エネルギー・重要インフラ": ["NERC CIP", "IEC 62443", "NIST SP 800-82 Rev.3"],
+      "製造業・防衛産業": ["CMMC v2.0", "TISAX"]
+    },
+    "key_common_requirements": {
+      "mfa": "全フレームワークで共通。特権アカウント・リモートアクセスへのMFAが最低限要件",
+      "privileged_access": "最小権限・職務分離・定期レビュー・JITアクセスが国際標準として確立",
+      "identity_lifecycle": "アカウントのプロビジョニング・定期レビュー・デプロビジョニングの自動化が推奨",
+      "logging": "アクセスログ・特権操作ログの保持（最低12ヶ月）・SIEM統合・異常検知が共通要件",
+      "zero_trust": "ネットワーク境界モデルからゼロトラストへの移行が2024年以降の共通方向性"
+    },
+    "japan_applicability_summary": {
+      "directly_applicable": ["ISO/IEC 27001:2022", "ISO/IEC 27017", "CIS Controls v8", "SOC 2 Type II", "SWIFT CSCF v2024", "PCI DSS v4.0", "IEC 62443", "TISAX"],
+      "conditionally_applicable": ["NIST CSF 2.0（参照基準として）", "NY DFS 500（NY拠点あり）", "EU DORA（EU拠点あり）", "SEC Rules（米国上場）", "CMMC v2.0（米国防衛調達参加）"],
+      "reference_only": ["NERC CIP（北米電力系）", "EBA Guidelines（EU金融機関）", "BIS Basel（大手行間接）"]
+    }
+  }
+}

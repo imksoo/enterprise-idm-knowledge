@@ -1,0 +1,950 @@
+{
+  "metadata": {
+    "id": "identity_landscape_v1",
+    "title": "エンタープライズIDM全体地図",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "overview",
+      "architecture",
+      "japan-context",
+      "identity-management",
+      "hybrid"
+    ],
+    "related_files": [
+      "../04_server_auth/os_auth_methods.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "Microsoftのオンプレミスディレクトリサービスで、日本企業のサーバー認証と端末管理の中核に残存しやすい。",
+      "properties": {
+        "vendor": "Microsoft",
+        "deployment": "on-premises",
+        "status": "legacy-but-dominant",
+        "japan_penetration": "extremely-high"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Microsoft Entra ID",
+      "object_type": "product",
+      "description": "クラウド中心のID基盤。SaaS連携、条件付きアクセス、モダン認証の中心となる。",
+      "properties": {
+        "vendor": "Microsoft",
+        "deployment": "cloud",
+        "status": "strategic-target",
+        "identity_scope": "workforce-and-saas"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Entra Hybrid Join",
+      "object_type": "pattern",
+      "description": "Active DirectoryとMicrosoft Entra IDを併用して端末とユーザーを段階移行するハイブリッド構成。",
+      "properties": {
+        "migration_role": "bridge",
+        "device_scope": "windows-endpoints",
+        "status": "common-transition-pattern"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "Entra Domain Services",
+      "object_type": "product",
+      "description": "マネージドなドメイン機能を提供し、レガシーLDAPやKerberos依存の一部をクラウド寄りに収容する。",
+      "properties": {
+        "vendor": "Microsoft",
+        "deployment": "managed-service",
+        "status": "niche-bridge"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Okta Workforce Identity",
+      "object_type": "product",
+      "description": "SaaS SSOとライフサイクル管理を中心に据えるクラウドID基盤。",
+      "properties": {
+        "vendor": "Okta",
+        "deployment": "cloud",
+        "status": "alternative-target"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "Ping Identity",
+      "object_type": "product",
+      "description": "大規模認証連携やポリシー制御に強いエンタープライズID製品群。",
+      "properties": {
+        "vendor": "Ping Identity",
+        "deployment": "hybrid",
+        "status": "specialized-alternative"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "ForgeRock",
+      "object_type": "product",
+      "description": "高度な認証フローとアイデンティティオーケストレーションを扱えるID基盤。",
+      "properties": {
+        "vendor": "ForgeRock",
+        "deployment": "hybrid",
+        "status": "specialized-alternative"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "OneLogin",
+      "object_type": "product",
+      "description": "SSOとIDライフサイクルを提供するクラウド型IDサービス。",
+      "properties": {
+        "vendor": "OneLogin",
+        "deployment": "cloud",
+        "status": "alternative-target"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "RHEL Identity Management (IdM)",
+      "object_type": "product",
+      "description": "RHEL系サーバー向けの統合ID管理基盤で、Linux側の認証統制を担う。",
+      "properties": {
+        "vendor": "Red Hat",
+        "deployment": "on-premises",
+        "status": "linux-control-plane"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "FreeIPA",
+      "object_type": "product",
+      "description": "Linux/Unix中心のディレクトリ、Kerberos、証明書管理を統合するOSS基盤。",
+      "properties": {
+        "vendor": "Community",
+        "deployment": "on-premises",
+        "status": "open-source-alternative"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "Windows Server",
+      "object_type": "product",
+      "description": "日本企業の業務サーバーで広く残存するWindows系サーバープラットフォーム。",
+      "properties": {
+        "vendor": "Microsoft",
+        "server_role": "workload-host",
+        "legacy_dependency": "high"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "RHEL / Linux",
+      "object_type": "product",
+      "description": "基幹系、ミドルウェア、OSSスタックのホストとなるLinux系サーバー。",
+      "properties": {
+        "vendor": "multiple",
+        "server_role": "workload-host",
+        "legacy_dependency": "medium"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "Local Administrator Account",
+      "object_type": "concept",
+      "description": "Windows Server上のローカル管理者権限アカウント。横展開の踏み台になりやすい。",
+      "properties": {
+        "scope": "host-local",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "Domain Join",
+      "object_type": "pattern",
+      "description": "サーバーや端末をActive Directoryに参加させて統合認証とポリシー適用を行う方式。",
+      "properties": {
+        "identity_scope": "machine-and-user",
+        "status": "dominant-pattern"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "Windows LAPS",
+      "object_type": "product",
+      "description": "Windowsのローカル管理者パスワードを個別化・ローテーションする仕組み。",
+      "properties": {
+        "vendor": "Microsoft",
+        "control_type": "local-admin-hardening",
+        "status": "recommended"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "PAM",
+      "object_type": "protocol",
+      "description": "Linux/Unixで認証方式を抽象化するプラガブル認証基盤。",
+      "properties": {
+        "platform": "linux",
+        "role": "auth-framework"
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "SSSD",
+      "object_type": "product",
+      "description": "Linuxで外部ディレクトリと認証情報を連携するデーモン。",
+      "properties": {
+        "platform": "linux",
+        "role": "directory-integration"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "Kerberos",
+      "object_type": "protocol",
+      "description": "チケットベースの認証プロトコル。サーバー間認証とシングルサインオンの中核。",
+      "properties": {
+        "role": "ticket-based-authentication",
+        "sso_capable": true
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "LDAP",
+      "object_type": "protocol",
+      "description": "ディレクトリ参照と認証連携に使われる標準プロトコル。",
+      "properties": {
+        "role": "directory-query",
+        "usage_scope": "identity-lookup"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "gMSA",
+      "object_type": "product",
+      "description": "WindowsサービスやIISアプリケーションプール向けのグループ管理サービスアカウント。",
+      "properties": {
+        "vendor": "Microsoft",
+        "scope": "service-identity",
+        "rotation": "automatic"
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "SQL Server",
+      "object_type": "product",
+      "description": "Windows統合認証と独自認証を併用しやすいデータベース製品。",
+      "properties": {
+        "vendor": "Microsoft",
+        "category": "database"
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "Windows Integrated Authentication",
+      "object_type": "pattern",
+      "description": "SQL ServerなどでKerberosやNTLMを使ってWindows資格情報で認証する方式。",
+      "properties": {
+        "auth_style": "integrated",
+        "preferred_for": "managed-admin-access"
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "SQL Authentication",
+      "object_type": "pattern",
+      "description": "SQL Serverが独自に保持するID/パスワードで認証する方式。",
+      "properties": {
+        "auth_style": "database-local",
+        "risk_level": "medium-to-high"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "IIS",
+      "object_type": "product",
+      "description": "Windows上で稼働するWebサーバーで、委任とサービスID設計が重要になる。",
+      "properties": {
+        "vendor": "Microsoft",
+        "category": "web-server"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "Kerberos Delegation",
+      "object_type": "pattern",
+      "description": "フロントエンドからバックエンドへユーザー権限を委譲するためのKerberos構成。",
+      "properties": {
+        "auth_style": "delegated",
+        "risk_level": "high-if-misconfigured"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "Application Pool Identity",
+      "object_type": "concept",
+      "description": "IISアプリケーションプールが利用する実行ID。過剰権限だと侵害面が広がる。",
+      "properties": {
+        "scope": "process-identity",
+        "risk_level": "high-if-shared"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "PostgreSQL",
+      "object_type": "product",
+      "description": "Linux/Unixで広く使われるデータベースで、pg_hba.confを起点に認証方式を切り替える。",
+      "properties": {
+        "vendor": "Community",
+        "category": "database"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "pg_hba.conf",
+      "object_type": "concept",
+      "description": "PostgreSQLの接続元、DB、ユーザー、認証方式を制御する設定ファイル。",
+      "properties": {
+        "scope": "database-access-control",
+        "platform": "postgresql"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "CIFS/SMB",
+      "object_type": "protocol",
+      "description": "Windowsファイル共有の中核プロトコルで、Kerberosと組み合わせた認証が重要になる。",
+      "properties": {
+        "role": "file-sharing",
+        "auth_dependency": "kerberos"
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "SPN",
+      "object_type": "concept",
+      "description": "サービスとKerberos主体を結びつける識別子。重複や誤登録が認証障害と委任事故を招く。",
+      "properties": {
+        "scope": "service-binding",
+        "criticality": "high"
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "Service Account",
+      "object_type": "concept",
+      "description": "サービスやバッチが利用する非対話型アカウント。固定パスワード運用が多い。",
+      "properties": {
+        "scope": "non-human-identity",
+        "risk_level": "high-if-static"
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "Shared Account",
+      "object_type": "concept",
+      "description": "複数人で共有されるアカウント。責任追跡を阻害し、退職や委託終了時の棚卸し漏れを招く。",
+      "properties": {
+        "scope": "human-identity",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "SIer Dependency",
+      "object_type": "risk",
+      "description": "運用委託先にID作成や削除を依存し、内部統制が形骸化する日本型ITの構造リスク。",
+      "properties": {
+        "context": "japan-enterprise",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "Orphaned Account",
+      "object_type": "risk",
+      "description": "退職者や契約終了者に紐づく利用実態のない残存アカウント。",
+      "properties": {
+        "scope": "identity-lifecycle",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "Pass-the-Hash",
+      "object_type": "risk",
+      "description": "NTLMハッシュを再利用して認証を突破する横展開攻撃。",
+      "properties": {
+        "attack_stage": "post-compromise",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "Pass-the-Ticket",
+      "object_type": "risk",
+      "description": "Kerberosチケットを窃取・再利用して権限を偽装する攻撃。",
+      "properties": {
+        "attack_stage": "post-compromise",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "Golden Ticket Attack",
+      "object_type": "risk",
+      "description": "KRBTGT情報を悪用して任意のKerberosチケットを生成するドメイン支配級の攻撃。",
+      "properties": {
+        "attack_stage": "domain-compromise",
+        "risk_level": "critical"
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "Silver Ticket Attack",
+      "object_type": "risk",
+      "description": "特定サービスの資格情報からサービスチケットを偽造する攻撃。",
+      "properties": {
+        "attack_stage": "service-compromise",
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "Lateral Movement",
+      "object_type": "risk",
+      "description": "侵害後にサーバー間・管理系統間で権限を拡大する横展開。",
+      "properties": {
+        "attack_stage": "post-compromise",
+        "risk_level": "critical"
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "Domain Admin Compromise",
+      "object_type": "risk",
+      "description": "単一の高権限管理者侵害がドメイン全体の制御喪失につながる状態。",
+      "properties": {
+        "attack_stage": "full-compromise",
+        "risk_level": "critical"
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "Server Direct Login Operator",
+      "object_type": "concept",
+      "description": "サーバーへ直接ログインして保守作業を行う運用者。日本企業では恒常的に残存しやすい。",
+      "properties": {
+        "scope": "human-admin",
+        "japan_common": true
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "Japan Enterprise IT Environment",
+      "object_type": "concept",
+      "description": "オンプレミス残存、レガシー業務、SIer依存が混在する日本企業のIT運用環境。",
+      "properties": {
+        "scope": "organizational-context",
+        "legacy_burden": "high"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_042",
+      "to": "node_001",
+      "relationship": "requires",
+      "description": "日本企業の既存環境ではActive Directoryが認証基盤として残存しやすい。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_033",
+      "relationship": "complements",
+      "description": "日本型IT環境ではSIer依存がID管理上の構造課題として併存する。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_041",
+      "relationship": "requires",
+      "description": "運用実務上、サーバー直接ログイン運用者が一定数残りやすい。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "Active Directoryはドメイン参加を前提に統合認証を提供する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "Windows Serverはドメイン参加により統合管理しやすくなる。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "RHEL / LinuxもSSSDやKerberos連携を通じてドメイン統合される場合がある。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_013",
+      "relationship": "requires",
+      "description": "Windows Serverにはローカル管理者アカウントが標準的に存在する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_013",
+      "relationship": "mitigates",
+      "description": "Windows LAPSはローカル管理者の共通パスワード運用を抑止する。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_035",
+      "relationship": "mitigates",
+      "description": "各端末・各サーバーで異なるローカル管理者資格情報によりPass-the-Hashの踏み台化を抑える。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "RHEL / LinuxではPAMが認証制御の基本層となる。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_017",
+      "relationship": "complements",
+      "description": "LinuxサーバーはSSSDで外部ディレクトリと連携しやすい。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_016",
+      "relationship": "complements",
+      "description": "SSSDはPAMと組み合わせてログイン認証を成立させる。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "SSSDはKerberos連携を通じてチケットベース認証を利用することが多い。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "SSSDはLDAPでディレクトリ属性参照を行う構成が一般的である。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_010",
+      "relationship": "complements",
+      "description": "RHEL Identity ManagementはFreeIPA系アーキテクチャに近い実装として捉えられる。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "RHEL Identity ManagementはLinuxサーバー群の統合ID管理に適する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "FreeIPAはKerberosを中核認証機構として利用する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "FreeIPAはLDAPディレクトリを構成要素として持つ。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "replaces",
+      "description": "Microsoft Entra IDはクラウド中心領域でActive Directoryを段階的に代替する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_001",
+      "relationship": "requires",
+      "description": "Entra Hybrid Joinは既存のActive Directory資産を前提とする。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Entra Hybrid JoinはActive DirectoryとMicrosoft Entra IDの橋渡しを行う。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Entra Domain ServicesはMicrosoft Entra IDの周辺でレガシー認証要件を補完する。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_019",
+      "relationship": "complements",
+      "description": "Entra Domain ServicesはLDAP依存ワークロードを段階収容しやすい。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "Entra Domain ServicesはKerberos依存ワークロードの一部移行先となりうる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_002",
+      "relationship": "replaces",
+      "description": "Okta Workforce IdentityはMicrosoft Entra IDの代替クラウドID基盤として選定されうる。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_002",
+      "relationship": "replaces",
+      "description": "Ping Identityは大規模認証要件でMicrosoft Entra IDの代替または補完候補となる。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_002",
+      "relationship": "replaces",
+      "description": "ForgeRockは高度な認証オーケストレーション要件で代替候補になる。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_002",
+      "relationship": "replaces",
+      "description": "OneLoginはSSO主導の簡素なクラウドID基盤として競合する。"
+    },
+    {
+      "from": "node_041",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "サーバー直接ログイン運用者はWindows Serverへ対話的に接続する。"
+    },
+    {
+      "from": "node_041",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "サーバー直接ログイン運用者はRHEL / Linuxへ対話的に接続する。"
+    },
+    {
+      "from": "node_041",
+      "to": "node_032",
+      "relationship": "complements",
+      "description": "直接ログイン運用では共有アカウントが残存しやすい。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_020",
+      "relationship": "example_of",
+      "description": "gMSAは管理されたService Accountの代表例である。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_031",
+      "relationship": "mitigates",
+      "description": "gMSAは固定パスワードのService Account乱用を軽減する。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_024",
+      "relationship": "complements",
+      "description": "gMSAはIISアプリケーションプールの実行IDとして利用できる。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_021",
+      "relationship": "complements",
+      "description": "gMSAはSQL Server関連サービスのIDとして利用できる。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_022",
+      "relationship": "complements",
+      "description": "SQL ServerはWindows統合認証を用いたアクセス制御を提供する。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_023",
+      "relationship": "complements",
+      "description": "SQL Serverは独自のSQL認証も併用できる。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "Windows統合認証はKerberosを優先して利用する。"
+    },
+    {
+      "from": "node_023",
+      "to": "node_031",
+      "relationship": "complements",
+      "description": "SQL認証ではアプリケーション用のService Account相当IDが乱立しやすい。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_025",
+      "relationship": "complements",
+      "description": "IISはバックエンド連携でKerberos Delegationを必要とすることがある。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_026",
+      "relationship": "requires",
+      "description": "IISは各アプリケーションプールに実行IDを割り当てる。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "Kerberos DelegationはKerberosチケット伝搬を前提とする。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_030",
+      "relationship": "requires",
+      "description": "Kerberos Delegationの成立には適切なSPN登録が必要である。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_031",
+      "relationship": "example_of",
+      "description": "Application Pool Identityはサービス実行主体の一種である。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_028",
+      "relationship": "requires",
+      "description": "PostgreSQLはpg_hba.confで接続元と認証方式を定義する。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "pg_hba.confはKerberos認証を選択的に有効化できる。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_019",
+      "relationship": "complements",
+      "description": "pg_hba.confはLDAP認証を選択的に有効化できる。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "CIFS/SMBの安全な統合認証にはKerberosが重要である。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_030",
+      "relationship": "requires",
+      "description": "ファイルサーバーアクセスのKerberos運用ではSPN整備が不可欠である。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_038",
+      "relationship": "mitigates",
+      "description": "SPNの適正管理はサービス主体のなりすましやSilver Ticket悪用の余地を狭める。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "Service Accountは棚卸し不備により残存アカウント化しやすい。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "Shared Accountは利用者が曖昧なまま残りやすい。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "SIer Dependencyは退職者・契約終了者アカウントの残存を招きやすい。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_035",
+      "relationship": "complements",
+      "description": "共通化されたローカル管理者資格情報はPass-the-Hashの踏み台となる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_036",
+      "relationship": "complements",
+      "description": "Kerberos依存環境ではチケット窃取時にPass-the-Ticketの影響が広がる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_037",
+      "relationship": "complements",
+      "description": "Kerberosの中核秘密が破られるとGolden Ticket Attackが成立する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_038",
+      "relationship": "complements",
+      "description": "サービス秘密が破られるとSilver Ticket Attackが成立する。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "Pass-the-Hashは横展開の代表的手段である。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "Pass-the-TicketはKerberos環境での横展開を加速させる。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "Golden Ticket Attackはドメイン全体の制御奪取に直結しやすい。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "Silver Ticket Attackは個別サービス侵害から横展開を助長する。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "ラテラルムーブメントが進むと最終的に高権限管理者侵害へ到達しやすい。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k_001",
+      "topic": "日本企業のAD依存実態",
+      "content": "日本企業の情報システム部門では、Windows端末管理だけでなく、サーバー認証、ファイル共有、業務システム連携までActive Directoryに依存しているケースが多い。クラウド導入後もオンプレミス認証の根幹として残りやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_002",
+      "topic": "サーバー直接ログイン運用の残存",
+      "content": "日本企業では運用自動化が不十分なまま、Windows ServerやRHEL / Linuxへ管理者が直接ログインして保守作業を行う慣行が残りやすい。この構造は個人責任と権限境界を曖昧にしやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_003",
+      "topic": "共有アカウント乱用の問題",
+      "content": "夜間保守や委託運用を理由にShared Accountが残ると、誰が何を実行したか追跡しにくくなる。特に障害対応時の暫定運用が恒久化すると統制が崩れやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_004",
+      "topic": "サービスアカウント固定パスワードの危険",
+      "content": "Service Accountが固定パスワードで長期間放置されると、アプリケーション停止を恐れて変更できず、侵害時の長期潜伏を許しやすい。特にWindowsサービス、IIS、バッチ、DB接続で顕著である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_005",
+      "topic": "SIer依存とライフサイクル統制不備",
+      "content": "ID作成・権限付与・削除の実務が委託先任せだと、退職者、異動者、契約終了者のアカウント削除が業務フローから漏れやすい。日本型ITでは内部のオーナー不在がこの問題を悪化させる。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_006",
+      "topic": "クラウドID導入後もADは消えにくい",
+      "content": "Microsoft Entra IDやOkta Workforce Identityを導入しても、Windows Server、CIFS/SMB、既存アプリ、工場系システムがActive DirectoryまたはKerberos/LDAPを必要とするため、完全置換ではなく長期併存になりやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_007",
+      "topic": "Entra Hybrid Joinの位置づけ",
+      "content": "Entra Hybrid Joinは端末やユーザーの一括切替ではなく、既存運用を維持したままクラウド管理へ移るための中継パターンである。移行完了形そのものではない点を明示すべきである。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_008",
+      "topic": "Entra Domain Servicesの適用境界",
+      "content": "Entra Domain ServicesはLDAPやKerberosを必要とする一部ワークロードの受け皿にはなるが、従来ADを完全互換で再現するものではない。オンプレミスサーバーの全面代替と誤解すると設計が破綻する。",
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "k_009",
+      "topic": "Linux系統合認証の設計要点",
+      "content": "RHEL / LinuxではPAM、SSSD、Kerberos、LDAPをどう組み合わせるかで運用品質が大きく変わる。Windows系ID基盤とLinux系ID基盤の責任分界を曖昧にしないことが重要である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_010",
+      "topic": "gMSAの価値",
+      "content": "gMSAはWindowsサービスやIISの実行IDに対してパスワード自動ローテーションを提供し、固定資格情報の配布を減らせる。Service Accountの棚卸しと組み合わせると効果が高い。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_011",
+      "topic": "SQL Server認証方式の使い分け",
+      "content": "SQL ServerではWindows Integrated Authenticationを優先し、SQL Authenticationは例外用途に限定する設計が望ましい。独自資格情報の増殖は管理不能な非人間IDを増やす。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_012",
+      "topic": "IIS委任とSPN管理",
+      "content": "IISでKerberos Delegationを使う場合、SPNの誤登録や重複、過大な委任設定が重大事故につながる。認証設計と運用手順を分離せず一体で設計する必要がある。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_013",
+      "topic": "PostgreSQLの外部認証統制",
+      "content": "PostgreSQLではpg_hba.confが実質的な境界防御点になる。接続元、対象DB、対象ユーザー、認証方式を明示的に絞り込まないとKerberos/LDAP連携でも過剰許可になりうる。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_014",
+      "topic": "CIFS/SMBとKerberos",
+      "content": "日本企業では部門ファイルサーバーが長期残存しやすく、CIFS/SMBのKerberos認証は業務継続上の重要要素である。ID基盤刷新ではファイル共有の認証依存を先に棚卸しすべきである。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_015",
+      "topic": "Pass-the-Hashから全落ちまでの連鎖",
+      "content": "ローカル管理者の共通化、資格情報の平文配置、過剰な管理権限が残ると、Pass-the-HashやPass-the-Ticketからラテラルムーブメント、最終的なDomain Admin Compromiseへ連鎖しやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_016",
+      "topic": "単一高権限侵害の破壊力",
+      "content": "Active Directory中心の運用では、一つの高権限管理者アカウントが侵害されるだけで認証基盤、ファイル共有、サーバー実行ID、委任設定まで連鎖的に支配されうる。特権の分離と経路分離が最優先である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    }
+  ]
+}

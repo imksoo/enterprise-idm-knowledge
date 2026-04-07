@@ -1,0 +1,343 @@
+{
+  "metadata": {
+    "scenario_id": "sim_mfg_02",
+    "title": "2025年12月のHP-UX EOL後：製造業でHP-UXが残っている現場の大混乱",
+    "industry": "製造",
+    "company_profile": {
+      "company_type": "中堅部品メーカー",
+      "employees": 2000,
+      "locations": "国内製造拠点複数",
+      "environment": [
+        "HP-UX 11i v3",
+        "Oracle Database 12c on Itanium",
+        "生産管理システム",
+        "2026年4月時点で無パッチ稼働"
+      ],
+      "current_constraints": [
+        "経営層はEOLを未認識",
+        "現場は停止回避を最優先",
+        "ベンダー発言に依存した延命"
+      ]
+    },
+    "themes": [
+      "EOL後運用",
+      "レガシー基盤移行",
+      "Oracleサポート",
+      "HP-UX",
+      "リスクコミュニケーション"
+    ],
+    "knowledge_needs": [
+      "HP-UX EOL後に生じるセキュリティと保守契約上のリスク",
+      "Oracle Databaseサポートへの波及影響",
+      "RHEL on x86やAIXへの移行比較観点",
+      "移行完了までの暫定リスク低減策",
+      "経営層向けの停止リスクとITリスクの説明方法",
+      "Itanium依存アプリケーションの棚卸し項目"
+    ]
+  },
+  "personas": [
+    {
+      "id": "mfg2_p01",
+      "name": "浜田 太郎",
+      "role": "情シス担当者",
+      "background": "生産管理システムの保守窓口を長く担当し、HP-UXの老朽化を把握している。",
+      "stance": "問題は認識しているが、ベンダーが『まだ動く』と言うため後回しにしてきた。"
+    },
+    {
+      "id": "mfg2_p02",
+      "name": "役員",
+      "role": "経営層",
+      "background": "製造現場出身で、生産停止回避を最優先に考える。",
+      "stance": "生産が止まらないなら現状維持でも良いと考えがち。"
+    },
+    {
+      "id": "mfg2_p03",
+      "name": "Oracle支援ベンダーSE",
+      "role": "Oracle支援ベンダーSE",
+      "background": "データベース保守を担当し、基盤EOLがDBサポートへ与える影響を理解している。",
+      "stance": "HP-UX EOLがOracleサポートへ波及する危険を強く警告する。"
+    },
+    {
+      "id": "mfg2_p04",
+      "name": "SIer緊急対応チーム",
+      "role": "SIer緊急対応チーム",
+      "background": "レガシー基盤からRHELやAIXへの更改案件を担当してきた。",
+      "stance": "最短ルートでの移行計画と暫定防御を同時に進めるべきと考える。"
+    },
+    {
+      "id": "mfg2_p05",
+      "name": "現場工場SE",
+      "role": "現場工場SE",
+      "background": "工場システムの実運用を担い、日々の稼働安定を見ている。",
+      "stance": "動いている以上、安易な変更は避けたい。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "mfg2_scene_01",
+      "title": "リスク認識の瞬間",
+      "setting": "外部セキュリティ診断の結果報告で、HP-UX無パッチ稼働が正式に指摘される。",
+      "dialogue": [
+        {
+          "speaker": "浜田 太郎",
+          "text": "診断結果で『HP-UX 11i v3は2025年12月31日でEOL、2026年4月時点で無パッチ運用』と明記されました。知ってはいましたが、報告書にされると重いです。",
+          "subtext": "先送りしてきた問題が顕在化した。"
+        },
+        {
+          "speaker": "現場工場SE",
+          "text": "でも実際には止まっていません。現場から見れば、今の安定稼働を崩す方がよほど怖いです。",
+          "subtext": "実害が見えないため危機感が薄い。"
+        },
+        {
+          "speaker": "SIer緊急対応チーム",
+          "text": "問題は今日動いているかではなく、障害や侵害が起きた時に直せるかです。EOL後は修正手段も再現環境も急速に失われ、支援窓口も細っていきます。",
+          "subtext": "保守不能リスクを強調している。"
+        },
+        {
+          "speaker": "浜田 太郎",
+          "text": "ベンダーの『まだ動く』を、私たちが『まだ支えられる』と誤解していました。そこを整理しないと経営に伝えられません。",
+          "subtext": "説明責任を意識し始めた。"
+        }
+      ],
+      "issues_surfaced": [
+        "HP-UX EOL後の無パッチ稼働",
+        "現場と情シスの危機感の差",
+        "保守不能リスクの顕在化",
+        "経営報告材料の不足"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/hybrid_os_combinations.json",
+        "06_security_hardening/ransomware_defense.json",
+        "03_identity_architecture/identity_landscape.json"
+      ]
+    },
+    {
+      "scene_id": "mfg2_scene_02",
+      "title": "経営層への報告",
+      "setting": "役員会で情シスがHP-UXの状況を説明する場面。",
+      "dialogue": [
+        {
+          "speaker": "役員",
+          "text": "ITが難しいことを言っていますが、要するに今すぐ止まるのですか。生産停止だけは絶対に避けてください。",
+          "subtext": "短期停止リスクだけで判断している。"
+        },
+        {
+          "speaker": "浜田 太郎",
+          "text": "今すぐ止まるとは言えません。ただ、2025年12月31日以降はメーカー保守前提が崩れ、障害や脆弱性が起きても通常の修正が受けられない状態です。そこが問題です。",
+          "subtext": "経営に伝わる言葉へ変換しようとしている。"
+        },
+        {
+          "speaker": "SIer緊急対応チーム",
+          "text": "経営判断としては『安定稼働』ではなく『単一障害点を放置している』状態です。止まる確率より、止まった時に復旧できない確率が上がっています。",
+          "subtext": "リスクの質を言い換えている。"
+        },
+        {
+          "speaker": "役員",
+          "text": "つまり、今は見えていないが、事故時の被害が大きくなるということですね。ならば移行の期間と費用感を具体的に示してください。",
+          "subtext": "ようやく意思決定モードに入った。"
+        }
+      ],
+      "issues_surfaced": [
+        "経営層のITリスク理解不足",
+        "停止確率と復旧不能リスクの混同",
+        "費用と期間の見える化不足",
+        "意思決定材料の欠如"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/ransomware_defense.json",
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "05_hybrid_scenarios/hybrid_os_combinations.json"
+      ]
+    },
+    {
+      "scene_id": "mfg2_scene_03",
+      "title": "Oracleサポート問題",
+      "setting": "Oracle支援ベンダーが、基盤EOLがデータベース支援に与える影響を説明する。",
+      "dialogue": [
+        {
+          "speaker": "Oracle支援ベンダーSE",
+          "text": "HP-UXのEOLはOSだけの話ではありません。Oracle Database 12cの障害切り分けでも、基盤側がサポート外だと再現や修正の前提が崩れます。",
+          "subtext": "OSとDBサポートが分離できないと説明している。"
+        },
+        {
+          "speaker": "浜田 太郎",
+          "text": "DB保守契約があるから安心だと思っていましたが、OSが前提条件を満たさないと支援範囲が狭まるわけですね。",
+          "subtext": "契約の読み違いに気づいた。"
+        },
+        {
+          "speaker": "Oracle支援ベンダーSE",
+          "text": "はい。特に性能劣化やI/O障害のような境界問題では、OSとハードウェアの前提が崩れると支援が限定的になります。監査でも説明が難しくなります。",
+          "subtext": "グレーゾーンを強調している。"
+        },
+        {
+          "speaker": "現場工場SE",
+          "text": "それなら、現場で障害が起きた時に『誰も最後まで責任を持てない』状態ですね。触るなと言ってきた私でも、それはまずいとわかります。",
+          "subtext": "現場も危機感を共有し始めた。"
+        }
+      ],
+      "issues_surfaced": [
+        "OS EOLのDBサポート波及",
+        "契約条件の誤認",
+        "障害切り分け責任の空洞化",
+        "監査説明の難化"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/hybrid_os_combinations.json",
+        "03_identity_architecture/app_architecture_id_design.json",
+        "06_security_hardening/ransomware_defense.json"
+      ]
+    },
+    {
+      "scene_id": "mfg2_scene_04",
+      "title": "移行先の検討",
+      "setting": "移行先候補としてRHEL on x86とAIXを比較する検討会。",
+      "dialogue": [
+        {
+          "speaker": "SIer緊急対応チーム",
+          "text": "最短ルートはRHEL on x86への移行です。部材確保、技術者確保、将来の運用標準化の面で優位です。AIXは安定性の印象はありますが、再び専用性を抱えます。",
+          "subtext": "将来運用まで含めた比較をしている。"
+        },
+        {
+          "speaker": "浜田 太郎",
+          "text": "アプリ改修量が読めないのが悩みです。Itanium依存の周辺処理があれば、OSだけの載せ替えでは終わりません。",
+          "subtext": "技術的な見積もり不確実性を気にしている。"
+        },
+        {
+          "speaker": "Oracle支援ベンダーSE",
+          "text": "DB観点ではRHEL on x86は選択肢として現実的です。AIXも可能ですが、将来の人材確保と周辺製品対応まで見る必要があります。",
+          "subtext": "AIXを否定せず、総合判断を促している。"
+        },
+        {
+          "speaker": "現場工場SE",
+          "text": "現場としては、切替回数が少なく、手順が検証しやすい案を選びたいです。新しい特殊基盤を増やすより、長く支えられる方が安心です。",
+          "subtext": "運用継続性を重視している。"
+        }
+      ],
+      "issues_surfaced": [
+        "RHEL on x86とAIXの比較",
+        "Itanium依存棚卸しの必要性",
+        "人材確保と将来保守性",
+        "切替手順の検証容易性"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/hybrid_os_combinations.json",
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "03_identity_architecture/identity_landscape.json"
+      ]
+    },
+    {
+      "scene_id": "mfg2_scene_05",
+      "title": "緊急プロジェクト計画",
+      "setting": "移行方針を経営へ提示する前に、短期対策と移行計画を確定する。",
+      "dialogue": [
+        {
+          "speaker": "SIer緊急対応チーム",
+          "text": "提案は三本柱です。第一にRHEL on x86を第一候補とした移行設計、第二にItanium依存の緊急棚卸し、第三に移行完了までのネットワーク分離と特権接続制御です。",
+          "subtext": "移行と暫定対策を同時に走らせたい。"
+        },
+        {
+          "speaker": "浜田 太郎",
+          "text": "現行HP-UXは変更を最小化しつつ、接続元制限、バックアップ確認、運用手順書の再整備を今月中に進めます。もう『様子を見る』では済ませません。",
+          "subtext": "先送りからの転換を宣言している。"
+        },
+        {
+          "speaker": "役員",
+          "text": "費用は覚悟します。ただし生産への影響を見える化してください。暫定措置で事故確率を下げつつ、移行完了時期を四半期単位で管理します。",
+          "subtext": "投資判断と進捗管理を求めている。"
+        },
+        {
+          "speaker": "現場工場SE",
+          "text": "現場も協力します。止められないから放置ではなく、止めないために計画的に変えるという前提で動きましょう。",
+          "subtext": "現場が計画移行へ腹落ちした。"
+        }
+      ],
+      "issues_surfaced": [
+        "移行第一候補の決定",
+        "暫定リスク低減策の実施",
+        "四半期単位の進捗管理",
+        "現場協力体制の確立"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/hybrid_os_combinations.json",
+        "06_security_hardening/ransomware_defense.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "OSライフサイクル管理",
+      "current": "HP-UX 11i v3が2025年12月31日EOL後も無パッチで稼働",
+      "target": "EOL前に更改計画を持ち、保守可能な基盤へ移行する",
+      "gap": "ライフサイクル監視と経営報告が機能していなかった",
+      "priority": "high"
+    },
+    {
+      "category": "経営ガバナンス",
+      "current": "経営層が基盤EOLの事実を把握していない",
+      "target": "四半期単位でレガシー資産リスクを報告し投資判断できる状態",
+      "gap": "ITリスクを事業影響へ翻訳する仕組みが不足",
+      "priority": "high"
+    },
+    {
+      "category": "Oracle支援前提",
+      "current": "DB保守契約があるため安全と誤認している",
+      "target": "OS・DB・ハードウェアのサポート前提条件を一体で管理する",
+      "gap": "契約条件と責任分界の理解が曖昧",
+      "priority": "high"
+    },
+    {
+      "category": "移行先評価",
+      "current": "RHEL on x86やAIXの比較が感覚的で、依存関係棚卸しがない",
+      "target": "アプリ、DB、周辺処理、運用人材まで含めて移行先を評価する",
+      "gap": "Itanium依存と周辺製品対応の情報が不足",
+      "priority": "medium"
+    },
+    {
+      "category": "暫定防御",
+      "current": "無パッチ環境に対する特別な到達制御や特権統制がない",
+      "target": "ネットワーク分離、接続元制限、特権接続記録を即時適用する",
+      "gap": "暫定措置の設計と責任者が決まっていない",
+      "priority": "high"
+    },
+    {
+      "category": "現場巻き込み",
+      "current": "現場は『動いているから触るな』で議論が止まる",
+      "target": "操業影響を織り込んだ移行計画を現場と共同策定する",
+      "gap": "切替試験計画と停止許容条件の合意がない",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "phase": "phase_1",
+      "action": "HP-UX基盤、Oracle Database、Itanium依存周辺処理の緊急棚卸しを実施する",
+      "owner": "情シス担当者 + Oracle支援ベンダーSE",
+      "rationale": "移行スコープと支援制約を正確に把握するため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "現行HP-UXに対して接続元制限、踏み台経由化、バックアップ検証を実施する",
+      "owner": "SIer緊急対応チーム",
+      "rationale": "移行完了までの事故確率と影響を下げるため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "経営層向けに停止影響、復旧不能リスク、投資計画を四半期ベースで提示する",
+      "owner": "情シス担当者",
+      "rationale": "技術問題を事業リスクとして意思決定できるようにするため"
+    },
+    {
+      "phase": "phase_2",
+      "action": "RHEL on x86を第一候補としてPoCと移行手順検証を開始し、AIXを比較対象として評価する",
+      "owner": "SIer緊急対応チーム",
+      "rationale": "最短移行と長期保守性の両面で判断するため"
+    },
+    {
+      "phase": "phase_2",
+      "action": "現場工場SEを含む切替判定会議体を設置し、停止許容条件とロールバック条件を定義する",
+      "owner": "役員",
+      "rationale": "現場不安を減らし、計画移行を実行可能にするため"
+    }
+  ]
+}

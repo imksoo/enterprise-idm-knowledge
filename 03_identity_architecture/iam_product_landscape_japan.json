@@ -1,0 +1,3317 @@
+{
+  "metadata": {
+    "id": "iam_product_landscape_japan",
+    "title": "IAM製品全景マップ：日本市場採用状況・シェア・特徴",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "iam",
+      "pam",
+      "idp",
+      "iga",
+      "directory-service",
+      "mfa",
+      "pki",
+      "mdm",
+      "securecube",
+      "hennge",
+      "cyberark",
+      "okta",
+      "sailpoint",
+      "japan-market"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "./identity_landscape.json",
+      "./pam_tool_comparison.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json"
+    ],
+    "scope_note": "日本企業の情報システム部門、CISO、SIerが、製品選定時に必要とする国内採用傾向、サポート体制、価格帯、パートナー性を重視して整理した。市場シェアは公開情報、導入社数、製品群の親和性からの推定を含む。"
+  },
+  "categories": [
+    {
+      "category_id": "directory",
+      "category_name": "ディレクトリサービス（IDマスター基盤）",
+      "japan_category_analysis": {
+        "market_share_estimate": "オンプレミスのIDマスターはActive Directoryが推定70%以上。Linux系の新規構築はRed Hat IdM / Red Hat Directory ServerとOSS系が分散し、SaaS側の実運用ディレクトリはEntra IDが最大。",
+        "adoption_reasons": [
+          "Windows Serverとグループポリシーの既存資産が厚い",
+          "基幹系やファイルサーバー、Kerberos依存アプリとの結合が強い",
+          "Entra IDとのハイブリッド運用によりActive Directoryを即時廃止しなくて済む"
+        ],
+        "adoption_barriers": [
+          "Linux/Unix中心組織ではActive Directoryの導入コストが過大になりやすい",
+          "OpenLDAPはRHEL 8以降でサーバーパッケージ廃止のため新規標準にしにくい",
+          "国産SaaS中心企業ではディレクトリを単体製品で持たずIdPと一体運用する傾向がある"
+        ],
+        "japanese_support_and_partnering": "Microsoft Japan、Red Hat Japan、Oracle Japanの直販/大手SIer網が強い。旧Novell系やOpenText系は保守可能パートナーが限定的。",
+        "price_band": "Active DirectoryはWindows Server同梱で初期コストは低めだが運用費は高い。Red Hat Directory ServerやOracle系は中〜高。Entra IDはM365バンドルで実質低〜中。",
+        "sier_fit": [
+          "NSSOL、NTT DATA、日立、富士通、NECはMicrosoft系とRed Hat系を持ちやすい",
+          "Oracle系はDB/ERP案件を持つSIerに親和性が高い",
+          "OpenLDAPは製品保守より個別構築案件になりやすくスケールしにくい"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "msad",
+          "name": "Microsoft Active Directory DS",
+          "vendor": "Microsoft",
+          "type": "directory",
+          "deployment": "on-premises",
+          "license_model": "included_with_windows_server",
+          "japan_market": {
+            "share_estimate": "推定70%以上（オンプレミスの企業ディレクトリ）",
+            "major_adopters": [
+              "大手金融",
+              "製造業",
+              "官公庁",
+              "全国拠点を持つ流通業"
+            ],
+            "japanese_support": "Microsoft Japanと大手SIer保守網",
+            "partner_model": "ほぼ全大手SIerが実装可能",
+            "price_band": "low_to_medium",
+            "japan_specific_notes": "Windows Server、ファイルサーバー、業務端末の一体運用が残りやすく、日本企業では最も置換しにくい基盤。"
+          },
+          "key_features": [
+            "KerberosとLDAPを中心にしたドメイン認証",
+            "グループポリシー",
+            "ドメイン参加",
+            "Windows Server統合",
+            "Entra Connect Sync連携"
+          ],
+          "integration_with_idp": [
+            "Microsoft Entra ID",
+            "Okta",
+            "HENNGE One",
+            "CloudGate UNO"
+          ],
+          "lifecycle": {
+            "status": "current_and_dominant",
+            "migration_pressure": "high"
+          },
+          "competitive_position": "既存資産依存が極めて強く、クラウド移行後も認証の残存基盤として残りやすい。",
+          "sources": [
+            "https://learn.microsoft.com/ja-jp/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview"
+          ]
+        },
+        {
+          "product_id": "entra_id_directory",
+          "name": "Microsoft Entra ID",
+          "vendor": "Microsoft",
+          "type": "directory",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定50%以上（クラウド側の従業員IdP基盤）",
+            "major_adopters": [
+              "Microsoft 365利用企業",
+              "中堅企業",
+              "自治体",
+              "教育機関"
+            ],
+            "japanese_support": "Microsoft Japan",
+            "partner_model": "ライセンス販社とSIerの双方で厚い",
+            "price_band": "low_to_medium",
+            "japan_specific_notes": "Microsoft 365導入と同時に標準採用されやすく、単独評価よりセット導入で普及した。"
+          },
+          "key_features": [
+            "SaaS向けIdP",
+            "条件付きアクセス",
+            "MFA",
+            "ライフサイクル管理",
+            "外部ID"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Entra ID Governance",
+            "Intune"
+          ],
+          "lifecycle": {
+            "status": "strategic_growth"
+          },
+          "competitive_position": "単体性能だけでなくM365同梱効果で日本市場の実効シェアが高い。",
+          "sources": [
+            "https://www.microsoft.com/ja-jp/security/business/microsoft-entra"
+          ]
+        },
+        {
+          "product_id": "openldap",
+          "name": "OpenLDAP",
+          "vendor": "OpenLDAP Project",
+          "type": "directory",
+          "deployment": "on-premises",
+          "license_model": "open_source",
+          "japan_market": {
+            "share_estimate": "低いが既存のOSS基盤では残存",
+            "major_adopters": [
+              "Linux中心の個別構築環境",
+              "旧来のOSS認証基盤"
+            ],
+            "japanese_support": "コミュニティまたは個別SI",
+            "partner_model": "案件依存",
+            "price_band": "low",
+            "japan_specific_notes": "RHEL 8/9ではopenldap-serversパッケージが廃止されたため、新規標準候補としては弱くなった。"
+          },
+          "key_features": [
+            "LDAPディレクトリ",
+            "OSS",
+            "シンプルなスキーマ設計"
+          ],
+          "integration_with_idp": [
+            "SSSD",
+            "Keycloak",
+            "各種LDAPクライアント"
+          ],
+          "lifecycle": {
+            "status": "legacy_niche",
+            "important_note": "RHEL 8/9ではopenldap-servers廃止"
+          },
+          "competitive_position": "低コストだが、運用保守責任を自力で負いやすく、日本の大規模企業標準には採りにくい。",
+          "sources": [
+            "https://access.redhat.com/solutions/3816971",
+            "https://access.redhat.com/solutions/2440481"
+          ]
+        },
+        {
+          "product_id": "rhds",
+          "name": "Red Hat Directory Server",
+          "vendor": "Red Hat",
+          "type": "directory",
+          "deployment": "on-premises",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "Linuxディレクトリの中では中位",
+            "major_adopters": [
+              "Red Hat標準を求める企業",
+              "通信",
+              "大規模Linux基盤"
+            ],
+            "japanese_support": "Red Hat Japan",
+            "partner_model": "Red Hat系パートナー中心",
+            "price_band": "medium",
+            "japan_specific_notes": "RHELベースの保守契約に載せやすく、OpenLDAP代替として説明しやすい。"
+          },
+          "key_features": [
+            "389 Directory Server系",
+            "商用サポート",
+            "複製",
+            "LDAPクライアント互換"
+          ],
+          "integration_with_idp": [
+            "SSSD",
+            "Red Hat IdM"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "RHEL標準化の流れに乗せやすい商用LDAP。",
+          "sources": [
+            "https://docs.redhat.com/en/documentation/red_hat_directory_server/11/html/release_notes/directory-server-11.0"
+          ]
+        },
+        {
+          "product_id": "rhidm",
+          "name": "Red Hat IdM / FreeIPA",
+          "vendor": "Red Hat",
+          "type": "directory",
+          "deployment": "on-premises",
+          "license_model": "subscription_or_open_source",
+          "japan_market": {
+            "share_estimate": "Linux認証統合のニッチだが実務価値は高い",
+            "major_adopters": [
+              "RHEL基幹環境",
+              "研究機関",
+              "製造系Linuxサーバー群"
+            ],
+            "japanese_support": "Red Hat Japan",
+            "partner_model": "Red Hat SI案件で採用しやすい",
+            "price_band": "medium",
+            "japan_specific_notes": "Kerberos、DNS、CAを統合し、Linuxサーバーの標準化に向く。"
+          },
+          "key_features": [
+            "Kerberos",
+            "DNS",
+            "CA",
+            "HBAC",
+            "SSH鍵管理"
+          ],
+          "integration_with_idp": [
+            "SSSD",
+            "Active Directory trust"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "Linux中心組織ではActive Directoryより運用整合性を取りやすい。",
+          "sources": [
+            "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/migrating_to_identity_management_on_rhel_8/migrating-from-an-ldap-directory-to-idm_migrating-to-idm-from-external-sources"
+          ]
+        },
+        {
+          "product_id": "oid",
+          "name": "Oracle Internet Directory",
+          "vendor": "Oracle",
+          "type": "directory",
+          "deployment": "on-premises",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "Oracleアプリ連携案件に限定",
+            "major_adopters": [
+              "Oracle ERP",
+              "旧来のOracleミドルウェア利用企業"
+            ],
+            "japanese_support": "Oracle Japan",
+            "partner_model": "Oracle系SIer中心",
+            "price_band": "high",
+            "japan_specific_notes": "新規採用は限定的で、既存Oracleスタックの維持要件で残りやすい。"
+          },
+          "key_features": [
+            "LDAPディレクトリ",
+            "Oracleミドルウェア統合"
+          ],
+          "integration_with_idp": [
+            "Oracle Access Manager"
+          ],
+          "lifecycle": {
+            "status": "legacy_specialized"
+          },
+          "competitive_position": "Oracle依存環境では自然だが、単体選定での優先度は下がった。",
+          "sources": [
+            "https://www.oracle.com/middleware/technologies/internetdirectory.html"
+          ]
+        },
+        {
+          "product_id": "oud",
+          "name": "Oracle Unified Directory",
+          "vendor": "Oracle",
+          "type": "directory",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "限定的",
+            "major_adopters": [
+              "Oracle Access Management案件"
+            ],
+            "japanese_support": "Oracle Japan",
+            "partner_model": "Oracle系パートナー",
+            "price_band": "high",
+            "japan_specific_notes": "高性能LDAP用途では候補になるが、日本では製品単独の指名は少ない。"
+          },
+          "key_features": [
+            "高性能LDAP",
+            "レプリケーション",
+            "プロキシ"
+          ],
+          "integration_with_idp": [
+            "Oracle Access Manager"
+          ],
+          "lifecycle": {
+            "status": "current_but_niche"
+          },
+          "competitive_position": "Oracle IAMスイートの一部として意味を持つ。",
+          "sources": [
+            "https://www.oracle.com/security/identity-management/unified-directory/"
+          ]
+        },
+        {
+          "product_id": "edirectory",
+          "name": "Micro Focus eDirectory",
+          "vendor": "OpenText",
+          "type": "directory",
+          "deployment": "on-premises",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "旧Novell残存環境に限定",
+            "major_adopters": [
+              "教育",
+              "地方企業のレガシー環境"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "旧Novell系保守パートナー",
+            "price_band": "medium_to_high",
+            "japan_specific_notes": "新規採用よりも既存環境の延命用途。"
+          },
+          "key_features": [
+            "クロスプラットフォームディレクトリ"
+          ],
+          "integration_with_idp": [
+            "OpenText Identity Manager"
+          ],
+          "lifecycle": {
+            "status": "legacy"
+          },
+          "competitive_position": "残存案件はあるが、市場拡大余地は限定的。",
+          "sources": [
+            "https://www.opentext.com/products/edirectory"
+          ]
+        },
+        {
+          "product_id": "apacheds",
+          "name": "Apache Directory Server",
+          "vendor": "Apache Software Foundation",
+          "type": "directory",
+          "deployment": "on-premises",
+          "license_model": "open_source",
+          "japan_market": {
+            "share_estimate": "非常に限定的",
+            "major_adopters": [
+              "開発検証環境"
+            ],
+            "japanese_support": "コミュニティ",
+            "partner_model": "ほぼなし",
+            "price_band": "low",
+            "japan_specific_notes": "本番の企業標準としてはまれ。"
+          },
+          "key_features": [
+            "JavaベースLDAP",
+            "OSS"
+          ],
+          "integration_with_idp": [
+            "LDAP連携製品"
+          ],
+          "lifecycle": {
+            "status": "niche"
+          },
+          "competitive_position": "商用サポート前提の日本企業では採用障壁が高い。",
+          "sources": [
+            "https://directory.apache.org/apacheds/"
+          ]
+        },
+        {
+          "product_id": "forgerockds",
+          "name": "ForgeRock Directory Services",
+          "vendor": "Ping Identity",
+          "type": "directory",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "金融・保険の特定案件で採用",
+            "major_adopters": [
+              "大規模認証基盤",
+              "金融",
+              "保険"
+            ],
+            "japanese_support": "Ping IdentityのAPJ体制とパートナー",
+            "partner_model": "大規模SI案件向け",
+            "price_band": "high",
+            "japan_specific_notes": "B2C/CIAMの文脈で知られるが、ディレクトリとしても大規模用途で使われる。"
+          },
+          "key_features": [
+            "OpenDJ系",
+            "高性能ディレクトリ",
+            "大規模認証基盤向け"
+          ],
+          "integration_with_idp": [
+            "PingFederate",
+            "PingOne"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "日本ではCIAM/金融案件に偏る。",
+          "sources": [
+            "https://www.pingidentity.com/en/platform/directory.html"
+          ]
+        },
+        {
+          "product_id": "miis_ilm_fim_mim",
+          "name": "MIIS / ILM / FIM / MIM",
+          "vendor": "Microsoft",
+          "type": "directory_and_provisioning_lineage",
+          "deployment": "on-premises",
+          "license_model": "legacy",
+          "japan_market": {
+            "share_estimate": "新規導入は限定、既存大企業に残存",
+            "major_adopters": [
+              "大企業の人事連携基盤"
+            ],
+            "japanese_support": "縮小",
+            "partner_model": "移行案件中心",
+            "price_band": "legacy",
+            "japan_specific_notes": "MIM 2016からEntra ID Governanceや他社IGAへの移行案件が増えている。"
+          },
+          "key_features": [
+            "同期",
+            "プロビジョニング",
+            "メタディレクトリ"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Entra ID Governance"
+          ],
+          "lifecycle": {
+            "status": "legacy_migration_target"
+          },
+          "competitive_position": "歴史的には重要だが、現在は移行元製品として扱うのが現実的。",
+          "sources": [
+            "https://www.oneidentity.com/documents/how-to-smooth-your-transition-from-mim-2016-with-support-from-one-identity-and-avanade-japanese-datasheet-162081.pdf"
+          ]
+        },
+        {
+          "product_id": "forefront_uag",
+          "name": "Microsoft Forefront UAG",
+          "vendor": "Microsoft",
+          "type": "legacy_remote_access",
+          "deployment": "on-premises",
+          "license_model": "discontinued",
+          "japan_market": {
+            "share_estimate": "残存のみ",
+            "major_adopters": [
+              "旧来のリモートアクセス基盤"
+            ],
+            "japanese_support": "終了",
+            "partner_model": "更改案件のみ",
+            "price_band": "n_a",
+            "japan_specific_notes": "後継はAzure AD Application Proxyで説明されることが多い。"
+          },
+          "key_features": [
+            "リモートアクセス",
+            "アプリ公開"
+          ],
+          "integration_with_idp": [
+            "Azure AD Application Proxy"
+          ],
+          "lifecycle": {
+            "status": "discontinued"
+          },
+          "competitive_position": "現行採用候補ではないが、移行文脈では参照される。",
+          "sources": [
+            "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/forefront-2010/ms823430(v=ws.10)"
+          ]
+        },
+        {
+          "product_id": "forefront_tmg",
+          "name": "Microsoft Forefront TMG",
+          "vendor": "Microsoft",
+          "type": "legacy_gateway",
+          "deployment": "on-premises",
+          "license_model": "discontinued",
+          "japan_market": {
+            "share_estimate": "残存のみ",
+            "major_adopters": [
+              "旧来の境界防御環境"
+            ],
+            "japanese_support": "終了",
+            "partner_model": "代替設計案件のみ",
+            "price_band": "n_a",
+            "japan_specific_notes": "明確な単一後継製品がなく、ゼロトラスト移行の論点になりやすい。"
+          },
+          "key_features": [
+            "プロキシ",
+            "境界防御"
+          ],
+          "integration_with_idp": [],
+          "lifecycle": {
+            "status": "discontinued"
+          },
+          "competitive_position": "歴史的製品。代替はZTNA/SASE/PAM/リバースプロキシの組み合わせで検討する。",
+          "sources": [
+            "https://learn.microsoft.com/en-us/lifecycle/products/microsoft-forefront-threat-management-gateway-2010"
+          ]
+        }
+      ]
+    },
+    {
+      "category_id": "pam",
+      "category_name": "PAM（特権アクセス管理）製品",
+      "japan_category_analysis": {
+        "market_share_estimate": "日本の大規模PAMはCyberArkが最有力、BeyondTrustとDelineaが続き、国内踏み台系ではSecureCube Access CheckやNTTテクノクロス系が存在感を持つ。公開情報ベースではITR Market View 2025が特権ID管理市場の独立区分を持つが、詳細ベンダー数値は有償。",
+        "adoption_reasons": [
+          "FISC、PCI DSS、J-SOX対応で証跡要求が強い",
+          "委託先接続、運用保守、ベンダーリモートアクセスを可視化したい",
+          "ランサムウェア対策として横展開の起点となる特権IDを抑制したい"
+        ],
+        "adoption_barriers": [
+          "日本企業では申請承認フロー変更の負荷が高い",
+          "高価格帯で運用設計も重く、PoCから本番まで長期化しやすい",
+          "サーバー台数よりも運用組織改編がボトルネックになりやすい"
+        ],
+        "japanese_support_and_partnering": "CyberArkは直販と広いパートナーネットワーク、BeyondTrustとDelineaはパートナー主導、SecureCube Access Checkは国内サポートが強い。One IdentityはQuest系サポートで国内対応が可能。",
+        "price_band": "CyberArkがvery_high、BeyondTrustがhigh、DelineaとOne Identityがmedium_high、SecureCube Access Checkは中〜高だが国内要件適合性が高い。",
+        "sier_fit": [
+          "NSSOL、NTT DATA、NRI、日立、富士通はCyberArkを持ちやすい",
+          "委託先接続統制案件はBeyondTrustがSIer提案に乗せやすい",
+          "国内金融・公共の作業記録要件ではSecureCube Access Checkが説明しやすい"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "cyberark_pam_suite",
+          "name": "CyberArk PAM Suite",
+          "vendor": "CyberArk",
+          "type": "pam",
+          "deployment": "self-hosted_and_saas",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "日本の大規模PAMで最有力。推定25-35%",
+            "major_adopters": [
+              "金融",
+              "通信",
+              "製造",
+              "大規模不動産"
+            ],
+            "japanese_support": "CyberArk Japanと認定パートナー",
+            "partner_model": "直販+大手SIer",
+            "price_band": "very_high",
+            "japan_specific_notes": "大京の日本事例ではPrivilege Cloudで約200対象システムを統制。金融向け訴求も強い。"
+          },
+          "key_features": [
+            "特権Vault",
+            "セッション録画",
+            "JIT",
+            "ゼロスタンディング特権",
+            "監査"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Entra ID",
+            "SailPoint"
+          ],
+          "lifecycle": {
+            "status": "market_leader"
+          },
+          "competitive_position": "もっとも無難な大規模案件の第一候補だが、導入負荷と価格は高い。",
+          "sources": [
+            "https://www.cyberark.com/ja/",
+            "https://www.cyberark.com/press/daikyo-secures-privileged-access-and-achieves-substantial-time-savings-with-cyberark/",
+            "https://www.cyberark.com/ja/partners/"
+          ]
+        },
+        {
+          "product_id": "cyberark_privilege_cloud",
+          "name": "CyberArk Privilege Cloud",
+          "vendor": "CyberArk",
+          "type": "pam",
+          "deployment": "saas",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "CyberArk案件の中で増加傾向",
+            "major_adopters": [
+              "クラウド移行企業",
+              "SaaS優先の中堅〜大企業"
+            ],
+            "japanese_support": "CyberArk Japan",
+            "partner_model": "直販+パートナー",
+            "price_band": "very_high",
+            "japan_specific_notes": "Self-Hostedより初期設計は軽く、クラウドファースト案件で採用が増えている。"
+          },
+          "key_features": [
+            "SaaS PAM",
+            "JIT",
+            "証跡",
+            "Vault"
+          ],
+          "integration_with_idp": [
+            "CyberArk Identity",
+            "Entra ID"
+          ],
+          "lifecycle": {
+            "status": "growth"
+          },
+          "competitive_position": "日本でもSaaS PAMの有力候補。",
+          "sources": [
+            "https://www.cyberark.com/products/privilege-cloud/"
+          ]
+        },
+        {
+          "product_id": "cyberark_conjur",
+          "name": "CyberArk Conjur",
+          "vendor": "CyberArk",
+          "type": "machine_secret_management",
+          "deployment": "self-hosted_and_saas",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "人のPAMより限定的だがDevSecOps案件で採用",
+            "major_adopters": [
+              "DevSecOps",
+              "Kubernetes",
+              "API基盤"
+            ],
+            "japanese_support": "CyberArk Japan",
+            "partner_model": "クラウド/DevOps SIer向け",
+            "price_band": "high",
+            "japan_specific_notes": "人の特権ID管理から非人間ID統制へ拡張したい企業で評価される。"
+          },
+          "key_features": [
+            "シークレット管理",
+            "Kubernetes",
+            "CI/CD連携"
+          ],
+          "integration_with_idp": [
+            "CyberArk PAM",
+            "Kubernetes"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "Vault系と競合するが、CyberArk採用企業の拡張先として強い。",
+          "sources": [
+            "https://www.cyberark.com/products/secrets-manager/"
+          ]
+        },
+        {
+          "product_id": "beyondtrust_pra",
+          "name": "BeyondTrust Privileged Remote Access",
+          "vendor": "BeyondTrust",
+          "type": "pam",
+          "deployment": "self-hosted_and_cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定10-15%",
+            "major_adopters": [
+              "委託先保守が多い企業",
+              "金融",
+              "OT/工場環境"
+            ],
+            "japanese_support": "国内販売パートナー経由が中心",
+            "partner_model": "パートナー主導",
+            "price_band": "high",
+            "japan_specific_notes": "ベンダー/委託先のVPNレス接続統制が強みで、踏み台サーバー更改の代替として説明しやすい。"
+          },
+          "key_features": [
+            "ベンダーリモートアクセス",
+            "セッション監査",
+            "資格情報注入"
+          ],
+          "integration_with_idp": [
+            "Password Safe",
+            "SAML"
+          ],
+          "lifecycle": {
+            "status": "leader"
+          },
+          "competitive_position": "外部接続経路の統制ではCyberArkより分かりやすく提案できるケースがある。",
+          "sources": [
+            "https://www.beyondtrust.com/products/privileged-remote-access",
+            "https://www.idnetworks.co.jp/about_beyondtrust/"
+          ]
+        },
+        {
+          "product_id": "beyondtrust_password_safe",
+          "name": "BeyondTrust Password Safe",
+          "vendor": "BeyondTrust",
+          "type": "pam",
+          "deployment": "self-hosted_and_cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定10-15%",
+            "major_adopters": [
+              "ハイブリッド基盤",
+              "Unix/Linux混在環境"
+            ],
+            "japanese_support": "パートナー中心",
+            "partner_model": "販売代理店・導入パートナー",
+            "price_band": "high",
+            "japan_specific_notes": "Password SafeとPRAを組み合わせると委託先統制の完成度が高い。"
+          },
+          "key_features": [
+            "パスワード保管",
+            "セッション管理",
+            "秘密情報管理"
+          ],
+          "integration_with_idp": [
+            "SailPoint",
+            "ServiceNow"
+          ],
+          "lifecycle": {
+            "status": "leader"
+          },
+          "competitive_position": "委託先と内部運用の両方を一体で設計したい案件に向く。",
+          "sources": [
+            "https://www.beyondtrust.com/products/password-safe",
+            "https://www.beyondtrust.com/products/password-safe/pricing"
+          ]
+        },
+        {
+          "product_id": "delinea_secret_server",
+          "name": "Delinea Secret Server",
+          "vendor": "Delinea",
+          "type": "pam",
+          "deployment": "self-hosted_and_saas",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定5-10%",
+            "major_adopters": [
+              "中堅〜大企業",
+              "短期導入志向の企業"
+            ],
+            "japanese_support": "パートナー中心",
+            "partner_model": "専門SI/代理店",
+            "price_band": "medium_high",
+            "japan_specific_notes": "CyberArkより軽量で導入しやすいという評価を受けやすい。"
+          },
+          "key_features": [
+            "Vault",
+            "発見",
+            "セッション監視",
+            "RBAC"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Delinea Platform"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "価格と導入容易性で競争しやすい。",
+          "sources": [
+            "https://delinea.com/products/secret-server",
+            "https://delinea.com/products/secret-server/features/privileged-session-management"
+          ]
+        },
+        {
+          "product_id": "delinea_server_pam",
+          "name": "Delinea Privilege Control for Servers",
+          "vendor": "Delinea",
+          "type": "pam",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "Linux/Unix権限制御の特定案件",
+            "major_adopters": [
+              "Linux/Unix中心企業"
+            ],
+            "japanese_support": "パートナー中心",
+            "partner_model": "専門パートナー",
+            "price_band": "medium_high",
+            "japan_specific_notes": "旧Centrify系の系譜としてLinux/Unix運用チームに説明しやすい。"
+          },
+          "key_features": [
+            "サーバー権限制御",
+            "AD bridging",
+            "JIT"
+          ],
+          "integration_with_idp": [
+            "Active Directory"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "Unix/Linux特化の統制で差別化。",
+          "sources": [
+            "https://delinea.com/products/server-pam"
+          ]
+        },
+        {
+          "product_id": "wallix_pam",
+          "name": "Wallix PAM",
+          "vendor": "WALLIX",
+          "type": "pam",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "非常に限定的",
+            "major_adopters": [
+              "GDPR・欧州案件を持つ企業"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "案件依存",
+            "price_band": "medium_high",
+            "japan_specific_notes": "欧州系の規制対応訴求はあるが、日本市場では認知が低い。"
+          },
+          "key_features": [
+            "Bastion",
+            "パスワード管理",
+            "セッション録画"
+          ],
+          "integration_with_idp": [
+            "SAML"
+          ],
+          "lifecycle": {
+            "status": "niche"
+          },
+          "competitive_position": "日本では大手入札案件の候補に入りにくい。",
+          "sources": [
+            "https://www.wallix.com/privileged-access-management"
+          ]
+        },
+        {
+          "product_id": "senhasegura",
+          "name": "Senhasegura PAM",
+          "vendor": "Senhasegura",
+          "type": "pam",
+          "deployment": "self-hosted_and_saas",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "ほぼ限定的",
+            "major_adopters": [
+              "多国籍企業の比較検討"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "アジア太平洋パートナー経由",
+            "price_band": "medium",
+            "japan_specific_notes": "APACでの成長はあるが、日本の案件化はまだ少ない。"
+          },
+          "key_features": [
+            "Vault",
+            "セッション監査"
+          ],
+          "integration_with_idp": [
+            "SAML"
+          ],
+          "lifecycle": {
+            "status": "emerging"
+          },
+          "competitive_position": "価格競争力はあるが国内体制が弱い。",
+          "sources": [
+            "https://senhasegura.com/"
+          ]
+        },
+        {
+          "product_id": "securecube_access_check",
+          "name": "SecureCube Access Check",
+          "vendor": "NRI Secure / TIS",
+          "type": "pam",
+          "deployment": "on-premises",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "国内踏み台・特権統制の有力製品。推定5-10%",
+            "major_adopters": [
+              "金融",
+              "公共",
+              "製造",
+              "上場企業"
+            ],
+            "japanese_support": "国内ベンダーと国内SIで強い",
+            "partner_model": "NRIグループ、TISなど",
+            "price_band": "medium_high",
+            "japan_specific_notes": "FISC、PCI DSS、J-SOX等に対応しやすい作業記録・申請承認・証跡連携が強み。TIS掲載では国内外のべ576ライセンス実績。"
+          },
+          "key_features": [
+            "ゲートウェイ型踏み台",
+            "申請承認",
+            "パスワード管理",
+            "操作ログ",
+            "監査補助"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "ワークフロー製品",
+            "統合ログ管理"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "日本語UI、国内サポート、FISC文脈の説明容易性で外資PAMと差別化できる。",
+          "sources": [
+            "https://www.tis.jp/service_solution/access_check/",
+            "https://www.nri-secure.co.jp/service/solution/accesscheck",
+            "https://www.nri.com/jp/service/case/secure_02.html"
+          ]
+        },
+        {
+          "product_id": "arcon_pam",
+          "name": "ARCON PAM",
+          "vendor": "ARCON",
+          "type": "pam",
+          "deployment": "self-hosted_and_saas",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "限定的",
+            "major_adopters": [
+              "アジア展開企業"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "APAC経由",
+            "price_band": "medium",
+            "japan_specific_notes": "Gartner PAM Challenger訴求はあるが、日本での導入実績公開は少ない。"
+          },
+          "key_features": [
+            "PAM",
+            "EPM",
+            "CIEM"
+          ],
+          "integration_with_idp": [
+            "Oracle Access Governance"
+          ],
+          "lifecycle": {
+            "status": "emerging"
+          },
+          "competitive_position": "価格訴求は可能だが国内信頼性の壁がある。",
+          "sources": [
+            "https://arconnet.com/"
+          ]
+        },
+        {
+          "product_id": "nri_securetech",
+          "name": "NRI SecureTech Security Services",
+          "vendor": "NRI Secure",
+          "type": "service",
+          "deployment": "service",
+          "license_model": "service_contract",
+          "japan_market": {
+            "share_estimate": "金融・大企業の高付加価値サービスで存在感",
+            "major_adopters": [
+              "金融",
+              "大手企業"
+            ],
+            "japanese_support": "国内専業",
+            "partner_model": "自社SIとコンサル一体",
+            "price_band": "high",
+            "japan_specific_notes": "製品単体ではなく、Access Checkやコンサルを含む包括提案が強み。"
+          },
+          "key_features": [
+            "コンサル",
+            "運用設計",
+            "国産支援"
+          ],
+          "integration_with_idp": [
+            "SecureCube Access Check"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "製品比較より導入成功率を重視する金融で強い。",
+          "sources": [
+            "https://www.nri-secure.co.jp/"
+          ]
+        },
+        {
+          "product_id": "oneidentity_spp",
+          "name": "One Identity Safeguard for Privileged Passwords",
+          "vendor": "One Identity",
+          "type": "pam",
+          "deployment": "self-hosted",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "中位以下だが確実なニッチ",
+            "major_adopters": [
+              "ハイブリッドAD運用企業"
+            ],
+            "japanese_support": "Quest / One Identity日本語サポート",
+            "partner_model": "Quest系パートナー",
+            "price_band": "medium_high",
+            "japan_specific_notes": "AD委任やIdentity Managerと組み合わせた設計がしやすい。"
+          },
+          "key_features": [
+            "パスワードVault",
+            "承認ワークフロー"
+          ],
+          "integration_with_idp": [
+            "Active Roles",
+            "Identity Manager"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "One Identity群を統一採用する企業で有力。",
+          "sources": [
+            "https://www.oneidentity.com/jp-ja/products/one-identity-safeguard-for-privileged-passwords/"
+          ]
+        },
+        {
+          "product_id": "oneidentity_safeguard",
+          "name": "One Identity Safeguard for Privileged Sessions",
+          "vendor": "One Identity",
+          "type": "pam",
+          "deployment": "self-hosted",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "中位以下",
+            "major_adopters": [
+              "One Identity統一導入企業"
+            ],
+            "japanese_support": "日本語サポートあり",
+            "partner_model": "Quest系",
+            "price_band": "medium_high",
+            "japan_specific_notes": "セッション録画まで含めた統制を取りたい組織向け。"
+          },
+          "key_features": [
+            "セッション記録",
+            "監査"
+          ],
+          "integration_with_idp": [
+            "Safeguard for Privileged Passwords"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "CyberArkほどの勢いはないが、堅実な選択肢。",
+          "sources": [
+            "https://www.oneidentity.com/jp-ja/one-identity-safeguard/"
+          ]
+        },
+        {
+          "product_id": "oneidentity_active_roles",
+          "name": "Active Roles",
+          "vendor": "One Identity",
+          "type": "ad_delegation",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "AD委任管理のニッチで一定需要",
+            "major_adopters": [
+              "大規模AD運用企業"
+            ],
+            "japanese_support": "日本語ページ・サポートあり",
+            "partner_model": "Quest系パートナー",
+            "price_band": "medium",
+            "japan_specific_notes": "PAMの周辺でAD委任と運用自動化を補完する製品。"
+          },
+          "key_features": [
+            "AD委任",
+            "ワークフロー",
+            "同期"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Entra ID",
+            "Microsoft 365"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "AD運用分掌の細分化に向く。",
+          "sources": [
+            "https://www.oneidentity.com/jp-ja/products/active-roles/"
+          ]
+        }
+      ]
+    },
+    {
+      "category_id": "idp_sso",
+      "category_name": "IdP/SSO製品",
+      "japan_category_analysis": {
+        "market_share_estimate": "国内の従業員向けIdP/SSOはEntra IDが最大。純SSO/IDaaSではHENNGE OneがITR Market View 2025で2021-2024予測の4年連続1位、CloudGate UNOとGMO TrustLoginが国内勢として続く。Oktaは外資・先進企業・グローバル統合で強い。",
+        "adoption_reasons": [
+          "Microsoft 365とGoogle Workspaceの普及",
+          "国産SaaS連携と日本語サポートの重視",
+          "ゼロトラスト移行でMFAと条件付きアクセスを同時に整備したい"
+        ],
+        "adoption_barriers": [
+          "オンプレミスWebアプリ連携が個別設計になりやすい",
+          "人事連携とプロビジョニングが別製品になる場合がある",
+          "海外製品は価格と運用英語力が障壁になりやすい"
+        ],
+        "japanese_support_and_partnering": "HENNGE One、CloudGate UNO、GMO TrustLoginは日本語UIと国内サポートが強い。OktaとPing Identityは大手SIer経由での導入が主流。Entra IDはMicrosoft販社網が厚い。",
+        "price_band": "GMO TrustLoginがlow、CloudGate UNOとHENNGE Oneがmedium、Entra IDはM365同梱前提でlow_to_medium、Okta/Pingはmedium_to_high。",
+        "sier_fit": [
+          "NSSOL、NTT DATA、日立、富士通はEntra IDとOktaを持ちやすい",
+          "国産販社はHENNGE One、CloudGate UNO、TrustLoginを扱いやすい",
+          "Keyspiderはプロビジョニング中心のSI設計に親和"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "entra_id_sso",
+          "name": "Microsoft Entra ID",
+          "vendor": "Microsoft",
+          "type": "idp_sso",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定40-55%（従業員向けIdP/SSOの実効利用）",
+            "major_adopters": [
+              "M365利用企業全般"
+            ],
+            "japanese_support": "Microsoft Japan",
+            "partner_model": "極めて広い",
+            "price_band": "low_to_medium",
+            "japan_specific_notes": "M365ライセンスと同時に採用されるため、独立製品比較より圧倒的に有利。"
+          },
+          "key_features": [
+            "SSO",
+            "MFA",
+            "条件付きアクセス",
+            "SCIM"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Intune"
+          ],
+          "lifecycle": {
+            "status": "dominant"
+          },
+          "competitive_position": "標準装備として採用されやすい日本市場の基準点。",
+          "sources": [
+            "https://www.microsoft.com/ja-jp/security/business/microsoft-entra"
+          ]
+        },
+        {
+          "product_id": "okta_workforce_identity",
+          "name": "Okta Workforce Identity",
+          "vendor": "Okta",
+          "type": "idp_sso",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定8-12%",
+            "major_adopters": [
+              "外資系",
+              "グローバル製造",
+              "先進的物流・IT企業"
+            ],
+            "japanese_support": "Okta Japanとパートナー",
+            "partner_model": "パートナー主義が強い",
+            "price_band": "medium_high",
+            "japan_specific_notes": "鴻池運輸、日本特殊陶業、Wacomなどの日本事例があり、グローバル統合や中立性で選ばれる。"
+          },
+          "key_features": [
+            "SSO",
+            "Universal Directory",
+            "Lifecycle Management",
+            "Adaptive MFA"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "オンプレアプリ",
+            "SaaS多数"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "M365偏重を避けたい企業や複数クラウドの中立制御で強い。",
+          "sources": [
+            "https://www.okta.com/ja-jp/products/workforce-identity/",
+            "https://www.okta.com/jp/customers/konoike/",
+            "https://www.okta.com/jp/partners/"
+          ]
+        },
+        {
+          "product_id": "ping_identity",
+          "name": "Ping Identity",
+          "vendor": "Ping Identity",
+          "type": "idp_sso",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定3-6%",
+            "major_adopters": [
+              "金融",
+              "保険",
+              "大規模認証連携"
+            ],
+            "japanese_support": "APJ体制とパートナー",
+            "partner_model": "大規模SI向け",
+            "price_band": "high",
+            "japan_specific_notes": "ForgeRock統合後はCIAM/Workforceの両面で大型案件志向が強い。"
+          },
+          "key_features": [
+            "フェデレーション",
+            "ポリシー制御",
+            "大規模認証"
+          ],
+          "integration_with_idp": [
+            "ForgeRock Directory Services"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "大型金融向けに強いが、中堅市場には広がりにくい。",
+          "sources": [
+            "https://www.pingidentity.com/en/platform/workforce.html"
+          ]
+        },
+        {
+          "product_id": "jumpcloud",
+          "name": "JumpCloud",
+          "vendor": "JumpCloud",
+          "type": "cloud_directory",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "SMB中心で限定的",
+            "major_adopters": [
+              "Mac/Linux混在SMB"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "一部販社",
+            "price_band": "medium",
+            "japan_specific_notes": "日本では認知は上がりつつあるが主流ではない。"
+          },
+          "key_features": [
+            "Cloud Directory",
+            "デバイス管理",
+            "SSO"
+          ],
+          "integration_with_idp": [
+            "Google Workspace",
+            "M365"
+          ],
+          "lifecycle": {
+            "status": "current_niche"
+          },
+          "competitive_position": "中小規模の統合管理に向くが、日本の大企業標準には入りにくい。",
+          "sources": [
+            "https://jumpcloud.com/platform"
+          ]
+        },
+        {
+          "product_id": "onelogin",
+          "name": "OneLogin",
+          "vendor": "One Identity / OneLogin",
+          "type": "idp_sso",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "既存顧客中心",
+            "major_adopters": [
+              "旧来導入企業"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "既存保守中心",
+            "price_band": "medium",
+            "japan_specific_notes": "日本市場の新規拡大は限定的。"
+          },
+          "key_features": [
+            "SSO",
+            "MFA",
+            "Directory Integration"
+          ],
+          "integration_with_idp": [
+            "Active Directory"
+          ],
+          "lifecycle": {
+            "status": "legacy_customer_base"
+          },
+          "competitive_position": "新規選定ではOktaやEntra IDに押されやすい。",
+          "sources": [
+            "https://www.onelogin.com/"
+          ]
+        },
+        {
+          "product_id": "shibboleth",
+          "name": "Shibboleth",
+          "vendor": "Shibboleth Consortium",
+          "type": "idp_sso",
+          "deployment": "on-premises",
+          "license_model": "open_source",
+          "japan_market": {
+            "share_estimate": "大学・研究機関に限定",
+            "major_adopters": [
+              "大学",
+              "研究機関"
+            ],
+            "japanese_support": "コミュニティ中心",
+            "partner_model": "限定的",
+            "price_band": "low",
+            "japan_specific_notes": "eduroamや学術認証連携の文脈で根強い。"
+          },
+          "key_features": [
+            "SAML IdP",
+            "学術認証"
+          ],
+          "integration_with_idp": [
+            "学認"
+          ],
+          "lifecycle": {
+            "status": "stable_niche"
+          },
+          "competitive_position": "企業向け標準ではないが、教育では重要。",
+          "sources": [
+            "https://www.shibboleth.net/"
+          ]
+        },
+        {
+          "product_id": "keycloak",
+          "name": "Keycloak",
+          "vendor": "Keycloak Community",
+          "type": "idp_sso",
+          "deployment": "self-hosted",
+          "license_model": "open_source",
+          "japan_market": {
+            "share_estimate": "開発主導案件で増加",
+            "major_adopters": [
+              "内製開発組織",
+              "SaaS事業者"
+            ],
+            "japanese_support": "コミュニティまたはSI",
+            "partner_model": "案件依存",
+            "price_band": "low",
+            "japan_specific_notes": "プロダクトチーム主導で採用されるが、企業全社標準化では運用体制が課題。"
+          },
+          "key_features": [
+            "OIDC",
+            "SAML",
+            "OSS"
+          ],
+          "integration_with_idp": [
+            "LDAP",
+            "Active Directory"
+          ],
+          "lifecycle": {
+            "status": "growth"
+          },
+          "competitive_position": "ライセンス費は安いが、運用と責任分界が重い。",
+          "sources": [
+            "https://www.keycloak.org/"
+          ]
+        },
+        {
+          "product_id": "hennge_one",
+          "name": "HENNGE One",
+          "vendor": "HENNGE",
+          "type": "idp_sso",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "国内IDaaSの有力1位。推定15-25%",
+            "major_adopters": [
+              "中堅企業",
+              "上場企業",
+              "医療",
+              "流通"
+            ],
+            "japanese_support": "HENNGE本体と国内パートナー",
+            "partner_model": "販社網が厚い",
+            "price_band": "medium",
+            "japan_specific_notes": "ITR Market View 2025でIDaaS市場売上シェア1位を2021-2024予測の4年連続で獲得。2025年時点で国内3000社以上導入、2024年改定後のHENNGE IdPは月額300円、Basicは800円。"
+          },
+          "key_features": [
+            "SSO",
+            "MFA",
+            "アクセス制御",
+            "デバイス証明",
+            "オンプレ接続"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Microsoft 365",
+            "Google Workspace"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "日本語UI、手厚い導入支援、M365強化で日本企業に適合しやすい。",
+          "sources": [
+            "https://hennge.com/jp/service/one/",
+            "https://hennge.com/jp/info/press/20250730_award/",
+            "https://hennge.com/jp/info/news/20230821_one/",
+            "https://hennge.com/jp/info/news/20250718_mes/"
+          ]
+        },
+        {
+          "product_id": "cloudgate_uno",
+          "name": "CloudGate UNO",
+          "vendor": "International Systems Research",
+          "type": "idp_sso",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定10-15%",
+            "major_adopters": [
+              "Google Workspace利用企業",
+              "中堅企業",
+              "教育",
+              "サービス業"
+            ],
+            "japanese_support": "ISRによる日本語サポート",
+            "partner_model": "国内販社",
+            "price_band": "medium",
+            "japan_specific_notes": "2025年時点で1,400社・70万ユーザー以上、月額400円から。AD連携やパスキー対応が強い。"
+          },
+          "key_features": [
+            "SSO",
+            "MFA",
+            "パスキー",
+            "アクセス制御",
+            "AD連携"
+          ],
+          "integration_with_idp": [
+            "Active Directory",
+            "Google Workspace",
+            "Microsoft 365"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "国内向け操作性ときめ細かいサポートで支持される。",
+          "sources": [
+            "https://www.cloudgate.jp/",
+            "https://www.cloudgate.jp/lineup/uno",
+            "https://www.cloudgate.jp/news/2026/1/it-review-winter-leader",
+            "https://www.cloudgate.jp/pdf/partner-pricing/cloudgate-service-pricing-list-2023-10-11.pdf"
+          ]
+        },
+        {
+          "product_id": "gmo_trustlogin",
+          "name": "GMO TrustLogin",
+          "vendor": "GMO GlobalSign",
+          "type": "idp_sso",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定5-10%",
+            "major_adopters": [
+              "中小企業",
+              "GMOグループ親和企業"
+            ],
+            "japanese_support": "GMO GlobalSign",
+            "partner_model": "国内販社",
+            "price_band": "low",
+            "japan_specific_notes": "基本プラン無料。2025年にはSaaS管理プラン月額290円、SSO Pro併用で月額500円訴求。"
+          },
+          "key_features": [
+            "SSO",
+            "ID管理",
+            "SaaS管理",
+            "MFA"
+          ],
+          "integration_with_idp": [
+            "各種SaaS",
+            "クライアント証明書"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "価格で最も入りやすい国産IDaaSの一つ。",
+          "sources": [
+            "https://trustlogin.com/",
+            "https://news.trustlogin.com/20250808",
+            "https://news.trustlogin.com/saasmanagement"
+          ]
+        },
+        {
+          "product_id": "iij_id",
+          "name": "IIJ ID",
+          "vendor": "IIJ",
+          "type": "managed_identity_service",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "中堅企業の限定的採用",
+            "major_adopters": [
+              "IIJ回線・マネージド利用企業"
+            ],
+            "japanese_support": "IIJ",
+            "partner_model": "直販・IIJ系",
+            "price_band": "medium",
+            "japan_specific_notes": "ネットワークやマネージドサービスと一体で採用されやすい。"
+          },
+          "key_features": [
+            "認証連携",
+            "マネージド提供"
+          ],
+          "integration_with_idp": [
+            "IIJサービス群"
+          ],
+          "lifecycle": {
+            "status": "current_niche"
+          },
+          "competitive_position": "通信/運用一体提案では有利。",
+          "sources": [
+            "https://www.iij.ad.jp/biz/id/"
+          ]
+        },
+        {
+          "product_id": "keyspider",
+          "name": "Keyspider",
+          "vendor": "Keyspider",
+          "type": "id_management_and_provisioning",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "限定的だがSaaSプロビジョニングで存在感",
+            "major_adopters": [
+              "SaaS横断運用を急ぐ企業"
+            ],
+            "japanese_support": "国内ベンダー",
+            "partner_model": "国内SIer",
+            "price_band": "medium",
+            "japan_specific_notes": "国産のID管理+プロビジョニング製品として差別化。"
+          },
+          "key_features": [
+            "プロビジョニング",
+            "ワークフロー",
+            "SaaS連携"
+          ],
+          "integration_with_idp": [
+            "Entra ID",
+            "各種SaaS"
+          ],
+          "lifecycle": {
+            "status": "current_niche"
+          },
+          "competitive_position": "IGAまでは不要だが自動プロビジョニングは欲しい日本企業向け。",
+          "sources": [
+            "https://www.keyspider.co.jp/"
+          ]
+        }
+      ]
+    },
+    {
+      "category_id": "iga",
+      "category_name": "IGA（Identity Governance & Administration）",
+      "japan_category_analysis": {
+        "market_share_estimate": "IGAはSailPointがグローバルリーダーで、日本でも大型案件の第一候補。One Identity Manager、Saviynt、IBM、OpenTextが続く。日本市場全体は人事連携・棚卸しの難しさから導入社数はIdPより少ない。",
+        "adoption_reasons": [
+          "入社・異動・退職の権限自動化",
+          "棚卸し、職務分掌、内部統制への対応",
+          "ERP、基幹、SaaS、ADを横断して権限可視化したい"
+        ],
+        "adoption_barriers": [
+          "人事マスタと組織マスタの不整合が多い",
+          "日本企業の承認文化と製品ワークフローの調整が重い",
+          "導入費が大きく、プロジェクト期間も長い"
+        ],
+        "japanese_support_and_partnering": "SailPointは日本営業窓口とパートナー網があり、東京リージョンも展開。One IdentityとIBMは日本語サポートが比較的整う。SaviyntとOmadaは大型案件寄り。",
+        "price_band": "全般にhigh。SailPointとSaviyntが高め、One IdentityとIBMがmedium_high〜high。",
+        "sier_fit": [
+          "NSSOL、NTT DATA、日立、富士通はSailPoint/IBMと親和",
+          "AD委任やMIM移行案件はOne Identityが扱いやすい"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "sailpoint_identitynow",
+          "name": "SailPoint IdentityNow",
+          "vendor": "SailPoint",
+          "type": "iga",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "IGAの有力首位候補。推定20-30%",
+            "major_adopters": [
+              "大手製造",
+              "金融",
+              "グローバル企業"
+            ],
+            "japanese_support": "日本営業窓口とパートナー",
+            "partner_model": "大手SIer中心",
+            "price_band": "high",
+            "japan_specific_notes": "東京AWSリージョンを持ち、日本でのデータ所在要件に対応しやすい。"
+          },
+          "key_features": [
+            "ライフサイクル管理",
+            "棚卸し",
+            "ポリシー管理",
+            "アクセス申請"
+          ],
+          "integration_with_idp": [
+            "Entra ID",
+            "Active Directory",
+            "主要SaaS"
+          ],
+          "lifecycle": {
+            "status": "leader"
+          },
+          "competitive_position": "大型IGA案件の第一候補。",
+          "sources": [
+            "https://www.sailpoint.com/ja/products/identitynow",
+            "https://www.sailpoint.com/press-releases/sailpoint-launches-new-aws-region-in-japan-to-support-increased-demand-for-identity-security",
+            "https://www.sailpoint.com/ja/partners"
+          ]
+        },
+        {
+          "product_id": "sailpoint_identityiq",
+          "name": "SailPoint IdentityIQ",
+          "vendor": "SailPoint",
+          "type": "iga",
+          "deployment": "self-hosted",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "大規模オンプレ/ハイブリッド案件で強い",
+            "major_adopters": [
+              "厳格統制企業"
+            ],
+            "japanese_support": "日本窓口あり",
+            "partner_model": "大手SIer",
+            "price_band": "high",
+            "japan_specific_notes": "クラウドより個別カスタマイズを重視する企業で選ばれやすい。"
+          },
+          "key_features": [
+            "高度なIGA",
+            "オンプレ連携"
+          ],
+          "integration_with_idp": [
+            "AD",
+            "ERP",
+            "SaaS"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "重厚な企業内統制に向く。",
+          "sources": [
+            "https://www.sailpoint.com/ja/products/identity-security-software/identity-iq"
+          ]
+        },
+        {
+          "product_id": "saviynt",
+          "name": "Saviynt",
+          "vendor": "Saviynt",
+          "type": "iga",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定5-10%",
+            "major_adopters": [
+              "クラウド志向の大企業"
+            ],
+            "japanese_support": "APJ体制",
+            "partner_model": "グローバルSIer",
+            "price_band": "high",
+            "japan_specific_notes": "クラウドネイティブ性で評価されるが、日本の事例公開はSailPointより少ない。"
+          },
+          "key_features": [
+            "クラウドIGA",
+            "CIEM"
+          ],
+          "integration_with_idp": [
+            "主要SaaS"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "クラウド主導案件の対抗馬。",
+          "sources": [
+            "https://saviynt.com/"
+          ]
+        },
+        {
+          "product_id": "one_identity_manager",
+          "name": "One Identity Manager",
+          "vendor": "One Identity",
+          "type": "iga",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定5-10%",
+            "major_adopters": [
+              "AD中心の大企業"
+            ],
+            "japanese_support": "日本語サポートあり",
+            "partner_model": "Quest系パートナー",
+            "price_band": "medium_high",
+            "japan_specific_notes": "MIM移行やAD統制強化の延長で候補に入りやすい。"
+          },
+          "key_features": [
+            "ライフサイクル管理",
+            "申請承認",
+            "棚卸し"
+          ],
+          "integration_with_idp": [
+            "Active Roles",
+            "Safeguard"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "One Identity群の統合価値が高い。",
+          "sources": [
+            "https://www.oneidentity.com/jp-ja/one-identity-manager-integration/"
+          ]
+        },
+        {
+          "product_id": "omada_identity",
+          "name": "Omada Identity",
+          "vendor": "Omada",
+          "type": "iga",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "限定的",
+            "major_adopters": [
+              "欧州案件を持つ企業"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "案件依存",
+            "price_band": "high",
+            "japan_specific_notes": "日本での認知はまだ低い。"
+          },
+          "key_features": [
+            "IGA"
+          ],
+          "integration_with_idp": [
+            "AD",
+            "SaaS"
+          ],
+          "lifecycle": {
+            "status": "niche"
+          },
+          "competitive_position": "日本市場では大型比較案件の一角。",
+          "sources": [
+            "https://omadaidentity.com/"
+          ]
+        },
+        {
+          "product_id": "ibm_security_identity_governance",
+          "name": "IBM Security Identity Governance",
+          "vendor": "IBM",
+          "type": "iga",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "既存IBM顧客基盤で一定",
+            "major_adopters": [
+              "金融",
+              "大企業",
+              "IBM基盤利用企業"
+            ],
+            "japanese_support": "IBM Japan",
+            "partner_model": "IBM系SIer",
+            "price_band": "high",
+            "japan_specific_notes": "基幹系をIBMで統一している企業で候補になりやすい。"
+          },
+          "key_features": [
+            "IGA",
+            "ポリシー",
+            "監査"
+          ],
+          "integration_with_idp": [
+            "IBM Security Verify"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "既存IBM基盤との親和性が採用理由。",
+          "sources": [
+            "https://www.ibm.com/products/security-verify-governance"
+          ]
+        },
+        {
+          "product_id": "opentext_identity_manager",
+          "name": "OpenText Identity Manager",
+          "vendor": "OpenText",
+          "type": "iga",
+          "deployment": "on-premises",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "旧NetIQ/Novell系に限定",
+            "major_adopters": [
+              "旧Novell環境"
+            ],
+            "japanese_support": "限定的",
+            "partner_model": "既存保守中心",
+            "price_band": "medium_high",
+            "japan_specific_notes": "新規より既存保守・更改文脈。"
+          },
+          "key_features": [
+            "IGA",
+            "プロビジョニング"
+          ],
+          "integration_with_idp": [
+            "eDirectory"
+          ],
+          "lifecycle": {
+            "status": "legacy_niche"
+          },
+          "competitive_position": "市場拡大より既存残存。",
+          "sources": [
+            "https://www.opentext.com/products/identity-manager"
+          ]
+        }
+      ]
+    },
+    {
+      "category_id": "mfa",
+      "category_name": "MFA/認証デバイス",
+      "japan_category_analysis": {
+        "market_share_estimate": "Entra MFAが最も広く、Duo Securityがゼロトラスト案件で続く。RSA SecurIDはレガシー金融に残存。ハードウェア高強度認証ではYubiKeyとFIDO2が増加。日本固有ではPalmSecure、NeoFace、NetAttest EPSが用途別に存在感を持つ。",
+        "adoption_reasons": [
+          "フィッシング対策",
+          "リモートワーク",
+          "FISCや金融庁文脈の認証強化"
+        ],
+        "adoption_barriers": [
+          "ユーザー教育負荷",
+          "既存VPN/レガシーアプリとの適合"
+        ],
+        "japanese_support_and_partnering": "Microsoft、Cisco、RSA、Yubicoに加え、富士通、NEC、Solitonの国内体制が強い。",
+        "price_band": "ソフトトークンはlow_to_medium、ハードウェアトークン/生体はmedium_to_high。",
+        "sier_fit": [
+          "Entra MFAはほぼ全SIerが扱える",
+          "金融・公共のRADIUS/証明書案件はSolitonが強い"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "entra_mfa",
+          "name": "Microsoft Authenticator / Entra MFA",
+          "vendor": "Microsoft",
+          "type": "mfa",
+          "deployment": "cloud",
+          "license_model": "bundled_or_subscription",
+          "japan_market": {
+            "share_estimate": "最大",
+            "major_adopters": [
+              "M365利用企業全般"
+            ],
+            "japanese_support": "Microsoft Japan",
+            "partner_model": "広い",
+            "price_band": "low",
+            "japan_specific_notes": "Entra IDとセットで標準採用されやすい。"
+          },
+          "key_features": [
+            "プッシュ通知",
+            "番号一致",
+            "パスキー"
+          ],
+          "integration_with_idp": [
+            "Entra ID"
+          ],
+          "lifecycle": {
+            "status": "dominant"
+          },
+          "competitive_position": "配布容易性とセット販売効果が圧倒的。",
+          "sources": [
+            "https://learn.microsoft.com/ja-jp/entra/identity/authentication/howto-mfa-numbers-match"
+          ]
+        },
+        {
+          "product_id": "duo",
+          "name": "Duo Security",
+          "vendor": "Cisco",
+          "type": "mfa",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "推定5-10%",
+            "major_adopters": [
+              "ゼロトラスト志向企業",
+              "教育",
+              "IT企業"
+            ],
+            "japanese_support": "Cisco Japan",
+            "partner_model": "Cisco販社網",
+            "price_band": "medium",
+            "japan_specific_notes": "使いやすさで選ばれやすい。"
+          },
+          "key_features": [
+            "MFA",
+            "デバイストラスト"
+          ],
+          "integration_with_idp": [
+            "Entra ID",
+            "Okta"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "ユーザー体験重視のMFAで強い。",
+          "sources": [
+            "https://duo.com/"
+          ]
+        },
+        {
+          "product_id": "rsa_securid",
+          "name": "RSA SecurID",
+          "vendor": "RSA",
+          "type": "mfa",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "レガシー残存",
+            "major_adopters": [
+              "金融",
+              "旧来VPN環境"
+            ],
+            "japanese_support": "RSA Japanパートナー網",
+            "partner_model": "金融向け既存販路",
+            "price_band": "high",
+            "japan_specific_notes": "OTPハードウェアトークンの残存需要がある。"
+          },
+          "key_features": [
+            "OTPトークン"
+          ],
+          "integration_with_idp": [
+            "VPN",
+            "RADIUS"
+          ],
+          "lifecycle": {
+            "status": "legacy_but_active"
+          },
+          "competitive_position": "新規より置換検討側に回りつつある。",
+          "sources": [
+            "https://www.rsa.com/products/securid/"
+          ]
+        },
+        {
+          "product_id": "yubikey",
+          "name": "Yubico YubiKey",
+          "vendor": "Yubico",
+          "type": "mfa_device",
+          "deployment": "device",
+          "license_model": "hardware",
+          "japan_market": {
+            "share_estimate": "高強度認証の有力",
+            "major_adopters": [
+              "高セキュリティ企業",
+              "開発者"
+            ],
+            "japanese_support": "国内販売代理店経由",
+            "partner_model": "代理店",
+            "price_band": "medium",
+            "japan_specific_notes": "フィッシング耐性認証の標準候補。"
+          },
+          "key_features": [
+            "FIDO2",
+            "スマートカード"
+          ],
+          "integration_with_idp": [
+            "Entra ID",
+            "Okta",
+            "CloudGate UNO"
+          ],
+          "lifecycle": {
+            "status": "growth"
+          },
+          "competitive_position": "ハードウェア強固性で優位。",
+          "sources": [
+            "https://www.yubico.com/products/yubikey-5-overview/"
+          ]
+        },
+        {
+          "product_id": "fido2_platform",
+          "name": "FIDO2対応各種",
+          "vendor": "Multiple",
+          "type": "mfa_platform",
+          "deployment": "device",
+          "license_model": "bundled",
+          "japan_market": {
+            "share_estimate": "急増中",
+            "major_adopters": [
+              "パスワードレス推進企業"
+            ],
+            "japanese_support": "OS・端末ベンダー依存",
+            "partner_model": "広い",
+            "price_band": "low",
+            "japan_specific_notes": "Windows HelloやTouch IDの普及で採用障壁が下がった。"
+          },
+          "key_features": [
+            "パスキー",
+            "生体/端末バインド"
+          ],
+          "integration_with_idp": [
+            "Entra ID",
+            "Okta",
+            "CloudGate UNO"
+          ],
+          "lifecycle": {
+            "status": "growth"
+          },
+          "competitive_position": "今後の標準形。",
+          "sources": [
+            "https://fidoalliance.org/passkeys/"
+          ]
+        },
+        {
+          "product_id": "palmsecure",
+          "name": "Fujitsu PalmSecure",
+          "vendor": "Fujitsu",
+          "type": "biometric",
+          "deployment": "device",
+          "license_model": "hardware_and_software",
+          "japan_market": {
+            "share_estimate": "日本の生体認証で高い認知",
+            "major_adopters": [
+              "金融",
+              "病院",
+              "製造"
+            ],
+            "japanese_support": "Fujitsu",
+            "partner_model": "富士通系",
+            "price_band": "high",
+            "japan_specific_notes": "手のひら静脈認証の国内代表格。"
+          },
+          "key_features": [
+            "静脈認証"
+          ],
+          "integration_with_idp": [
+            "物理・論理アクセス"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "高精度だが汎用MFAより高価。",
+          "sources": [
+            "https://www.fujitsu.com/global/products/computing/peripheral/biometrics/palmsecure/"
+          ]
+        },
+        {
+          "product_id": "neoface",
+          "name": "NEC NeoFace",
+          "vendor": "NEC",
+          "type": "biometric",
+          "deployment": "device_and_service",
+          "license_model": "subscription_or_project",
+          "japan_market": {
+            "share_estimate": "顔認証分野で強い",
+            "major_adopters": [
+              "空港",
+              "大規模施設",
+              "金融"
+            ],
+            "japanese_support": "NEC",
+            "partner_model": "NEC系",
+            "price_band": "high",
+            "japan_specific_notes": "顔認証プラットフォームとして知名度が高い。"
+          },
+          "key_features": [
+            "顔認証"
+          ],
+          "integration_with_idp": [
+            "入退室",
+            "論理認証連携"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "物理と論理の統合認証で強み。",
+          "sources": [
+            "https://www.nec.com/en/global/solutions/biometrics/face/"
+          ]
+        },
+        {
+          "product_id": "netattest_eps_mfa",
+          "name": "Soliton NetAttest EPS",
+          "vendor": "Soliton Systems",
+          "type": "certificate_based_mfa",
+          "deployment": "on-premises",
+          "license_model": "appliance_or_subscription",
+          "japan_market": {
+            "share_estimate": "証明書+RADIUSの国内リーダー",
+            "major_adopters": [
+              "金融",
+              "官公庁",
+              "医療"
+            ],
+            "japanese_support": "Soliton Systems",
+            "partner_model": "国内販社",
+            "price_band": "medium",
+            "japan_specific_notes": "富士キメラ総研2025調査で認証アプライアンス国内シェアNo.1。"
+          },
+          "key_features": [
+            "証明書認証",
+            "RADIUS",
+            "端末認証"
+          ],
+          "integration_with_idp": [
+            "RADIUS",
+            "Soliton OneGate"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "国内の802.1X/証明書配布運用で極めて強い。",
+          "sources": [
+            "https://www.soliton.co.jp/news/2025/006612.html"
+          ]
+        }
+      ]
+    },
+    {
+      "category_id": "radius",
+      "category_name": "RADIUS/ネットワーク認証",
+      "japan_category_analysis": {
+        "market_share_estimate": "大規模NACはCisco ISEとAruba ClearPass、国内の証明書+RADIUSはNetAttest EPSが強い。Windowsサーバー内蔵のNPSとFreeRADIUSはコスト重視で広く使われる。",
+        "adoption_reasons": [
+          "802.1XやVPN認証",
+          "端末証明書配布",
+          "ゼロトラストの接続制御"
+        ],
+        "adoption_barriers": [
+          "ネットワーク運用部門との調整が必要",
+          "証明書失効運用が重い"
+        ],
+        "japanese_support_and_partnering": "Cisco、HPE Aruba、Soliton、Microsoftの体制が強い。",
+        "price_band": "NPS/FreeRADIUSはlow、NetAttest EPSはmedium、ISE/ClearPassはhigh。",
+        "sier_fit": [
+          "ネットワークSIerはISE/ClearPassを持ちやすい",
+          "Solitonは金融・公共案件と相性が良い"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "cisco_ise",
+          "name": "Cisco Identity Services Engine",
+          "vendor": "Cisco",
+          "type": "radius_nac",
+          "deployment": "on-premises",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "大規模NACの有力首位",
+            "major_adopters": [
+              "大企業",
+              "製造",
+              "通信"
+            ],
+            "japanese_support": "Cisco Japan",
+            "partner_model": "広い",
+            "price_band": "high",
+            "japan_specific_notes": "既存Ciscoネットワークを持つ企業で選ばれやすい。"
+          },
+          "key_features": [
+            "802.1X",
+            "NAC",
+            "ポスチャ"
+          ],
+          "integration_with_idp": [
+            "AD",
+            "PKI"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "ネットワーク統合力で優位。",
+          "sources": [
+            "https://www.cisco.com/site/us/en/products/security/identity-services-engine/index.html"
+          ]
+        },
+        {
+          "product_id": "aruba_clearpass",
+          "name": "Aruba ClearPass",
+          "vendor": "HPE Aruba",
+          "type": "radius_nac",
+          "deployment": "on-premises",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "Cisco対抗の有力",
+            "major_adopters": [
+              "Arubaネットワーク利用企業"
+            ],
+            "japanese_support": "HPE Aruba Japan",
+            "partner_model": "ネットワーク販社",
+            "price_band": "high",
+            "japan_specific_notes": "Aruba無線との親和性が高い。"
+          },
+          "key_features": [
+            "802.1X",
+            "NAC"
+          ],
+          "integration_with_idp": [
+            "AD",
+            "PKI"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "Arubaユーザー企業では有力。",
+          "sources": [
+            "https://www.arubanetworks.com/products/security/network-access-control/"
+          ]
+        },
+        {
+          "product_id": "netattest_eps_radius",
+          "name": "Soliton NetAttest EPS",
+          "vendor": "Soliton Systems",
+          "type": "radius",
+          "deployment": "on-premises_and_iaas",
+          "license_model": "appliance_or_subscription",
+          "japan_market": {
+            "share_estimate": "国内認証アプライアンスNo.1",
+            "major_adopters": [
+              "金融",
+              "官公庁",
+              "病院"
+            ],
+            "japanese_support": "Soliton Systems",
+            "partner_model": "国内販社",
+            "price_band": "medium",
+            "japan_specific_notes": "RADIUSで認証しつつ、OneGate連携でクラウド運用にも拡張。"
+          },
+          "key_features": [
+            "RADIUS",
+            "証明書管理",
+            "端末認証"
+          ],
+          "integration_with_idp": [
+            "Soliton OneGate"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "国内運用ノウハウ込みで強い。",
+          "sources": [
+            "https://www.soliton.co.jp/eps/",
+            "https://www.soliton.co.jp/news/2025/006612.html"
+          ]
+        },
+        {
+          "product_id": "microsoft_nps",
+          "name": "Microsoft NPS",
+          "vendor": "Microsoft",
+          "type": "radius",
+          "deployment": "on-premises",
+          "license_model": "included_with_windows_server",
+          "japan_market": {
+            "share_estimate": "無料ゆえ広いが高度機能は限定",
+            "major_adopters": [
+              "Windows中心企業"
+            ],
+            "japanese_support": "Microsoft Japan",
+            "partner_model": "広い",
+            "price_band": "low",
+            "japan_specific_notes": "PoCや小規模環境では定番。"
+          },
+          "key_features": [
+            "RADIUS"
+          ],
+          "integration_with_idp": [
+            "Active Directory"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "安価だがNAC機能は薄い。",
+          "sources": [
+            "https://learn.microsoft.com/ja-jp/windows-server/networking/technologies/nps/nps-top"
+          ]
+        },
+        {
+          "product_id": "freeradius",
+          "name": "FreeRADIUS",
+          "vendor": "FreeRADIUS Project",
+          "type": "radius",
+          "deployment": "on-premises",
+          "license_model": "open_source",
+          "japan_market": {
+            "share_estimate": "構築系案件で一定",
+            "major_adopters": [
+              "コスト重視",
+              "学術"
+            ],
+            "japanese_support": "コミュニティ",
+            "partner_model": "個別SI",
+            "price_band": "low",
+            "japan_specific_notes": "運用体制を自前で持てる組織向け。"
+          },
+          "key_features": [
+            "RADIUS",
+            "OSS"
+          ],
+          "integration_with_idp": [
+            "LDAP",
+            "SQL"
+          ],
+          "lifecycle": {
+            "status": "stable"
+          },
+          "competitive_position": "柔軟だが企業標準にしにくい。",
+          "sources": [
+            "https://www.freeradius.org/"
+          ]
+        }
+      ]
+    },
+    {
+      "category_id": "pki",
+      "category_name": "PKI/証明書管理",
+      "japan_category_analysis": {
+        "market_share_estimate": "社内Windows PKIはAD CSが最大。金融・政府の高信頼PKIではEntrust、証明書ライフサイクル管理ではVenafi、パブリックCAではGMO GlobalSignが国内シェア上位。",
+        "adoption_reasons": [
+          "端末証明書",
+          "サーバー証明書",
+          "電子署名",
+          "802.1X"
+        ],
+        "adoption_barriers": [
+          "証明書棚卸しと更新運用が難しい",
+          "CA運用の内部統制が重い"
+        ],
+        "japanese_support_and_partnering": "Microsoft、Entrust、DigiCert、GMO GlobalSignの体制が整う。Venafiは大規模CLM案件向け。",
+        "price_band": "AD CSはlow、GMO GlobalSignはmedium、Entrust/Venafi/DigiCert企業PKIはmedium_high〜high。",
+        "sier_fit": [
+          "AD CSはWindows SIer全般",
+          "EntrustとDigiCertは金融・大学のPKI案件",
+          "GMO GlobalSignは国内証明書運用とTrustLogin連携で提案しやすい"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "adcs",
+          "name": "Microsoft AD CS",
+          "vendor": "Microsoft",
+          "type": "pki",
+          "deployment": "on-premises",
+          "license_model": "included_with_windows_server",
+          "japan_market": {
+            "share_estimate": "社内Windows PKIで最大",
+            "major_adopters": [
+              "Windows中心企業"
+            ],
+            "japanese_support": "Microsoft Japan",
+            "partner_model": "広い",
+            "price_band": "low",
+            "japan_specific_notes": "Entra IDやIntune連携文脈でも前提知識として残る。"
+          },
+          "key_features": [
+            "社内CA",
+            "テンプレート"
+          ],
+          "integration_with_idp": [
+            "Active Directory"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "最も一般的な社内PKI。",
+          "sources": [
+            "https://learn.microsoft.com/ja-jp/windows-server/identity/ad-cs/active-directory-certificate-services-overview"
+          ]
+        },
+        {
+          "product_id": "entrust_pki",
+          "name": "Entrust PKI",
+          "vendor": "Entrust",
+          "type": "pki",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "金融・公共で有力",
+            "major_adopters": [
+              "金融",
+              "政府",
+              "大学"
+            ],
+            "japanese_support": "Entrust Japan",
+            "partner_model": "専門パートナー",
+            "price_band": "high",
+            "japan_specific_notes": "東京工業大学事例など高信頼PKI案件で使われる。"
+          },
+          "key_features": [
+            "企業PKI",
+            "CLM",
+            "HSM連携"
+          ],
+          "integration_with_idp": [
+            "スマートカード",
+            "MFA"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "高信頼PKIの定番。",
+          "sources": [
+            "https://www.entrust.com/ja/products/pki",
+            "https://www.entrust.com/sites/default/files/documentation/casestudies/entrust-pki-iam-tokyo-institute-technology-cs_ja.pdf"
+          ]
+        },
+        {
+          "product_id": "venafi",
+          "name": "Venafi",
+          "vendor": "CyberArk",
+          "type": "certificate_lifecycle_management",
+          "deployment": "hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "大規模証明書統制で有力",
+            "major_adopters": [
+              "大企業",
+              "金融"
+            ],
+            "japanese_support": "パートナー中心",
+            "partner_model": "大規模SIer",
+            "price_band": "high",
+            "japan_specific_notes": "証明書有効期限短縮への対応で重要度が上がる。"
+          },
+          "key_features": [
+            "CLM",
+            "自動更新"
+          ],
+          "integration_with_idp": [
+            "PKI",
+            "DevOps"
+          ],
+          "lifecycle": {
+            "status": "growth"
+          },
+          "competitive_position": "証明書棚卸しと自動化で強い。",
+          "sources": [
+            "https://www.venafi.com/"
+          ]
+        },
+        {
+          "product_id": "digicert_pki",
+          "name": "DigiCert PKI Platform",
+          "vendor": "DigiCert",
+          "type": "pki",
+          "deployment": "cloud_and_hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "パブリック/企業PKIで有力",
+            "major_adopters": [
+              "グローバル企業"
+            ],
+            "japanese_support": "DigiCert Japan",
+            "partner_model": "代理店",
+            "price_band": "medium_high",
+            "japan_specific_notes": "クラウドPKIで比較対象になりやすい。"
+          },
+          "key_features": [
+            "PKI",
+            "CLM"
+          ],
+          "integration_with_idp": [
+            "IoT",
+            "デバイス証明書"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "クラウドPKIの有力候補。",
+          "sources": [
+            "https://www.digicert.com/tls-ssl/pki"
+          ]
+        },
+        {
+          "product_id": "gmo_globalsign",
+          "name": "GMO GlobalSign",
+          "vendor": "GMO GlobalSign",
+          "type": "pki",
+          "deployment": "cloud_and_service",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "国内有償SSLでNo.1訴求、クライアント証明書導入7,300社",
+            "major_adopters": [
+              "日本企業全般",
+              "金融",
+              "電子契約"
+            ],
+            "japanese_support": "国内ベンダー",
+            "partner_model": "国内販社網",
+            "price_band": "medium",
+            "japan_specific_notes": "国内シェア・認知度No.1を訴求し、TrustLoginとも連携しやすい。"
+          },
+          "key_features": [
+            "SSL",
+            "クライアント証明書",
+            "マネージドPKI"
+          ],
+          "integration_with_idp": [
+            "GMO TrustLogin"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "国内サポートと証明書運用の実績で強い。",
+          "sources": [
+            "https://jp.globalsign.com/",
+            "https://jp.globalsign.com/ssl/feature/"
+          ]
+        }
+      ]
+    },
+    {
+      "category_id": "mdm_uem",
+      "category_name": "MDM/UEM（エンドポイント管理）",
+      "japan_category_analysis": {
+        "market_share_estimate": "Microsoft 365普及によりIntuneが急伸。Mac/iOS特化はJamf、既存大企業UEMはWorkspace ONE、MobileIron系後継はIvanti。国内PC資産管理・情報漏えい対策ではSKYSEA Client Viewが富士キメラ総研2025調査で2024年度シェア1位。",
+        "adoption_reasons": [
+          "Entra IDと条件付きアクセスとの一体運用",
+          "テレワーク端末統制",
+          "資産管理と情報漏えい対策"
+        ],
+        "adoption_barriers": [
+          "Windows/Mac/モバイルの要件差",
+          "既存PC管理製品との役割重複"
+        ],
+        "japanese_support_and_partnering": "Microsoft、Jamf Japan、Ivanti、Broadcom系、Skyのサポート体制がある。",
+        "price_band": "Intuneはlow_to_medium、JamfとWorkspace ONEはmedium_to_high、SKYSEAはmedium。",
+        "sier_fit": [
+          "Microsoft案件はIntuneが最も提案しやすい",
+          "Apple比率が高い企業ではJamf",
+          "日本企業のPC運用ではSKYSEAが営業的に通しやすい"
+        ]
+      },
+      "products": [
+        {
+          "product_id": "intune",
+          "name": "Microsoft Intune",
+          "vendor": "Microsoft",
+          "type": "mdm_uem",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "急伸中。M365利用企業で最大候補",
+            "major_adopters": [
+              "M365利用企業",
+              "自治体",
+              "教育"
+            ],
+            "japanese_support": "Microsoft Japan",
+            "partner_model": "広い",
+            "price_band": "low_to_medium",
+            "japan_specific_notes": "Entra IDと条件付きアクセスと一体で採用されやすい。"
+          },
+          "key_features": [
+            "MDM",
+            "MAM",
+            "コンプライアンス"
+          ],
+          "integration_with_idp": [
+            "Entra ID"
+          ],
+          "lifecycle": {
+            "status": "growth"
+          },
+          "competitive_position": "日本市場ではM365の拡大と一緒に伸びる。",
+          "sources": [
+            "https://learn.microsoft.com/ja-jp/mem/intune/fundamentals/device-lifecycle"
+          ]
+        },
+        {
+          "product_id": "jamf",
+          "name": "Jamf",
+          "vendor": "Jamf",
+          "type": "mdm_uem",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "Apple専門領域で有力",
+            "major_adopters": [
+              "クリエイティブ企業",
+              "教育",
+              "Apple比率の高い企業"
+            ],
+            "japanese_support": "Jamf Japanと販社",
+            "partner_model": "Too等の販社",
+            "price_band": "medium_high",
+            "japan_specific_notes": "Apple専業のため、Mac/iOS比率が高い企業で優先される。"
+          },
+          "key_features": [
+            "Apple管理",
+            "ゼロタッチ展開"
+          ],
+          "integration_with_idp": [
+            "Entra ID",
+            "Okta"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "Apple管理の深さではIntuneより優位。",
+          "sources": [
+            "https://www.jamf.com/ja/",
+            "https://prtimes.jp/main/html/rd/p/000000173.000004669.html"
+          ]
+        },
+        {
+          "product_id": "workspace_one",
+          "name": "VMware Workspace ONE",
+          "vendor": "Omnissa",
+          "type": "mdm_uem",
+          "deployment": "cloud_and_hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "既存大企業基盤で一定",
+            "major_adopters": [
+              "大企業"
+            ],
+            "japanese_support": "国内パートナー",
+            "partner_model": "VMware系販社",
+            "price_band": "high",
+            "japan_specific_notes": "既存Workspace ONE基盤の継続利用が中心。"
+          },
+          "key_features": [
+            "UEM",
+            "VDI連携"
+          ],
+          "integration_with_idp": [
+            "Workspace ONE Access"
+          ],
+          "lifecycle": {
+            "status": "installed_base"
+          },
+          "competitive_position": "新規ではIntuneに押されやすい。",
+          "sources": [
+            "https://www.omnissa.com/products/workspace-one/"
+          ]
+        },
+        {
+          "product_id": "ivanti_mdm",
+          "name": "Ivanti Neurons for MDM",
+          "vendor": "Ivanti",
+          "type": "mdm_uem",
+          "deployment": "cloud",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "中位以下",
+            "major_adopters": [
+              "旧MobileIronユーザー"
+            ],
+            "japanese_support": "Ivanti Japan",
+            "partner_model": "販社",
+            "price_band": "medium_high",
+            "japan_specific_notes": "既存ユーザー維持が中心。"
+          },
+          "key_features": [
+            "MDM",
+            "UEM"
+          ],
+          "integration_with_idp": [
+            "Entra ID"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "レガシーユーザー維持。",
+          "sources": [
+            "https://www.ivanti.com/products/ivanti-neurons-for-mdm"
+          ]
+        },
+        {
+          "product_id": "skysea_client_view",
+          "name": "SKYSEA Client View",
+          "vendor": "Sky",
+          "type": "endpoint_management",
+          "deployment": "on-premises_and_hybrid",
+          "license_model": "subscription",
+          "japan_market": {
+            "share_estimate": "国内端末管理・セキュリティツールで2024年度シェア1位",
+            "major_adopters": [
+              "中堅企業",
+              "教育",
+              "地方企業"
+            ],
+            "japanese_support": "Sky",
+            "partner_model": "国内販社網",
+            "price_band": "medium",
+            "japan_specific_notes": "MDM専業ではなくPC資産管理、操作ログ、情報漏えい対策の文脈で非常に強い。"
+          },
+          "key_features": [
+            "資産管理",
+            "ログ取得",
+            "デバイス制御"
+          ],
+          "integration_with_idp": [
+            "AD",
+            "SIEM"
+          ],
+          "lifecycle": {
+            "status": "current"
+          },
+          "competitive_position": "日本企業のPC管理では営業面で非常に通しやすい。",
+          "sources": [
+            "https://www.skygroup.jp/news/251126_03/",
+            "https://www.skyseaclientview.net/"
+          ]
+        }
+      ]
+    }
+  ],
+  "japan_market_analysis": {
+    "overall_findings": [
+      {
+        "id": "market_001",
+        "topic": "日本のIAMは単一市場ではなく、IDaaS、SSO、特権ID管理、IGA、EIAMに分かれている",
+        "detail": "ITR Market View 2025は統合ID管理、特権ID管理、IDaaS、IGA、EIAM、SSOを別区分で集計しており、日本市場ではカテゴリごとに勝者が異なる。"
+      },
+      {
+        "id": "market_002",
+        "topic": "IdP/SSOはMicrosoft 365セット効果でEntra IDが最大",
+        "detail": "純粋な製品比較ではなく、M365の導入済み顧客基盤がそのままEntra ID採用率に反映されている。"
+      },
+      {
+        "id": "market_003",
+        "topic": "国産IDaaSはHENNGE One、CloudGate UNO、GMO TrustLoginの3強構図",
+        "detail": "HENNGE OneはIDaaS市場売上シェア1位、CloudGate UNOは1,400社・70万ユーザー、TrustLoginは無料から入れる価格訴求で棲み分ける。"
+      },
+      {
+        "id": "market_004",
+        "topic": "PAMは金融・通信・製造でCyberArkが第一候補",
+        "detail": "ただし委託先接続や国内監査要件が強い場合はBeyondTrustやSecureCube Access Checkが有力になる。"
+      },
+      {
+        "id": "market_005",
+        "topic": "日本企業ではPAM単体より踏み台・作業記録・承認ワークフローが重視される",
+        "detail": "FISC、PCI DSS、J-SOXの監査で、誰が・いつ・何をしたかの説明責任が重い。"
+      },
+      {
+        "id": "market_006",
+        "topic": "IGAは導入社数こそ限定的だが、一度入ると業務変革の影響が大きい",
+        "detail": "人事、組織、ERP、AD、SaaSの不整合を整える必要があり、製品力よりプロジェクト推進力が成功要因になりやすい。"
+      },
+      {
+        "id": "market_007",
+        "topic": "RADIUSと証明書認証ではNetAttest EPSが日本特有の強さを持つ",
+        "detail": "金融・公共の端末認証運用で、日本語サポートと国内実績が重視されるため。"
+      },
+      {
+        "id": "market_008",
+        "topic": "日本市場では価格より日本語支援と国内パートナーが採用可否を左右する",
+        "detail": "障害時の日本語対応、導入手順書、承認フロー調整、監査対応が製品評価に直結する。"
+      }
+    ],
+    "share_estimate_notes": [
+      "公開ベンダーシェアが有償レポートに閉じる領域では、導入社数、既存ライセンス浸透率、標準同梱率、公開採用事例からレンジ推定した。",
+      "2026-04-07時点の公開情報を使用した。"
+    ],
+    "sier_partner_landscape": [
+      {
+        "partner_type": "大手総合SIer",
+        "fit_products": [
+          "Microsoft Entra ID",
+          "CyberArk PAM Suite",
+          "SailPoint",
+          "Okta"
+        ],
+        "reason": "大規模導入、複雑なハイブリッド設計、人事連携を含む案件に強い。"
+      },
+      {
+        "partner_type": "国内セキュリティ専業",
+        "fit_products": [
+          "SecureCube Access Check",
+          "Soliton NetAttest EPS",
+          "BeyondTrust"
+        ],
+        "reason": "監査証跡、委託先接続、証明書運用など日本固有要件に強い。"
+      },
+      {
+        "partner_type": "販社・クラウド再販",
+        "fit_products": [
+          "HENNGE One",
+          "CloudGate UNO",
+          "GMO TrustLogin"
+        ],
+        "reason": "比較的短期導入で中堅企業へ横展開しやすい。"
+      }
+    ]
+  },
+  "product_comparison_matrices": {
+    "pam_japan_market_comparison": [
+      {
+        "product": "CyberArk PAM Suite",
+        "japanese_ui": "partial",
+        "domestic_support": "strong",
+        "fisc_track_record": "high",
+        "deployment_scale": "large_enterprise",
+        "price_band": "very_high",
+        "japan_share_estimate": "25-35%"
+      },
+      {
+        "product": "BeyondTrust Password Safe + PRA",
+        "japanese_ui": "partial",
+        "domestic_support": "medium",
+        "fisc_track_record": "medium_high",
+        "deployment_scale": "mid_to_large",
+        "price_band": "high",
+        "japan_share_estimate": "10-15%"
+      },
+      {
+        "product": "Delinea Secret Server",
+        "japanese_ui": "partial",
+        "domestic_support": "medium",
+        "fisc_track_record": "medium",
+        "deployment_scale": "mid_to_large",
+        "price_band": "medium_high",
+        "japan_share_estimate": "5-10%"
+      },
+      {
+        "product": "SecureCube Access Check",
+        "japanese_ui": "full",
+        "domestic_support": "strong",
+        "fisc_track_record": "high",
+        "deployment_scale": "mid_to_large",
+        "price_band": "medium_high",
+        "japan_share_estimate": "5-10%"
+      },
+      {
+        "product": "One Identity Safeguard",
+        "japanese_ui": "full",
+        "domestic_support": "medium",
+        "fisc_track_record": "medium",
+        "deployment_scale": "mid_to_large",
+        "price_band": "medium_high",
+        "japan_share_estimate": "3-5%"
+      },
+      {
+        "product": "ARCON PAM",
+        "japanese_ui": "partial",
+        "domestic_support": "limited",
+        "fisc_track_record": "low",
+        "deployment_scale": "mid_market",
+        "price_band": "medium",
+        "japan_share_estimate": "below_3%"
+      }
+    ],
+    "sso_idp_japan_market_comparison": [
+      {
+        "product": "Microsoft Entra ID",
+        "japanese_ui": "full",
+        "domestic_track_record": "very_high",
+        "m365_integration": "native",
+        "on_prem_ad_integration": "strong",
+        "smb_fit": "medium",
+        "price_band": "low_to_medium"
+      },
+      {
+        "product": "HENNGE One",
+        "japanese_ui": "full",
+        "domestic_track_record": "very_high",
+        "m365_integration": "strong",
+        "on_prem_ad_integration": "strong",
+        "smb_fit": "medium",
+        "price_band": "medium"
+      },
+      {
+        "product": "CloudGate UNO",
+        "japanese_ui": "full",
+        "domestic_track_record": "high",
+        "m365_integration": "strong",
+        "on_prem_ad_integration": "strong",
+        "smb_fit": "strong",
+        "price_band": "medium"
+      },
+      {
+        "product": "Okta Workforce Identity",
+        "japanese_ui": "full",
+        "domestic_track_record": "medium_high",
+        "m365_integration": "strong",
+        "on_prem_ad_integration": "strong",
+        "smb_fit": "medium",
+        "price_band": "medium_high"
+      },
+      {
+        "product": "GMO TrustLogin",
+        "japanese_ui": "full",
+        "domestic_track_record": "medium_high",
+        "m365_integration": "medium",
+        "on_prem_ad_integration": "medium",
+        "smb_fit": "very_strong",
+        "price_band": "low"
+      },
+      {
+        "product": "IIJ ID",
+        "japanese_ui": "full",
+        "domestic_track_record": "medium",
+        "m365_integration": "medium",
+        "on_prem_ad_integration": "medium",
+        "smb_fit": "medium",
+        "price_band": "medium"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_iam_001",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "日本企業のオンプレミスIDマスターとして最も残存しやすい基盤。",
+      "properties": {
+        "category": "directory"
+      }
+    },
+    {
+      "id": "node_iam_002",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "クラウド側の従業員認証とアクセス制御で最大の存在感を持つ。",
+      "properties": {
+        "category": "directory_and_idp"
+      }
+    },
+    {
+      "id": "node_iam_003",
+      "label": "CyberArk",
+      "object_type": "product",
+      "description": "日本の大規模PAM案件で最有力の外資製品。",
+      "properties": {
+        "category": "pam"
+      }
+    },
+    {
+      "id": "node_iam_004",
+      "label": "SecureCube Access Check",
+      "object_type": "product",
+      "description": "日本市場の監査・踏み台要件に強い国産PAM。",
+      "properties": {
+        "category": "pam"
+      }
+    },
+    {
+      "id": "node_iam_005",
+      "label": "HENNGE One",
+      "object_type": "product",
+      "description": "日本のIDaaS/SSO市場で高いシェアを持つ国産製品。",
+      "properties": {
+        "category": "idp_sso"
+      }
+    },
+    {
+      "id": "node_iam_006",
+      "label": "CloudGate UNO",
+      "object_type": "product",
+      "description": "Google WorkspaceやMicrosoft 365連携に強い国産SSO。",
+      "properties": {
+        "category": "idp_sso"
+      }
+    },
+    {
+      "id": "node_iam_007",
+      "label": "Okta Workforce Identity",
+      "object_type": "product",
+      "description": "グローバル統合と中立性で選ばれる外資IdP。",
+      "properties": {
+        "category": "idp_sso"
+      }
+    },
+    {
+      "id": "node_iam_008",
+      "label": "SailPoint",
+      "object_type": "product",
+      "description": "大型IGA案件の第一候補になりやすい。",
+      "properties": {
+        "category": "iga"
+      }
+    },
+    {
+      "id": "node_iam_009",
+      "label": "Soliton NetAttest EPS",
+      "object_type": "product",
+      "description": "証明書ベースRADIUS認証で国内シェアが高い。",
+      "properties": {
+        "category": "mfa_and_radius"
+      }
+    },
+    {
+      "id": "node_iam_010",
+      "label": "GMO GlobalSign",
+      "object_type": "product",
+      "description": "国内シェアが高いPKI/証明書管理ベンダー。",
+      "properties": {
+        "category": "pki"
+      }
+    },
+    {
+      "id": "node_iam_011",
+      "label": "Intune",
+      "object_type": "product",
+      "description": "Entra IDと一体で拡大するMicrosoftのUEM。",
+      "properties": {
+        "category": "mdm_uem"
+      }
+    },
+    {
+      "id": "node_iam_012",
+      "label": "SKYSEA Client View",
+      "object_type": "product",
+      "description": "日本企業のPC資産管理と情報漏えい対策で強い。",
+      "properties": {
+        "category": "mdm_uem"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_iam_001",
+      "to": "node_iam_002",
+      "relationship": "complements",
+      "description": "Active DirectoryはEntra IDとハイブリッド運用されやすい。"
+    },
+    {
+      "from": "node_iam_002",
+      "to": "node_iam_011",
+      "relationship": "requires",
+      "description": "Intuneの条件付きアクセスとデバイス準拠はEntra IDを中核に構成される。"
+    },
+    {
+      "from": "node_iam_003",
+      "to": "node_iam_001",
+      "relationship": "requires",
+      "description": "CyberArkはActive Directoryを含む既存特権アカウントの統制対象になりやすい。"
+    },
+    {
+      "from": "node_iam_004",
+      "to": "node_iam_001",
+      "relationship": "complements",
+      "description": "SecureCube Access CheckはADを残したまま踏み台・証跡を補完しやすい。"
+    },
+    {
+      "from": "node_iam_005",
+      "to": "node_iam_001",
+      "relationship": "complements",
+      "description": "HENNGE OneはAD連携でSaaS側SSOを実現しやすい。"
+    },
+    {
+      "from": "node_iam_006",
+      "to": "node_iam_001",
+      "relationship": "complements",
+      "description": "CloudGate UNOはAD連携でユーザー同期とSSOを行う。"
+    },
+    {
+      "from": "node_iam_007",
+      "to": "node_iam_001",
+      "relationship": "complements",
+      "description": "OktaはAD連携を維持しながらクラウド認証を担う。"
+    },
+    {
+      "from": "node_iam_008",
+      "to": "node_iam_001",
+      "relationship": "requires",
+      "description": "SailPoint導入ではADや人事マスタの整備が前提になりやすい。"
+    },
+    {
+      "from": "node_iam_009",
+      "to": "node_iam_010",
+      "relationship": "complements",
+      "description": "NetAttest EPSの証明書認証はPKI運用と密接に結び付く。"
+    },
+    {
+      "from": "node_iam_010",
+      "to": "node_iam_005",
+      "relationship": "complements",
+      "description": "GMO GlobalSignはTrustLoginや証明書認証サービスと親和性が高い。"
+    },
+    {
+      "from": "node_iam_012",
+      "to": "node_iam_001",
+      "relationship": "complements",
+      "description": "SKYSEA Client ViewはAD中心の端末管理を補完しやすい。"
+    },
+    {
+      "from": "node_iam_011",
+      "to": "node_iam_002",
+      "relationship": "implements",
+      "description": "IntuneはEntra ID中心のデバイスコンプライアンスを実装する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "iam_k_001",
+      "topic": "日本のオンプレミスIDマスターは依然としてActive Directory中心",
+      "content": "サーバー認証、ファイル共有、グループポリシー、運用手順が一体化しているため、Active Directoryは単なるディレクトリではなく運用基盤として残存する。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_002",
+      "topic": "Entra IDは製品単体比較よりMicrosoft 365同梱効果で強い",
+      "content": "日本企業ではM365の導入が先にあり、結果としてEntra IDが実効的な標準IdPになるケースが多い。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_003",
+      "topic": "HENNGE Oneは国内IDaaS市場で強い",
+      "content": "HENNGE公表では、ITR Market View 2025のIDaaS市場ベンダー別売上金額シェアで2021年度、2022年度、2023年度、2024年度予測の4年連続1位。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_004",
+      "topic": "HENNGE Oneは2025年時点で国内3000社以上の導入実績を持つ",
+      "content": "導入社数と販社網の厚さにより、中堅〜大手企業の国産IdPとして有力。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_005",
+      "topic": "CloudGate UNOは2025年時点で1,400社・70万ユーザー以上",
+      "content": "国内シェアトップクラスのIDaaSとして、Google WorkspaceとMicrosoft 365の二大連携で存在感が高い。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_006",
+      "topic": "CloudGate UNOは日本語サポートとパスキー訴求が強い",
+      "content": "ISR社員による導入から運用までの日本語支援を前面に出している。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_007",
+      "topic": "GMO TrustLoginは低価格で入りやすい",
+      "content": "基本プラン無料、SaaS管理プラン月額290円、SSO Pro併用で500円という価格訴求があり、中小企業向け導入障壁が低い。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_008",
+      "topic": "Oktaは日本で外資系とグローバル企業に強い",
+      "content": "鴻池運輸や日本特殊陶業など、日本でも大規模導入事例があるが、価格と設計自由度の高さから中堅市場には広がりにくい。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_009",
+      "topic": "Ping Identityは金融・保険の大型案件向け",
+      "content": "日本市場では大規模認証とCIAM/フェデレーションの文脈で採用されやすく、中堅市場での面展開は限定的。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_010",
+      "topic": "Keycloakは内製開発主導では有力だが全社標準化は別問題",
+      "content": "ライセンス費の低さは魅力だが、24時間運用、監査、責任分界を自社で持つ必要がある。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "iam_k_011",
+      "topic": "OpenLDAPはRHEL 8/9でサーバーパッケージが廃止された",
+      "content": "Red Hatはopenldap-serversをRHEL8/9で削除し、移行先としてRed Hat Directory ServerまたはIdMを示している。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "iam_k_012",
+      "topic": "Linuxディレクトリの新規標準はIdMか商用389 DSに寄りやすい",
+      "content": "日本企業でもRHELサブスクリプションに乗る商用サポートが優先されやすい。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_013",
+      "topic": "CyberArkは日本の大規模PAMで最有力",
+      "content": "日本語ページ、金融訴求、広いパートナーネットワーク、日本事例の増加により第一候補化している。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_014",
+      "topic": "CyberArk Privilege CloudはSaaS PAMの中心候補",
+      "content": "大京の日本事例では、約200対象システムを対象にPrivilege Cloudでクラウドファースト変革を支えた。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_015",
+      "topic": "BeyondTrustは委託先リモート接続統制に強い",
+      "content": "Password SafeとPrivileged Remote Accessを組み合わせると、外部ベンダー接続、資格情報注入、セッション監査を一体化しやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "iam_k_016",
+      "topic": "DelineaはCyberArkより軽量なPAMとして比較されやすい",
+      "content": "導入容易性と価格帯で中堅〜大企業の比較表に残りやすい。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_017",
+      "topic": "SecureCube Access Checkは日本の監査・踏み台要件に強い",
+      "content": "TIS掲載ではFISC、PCI DSS、J-SOX等への対応を訴求し、申請承認からアクセス制御、ログ管理、監査補助までをゲートウェイ型で提供する。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_018",
+      "topic": "SecureCube Access Checkは国内外のべ576ライセンス実績が公開されている",
+      "content": "国産PAMとしては導入実績が見えやすく、上場企業中心に営業しやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_019",
+      "topic": "SecureCube Access CheckはFISC文脈で説明しやすい",
+      "content": "NRI公開事例でもFISC安全対策基準への対応可能性が強調されている。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_020",
+      "topic": "PAMの日本市場では製品機能より運用設計が成否を分ける",
+      "content": "申請承認、緊急時運用、委託先統制、監査閲覧権限を決めないと導入効果が出にくい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_021",
+      "topic": "NetAttest EPSは国内認証アプライアンスNo.1",
+      "content": "Soliton公表では富士キメラ総研『2025 コミュニケーション関連マーケティング調査総覧』を根拠に国内シェアNo.1とされる。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_022",
+      "topic": "SolitonはRADIUS処理を維持したままクラウド運用へ拡張している",
+      "content": "2026年1月開始予定のOneGate連携により、ユーザーIDと証明書管理をクラウド運用に拡張する。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_023",
+      "topic": "SailPointは日本でも大型IGA案件の第一候補",
+      "content": "日本営業窓口と東京AWSリージョンを持ち、データ所在要件に対応しやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_024",
+      "topic": "IGAは人事マスタ整備の成否が製品選定以上に重要",
+      "content": "製品導入だけではJoiner、Mover、Leaverの自動化は成功しない。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_025",
+      "topic": "One IdentityはMIM移行とAD委任管理で強い文脈を持つ",
+      "content": "Active Roles、Safeguard、Identity Managerの組み合わせでAD統制からIGAまで広げやすい。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_026",
+      "topic": "Entra MFAは日本で最も配布しやすいMFA",
+      "content": "Microsoft 365利用者への横展開が容易で、追加配布やユーザー教育の負担が低い。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_027",
+      "topic": "YubiKeyとパスキーは高強度認証の標準候補になりつつある",
+      "content": "フィッシング耐性が重視される金融・開発者環境で採用が進む。",
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "iam_k_028",
+      "topic": "PalmSecureとNeoFaceは日本独自の生体認証文脈を持つ",
+      "content": "物理と論理の統合認証を求める日本企業・公共案件で比較対象になる。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_029",
+      "topic": "GMO GlobalSignは国内有償SSLシェアNo.1を訴求している",
+      "content": "2026年1月時点でSSL国内シェア・認知度No.1、クライアント証明書導入企業数7,300社を掲げる。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_030",
+      "topic": "AD CSは依然として社内PKIの標準",
+      "content": "Windows中心企業では最初の選択肢になりやすいが、証明書棚卸しとCLMは別途課題化しやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "iam_k_031",
+      "topic": "IntuneはIAM製品選定に直接影響する",
+      "content": "デバイス準拠と条件付きアクセスを実現するため、Entra ID選定とIntune選定は分離しにくい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_032",
+      "topic": "SKYSEA Client Viewは日本のPC運用文化に適合している",
+      "content": "PC資産管理、操作ログ、デバイス制御を一つで説明できるため、国内営業現場で非常に通しやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_033",
+      "topic": "日本市場では『日本語UI』『国内サポート』『国内実績』が強い選定要件になる",
+      "content": "IAMは障害時、異動時、監査時に現場運用へ深く食い込むため、英語運用がボトルネックになりやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_034",
+      "topic": "外資製品は機能優位でも国内パートナー有無で案件化率が変わる",
+      "content": "SaaS単体より、導入設計、教育、24時間保守、監査資料作成まで提供できるかが重要。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_035",
+      "topic": "FIM/MIM系譜は日本で今も移行テーマとして残る",
+      "content": "歴史的メタディレクトリ案件の残存により、MIMからEntra ID GovernanceやOne Identity Managerへの移行検討が続く。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "iam_k_036",
+      "topic": "Forefront UAG/TMGは現行製品ではないが、日本の移行設計では参照価値が残る",
+      "content": "境界防御時代のアーキテクチャが残る企業では、ZTNA、App Proxy、PAM、SASEへの分解置換が必要になる。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    }
+  ]
+}

@@ -1,0 +1,926 @@
+{
+  "metadata": {
+    "id": "commercial_unix_survival",
+    "title": "商用UNIX 2026年生存状況とID管理実態調査",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "AIX",
+      "Oracle Solaris",
+      "HP-UX",
+      "IBM i",
+      "z/OS",
+      "商用UNIX",
+      "OS認証",
+      "特権アクセス管理",
+      "日本企業"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "./os_auth_methods.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "platforms": [
+    {
+      "platform_id": "aix",
+      "name": "IBM AIX",
+      "hardware": "IBM Power",
+      "survival_status": "alive",
+      "survival_reason": "日本の銀行・保険・公共・大規模製造で長期稼働する基幹系が多く、Powerの高可用性、PowerVM、長期保守、アプリ互換性の高さが継続要因である。2025-07-25にPower11が一般提供開始となっており、2026年時点でも現行ハード上で継続できる商用UNIXである。",
+      "estimated_japan_installations_2026": "大手企業・公共を中心に数百〜千台規模の本番系LPARが残存しているとみられる。特に金融・保険では単純な台数より業務重要度が高い。",
+      "support_lifecycle": {
+        "os_release_status": [
+          {
+            "release": "AIX 7.2",
+            "general_availability": "2015-12",
+            "standard_support_status_2026": "IBM公開のAIX lifecycleページではリリースEOSは未掲示。AIX 7.2 TL5のEnd of Fix Supportは『To be determined』であり、2026-04時点でリリース全体の標準サポート終了を一次情報では確認できない。",
+            "notes": "『AIX 7.2は既に標準サポート終了』という見方はTL単位のEoFSと混同しやすい。旧TLは終了済みでも、7.2 TL5は継続中。"
+          },
+          {
+            "release": "AIX 7.3",
+            "general_availability": "2021-12",
+            "standard_support_status_2026": "現行サポート対象",
+            "technology_level_eofs": [
+              {
+                "tl": "7.3 TL4",
+                "release_date": "2025-12",
+                "end_of_fix_support": "2028-12-31"
+              },
+              {
+                "tl": "7.3 TL3",
+                "release_date": "2024-12",
+                "end_of_fix_support": "2027-12-31"
+              }
+            ]
+          }
+        ],
+        "hardware_status": {
+          "Power9": "IBMは2024-09-12付通知で一部Power9モデルの標準保守を2026-01-31で終了と案内している。",
+          "Power10": "2026年時点で稼働基盤として広く有効。公開情報上、標準保守終了日は未確認。",
+          "Power11": "2025-07-25に一般提供開始。AIX継続案件の新規更改先として有力。"
+        },
+        "support_policy_characteristics": [
+          "TLごとにEnd of Fix Supportを管理する長期保守型",
+          "リリースEOSはIBM product lifecycleに掲載されるが、未到来の場合は明示されないことがある",
+          "Extended SupportやHardware Support Extensionで延命できる"
+        ]
+      },
+      "id_management": {
+        "native_tools": [
+          "LDAP client",
+          "secldapclntd",
+          "Kerberos",
+          "RBAC",
+          "Trusted AIX",
+          "NIS",
+          "sudo"
+        ],
+        "ad_integration": "ネイティブLDAP統合は可能で、IBM Lab Servicesも『AIX or Linux LDAP Integration with Microsoft Active Directory』を案内している。現場ではLDAP + Kerberos + sudoers配布の組み合わせが多く、Linuxのrealmd/SSSDほど一体化していない。",
+        "ldap_client": "LDAPクライアントとsecldapclntdで外部ディレクトリ参照を実装する。GSKit/TLS、bind DN、RFC2307属性、AIX属性マップ設計が運用課題になる。",
+        "kerberos": "IBM Network Authentication Serviceを利用する。AD連携は可能だが、krb5設定、時刻同期、鍵表、暗号スイート、GSKit/TLS設定の整合が必要で、パッチ運用が不可欠。",
+        "privileged_access": "AIX独自RBAC、sudo、PowerSC、Trusted Execution、監査機能を組み合わせる。root共有のまま残る現場も多く、PAM（特権アクセス管理）製品導入よりOS標準の最小権限化が先行しやすい。",
+        "known_limitations": [
+          "Active DirectoryとLinuxのような一体化したドメイン参加体験ではない",
+          "RFC2307属性設計とUID/GID整合を誤ると既存バッチやNFS権限が壊れる",
+          "Kerberos・LDAP・sudo・アプリ固有設定が別管理になりやすい",
+          "NIS残存環境では移行時に影響範囲の見積りが難しい",
+          "AIX固有RBACはLinux管理者にとって学習コストが高い"
+        ]
+      },
+      "migration_path": {
+        "primary_targets": [
+          "Linux on Power",
+          "Red Hat Enterprise Linux",
+          "IBM Power Virtual Server",
+          "一部はx86 Linux"
+        ],
+        "typical_triggers": [
+          "Power9保守切れ",
+          "AIX運用者の高齢化",
+          "アプリ改修のついでのLinux化",
+          "ゼロトラスト/EDR標準化要求",
+          "更改予算の圧縮"
+        ],
+        "difficulty": "極高",
+        "id_management_change": "AIX独自RBACやローカル運用から、LDAP/Active Directory/SSSDベースの一元管理へ寄る。権限モデル、UID/GID、sudo、バッチ実行ID、鍵表運用の再設計が必要。"
+      },
+      "japan_specific": "日本では『止められない勘定系・保険基幹のAIX』が依然として存在し、完全撤去よりもPower世代更新やPower Virtual Serverを使った段階的モダナイズが現実的である。"
+    },
+    {
+      "platform_id": "solaris",
+      "name": "Oracle Solaris",
+      "hardware": "Oracle SPARC / x86, 旧富士通SPARC",
+      "survival_status": "declining",
+      "survival_reason": "Oracle Solaris 11.4自体は長期サポートが明示され、ZFS、Zones、DTrace、Oracle Databaseとの親和性は依然強い。一方でSPARC側は公開情報上の新世代投入が止まり、富士通SPARCも新規販売の中心ではなく、OSより先にハード更改が制約になっている。",
+      "estimated_japan_installations_2026": "官公庁、公共、通信、製造、金融周辺に限定的に残存。新規導入は少なく、保守契約付きの延命またはクラウド移行待ちの既存資産が中心。",
+      "support_lifecycle": {
+        "os_release_status": [
+          {
+            "release": "Solaris 11.4",
+            "general_availability": "2018-08",
+            "premier_support_ends": "2031-11",
+            "extended_support_ends": "2037-11",
+            "sustaining_support": "Indefinite"
+          },
+          {
+            "release": "Solaris 10",
+            "premier_support_ended": "2018-01",
+            "extended_support_ends": "2027-01",
+            "sustaining_support": "Indefinite"
+          }
+        ],
+        "hardware_status": {
+          "Oracle_SPARC": "Oracleの公開ページは依然としてSPARC T8/M8世代を中心に案内しており、新世代の公開継続投資は見えにくい。",
+          "Fujitsu_SPARC": "富士通公開資料ではM10-1が2021-12販売終了、M10-4Sが2020-09販売終了、M10-4が2017-09販売終了。SPARC Enterpriseは既に販売終了。",
+          "practical_deadline": "実運用上はOSサポート期限より、SPARC保守部材・オンサイト保守条件が先に制約になる。"
+        },
+        "support_policy_characteristics": [
+          "Oracle Lifetime Support Policyに基づく長期支援",
+          "Solaris 10は2027-01までExtended Support",
+          "Solaris 11.4は2030年代まで保守可能だが、ハード更改戦略が別問題"
+        ]
+      },
+      "id_management": {
+        "native_tools": [
+          "PAM",
+          "nsswitch",
+          "nscd",
+          "ldapclient",
+          "Kerberos",
+          "SMB domain mode",
+          "RBAC",
+          "Zones"
+        ],
+        "ad_integration": "2025年更新のOracle Solaris 11.4文書では、既存LDAPクライアントをActive Directory構成へ登録し、SMB domain modeと `nscfg adldap` でAD LDAPを利用する手順が追加された。Linux的な単純ドメイン参加ではなく、SMB/Kerberos/LDAPを組み合わせる方式である。",
+        "ldap_client": "ldapclientやSMFの `svc:/network/ldap/client:default` で設定する。name-service cacheとnsswitchの整合、proxy認証、schema確認が必要で、Solarisユーザー/グループ属性をAD側へ載せる前提がある。",
+        "kerberos": "KerberosはAD連携の中心だが、SMB domain mode、host principal、DNS、時刻同期、Zones内外の資格情報設計をあわせて運用する必要がある。",
+        "privileged_access": "RBAC、sudo、pfexec、監査、Zones分離を組み合わせる。非global zone内では一部管理ユーティリティが制約されるため、ID/権限管理はglobal zone主導になりやすい。",
+        "known_limitations": [
+          "Linuxのrealmd/SSSDのような単純なAD統合体験ではない",
+          "AD連携はSMB domain mode前提で、構成理解が浅いと障害切り分けが難しい",
+          "SPARC残存環境ではOS更改よりハード保守の都合が支配的",
+          "ZonesごとのID見え方とglobal zoneの責務を誤ると権限分離が曖昧になる",
+          "Oracle Directory Serverや旧Sun系資産が残ると二重ディレクトリ化しやすい"
+        ]
+      },
+      "migration_path": {
+        "primary_targets": [
+          "Oracle Linux",
+          "Red Hat Enterprise Linux",
+          "x86 Oracle Database基盤",
+          "一部はOracle Cloud Infrastructure"
+        ],
+        "typical_triggers": [
+          "SPARC保守期限",
+          "富士通SPARC更改打ち止め",
+          "Solaris運用者不足",
+          "Oracle以外ミドルの対応縮小"
+        ],
+        "difficulty": "高",
+        "id_management_change": "ldapclient主体のSolaris固有運用から、LinuxのSSSD/Active Directory/IdMへ寄る。sudo、PAM、権限昇格、サービスアカウント管理の流儀が変わる。"
+      },
+      "japan_specific": "日本では富士通SPARCの歴史的導入が大きく、Solaris撤去は『OSの寿命』より『SPARC保守と移行予算の都合』で起きる。"
+    },
+    {
+      "platform_id": "hpux",
+      "name": "HP-UX",
+      "hardware": "HPE Integrity (Intel Itanium), 一部旧PA-RISC",
+      "survival_status": "dead",
+      "survival_reason": "HP-UX 11i v3は2025-12-31で標準サポート終了、2025年版OEURが最終更新である。2026年以降はMature Product Supportによる保守延命は可能だが、新規基盤としては事実上終焉である。",
+      "estimated_japan_installations_2026": "極少。残っていても更改待ち、装置制御、長寿命ERP周辺など限定用途。",
+      "support_lifecycle": {
+        "os_release_status": [
+          {
+            "release": "HP-UX 11i v3",
+            "general_availability": "2007-02",
+            "standard_support_ends": "2025-12-31",
+            "mature_product_support_through": "2028-12-31"
+          }
+        ],
+        "hardware_status": {
+          "Integrity": "HPE Integrityサーバも2025-12-31で標準サポート終了、2026-2028は部材条件付きのMature Support。",
+          "Itanium_dependency": "HPE自身が2025 OEURで『Intel Itanium based systems』向けと明記しており、CPU系譜の行き止まりが明確。"
+        },
+        "support_policy_characteristics": [
+          "2025 OEURが最終OEUR",
+          "既存パッチは利用可能でも新規課題向けの修正は原則停止",
+          "Mature Supportは延命策であり近代化の根拠にはならない"
+        ]
+      },
+      "id_management": {
+        "native_tools": [
+          "PAM",
+          "Kerberos",
+          "LDAP-UX",
+          "sudo",
+          "Trusted Mode"
+        ],
+        "ad_integration": "LDAP/Kerberos連携は実装可能だが、2026年時点で新規にHP-UXをActive Directory統合する案件は稀で、既存構成の保守が中心である。",
+        "ldap_client": "LDAP-UXやPAM/NSS連携で外部認証を扱えるが、証明書・旧暗号・互換性の制約が強い。",
+        "kerberos": "Kerberosライブラリは存在するが、現代的な暗号ポリシーや周辺製品との整合確保が難しい。",
+        "privileged_access": "sudoとベンダーPAM製品で延命している例が多く、OS標準機能だけで近代的PAM（特権アクセス管理）水準を満たすのは難しい。",
+        "known_limitations": [
+          "人材市場が極端に小さい",
+          "Active Directory/LDAP統合を維持するだけでも旧暗号と証明書問題に悩みやすい",
+          "運用改善より撤去計画が主目的になりやすい",
+          "対応製品・EDR・IAM連携の選択肢が乏しい"
+        ]
+      },
+      "migration_path": {
+        "primary_targets": [
+          "x86 Linux",
+          "Red Hat Enterprise Linux",
+          "ミッションクリティカルx86",
+          "クラウド再配置"
+        ],
+        "typical_triggers": [
+          "2025-12-31の標準保守終了",
+          "Itanium依存からの脱却",
+          "保守費高騰"
+        ],
+        "difficulty": "高",
+        "id_management_change": "旧LDAP/PAM構成からLinux標準のLDAP/Active Directory/SSSDへ移る。多くの企業ではID管理刷新より先にアプリ移植が主要論点。"
+      },
+      "japan_specific": "日本企業での残存はゼロではないが、2026年時点では『まだ使うべきOS』ではなく『最後の撤去対象』である。"
+    },
+    {
+      "platform_id": "ibmi",
+      "name": "IBM i",
+      "hardware": "IBM Power",
+      "survival_status": "alive",
+      "survival_reason": "AIXとは別系統の業務OSとして依然強く、製造・流通・卸・中堅企業で業務APと一体化した形で残る。2025-04-18にIBM i 7.6が一般提供され、2025-07にはPower11対応も出ており、2026年時点では現役プラットフォームである。",
+      "estimated_japan_installations_2026": "国内では中堅〜大手の製造・流通・卸を中心に相当数残存。単体サーバより業務パッケージと一体で生き残るケースが多い。",
+      "support_lifecycle": {
+        "os_release_status": [
+          {
+            "release": "IBM i 7.6",
+            "general_availability": "2025-04-18",
+            "status_2026": "最新メジャーリリース"
+          },
+          {
+            "release": "IBM i 7.5",
+            "general_availability": "2022-05-10",
+            "lifecycle_policy": "Enhanced (minimum 5 years support with extension of 3 years)",
+            "status_2026": "現行サポート対象"
+          },
+          {
+            "release": "IBM i 7.4",
+            "withdrawn_from_marketing": "2026-04-30",
+            "transition_to_extended_or_end_of_support": "2026-09-30",
+            "extension_availability_through": "2029-09-30"
+          }
+        ],
+        "hardware_status": {
+          "Power9": "IBM i 7.5がPower9をサポートする最後のリリースとIBMが案内している。",
+          "Power10": "2026年時点で広く有効。",
+          "Power11": "2025-07時点でIBM i 7.6、7.5 TR6、7.4 TR12がPower11を支援。"
+        },
+        "support_policy_characteristics": [
+          "IBMの伝統的な長期保守",
+          "Technology Refreshで機能追加が継続",
+          "OS・DB・ミドル・管理系が一体で更新される"
+        ]
+      },
+      "id_management": {
+        "native_tools": [
+          "ユーザープロファイル",
+          "IBM Directory Server for IBM i",
+          "Enterprise Identity Mapping",
+          "Kerberos",
+          "IBM i Access Client Solutions",
+          "Navigator for i"
+        ],
+        "ad_integration": "IBM iはWindows的なドメイン参加OSではなく、ユーザープロファイルが基本単位である。AD連携はEIM、Kerberos、LDAP、ACS経由の管理補助で実現するが、ネイティブにADへ全面従属する設計ではない。",
+        "ldap_client": "OS組込のIBM Directory Server for IBM iを持ち、LDAPサーバ/クライアント双方を扱える。EIMのドメイン格納にもLDAPが使われる。",
+        "kerberos": "Network Authentication ServiceとEIMを通じてKerberos SSOは可能だが、ADの時刻同期、サービスプリンシパル、EIMドメイン、LDAP管理パスワード整合など前提が多い。",
+        "privileged_access": "特権は *SECOFR、*SECADM、*ALLOBJ などの特殊権限で制御される。ユーザークラスとオブジェクト権限の理解が必須で、Windows/Linuxのroot/sudoモデルとはかなり異なる。",
+        "known_limitations": [
+          "Active Directory中心のIAM設計にそのまま乗りにくい",
+          "ユーザープロファイル、特殊権限、オブジェクト権限の概念差が大きい",
+          "IBM i固有運用を理解する要員が減っている",
+          "サードパーティ製PAM製品依存になりやすい",
+          "業務パッケージがIBM i前提だとOS更改よりAP更改が重い"
+        ]
+      },
+      "migration_path": {
+        "primary_targets": [
+          "そのまま継続",
+          "Power上の新しいIBM i",
+          "段階的にLinux/クラウドへ周辺機能を分離"
+        ],
+        "typical_triggers": [
+          "保守費・人材費の圧力",
+          "業務パッケージ刷新",
+          "API化・周辺機能外出し",
+          "MFAや監査要件の強化"
+        ],
+        "difficulty": "中〜高",
+        "id_management_change": "全面移行しない限りIBM i固有のユーザープロファイル運用は残る。周辺系だけLinux/クラウドへ分離すると、ID管理が二層化しやすい。"
+      },
+      "japan_specific": "日本では製造・流通・卸・中堅企業での残存が強く、AIXほど金融大型案件に偏らない。"
+    },
+    {
+      "platform_id": "tru64",
+      "name": "Tru64 UNIX",
+      "hardware": "AlphaServer",
+      "survival_status": "dead",
+      "survival_reason": "ベンダー継続投資が消滅して久しく、2026年時点で実運用残存があってもアーカイブ的存在である。",
+      "estimated_japan_installations_2026": "ほぼゼロ",
+      "support_lifecycle": {
+        "os_release_status": [
+          {
+            "release": "Tru64 UNIX",
+            "status_2026": "事実上終了"
+          }
+        ],
+        "hardware_status": {
+          "Alpha": "現行基盤ではない"
+        },
+        "support_policy_characteristics": [
+          "新規採用不可",
+          "延命理由はアプリの化石化のみ"
+        ]
+      },
+      "id_management": {
+        "native_tools": [
+          "NIS",
+          "LDAP",
+          "Kerberos"
+        ],
+        "ad_integration": "実用観点では議論対象外。",
+        "ldap_client": "歴史的には存在したが、2026年の設計対象ではない。",
+        "kerberos": "同上",
+        "privileged_access": "同上",
+        "known_limitations": [
+          "人材消滅",
+          "ハード調達不可",
+          "監査対応困難"
+        ]
+      },
+      "migration_path": {
+        "primary_targets": [
+          "Linux",
+          "リホスト",
+          "アプリ再構築"
+        ],
+        "typical_triggers": [
+          "継続不能"
+        ],
+        "difficulty": "極高",
+        "id_management_change": "全面再設計。"
+      },
+      "japan_specific": "確認対象ではあるが、現実的には撤去済みとみなしてよい。"
+    },
+    {
+      "platform_id": "zos",
+      "name": "IBM z/OS",
+      "hardware": "IBM Z",
+      "survival_status": "alive",
+      "survival_reason": "商用UNIXではないが、日本の大手銀行・保険・公共での中核基盤として現役であり、AIXやIBM i以上に『止めない』前提で継続している。",
+      "estimated_japan_installations_2026": "大手金融・公共の中枢に継続",
+      "support_lifecycle": {
+        "os_release_status": [
+          {
+            "release": "z/OS",
+            "status_2026": "現役"
+          }
+        ],
+        "hardware_status": {
+          "IBM_Z": "継続投資あり"
+        },
+        "support_policy_characteristics": [
+          "長期継続前提",
+          "刷新より共存が基本"
+        ]
+      },
+      "id_management": {
+        "native_tools": [
+          "RACF",
+          "LDAP gateway"
+        ],
+        "ad_integration": "RACF-LDAP連携や周辺ゲートウェイで外部連携は可能だが、認証の重心はRACFに残る。",
+        "ldap_client": "周辺統合用",
+        "kerberos": "周辺統合で使用",
+        "privileged_access": "RACF中心",
+        "known_limitations": [
+          "分散系IAMと概念差が大きい",
+          "メインフレーム人材依存"
+        ]
+      },
+      "migration_path": {
+        "primary_targets": [
+          "そのまま継続"
+        ],
+        "typical_triggers": [
+          "大規模再構築時のみ"
+        ],
+        "difficulty": "-",
+        "id_management_change": "RACF継続が基本。"
+      },
+      "japan_specific": "大手金融の中核では今なお現役で、周辺のLinux/Windows/クラウドと共存する。"
+    }
+  ],
+  "migration_matrix": [
+    {
+      "source": "AIX + 勘定系",
+      "target": "Linux on Power / オープン系",
+      "trigger": "Power9保守切れ、AIX要員減少、モダナイゼーション予算化",
+      "difficulty": "極高",
+      "id_management_change": "AIX独自RBACやローカル運用からLDAP/Active Directory/SSSDへ移行"
+    },
+    {
+      "source": "Solaris + Oracle Database",
+      "target": "Oracle Linux / Red Hat Enterprise Linux + Oracle Database",
+      "trigger": "SPARC保守切れ、富士通SPARC販売終了、Solaris要員不足",
+      "difficulty": "高",
+      "id_management_change": "ldapclient/SMB domain modeからLinux標準AD統合へ"
+    },
+    {
+      "source": "HP-UX + Itanium",
+      "target": "x86 Linux / クラウド",
+      "trigger": "2025-12-31標準サポート終了",
+      "difficulty": "高",
+      "id_management_change": "旧LDAP/PAM構成から現代的LDAP/Active Directory運用へ"
+    },
+    {
+      "source": "IBM i + 業務AP",
+      "target": "そのまま継続 or 周辺機能をLinuxへ段階移行",
+      "trigger": "コスト圧力、API化、パッケージ刷新",
+      "difficulty": "中〜高",
+      "id_management_change": "IBM i固有ユーザープロファイルを残しつつ周辺で二層管理化"
+    },
+    {
+      "source": "z/OS + 勘定系",
+      "target": "そのまま継続",
+      "trigger": "なし",
+      "difficulty": "-",
+      "id_management_change": "RACF継続"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "商用UNIX生存状況",
+      "object_type": "concept",
+      "description": "2026年時点でAIX、Oracle Solaris、HP-UX、IBM iなどがどの程度実運用に残存しているかを整理する観点。",
+      "properties": {
+        "focus": [
+          "日本企業",
+          "OS認証",
+          "移行判断"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "AIX",
+      "object_type": "product",
+      "description": "IBM Power上で継続利用される商用UNIX。日本では金融・保険基幹で残存度が高い。",
+      "properties": {
+        "vendor": "IBM",
+        "survival_status": "alive"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Oracle Solaris",
+      "object_type": "product",
+      "description": "OSサポートは長いが、SPARC更改制約に強く影響される商用UNIX。",
+      "properties": {
+        "vendor": "Oracle",
+        "survival_status": "declining"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "HP-UX",
+      "object_type": "product",
+      "description": "2025年末で標準サポートを終える、事実上終焉段階の商用UNIX。",
+      "properties": {
+        "vendor": "HPE",
+        "survival_status": "dead"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "IBM i",
+      "object_type": "product",
+      "description": "IBM Power上で稼働する独自業務OS。AIXとは異なる運用文化を持つ。",
+      "properties": {
+        "vendor": "IBM",
+        "survival_status": "alive"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "IBM Power",
+      "object_type": "product",
+      "description": "AIXおよびIBM iの継続性を支えるハードウェア基盤。",
+      "properties": {
+        "vendor": "IBM"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "SPARC",
+      "object_type": "product",
+      "description": "Solaris残存の制約条件となるハードウェア系譜。",
+      "properties": {
+        "vendor": "Oracle/Fujitsu"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "Active Directory",
+      "object_type": "product",
+      "description": "商用UNIXの外部認証連携で最も頻出するディレクトリ基盤。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "LDAP",
+      "object_type": "protocol",
+      "description": "商用UNIX残存環境で最も実務的な共通ディレクトリ連携方式。",
+      "properties": {}
+    },
+    {
+      "id": "node_010",
+      "label": "Kerberos",
+      "object_type": "protocol",
+      "description": "Active Directory連携やSMB統合で使われる認証プロトコル。",
+      "properties": {}
+    },
+    {
+      "id": "node_011",
+      "label": "特権アクセス管理",
+      "object_type": "concept",
+      "description": "root、*SECOFR、RACF管理者など高権限IDの統制。",
+      "properties": {}
+    },
+    {
+      "id": "node_012",
+      "label": "Linux移行",
+      "object_type": "pattern",
+      "description": "商用UNIX更改の主流移行先。",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "AIXはIBM Powerに依存する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "Solaris残存案件の多くはSPARC保守に影響される。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "AIXはLDAP/Kerberos経由でActive Directoryと連携する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "Solaris 11.4はSMB domain modeとLDAP設定でActive Directoryを利用できる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "IBM iはEIMとKerberosでActive Directoryと補完連携する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "LDAPはActive Directory連携の共通経路である。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "KerberosはActive Directoryの相互認証基盤である。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_012",
+      "relationship": "replaces",
+      "description": "HP-UXはLinuxへ置換されるケースが中心である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_012",
+      "relationship": "replaces",
+      "description": "SolarisはOracle LinuxやRed Hat Enterprise Linuxへ移行される。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "AIX残存環境ではRBACやsudoによる特権統制が必要である。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "AIXの現役性",
+      "summary": "AIXは2026年でも単なる延命ではなく、Power11上で継続可能な現役商用UNIXである。",
+      "details": [
+        "IBM Power11は2025-07-25に一般提供開始。",
+        "AIX 7.3はTL単位で2027年末・2028年末までのEnd of Fix Supportが公開されている。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "AIX 7.2の誤認しやすい点",
+      "summary": "AIX 7.2は旧TLのEoFS終了とリリースEOSが混同されやすい。",
+      "details": [
+        "IBM公開ページではAIX releaseのEOSは通過後でないと見えない場合がある。",
+        "AIX 7.2 TL5は2026年時点でEnd of Fix Supportが『To be determined』。"
+      ],
+      "related_nodes": [
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "AIXのID管理実態",
+      "summary": "AIXの現場ではLinuxのような簡潔なドメイン参加より、LDAPとKerberosの個別設計が多い。",
+      "details": [
+        "secldapclntd、LDAPクライアント、Kerberos、sudoを組み合わせる。",
+        "RFC2307属性、GSKit/TLS、UID/GID整合が運用品質を左右する。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_008",
+        "node_009",
+        "node_010"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "AIXの日本市場",
+      "summary": "日本では銀行・保険の基幹系がAIX残存の中心で、単純台数より業務クリティカル度が高い。",
+      "details": [
+        "IBMは金融向けPower訴求を継続している。",
+        "『止められないので更新して使う』という構造が残る。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Solarisの残存理由",
+      "summary": "Solaris 11.4は長期サポートが明確で、OSだけ見れば2030年代まで継続可能である。",
+      "details": [
+        "Premier Supportは2031-11まで、Extended Supportは2037-11まで。",
+        "ZFS、Zones、DTrace、Oracle Database親和性が継続理由。"
+      ],
+      "related_nodes": [
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "Solarisの実務上の寿命",
+      "summary": "Solaris案件の移行期限はOSサポートよりSPARCハード保守が先に決める。",
+      "details": [
+        "Oracle公開ページは依然T8/M8を中心に記載。",
+        "富士通はM10世代の販売終了日を公開しており、実運用ではハード制約が強い。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_007"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "SolarisのAD連携",
+      "summary": "Solaris 11.4は2025年文書更新でAD LDAPクライアント手順を追加したが、Linux的な単純ドメイン参加ではない。",
+      "details": [
+        "SMB domain modeの参加後に `nscfg adldap` を実行する。",
+        "Kerberos host principalでAD LDAPへ接続する。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_008",
+        "node_009",
+        "node_010"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "Solaris ZonesとID管理",
+      "summary": "Solaris Zonesではglobal zone主導でID・権限制御を考える必要がある。",
+      "details": [
+        "非global zoneでは一部管理ユーティリティやハードウェア系機能が制約される。",
+        "ホスト境界とアプリ境界が混ざると監査設計が複雑になる。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_011"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "日本のSolaris残存",
+      "summary": "日本では旧富士通SPARC資産の残存が大きく、全面Linux移行より段階的な逃がし方が多い。",
+      "details": [
+        "富士通はSPARC/Solarisクラウド移行事例を公開している。",
+        "保守延命と移行準備の中間解として使われる。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_007"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "HP-UXの終焉",
+      "summary": "HP-UX 11i v3は2025-12-31で標準サポート終了し、2025 OEURが最後の更新である。",
+      "details": [
+        "2026年以降はMature Product Supportによる延命のみ。",
+        "新規採用OSとしての合理性はほぼ失われた。"
+      ],
+      "related_nodes": [
+        "node_004"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "HP-UXのID管理",
+      "summary": "HP-UXのID管理はLDAP/PAM/Kerberosで延命可能でも、現代的IAMとの親和性は低い。",
+      "details": [
+        "旧暗号、証明書、互換性の問題が出やすい。",
+        "設計最適化より撤去計画のほうが重要になる。"
+      ],
+      "related_nodes": [
+        "node_004",
+        "node_008",
+        "node_009",
+        "node_010"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "IBM iの現役性",
+      "summary": "IBM iは2025年に7.6が出ており、2026年時点で明確に現役である。",
+      "details": [
+        "IBM i 7.6は2025-04-18に一般提供開始。",
+        "Power11にも2025-07時点で対応している。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "IBM i 7.5の位置づけ",
+      "summary": "IBM i 7.5は依然サポート対象だが、最新メジャーは7.6である。",
+      "details": [
+        "7.5のGAは2022-05-10。",
+        "IBM i 7.4は2026年に標準サポート移行フェーズへ入る。"
+      ],
+      "related_nodes": [
+        "node_005"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "IBM iのID管理モデル",
+      "summary": "IBM iはActive Directory従属ではなく、ユーザープロファイル中心の独自モデルである。",
+      "details": [
+        "管理単位は *USER オブジェクトである。",
+        "特殊権限 *SECOFR、*SECADM、*ALLOBJ の理解が必須。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_011"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "IBM iのAD連携の現実",
+      "summary": "IBM iはEIM、Kerberos、LDAPでADと連携できるが、Windowsのようなドメイン参加とは違う。",
+      "details": [
+        "SSOは可能だがEIMドメインやLDAP管理を理解する必要がある。",
+        "そのため『AD統合済み』でも運用はIBM i固有のまま残る。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_008",
+        "node_009",
+        "node_010"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "IBM iの日本市場",
+      "summary": "日本では製造・流通・卸でIBM iが根強く、AIXより分散的な残り方をしている。",
+      "details": [
+        "業務パッケージと一体で残るため、OS単独評価では移行判断を誤る。",
+        "完全撤去よりAPI化と周辺分離が多い。"
+      ],
+      "related_nodes": [
+        "node_005"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "Tru64 UNIXの扱い",
+      "summary": "Tru64 UNIXは確認対象ではあるが、2026年の設計対象としては死滅扱いでよい。",
+      "details": [
+        "残っていてもハード・人材・保守のいずれも実用性がない。"
+      ],
+      "related_nodes": [
+        "node_001"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "z/OSとRACF",
+      "summary": "参考対象としてのz/OSは商用UNIXではないが、日本企業のID管理実態では無視できない。",
+      "details": [
+        "RACF中心で外部連携しても認証の重心はメインフレームに残る。"
+      ],
+      "related_nodes": [
+        "node_011"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "共通する移行トリガー",
+      "summary": "商用UNIX移行の実際のトリガーはOS寿命よりハード保守・人材・セキュリティ標準化である。",
+      "details": [
+        "AIXはPower世代交代、SolarisはSPARC保守、HP-UXはItanium終焉が支配的。",
+        "ID管理刷新だけを単独で実施する案件は少ない。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "ID管理の現実的課題",
+      "summary": "商用UNIX残存環境では、OSごとに認証スタックと権限モデルがばらばらで統一運用が難しい。",
+      "details": [
+        "LDAP、Kerberos、ローカルID、sudo、RBAC、特殊権限が混在する。",
+        "障害時にどこで認証失敗しているかを切り分けにくい。"
+      ],
+      "related_nodes": [
+        "node_008",
+        "node_009",
+        "node_010",
+        "node_011"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "ゼロトラストとの摩擦",
+      "summary": "商用UNIXはゼロトラストやEDR標準化に乗りにくく、ID管理刷新を後押しする。",
+      "details": [
+        "特権IDの棚卸し、MFA、証跡統合、JIT付与が難しい。",
+        "そのため移行案件では認証方式の標準化が副次論点になる。"
+      ],
+      "related_nodes": [
+        "node_011",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "移行先の主流",
+      "summary": "移行先は全面クラウドよりLinux系への再配置が主流である。",
+      "details": [
+        "AIXはLinux on PowerやPower Virtual Server。",
+        "SolarisとHP-UXはx86 Linuxやクラウド。",
+        "IBM iは継続利用と周辺分離の混在。"
+      ],
+      "related_nodes": [
+        "node_012"
+      ]
+    }
+  ]
+}

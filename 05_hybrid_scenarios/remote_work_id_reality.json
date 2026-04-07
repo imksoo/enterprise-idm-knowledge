@@ -1,0 +1,1017 @@
+{
+  "metadata": {
+    "id": "remote_work_id_reality",
+    "title": "リモートワーク常態化時代（2026年）のID管理現実と対策",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "remote-work",
+      "sase",
+      "vpn",
+      "ztna",
+      "mdm",
+      "conditional-access",
+      "2026-reality"
+    ],
+    "related_files": [
+      "../03_identity_architecture/identity_landscape.json",
+      "../04_server_auth/os_auth_methods.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/group_policy_alternatives.json",
+      "../07_migration_patterns/japan_security_frameworks.json"
+    ]
+  },
+  "remote_access_patterns": [
+    {
+      "id": "rap_001",
+      "name": "IPSec/SSL VPN",
+      "category": "legacy-dominant",
+      "representative_products": [
+        "Cisco AnyConnect",
+        "Pulse Secure",
+        "Fortinet SSL VPN",
+        "Palo Alto GlobalProtect"
+      ],
+      "adoption_profile_2026_japan": "中堅以上の日本企業で依然として最多。オンプレミス Active Directory と Windows ファイル共有が残る企業ほど維持されやすい。",
+      "identity_management_impact": "認証の主導権が RADIUS と Active Directory に残りやすく、Entra ID は SaaS 側に限定される。リモートアクセス基盤を更新しても ID 管理基盤の刷新につながらないことが多い。",
+      "authentication_flow": [
+        "端末上の VPN クライアントが VPN ゲートウェイに接続要求を送る",
+        "VPN ゲートウェイは NPS などの RADIUS サーバーへ認証を委譲する",
+        "RADIUS サーバーは Active Directory で資格情報を検証する",
+        "接続後はオンプレミス DNS、Kerberos、SMB/CIFS が利用可能になる"
+      ],
+      "mfa_integration": {
+        "methods": [
+          "RADIUS challenge/response",
+          "TOTP",
+          "プッシュ通知",
+          "証明書併用"
+        ],
+        "reality_2026_japan": "多要素認証があっても RADIUS 経由の追加要素であり、SaaS 側の条件付きアクセスとは分断されやすい。証券・金融ではスマートカードやクライアント証明書併用が残る。"
+      },
+      "device_authentication": {
+        "support_level": "medium",
+        "typical_controls": [
+          "端末証明書",
+          "AD コンピューターアカウント",
+          "EDR 稼働確認"
+        ],
+        "reality_2026_japan": "実装可能でもユーザー認証中心運用が多く、端末健全性は別製品のチェックに分かれる。"
+      },
+      "on_premises_server_access_reality": "もっとも相性が良い。VPN 接続中は Kerberos、RDP、SMB/CIFS、管理共有が従来どおり動くため、サーバー運用部門は変更インセンティブが低い。",
+      "financial_and_securities_adoption": "非常に多い。特に証券、銀行、保険の管理業務や委託先接続では依然主流。",
+      "major_challenges": [
+        "全トラフィック集中による遅延と帯域逼迫",
+        "接続断で業務停止しやすい",
+        "VPN の到達性が高すぎ、侵害時の横移動面が広い",
+        "ID 管理が Active Directory 依存のまま固定化しやすい"
+      ],
+      "ideal_state": "アプリ単位・端末状態単位でアクセスを制御し、ネットワーク接続自体を信頼しない。",
+      "reality_2026_japan": "リモートワーク常態化後も、実務で必要なオンプレミス業務が残る限り VPN が最後の依存先として残る。"
+    },
+    {
+      "id": "rap_002",
+      "name": "SASE（ZIA+ZPA など）",
+      "category": "large-enterprise-modernization",
+      "representative_products": [
+        "Zscaler",
+        "Prisma Access",
+        "Netskope",
+        "Cisco Umbrella"
+      ],
+      "adoption_profile_2026_japan": "大手企業やグローバル企業で導入拡大中。ネットワーク刷新予算が取れる企業ほど採用が進むが、効果の出方に差が大きい。",
+      "identity_management_impact": "SAML や OpenID Connect による IdP 連携が増え、Entra ID や Okta の存在感は高まる。ただしオンプレミス Active Directory の代替にはならず、サーバー認証や管理者認証は別問題として残る。",
+      "authentication_flow": [
+        "端末エージェントがクラウド接続点へ接続する",
+        "ユーザー認証は Entra ID または Okta と SAML/OpenID Connect で連携する",
+        "ポスチャ情報を元にアクセス可否を評価する",
+        "SaaS もしくは限定公開された内部アプリへアプリ単位で接続する"
+      ],
+      "mfa_integration": {
+        "methods": [
+          "SAML",
+          "OpenID Connect",
+          "IdP 側の多要素認証"
+        ],
+        "reality_2026_japan": "多要素認証は IdP 側で一元化しやすいが、既存 VPN を並行運用していると二重認証設計になりやすい。"
+      },
+      "device_authentication": {
+        "support_level": "high",
+        "typical_controls": [
+          "デバイス証明書",
+          "Microsoft Intune 準拠性",
+          "EDR 状態",
+          "OS バージョン確認"
+        ],
+        "reality_2026_japan": "エージェントは導入されても、全端末が Microsoft Intune 管理下ではないため、最終的にユーザー認証だけで通す例外が残りやすい。"
+      },
+      "on_premises_server_access_reality": "SaaS と Web アプリでは効果が出やすいが、RDP、SMB/CIFS、レガシー管理プロトコルは結局 VPN や専用経路が残ることが多い。",
+      "financial_and_securities_adoption": "大手では導入が進む一方、証券・金融の高統制業務ではフルトンネル VPN や閉域網が併存する。",
+      "major_challenges": [
+        "設定が複雑で責任分界が見えにくい",
+        "ライセンスと運用コストが高い",
+        "SASE 導入だけでは Active Directory 依存が減らない",
+        "エージェント追加による端末負荷とユーザー不満"
+      ],
+      "ideal_state": "SaaS、内部 Web、管理系アプリを同一ポリシーで制御し、ユーザー、端末、セッション単位でアクセス判断する。",
+      "reality_2026_japan": "名称はゼロトラスト化でも、実態は VPN 補強と Web フィルタ改善に留まる案件が少なくない。"
+    },
+    {
+      "id": "rap_003",
+      "name": "Microsoft Entra Application Proxy",
+      "category": "m365-aligned",
+      "representative_products": [
+        "Microsoft Entra Application Proxy"
+      ],
+      "adoption_profile_2026_japan": "M365 採用企業や Entra ID を主 IdP に寄せた企業で活用。小規模導入から始めやすい。",
+      "identity_management_impact": "Entra ID ネイティブのため、条件付きアクセス、多要素認証、サインインログを一つに寄せやすい。内部 Web アプリの公開を機に ADFS 依存を縮小できる。",
+      "authentication_flow": [
+        "ユーザーはインターネット経由で Entra ID にサインインする",
+        "条件付きアクセスと多要素認証を Entra ID で評価する",
+        "オンプレミス コネクタが内部 Web アプリへリレーする",
+        "必要に応じて Kerberos 制約付き委任やヘッダー ベース認証を内部アプリ側へ橋渡しする"
+      ],
+      "mfa_integration": {
+        "methods": [
+          "Entra ID の多要素認証",
+          "SAML",
+          "OpenID Connect",
+          "パススルー認証やパスワードハッシュ同期と組み合わせ"
+        ],
+        "reality_2026_japan": "多要素認証と条件付きアクセスを最も整理しやすいが、対象が Web アプリ中心で、RDP や SMB/CIFS は別方式のまま残る。"
+      },
+      "device_authentication": {
+        "support_level": "high",
+        "typical_controls": [
+          "Microsoft Intune 準拠性",
+          "Entra ID デバイス状態",
+          "クライアント証明書"
+        ],
+        "reality_2026_japan": "端末準拠性まで使い切れる企業はまだ限定的で、まずは多要素認証付きの外部公開から着手される。"
+      },
+      "on_premises_server_access_reality": "利用対象は内部 Web アプリやポータル。サーバーへの直接管理アクセスの置き換えにはならない。",
+      "financial_and_securities_adoption": "参照系ポータルや申請系で採用余地があるが、取引・勘定系の管理接続には単独では不足する。",
+      "major_challenges": [
+        "Web アプリ以外には適用しにくい",
+        "内部アプリ改修が必要なことがある",
+        "Kerberos 制約付き委任の設計が難しい",
+        "公開対象の棚卸しが必要"
+      ],
+      "ideal_state": "内部 Web アプリを Entra ID 前段に集約し、VPN なしでも安全に利用可能にする。",
+      "reality_2026_japan": "M365 前提の企業では効果が高いが、オンプレミス全体のリモートアクセスを置き換える手段ではない。"
+    },
+    {
+      "id": "rap_004",
+      "name": "Azure Virtual Desktop / Windows 365",
+      "category": "workspace-isolation",
+      "representative_products": [
+        "Azure Virtual Desktop",
+        "Windows 365"
+      ],
+      "adoption_profile_2026_japan": "VDI 更改、委託先統制、コールセンター、金融の高統制業務で採用が増加。端末よりセッションを守る発想。",
+      "identity_management_impact": "ユーザー認証を Entra ID に寄せやすく、端末側を軽量化できる。一方で仮想デスクトップ内部では Active Directory、Kerberos、共有ドライブが残ることも多い。",
+      "authentication_flow": [
+        "ユーザーは Entra ID でワークスペースへサインインする",
+        "条件付きアクセスで端末状態やリスクを評価する",
+        "セッション内部では仮想デスクトップが内部ネットワークへ到達する",
+        "必要に応じて Active Directory ベースのアプリ認証を継続利用する"
+      ],
+      "mfa_integration": {
+        "methods": [
+          "Entra ID の多要素認証",
+          "条件付きアクセス",
+          "FIDO2"
+        ],
+        "reality_2026_japan": "入口の認証強化は進めやすいが、仮想デスクトップ内部の権限制御や共有アカウント問題は別途整理が必要。"
+      },
+      "device_authentication": {
+        "support_level": "high",
+        "typical_controls": [
+          "Microsoft Intune",
+          "準拠デバイス要件",
+          "ブラウザベース制御"
+        ],
+        "reality_2026_japan": "個人端末からでも画面転送型で制御しやすいが、完全なデータ持ち出し対策には DLP とクリップボード制御の実装が要る。"
+      },
+      "on_premises_server_access_reality": "ユーザー端末から直接サーバーへ入らず、仮想デスクトップ内からアクセスする形に変えやすい。管理経路集約には有効。",
+      "financial_and_securities_adoption": "高い。委託先、在宅オペレーション、厳格な端末持ち出し制御で採用される。",
+      "major_challenges": [
+        "継続課金コストが高い",
+        "帯域と遅延の影響を受ける",
+        "GPU や重い業務アプリでは設計が難しい",
+        "VDI の中身が従来型だと ID 管理課題を先送りするだけになる"
+      ],
+      "ideal_state": "端末を信頼せず、業務セッションを管理されたクラウドワークスペースへ閉じ込める。",
+      "reality_2026_japan": "委託先や高統制業務には有効だが、全社員の標準方式としてはコスト負担が重い。"
+    },
+    {
+      "id": "rap_005",
+      "name": "ZTNA（BeyondCorp 型）",
+      "category": "identity-centric",
+      "representative_products": [
+        "Cloudflare Access",
+        "Twingate"
+      ],
+      "adoption_profile_2026_japan": "ベンチャー、IT 企業、SaaS ネイティブ企業で少数派だが増加。オンプレミス依存が弱い企業に適する。",
+      "identity_management_impact": "IdP と端末ポスチャが中核になり、ネットワーク境界より ID 管理の成熟度が重要になる。人事連携や自動プロビジョニングの有無が運用品質を左右する。",
+      "authentication_flow": [
+        "ユーザーは Entra ID や Okta にサインインする",
+        "ZTNA 側が IdP トークンと端末状態を検証する",
+        "アプリ単位またはコネクタ単位で接続を許可する",
+        "内部ネットワーク全体へのフル接続は提供しない"
+      ],
+      "mfa_integration": {
+        "methods": [
+          "SAML",
+          "OpenID Connect",
+          "IdP 側の多要素認証"
+        ],
+        "reality_2026_japan": "認証面は整理しやすいが、Windows 管理共有、レガシー厚いクライアント、二重ホップを含む運用タスクでは適用外が出やすい。"
+      },
+      "device_authentication": {
+        "support_level": "high",
+        "typical_controls": [
+          "デバイスポスチャ",
+          "クライアント証明書",
+          "EDR 連携"
+        ],
+        "reality_2026_japan": "デバイス統制が弱い企業では理想の設計が成立せず、例外申請が増えてゼロトラストの一貫性が崩れやすい。"
+      },
+      "on_premises_server_access_reality": "社内 Web や SSH の一部には向くが、SMB/CIFS、ドメイン参加前提の管理運用、古いクライアントサーバー型業務では弱い。",
+      "financial_and_securities_adoption": "限定的。情報参照系や開発環境では可能性があるが、本番系の運用接続では慎重。",
+      "major_challenges": [
+        "オンプレミス Windows 運用と相性が悪い領域がある",
+        "アプリ棚卸しと認証改修が前提になる",
+        "ネットワーク担当と ID 担当の役割再定義が必要",
+        "日本企業の例外運用文化と衝突しやすい"
+      ],
+      "ideal_state": "すべての業務アプリが IdP 連携と端末評価前提で公開され、フルネットワーク接続を不要にする。",
+      "reality_2026_japan": "SaaS ネイティブ企業では有効だが、オンプレミス残存企業では単独で全体最適になりにくい。"
+    }
+  ],
+  "device_user_id_combinations": [
+    {
+      "id": "combo_a",
+      "name": "パターンA: 会社支給 Windows PC + フルトンネル VPN",
+      "typical_industries": [
+        "証券",
+        "銀行",
+        "保険"
+      ],
+      "device_state": "Active Directory Domain Join または Entra Hybrid Join",
+      "identity_stack": [
+        "Active Directory",
+        "RADIUS",
+        "多要素認証",
+        "Entra ID"
+      ],
+      "access_reality": "全トラフィックがオンプレミス経由になり、M365 も VPN に巻き込まれやすい。セキュリティ統制は説明しやすいが、体感遅延と切断不満が強い。",
+      "id_management_implication": "VPN 接続中は Kerberos が安定し、ファイル共有や管理共有も従来通り動くため、サーバー側の ID モダナイズ圧力が弱い。条件付きアクセスは SaaS の補助線に留まりやすい。",
+      "ideal_state": "Microsoft 365 トラフィックは分離し、サーバー管理経路は PAM（特権アクセス管理）と踏み台へ集約する。",
+      "reality_2026_japan": "規制対応の説明容易性から、非効率でも維持されることが多い。"
+    },
+    {
+      "id": "combo_b",
+      "name": "パターンB: 会社支給 Windows PC + Split Tunnel VPN",
+      "typical_industries": [
+        "一般企業",
+        "製造",
+        "流通",
+        "サービス"
+      ],
+      "device_state": "Entra Hybrid Join が多く、一部は Entra Join へ移行中",
+      "identity_stack": [
+        "Active Directory",
+        "Entra ID",
+        "Microsoft Intune",
+        "多要素認証"
+      ],
+      "access_reality": "通常時は SaaS を直接利用し、オンプレミス業務時のみ VPN を張る。ユーザー体験は改善するが、VPN を忘れると業務アプリが動かない断層が残る。",
+      "id_management_implication": "オンライン時は Entra ID 中心、オンプレミス利用時は Kerberos 中心という二重モデルになる。ヘルプデスク運用はシンプルにならず、認証障害の切り分けが難しい。",
+      "ideal_state": "オンプレミス業務アプリを段階的に App Proxy か ZTNA 公開へ移し、VPN 必須業務を減らす。",
+      "reality_2026_japan": "最も現実的な折衷案として広く採用される。"
+    },
+    {
+      "id": "combo_c",
+      "name": "パターンC: 会社支給 iPhone/iPad + M365",
+      "typical_industries": [
+        "全業種の経営層",
+        "営業",
+        "外回り"
+      ],
+      "device_state": "Microsoft Intune MDM 管理",
+      "identity_stack": [
+        "Entra ID",
+        "条件付きアクセス",
+        "Microsoft Intune",
+        "多要素認証"
+      ],
+      "access_reality": "メール、Teams、承認、閲覧業務はモバイルで完結する。オンプレミス サーバーへの管理アクセスは原則させない設計が多い。",
+      "id_management_implication": "サーバーアクセスを PC 側へ限定することで、モバイルはクラウド ID に寄せやすい。デバイス準拠性がそのまま利用可否に直結する。",
+      "ideal_state": "役割ごとにモバイル許可範囲を限定し、データ持ち出しをアプリ単位で制御する。",
+      "reality_2026_japan": "最もゼロトラストらしく見えるが、対象業務が限定的なので全社 ID モデルの難所は残る。"
+    },
+    {
+      "id": "combo_d",
+      "name": "パターンD: BYOD スマートフォン + MAM",
+      "typical_industries": [
+        "中小企業",
+        "一部大手の非正規雇用・外部協力者"
+      ],
+      "device_state": "MDM なし、アプリ保護ポリシー中心",
+      "identity_stack": [
+        "Entra ID",
+        "多要素認証",
+        "Microsoft Intune アプリ保護ポリシー"
+      ],
+      "access_reality": "Outlook、Teams、SharePoint モバイルは使えるが、端末の健全性は完全には把握できない。紛失時や OS 更新遅延の統制に限界がある。",
+      "id_management_implication": "ユーザー ID は一元化しやすい一方、デバイス ID の信頼度が低い。条件付きアクセスはアプリ保護条件に寄るため、端末全体の統制より弱い。",
+      "ideal_state": "業務データは管理対象アプリ内へ閉じ込め、退職時や契約終了時にワイプできる状態を維持する。",
+      "reality_2026_japan": "利便性優先で採られるが、監査部門から見ると妥協案である。"
+    },
+    {
+      "id": "combo_e",
+      "name": "パターンE: SIer 常駐エンジニアのリモートアクセス",
+      "typical_industries": [
+        "証券",
+        "銀行",
+        "公共",
+        "大手製造"
+      ],
+      "device_state": "委託先所有端末または貸与端末が混在",
+      "identity_stack": [
+        "VPN",
+        "踏み台サーバー",
+        "PAM（特権アクセス管理）",
+        "JIT"
+      ],
+      "access_reality": "理想は個人単位 ID、時間制限、申請承認、セッション録画だが、現実には共有アカウント、固定接続、RDP 直接接続が残る場合がある。",
+      "id_management_implication": "委託先 ID を自社 Active Directory に直接作るか、外部 ID 連携するかで統制レベルが大きく変わる。契約終了時の権限剥奪漏れが重大リスク。",
+      "ideal_state": "顧客環境のローカルアカウントや共有管理者を廃止し、踏み台経由の個人単位 JIT 接続へ統一する。",
+      "reality_2026_japan": "ここが最も理想と現実の差が大きい。"
+    },
+    {
+      "id": "combo_f",
+      "name": "パターンF: 取引先・代理店のポータルアクセス",
+      "typical_industries": [
+        "保険",
+        "製造",
+        "卸売",
+        "不動産"
+      ],
+      "device_state": "社外端末前提で企業管理外が多い",
+      "identity_stack": [
+        "Entra B2B",
+        "Entra External ID",
+        "Okta Customer Identity",
+        "多要素認証"
+      ],
+      "access_reality": "社内ネットワークへは入れず、外部ポータルだけを使わせる設計が増える。アカウント棚卸しと契約終了時の削除が最大課題。",
+      "id_management_implication": "外部ユーザーのライフサイクル管理が主題になり、社内 Active Directory の枠外で統制を作る必要がある。スポンサー部門の責任が曖昧だと放置アカウントが増える。",
+      "ideal_state": "契約情報と連動して招待、延長、失効を自動化し、外部アクセス権限を期限付きにする。",
+      "reality_2026_japan": "ポータル化は進んでも、削除統制は人手依存のまま残りやすい。"
+    }
+  ],
+  "sase_reality_assessment": {
+    "changed": [
+      {
+        "theme": "SaaS 可視性",
+        "detail": "CASB 機能により Box、Dropbox、個人クラウド利用の可視化が進み、シャドー IT 把握が容易になった。"
+      },
+      {
+        "theme": "Web フィルタリング",
+        "detail": "拠点、在宅、モバイルで同一ポリシーの URL 制御を適用しやすくなった。"
+      },
+      {
+        "theme": "SD-WAN との統合",
+        "detail": "拠点間通信とインターネット出口をクラウド側へ寄せやすくなり、MPLS 一辺倒ではなくなった。"
+      },
+      {
+        "theme": "デバイスポスチャ確認",
+        "detail": "OS バージョン、EDR 稼働、暗号化状況などを接続判断に組み込みやすくなった。"
+      },
+      {
+        "theme": "SaaS 認証の一元化",
+        "detail": "Entra ID や Okta との SAML/OpenID Connect 連携により、SaaS 側の認証統制は整理しやすくなった。"
+      }
+    ],
+    "unchanged": [
+      {
+        "theme": "オンプレミス サーバー管理",
+        "detail": "RDP、SSH、SMB/CIFS、管理共有などは依然として VPN、閉域網、踏み台に依存することが多い。"
+      },
+      {
+        "theme": "Active Directory 依存",
+        "detail": "Windows サーバー認証、Kerberos、グループポリシー、サービスアカウントは大きく変わっていない。"
+      },
+      {
+        "theme": "ADFS 残存",
+        "detail": "SaaS 側はクラウド化しても、古い業務アプリや認証中継で ADFS が残りやすい。"
+      },
+      {
+        "theme": "特権アクセス管理の遅れ",
+        "detail": "ネットワーク刷新よりも、共有管理者廃止、JIT、セッション録画の整備が後回しになりやすい。"
+      },
+      {
+        "theme": "ヘルプデスク運用",
+        "detail": "認証障害は VPN、SASE、Entra ID、Active Directory、端末管理のどこに原因があるか切り分けが難しい。"
+      }
+    ],
+    "prerequisites_for_true_zt": [
+      {
+        "id": "pre_001",
+        "item": "Entra ID Premium P2",
+        "check": false,
+        "reason": "条件付きアクセスとリスクベース認証を全社標準にするため。"
+      },
+      {
+        "id": "pre_002",
+        "item": "Microsoft Intune / MDM で全デバイス管理",
+        "check": false,
+        "reason": "ユーザーだけでなく端末状態をアクセス判断に組み込むため。"
+      },
+      {
+        "id": "pre_003",
+        "item": "アプリの Entra ID / SAML / OpenID Connect 対応",
+        "check": false,
+        "reason": "ネットワーク接続ではなくアプリ単位で認証制御するため。"
+      },
+      {
+        "id": "pre_004",
+        "item": "オンプレミス Web アプリの App Proxy または同等公開",
+        "check": false,
+        "reason": "VPN 必須業務を減らし、条件付きアクセスを適用するため。"
+      },
+      {
+        "id": "pre_005",
+        "item": "FIDO2 / Windows Hello for Business 展開",
+        "check": false,
+        "reason": "フィッシング耐性のある多要素認証へ移行するため。"
+      },
+      {
+        "id": "pre_006",
+        "item": "PAM（特権アクセス管理）でサーバー直接ログイン廃止",
+        "check": false,
+        "reason": "ゼロトラストの弱点となる常時特権と共有管理者を排除するため。"
+      },
+      {
+        "id": "pre_007",
+        "item": "SIEM / SOC で継続的監視",
+        "check": false,
+        "reason": "認証イベント、端末状態、操作ログを継続的に相関分析するため。"
+      },
+      {
+        "id": "pre_008",
+        "item": "HR 起点の ID プロビジョニング自動化",
+        "check": false,
+        "reason": "入社、異動、退職、委託終了に合わせた権限更新を遅延なく実施するため。"
+      }
+    ]
+  },
+  "industry_specific": {
+    "securities": {
+      "regulatory_context": [
+        "FISC 安全対策基準",
+        "金融庁 金融分野におけるサイバーセキュリティに関するガイドライン",
+        "日本証券業協会 ガイドライン"
+      ],
+      "remote_access_constraints": [
+        "会社支給端末のみ許可が多い",
+        "リモートアクセスは多要素認証必須",
+        "売買システムは参照系と管理系で分離されやすい",
+        "特権操作は踏み台、録画、時間制限が求められる"
+      ],
+      "id_management_implications": [
+        "共有アカウント禁止と個人識別の強制度が高い",
+        "委託先 ID の棚卸しと時間制限付与が重要",
+        "フィッシング耐性 MFA への移行圧力が強い"
+      ],
+      "reality_2026_japan": "営業店や事務センターの一般業務は仮想デスクトップ化が進む一方、基幹システム運用は保守的で、フルトンネル VPN や閉域接続が残りやすい。"
+    },
+    "banking": {
+      "regulatory_context": [
+        "FISC 安全対策基準",
+        "金融庁 金融分野におけるサイバーセキュリティに関するガイドライン",
+        "全国銀行協会 方針"
+      ],
+      "remote_access_constraints": [
+        "フルトンネル VPN と閉域網の併用が多い",
+        "外部委託先は専用端末または仮想デスクトップ経由が求められる",
+        "勘定系や対外接続系は原則分離"
+      ],
+      "id_management_implications": [
+        "ネットワーク分離だけではなく、個人単位 ID と操作証跡が必須",
+        "運用者の JIT とセッション記録が重視される",
+        "リモート接続の説明責任を監査向けに示す必要がある"
+      ],
+      "reality_2026_japan": "SASE 導入が進んでも、実際の高重要度運用は従来型統制を維持し、SaaS と一般業務だけが先にモダン化する。"
+    },
+    "manufacturing": {
+      "regulatory_context": [
+        "社内セキュリティ基準",
+        "サプライチェーン監査要件",
+        "工場・OT 分離ポリシー"
+      ],
+      "remote_access_constraints": [
+        "工場ネットワークは直接公開しない",
+        "保守ベンダー接続は時間制限と申請制が必要",
+        "本社 IT と工場 OT で認証方式が分断されやすい"
+      ],
+      "id_management_implications": [
+        "取引先・保守ベンダーのアカウント管理が主題になりやすい",
+        "工場側では Active Directory 非参加装置やローカルアカウントが残る",
+        "ZTNA 単体では OT 機器まで届かず、踏み台とセグメント分離が重要"
+      ],
+      "reality_2026_japan": "本社業務は Entra ID と Microsoft Intune へ寄っても、工場保守や装置接続は VPN とローカル運用が残る二層構造になりやすい。"
+    }
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "リモートワーク常態化",
+      "object_type": "concept",
+      "description": "2026年時点でリモートワークが例外ではなく恒常運用になった状態。",
+      "properties": {
+        "japan_context": "high",
+        "since": "2020-2021"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "IPSec/SSL VPN",
+      "object_type": "pattern",
+      "description": "RADIUS と Active Directory を背後に持つ従来型のリモートアクセス方式。",
+      "properties": {
+        "status_2026": "still-dominant"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "SASE",
+      "object_type": "concept",
+      "description": "クラウド接続点で Web、SaaS、内部アプリのアクセス制御を集約する設計群。",
+      "properties": {
+        "status_2026": "growing-but-uneven"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "Microsoft Entra Application Proxy",
+      "object_type": "product",
+      "description": "Entra ID 前段でオンプレミス Web アプリを公開する機能。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Azure Virtual Desktop",
+      "object_type": "product",
+      "description": "クラウド上の仮想デスクトップで業務セッションを分離する方式。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "Windows 365",
+      "object_type": "product",
+      "description": "クラウド PC として業務環境を配布するサービス。",
+      "properties": {
+        "vendor": "Microsoft"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "ZTNA",
+      "object_type": "concept",
+      "description": "アプリ単位で接続を制御し、フルネットワーク接続を不要化する設計。",
+      "properties": {
+        "status_2026": "selective-adoption"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "デバイスポスチャ",
+      "object_type": "concept",
+      "description": "OS 更新、暗号化、EDR 稼働などの端末健全性情報。",
+      "properties": {}
+    },
+    {
+      "id": "node_009",
+      "label": "Split Tunnel VPN",
+      "object_type": "pattern",
+      "description": "SaaS は直接通信し、内部向け通信だけを VPN へ流す方式。",
+      "properties": {}
+    },
+    {
+      "id": "node_010",
+      "label": "フルトンネル VPN",
+      "object_type": "pattern",
+      "description": "すべての通信を企業側へ折り返す方式。",
+      "properties": {}
+    },
+    {
+      "id": "node_011",
+      "label": "委託先リモートアクセス",
+      "object_type": "pattern",
+      "description": "SIer や保守ベンダーが顧客環境へ接続する運用。",
+      "properties": {
+        "risk_level": "high"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "外部ユーザー ポータルアクセス",
+      "object_type": "pattern",
+      "description": "代理店、取引先、社外協力者が外部公開ポータルへアクセスする設計。",
+      "properties": {}
+    },
+    {
+      "id": "node_013",
+      "label": "フィッシング耐性 MFA",
+      "object_type": "pattern",
+      "description": "FIDO2 や証明書などを用いた中間者耐性のある多要素認証。",
+      "properties": {}
+    },
+    {
+      "id": "node_014",
+      "label": "証券業リモートアクセス統制",
+      "object_type": "pattern",
+      "description": "証券会社で求められる厳格な端末管理、個人識別、証跡取得の組み合わせ。",
+      "properties": {}
+    },
+    {
+      "id": "node_015",
+      "label": "Active Directory 依存継続",
+      "object_type": "risk",
+      "description": "アクセス基盤刷新後もサーバー認証と運用手順が Active Directory に残り続ける状態。",
+      "properties": {
+        "impact": "high"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "リモートワーク常態化でも VPN は主要手段として残る。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "リモートワーク常態化は SASE 導入需要も押し上げた。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "SASE の実効性にはデバイスポスチャ連携が必要である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_015",
+      "relationship": "mitigates",
+      "description": "SaaS 認証面では Active Directory 依存を減らせるが、完全には解消しない。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_015",
+      "relationship": "mitigates",
+      "description": "内部 Web アプリの公開を通じて VPN 依存を部分的に減らせる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_011",
+      "relationship": "mitigates",
+      "description": "仮想デスクトップ化は委託先接続の端末統制を強化する。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_011",
+      "relationship": "mitigates",
+      "description": "Windows 365 は委託先や在宅要員向けの隔離された作業環境を提供できる。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_015",
+      "relationship": "mitigates",
+      "description": "ZTNA はネットワーク全体への到達性を減らし、境界依存を下げる。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "Split Tunnel VPN は VPN 運用の現実的な派生形である。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "フルトンネル VPN は高統制業界で残る代表形である。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "委託先接続は証券業で特に強い統制要求を受ける。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_014",
+      "relationship": "requires",
+      "description": "証券業のリモートアクセスではフィッシング耐性 MFA への移行圧力が高い。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "外部ユーザー向けポータルは ZTNA や公開型アクセス制御と相性が良い。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "リモートワークの位置づけ",
+      "summary": "2026年の日本企業ではリモートワークは例外運用ではなく常態運用である。",
+      "details": [
+        "PC 更改とセキュリティ基盤更新が一巡した企業では、Microsoft Intune、Entra ID、SASE を部分導入済みのケースが増えた。",
+        "ただし導入済みであっても全社の ID 管理モデルが変わったとは限らない。"
+      ],
+      "related_nodes": [
+        "node_001"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "VPN 残存の理由",
+      "summary": "オンプレミス サーバー、SMB/CIFS、RDP、業務クライアントが残る限り VPN は消えにくい。",
+      "details": [
+        "ネットワーク全体を張る方式の方が既存運用に手を入れずに済む。",
+        "サーバー管理部門は Kerberos が確実に動くことを優先しやすい。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "SASE 導入効果",
+      "summary": "SASE は SaaS 可視性、Web フィルタ、インターネット出口統合では効果が見えやすい。",
+      "details": [
+        "シャドー IT の検知や Web 制御は従来 VPN より改善しやすい。",
+        "拠点側の SD-WAN と組み合わせるとネットワーク出口設計も変わる。"
+      ],
+      "related_nodes": [
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "SASE の限界",
+      "summary": "SASE を入れても Active Directory の運用課題は自動では解決しない。",
+      "details": [
+        "Windows サーバー認証、サービスアカウント、共有管理者は別途手当てが必要である。",
+        "結果として、ネットワーク刷新の見た目に対して ID 管理は旧来のまま残ることが多い。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Microsoft Entra Application Proxy の位置づけ",
+      "summary": "内部 Web アプリには有効だが、サーバー管理アクセスの万能薬ではない。",
+      "details": [
+        "Entra ID の条件付きアクセスと多要素認証を適用しやすい。",
+        "RDP、SMB/CIFS、厚いクライアントには直接効かない。"
+      ],
+      "related_nodes": [
+        "node_004"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "仮想デスクトップの価値",
+      "summary": "Azure Virtual Desktop と Windows 365 は端末を信頼しない設計に寄せやすい。",
+      "details": [
+        "委託先や在宅業務で端末制御を簡素化できる。",
+        "一方で内部セッションの権限制御を怠ると、旧来運用を別の場所へ移すだけになる。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "ZTNA 単体導入の難しさ",
+      "summary": "ZTNA はアプリ棚卸しと IdP 統合が前提であり、オンプレミス残存企業では適用外業務が多い。",
+      "details": [
+        "レガシーな業務クライアントと Windows 管理共有がボトルネックになる。",
+        "例外が多い企業では最終的に VPN と併存しやすい。"
+      ],
+      "related_nodes": [
+        "node_007",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "デバイスポスチャの重要性",
+      "summary": "ゼロトラストの実効性はユーザー認証だけでなく端末健全性評価に依存する。",
+      "details": [
+        "OS 更新、暗号化、EDR、脱獄有無などを継続評価する必要がある。",
+        "Microsoft Intune などの端末管理が未整備だとポスチャ制御は限定的になる。"
+      ],
+      "related_nodes": [
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "Split Tunnel VPN の現実性",
+      "summary": "Split Tunnel VPN は UX とセキュリティの折衷案として 2026 年も有力である。",
+      "details": [
+        "SaaS を直接通信させることで帯域負荷を減らせる。",
+        "ただし VPN 接続前提の業務が残ると、ユーザー教育と障害切り分けが難しい。"
+      ],
+      "related_nodes": [
+        "node_009",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "フルトンネル VPN の存続理由",
+      "summary": "金融・証券では説明責任の明確さからフルトンネル VPN が残る。",
+      "details": [
+        "全通信を企業統制下に置く方が監査と規制対応を説明しやすい。",
+        "その代償として遅延、切断、M365 劣化が残る。"
+      ],
+      "related_nodes": [
+        "node_010",
+        "node_014"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "委託先アクセスの本質",
+      "summary": "委託先リモートアクセスの課題はネットワークではなく個人識別、時間制限、証跡にある。",
+      "details": [
+        "共有アカウントが残ると監査証跡が破綻する。",
+        "PAM、踏み台、JIT、セッション録画を組み合わせる必要がある。"
+      ],
+      "related_nodes": [
+        "node_011"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "外部ユーザー ポータルの管理課題",
+      "summary": "B2B や外部ポータルでは、付与よりも削除と期限管理が難所になる。",
+      "details": [
+        "スポンサー部門が責任を持たないと放置アカウントが増える。",
+        "契約や取引終了とアカウント失効を連動させる設計が必要である。"
+      ],
+      "related_nodes": [
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "フィッシング耐性 MFA への移行",
+      "summary": "証券業を中心に、TOTP だけでは不十分という認識が強まっている。",
+      "details": [
+        "フィッシング耐性を持つ FIDO2 や証明書ベース認証への移行が焦点になっている。",
+        "社内管理者アクセスでも同じ方向へ進めるべきである。"
+      ],
+      "related_nodes": [
+        "node_013",
+        "node_014"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "証券業の統制強度",
+      "summary": "証券会社ではリモートアクセスの許可範囲、端末要件、証跡要件が厳しい。",
+      "details": [
+        "会社支給端末のみ許可する傾向が強い。",
+        "売買系本番への直接リモート操作は限定的で、参照系や申請系に分離される。"
+      ],
+      "related_nodes": [
+        "node_014"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "ID 管理の二重化",
+      "summary": "多くの企業では Entra ID と Active Directory が用途別に併存し、運用の二重化が続く。",
+      "details": [
+        "SaaS とモバイルは Entra ID 寄り、サーバーと社内システムは Active Directory 寄りになる。",
+        "結果として運用手順、障害対応、権限モデルが二重化する。"
+      ],
+      "related_nodes": [
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "ゼロトラスト前提条件",
+      "summary": "ゼロトラストは製品導入名ではなく、ID、端末、アプリ、監視の整備状態で成否が決まる。",
+      "details": [
+        "Entra ID Premium P2、Microsoft Intune、アプリ改修、PAM、SIEM の整備が前提である。",
+        "どれか一つ欠けると例外運用が増え、設計の一貫性が崩れる。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_007",
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "モバイルの棲み分け",
+      "summary": "モバイル端末はクラウド業務に限定し、サーバー管理は PC 側へ分離する方が統制しやすい。",
+      "details": [
+        "iPhone/iPad は MDM と条件付きアクセスの相性が良い。",
+        "その代わり、オンプレミス サーバー管理を無理に載せない方が安全である。"
+      ],
+      "related_nodes": [
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "BYOD の妥協点",
+      "summary": "BYOD ではアプリ保護で一定の対策はできるが、端末自体の信頼性は企業が担保できない。",
+      "details": [
+        "MAM は現実解だが、ゼロトラストの理想形ではない。",
+        "利用範囲を SaaS とモバイルアプリへ限定する設計が望ましい。"
+      ],
+      "related_nodes": [
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "製造業の二層構造",
+      "summary": "本社 IT はクラウド化できても、工場や OT は VPN とローカル認証が残りやすい。",
+      "details": [
+        "保守ベンダー接続では時間制限と踏み台が重要である。",
+        "ZTNA だけで OT 機器管理まで置き換えるのは現実的でない。"
+      ],
+      "related_nodes": [
+        "node_011",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "監査に強い設計",
+      "summary": "規制業界では接続方式そのものより、誰が、いつ、どの権限で、何をしたかの説明可能性が重要である。",
+      "details": [
+        "個人単位 ID、JIT、セッション録画、ログ保全が中心論点になる。",
+        "ネットワーク境界の厳格さだけでは監査要求を満たしにくい。"
+      ],
+      "related_nodes": [
+        "node_011",
+        "node_014"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "SASE と VPN の併存",
+      "summary": "2026 年時点の多くの日本企業では、SASE は VPN の完全置換ではなく役割分担型の追加レイヤーである。",
+      "details": [
+        "SaaS と Web は SASE、サーバー管理と古い業務は VPN という分業になりやすい。",
+        "そのため、移行計画では『何が残るか』を先に定義する必要がある。"
+      ],
+      "related_nodes": [
+        "node_002",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "本当に変えるべき対象",
+      "summary": "ID 管理の近代化で本当に変えるべきは、認証の前段ネットワークではなく、アカウント、端末、特権、ライフサイクルである。",
+      "details": [
+        "VPN や SASE は到達経路を変えるが、権限の払い出しと回収までは自動では変えない。",
+        "人事連携と権限自動化がない企業では、リモートアクセス刷新だけでは統制改善が限定的である。"
+      ],
+      "related_nodes": [
+        "node_003",
+        "node_007",
+        "node_015"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2076 @@
+{
+  "metadata": {
+    "id": "topic_pam_tool_comparison",
+    "title": "PAM製品比較",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "特権アクセス管理",
+      "CyberArk",
+      "BeyondTrust",
+      "Delinea",
+      "HashiCorp Vault",
+      "Microsoft",
+      "One Identity",
+      "senhasegura",
+      "WALLIX",
+      "ARCON",
+      "金融",
+      "製造",
+      "CISO",
+      "比較"
+    ],
+    "related_files": [
+      "03_identity_architecture/identity_landscape.json",
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/ransomware_defense.json",
+      "04_server_auth/os_auth_methods.json",
+      "07_migration_patterns/ad_to_entra_migration.json"
+    ],
+    "scope_note": "人の特権ID管理とマシンシークレット管理を同一比較表に載せているが、HashiCorp VaultとAzure Key Vaultは機密情報管理寄り、CyberArk・BeyondTrust・Delinea・One Identityは人の特権操作統制寄りである。比較時は用途の重み付けを必ず行う。"
+  },
+  "comparison_scope": {
+    "target_readers": [
+      "証券会社のCIO",
+      "金融機関のCISO",
+      "製造業の情報システム部門",
+      "大手SIerのアーキテクト"
+    ],
+    "evaluation_principles": [
+      "常時特権の削減",
+      "監査証跡の完全性",
+      "オンプレミス残存への対応",
+      "クラウド移行後の運用モデル適合性",
+      "日本市場での導入実務性"
+    ],
+    "rating_scale": {
+      "strong": "要件を製品の標準機能で広く満たす。大規模導入事例が想定しやすい。",
+      "medium": "主要要件は満たすが、追加製品、個別設計、制約理解が必要。",
+      "limited": "一部要件のみ対応。周辺製品や実装工夫が前提。",
+      "none": "主要な守備範囲外。別製品で補完すべき。"
+    },
+    "important_cautions": [
+      "金融向け適合性は認証取得の有無ではなく、FISCやPCI DSSの統制要求に対して証跡を作りやすいかで評価する。",
+      "日本国内の金融実績は公開事例の多寡だけでなく、監査法人・SIer・保守体制の成熟度も含めて評価する。",
+      "Microsoft組み込み機能はコスト優位だが、統合されたセッション録画、踏み台、ベンダーリモートアクセス統制は弱い。",
+      "HashiCorp Vaultはマシンシークレットに極めて強いが、人の特権セッション監査は守備範囲外である。"
+    ]
+  },
+  "products": [
+    {
+      "id": "pam_cyberark",
+      "label": "CyberArk",
+      "vendor": "CyberArk",
+      "market_position": "leader",
+      "primary_fit": [
+        "大規模金融",
+        "証券",
+        "多拠点製造",
+        "厳格監査"
+      ],
+      "deployment_models": [
+        "self-hosted",
+        "SaaS"
+      ],
+      "subproducts": [
+        {
+          "name": "CyberArk PAM Self-Hosted",
+          "role": "オンプレミスまたは顧客管理下での中核PAM"
+        },
+        {
+          "name": "CyberArk Privilege Cloud",
+          "role": "SaaS型PAM"
+        },
+        {
+          "name": "CyberArk Endpoint Privilege Manager",
+          "role": "エンドポイント最小権限とアプリケーション制御"
+        },
+        {
+          "name": "CyberArk Secrets Manager",
+          "role": "DevOps・アプリケーション向けシークレット管理"
+        }
+      ],
+      "summary": "人の特権アクセス統制、特権セッション監査、エンドポイント最小権限、マシンシークレットまでを広く持つ。大規模・高統制案件で最も無難だが、価格と実装難易度は高い。",
+      "strength_tags": [
+        "金融導入実績",
+        "セッション統制",
+        "JIT/ZSP",
+        "広範なコネクタ"
+      ],
+      "watchout_tags": [
+        "高価格",
+        "導入設計が重い",
+        "運用要員が必要"
+      ],
+      "japan_market": {
+        "japanese_ui": "partial",
+        "support_model": "直販とパートナーの両方",
+        "market_presence": "very_high",
+        "financial_references": "very_high",
+        "major_sier_handling": "high"
+      },
+      "indicative_entry_cost_band": "very_high",
+      "sources": [
+        "https://www.cyberark.com/products/privileged-access-manager",
+        "https://www.cyberark.com/products/privileged-access/",
+        "https://www.cyberark.com/resources/product-announcements/cyberark-privilege-cloud-version-14-4-release"
+      ]
+    },
+    {
+      "id": "pam_beyondtrust",
+      "label": "BeyondTrust",
+      "vendor": "BeyondTrust",
+      "market_position": "leader",
+      "primary_fit": [
+        "委託先接続統制",
+        "ベンダーリモートアクセス",
+        "ハイブリッドインフラ"
+      ],
+      "deployment_models": [
+        "self-hosted",
+        "cloud-hosted"
+      ],
+      "subproducts": [
+        {
+          "name": "BeyondTrust Password Safe",
+          "role": "特権パスワード・セッション・シークレット統合"
+        },
+        {
+          "name": "BeyondTrust Privileged Remote Access",
+          "role": "委託先・外部接続の統制"
+        },
+        {
+          "name": "BeyondTrust PowerBroker for Unix/Linux",
+          "role": "Unix/Linux権限制御と監査"
+        }
+      ],
+      "summary": "Password SafeとPrivileged Remote Accessの組み合わせが強く、外部委託先や保守ベンダーの接続統制で評価しやすい。Unix/Linux統制も比較的強い。",
+      "strength_tags": [
+        "Password Safe",
+        "外部委託先統制",
+        "セッション管理",
+        "Unix/Linux"
+      ],
+      "watchout_tags": [
+        "製品構成理解が必要",
+        "DevOpsはCyberArk/Vaultほど深くない"
+      ],
+      "japan_market": {
+        "japanese_ui": "partial",
+        "support_model": "パートナー主導",
+        "market_presence": "high",
+        "financial_references": "medium_high",
+        "major_sier_handling": "medium"
+      },
+      "indicative_entry_cost_band": "high",
+      "sources": [
+        "https://www.beyondtrust.com/products/password-safe",
+        "https://www.beyondtrust.com/password-safe"
+      ]
+    },
+    {
+      "id": "pam_delinea",
+      "label": "Delinea",
+      "vendor": "Delinea",
+      "market_position": "challenger",
+      "primary_fit": [
+        "中堅から大企業",
+        "短期導入",
+        "ハイブリッドAD",
+        "運用負荷抑制"
+      ],
+      "deployment_models": [
+        "self-hosted",
+        "SaaS"
+      ],
+      "subproducts": [
+        {
+          "name": "Delinea Secret Server",
+          "role": "パスワード保管、ローテーション、セッション監視"
+        },
+        {
+          "name": "Delinea Privileged Access Service",
+          "role": "SaaS型PAMとクラウド権限制御"
+        },
+        {
+          "name": "Delinea Server Suite",
+          "role": "Linux/Unixの権限昇格とAD統合"
+        }
+      ],
+      "summary": "旧Thycotic系のSecret Serverの扱いやすさと、旧Centrify系のLinux/Unix・クラウド統制を統合した製品群。CyberArkより軽く導入したい組織で候補に残りやすい。",
+      "strength_tags": [
+        "導入しやすさ",
+        "Secret Server",
+        "Linux/Unix",
+        "SaaS選択肢"
+      ],
+      "watchout_tags": [
+        "製品再編の理解が必要",
+        "日本市場での存在感はCyberArk/Microsoftより弱い"
+      ],
+      "japan_market": {
+        "japanese_ui": "partial",
+        "support_model": "パートナー中心",
+        "market_presence": "medium",
+        "financial_references": "medium",
+        "major_sier_handling": "medium"
+      },
+      "indicative_entry_cost_band": "medium_high",
+      "sources": [
+        "https://delinea.com/products/secret-server/features/privileged-session-management",
+        "https://delinea.com/products/secret-server/features/discovery",
+        "https://delinea.com/products/cloud-suite",
+        "https://delinea.com/products/privilege-control-for-servers"
+      ]
+    },
+    {
+      "id": "pam_vault",
+      "label": "HashiCorp Vault",
+      "vendor": "HashiCorp",
+      "market_position": "specialist",
+      "primary_fit": [
+        "DevOps",
+        "Kubernetes",
+        "マイクロサービス",
+        "機械ID"
+      ],
+      "deployment_models": [
+        "self-hosted",
+        "SaaS"
+      ],
+      "subproducts": [
+        {
+          "name": "Vault Community Edition",
+          "role": "OSS版のシークレット基盤"
+        },
+        {
+          "name": "Vault Enterprise",
+          "role": "大規模運用、マルチテナント、DR/ガバナンス拡張"
+        },
+        {
+          "name": "HCP Vault",
+          "role": "HashiCorp管理のクラウド提供"
+        }
+      ],
+      "summary": "人の特権セッション管理ではなく、短命資格情報、Kubernetes、データベース動的シークレット、アプリ間認証を主戦場とする。機械IDの比率が高い組織では強い。",
+      "strength_tags": [
+        "動的シークレット",
+        "Kubernetes",
+        "Terraform連携",
+        "API中心"
+      ],
+      "watchout_tags": [
+        "人のPAMを代替できない",
+        "セッション録画なし",
+        "Windows/ADの運用者統制は別製品が必要"
+      ],
+      "japan_market": {
+        "japanese_ui": "limited",
+        "support_model": "直販とパートナー",
+        "market_presence": "medium",
+        "financial_references": "medium",
+        "major_sier_handling": "medium"
+      },
+      "indicative_entry_cost_band": "low_to_high",
+      "sources": [
+        "https://developer.hashicorp.com/vault/docs/secrets/kubernetes",
+        "https://docs.hashicorp.com/vault/docs/deploy/kubernetes",
+        "https://www.hashicorp.com/en/lp/vault-hvd",
+        "https://support.hashicorp.com/hc/en-us/articles/4404774536083-Connecting-privately-to-HCP-Vault-Dedicated-and-Consul-Dedicated-clusters"
+      ]
+    },
+    {
+      "id": "pam_microsoft",
+      "label": "Microsoft",
+      "vendor": "Microsoft",
+      "market_position": "bundled_platform",
+      "primary_fit": [
+        "Microsoft集中環境",
+        "段階的PAM",
+        "コスト抑制",
+        "クラウドロール管理"
+      ],
+      "deployment_models": [
+        "built_in",
+        "cloud_service"
+      ],
+      "subproducts": [
+        {
+          "name": "Windows LAPS",
+          "role": "Windowsローカル管理者パスワードの一意化・自動更新"
+        },
+        {
+          "name": "Entra ID Privileged Identity Management",
+          "role": "EntraロールとAzureリソースのJIT"
+        },
+        {
+          "name": "JEA",
+          "role": "PowerShellベースの最小権限委任"
+        },
+        {
+          "name": "Azure Key Vault",
+          "role": "クラウドシークレットと鍵管理"
+        }
+      ],
+      "summary": "Windows LAPS、Entra ID Privileged Identity Management、JEA、Azure Key Vaultを組み合わせると一定のPAM代替は可能。ただし統合セッション録画、外部委託先統制、マルチベンダーBastionは不足しやすい。",
+      "strength_tags": [
+        "Microsoft親和性",
+        "低追加コスト",
+        "EntraロールJIT",
+        "Azureネイティブ"
+      ],
+      "watchout_tags": [
+        "フルPAMではない",
+        "人のセッション監査が弱い",
+        "オンプレDBやネットワーク機器統制に限界"
+      ],
+      "japan_market": {
+        "japanese_ui": "strong",
+        "support_model": "直販と広いパートナー網",
+        "market_presence": "very_high",
+        "financial_references": "very_high",
+        "major_sier_handling": "very_high"
+      },
+      "indicative_entry_cost_band": "low_to_medium",
+      "sources": [
+        "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview",
+        "https://learn.microsoft.com/en-us/azure/active-directory/active-directory-privileged-identity-management-configure",
+        "https://learn.microsoft.com/en-us/azure/key-vault/general/overview",
+        "https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview",
+        "https://learn.microsoft.com/en-us/azure/developer/github/github-actions-key-vault"
+      ]
+    },
+    {
+      "id": "pam_oneidentity",
+      "label": "One Identity Safeguard",
+      "vendor": "One Identity",
+      "market_position": "challenger",
+      "primary_fit": [
+        "監査重視",
+        "ベンダー接続監視",
+        "既存One Identity顧客"
+      ],
+      "deployment_models": [
+        "appliance",
+        "SaaS"
+      ],
+      "subproducts": [
+        {
+          "name": "One Identity Safeguard",
+          "role": "特権パスワードとセッションの統合PAM"
+        }
+      ],
+      "summary": "Safeguard for Privileged PasswordsとSafeguard for Privileged Sessionsを軸にした監査志向のPAM。SaaS版もあり、既存のOne Identity製品群と合わせやすい。",
+      "strength_tags": [
+        "セッション記録",
+        "監査証跡",
+        "SaaS選択肢"
+      ],
+      "watchout_tags": [
+        "日本での案件密度はCyberArkより低い",
+        "DevOps機密管理は主戦場ではない"
+      ],
+      "japan_market": {
+        "japanese_ui": "partial",
+        "support_model": "パートナー中心",
+        "market_presence": "medium",
+        "financial_references": "medium",
+        "major_sier_handling": "medium"
+      },
+      "indicative_entry_cost_band": "medium_high",
+      "sources": [
+        "https://www.oneidentity.com/one-identity-safeguard/",
+        "https://www.oneidentity.com/products/privileged-session-manager/",
+        "https://www.oneidentity.com/safeguard-technology-integrations/"
+      ]
+    },
+    {
+      "id": "pam_senhasegura",
+      "label": "senhasegura",
+      "vendor": "senhasegura",
+      "market_position": "regional_challenger",
+      "primary_fit": [
+        "コストを抑えたPAM導入",
+        "Bastion中心",
+        "APAC展開案件"
+      ],
+      "deployment_models": [
+        "self-hosted",
+        "private_cloud"
+      ],
+      "subproducts": [
+        {
+          "name": "senhasegura PAM",
+          "role": "パスワード金庫、セッション管理、特権統制"
+        }
+      ],
+      "summary": "中南米での知名度が高いPAMベンダー。PAM Coreを中心に標準的なVaulting、セッション録画、Bastion機能を持つ。日本での導入体制は個別確認が必要。",
+      "strength_tags": [
+        "標準PAM機能",
+        "セッション動画",
+        "価格競争力"
+      ],
+      "watchout_tags": [
+        "日本市場の情報が少ない",
+        "大手金融の公開実績確認が必要"
+      ],
+      "japan_market": {
+        "japanese_ui": "limited",
+        "support_model": "APACパートナー確認が必要",
+        "market_presence": "low",
+        "financial_references": "limited",
+        "major_sier_handling": "limited"
+      },
+      "indicative_entry_cost_band": "medium",
+      "sources": [
+        "https://docs.senhasegura.io/v3-33/docs/pam-session-view-and-download-the-session-video-2",
+        "https://senhasegura.io/"
+      ]
+    },
+    {
+      "id": "pam_wallix",
+      "label": "WALLIX Bastion",
+      "vendor": "WALLIX",
+      "market_position": "regional_challenger",
+      "primary_fit": [
+        "欧州系PAM",
+        "Bastion中心",
+        "委託先接続"
+      ],
+      "deployment_models": [
+        "self-hosted",
+        "SaaS"
+      ],
+      "subproducts": [
+        {
+          "name": "WALLIX Bastion",
+          "role": "パスワード管理とセッション管理を統合したPAM"
+        }
+      ],
+      "summary": "WALLIX BastionはBastion型PAMとしてわかりやすく、パスワード管理とセッション監査を統合する。欧州案件や委託先アクセス統制で比較に残ることがある。",
+      "strength_tags": [
+        "Bastion",
+        "セッション管理",
+        "A2A Password Management"
+      ],
+      "watchout_tags": [
+        "日本市場の案件密度が低い",
+        "広範なクラウド権限管理は限定的"
+      ],
+      "japan_market": {
+        "japanese_ui": "limited",
+        "support_model": "代理店中心",
+        "market_presence": "low",
+        "financial_references": "limited",
+        "major_sier_handling": "limited"
+      },
+      "indicative_entry_cost_band": "medium",
+      "sources": [
+        "https://www.wallix.com/privileged-access-management",
+        "https://pam.wallix.one/documentation/deployment/release-notes/1.6.0.html"
+      ]
+    },
+    {
+      "id": "pam_arcon",
+      "label": "ARCON Privileged Access Management",
+      "vendor": "ARCON",
+      "market_position": "regional_challenger",
+      "primary_fit": [
+        "APAC案件",
+        "コスト感重視",
+        "標準PAM導入"
+      ],
+      "deployment_models": [
+        "self-hosted",
+        "private_cloud"
+      ],
+      "subproducts": [
+        {
+          "name": "ARCON PAM",
+          "role": "パスワードVault、JIT、セッション監査"
+        }
+      ],
+      "summary": "ARCONはAPACで一定の実績を持つPAM。JIT、Vault、セッション記録など標準機能は揃うが、日本の大規模金融での案件蓄積は個別確認が必要。",
+      "strength_tags": [
+        "標準PAM網羅性",
+        "JIT",
+        "価格競争力"
+      ],
+      "watchout_tags": [
+        "日本での保守体制確認が必要",
+        "ブランド認知が限定的"
+      ],
+      "japan_market": {
+        "japanese_ui": "limited",
+        "support_model": "パートナー確認が必要",
+        "market_presence": "low",
+        "financial_references": "limited",
+        "major_sier_handling": "limited"
+      },
+      "indicative_entry_cost_band": "medium",
+      "sources": [
+        "https://arconnet.com/wp-content/uploads/2022/11/ARCON_PAM-Features.pdf",
+        "https://arconnet.com/"
+      ]
+    }
+  ],
+  "comparison_matrix": {
+    "axis_definitions": [
+      {
+        "id": "vaulting_rotation",
+        "label": "パスワード管理と自動ローテーション",
+        "category": "core_function"
+      },
+      {
+        "id": "session_management",
+        "label": "セッション管理・録画",
+        "category": "core_function"
+      },
+      {
+        "id": "discovery",
+        "label": "特権アカウント発見",
+        "category": "core_function"
+      },
+      {
+        "id": "jit_access",
+        "label": "Just-in-Timeアクセス",
+        "category": "core_function"
+      },
+      {
+        "id": "bastion",
+        "label": "踏み台機能",
+        "category": "core_function"
+      },
+      {
+        "id": "windows_server",
+        "label": "Windows Server対応",
+        "category": "platform"
+      },
+      {
+        "id": "active_directory",
+        "label": "Active Directory対応",
+        "category": "platform"
+      },
+      {
+        "id": "linux_unix",
+        "label": "Linux/Unix対応",
+        "category": "platform"
+      },
+      {
+        "id": "databases",
+        "label": "データベース対応",
+        "category": "platform"
+      },
+      {
+        "id": "cloud_iam",
+        "label": "クラウドIAM対応",
+        "category": "platform"
+      },
+      {
+        "id": "network_devices",
+        "label": "ネットワーク機器対応",
+        "category": "platform"
+      },
+      {
+        "id": "saas_admin",
+        "label": "SaaS管理者アカウント対応",
+        "category": "platform"
+      },
+      {
+        "id": "cicd_secrets",
+        "label": "CI/CDシークレット管理",
+        "category": "devops"
+      },
+      {
+        "id": "kubernetes",
+        "label": "Kubernetes統合",
+        "category": "devops"
+      },
+      {
+        "id": "iac",
+        "label": "Terraform/Ansible等IaC連携",
+        "category": "devops"
+      },
+      {
+        "id": "microservices",
+        "label": "マイクロサービスのシークレット管理",
+        "category": "devops"
+      },
+      {
+        "id": "deployment_choice",
+        "label": "SaaS/セルフホスト選択肢",
+        "category": "operating_model"
+      },
+      {
+        "id": "api_extensibility",
+        "label": "API拡張性",
+        "category": "operating_model"
+      },
+      {
+        "id": "japanese_ui",
+        "label": "日本語UI",
+        "category": "japan_market"
+      },
+      {
+        "id": "japan_support",
+        "label": "日本サポート体制",
+        "category": "japan_market"
+      },
+      {
+        "id": "financial_presence_jp",
+        "label": "国内金融・証券実績",
+        "category": "japan_market"
+      },
+      {
+        "id": "entry_cost",
+        "label": "エントリーコスト適合性",
+        "category": "japan_market"
+      },
+      {
+        "id": "fisc_alignment",
+        "label": "FISC統制に必要な証跡の作りやすさ",
+        "category": "financial_governance"
+      },
+      {
+        "id": "pci_alignment",
+        "label": "PCI DSS Req.7/8向け統制適合性",
+        "category": "financial_governance"
+      },
+      {
+        "id": "sod_integration",
+        "label": "SOD連携のしやすさ",
+        "category": "financial_governance"
+      },
+      {
+        "id": "siem_integration",
+        "label": "監査ログのSIEM連携",
+        "category": "financial_governance"
+      }
+    ],
+    "product_scores": [
+      {
+        "product_id": "pam_cyberark",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "strong",
+            "note": "Self-HostedとPrivilege Cloudの中心機能。ローテーションの適用範囲が広い。"
+          },
+          "session_management": {
+            "score": "strong",
+            "note": "PAMの主戦場。高リスク操作の証跡を作りやすい。"
+          },
+          "discovery": {
+            "score": "strong",
+            "note": "特権アカウント発見の成熟度が高い。"
+          },
+          "jit_access": {
+            "score": "strong",
+            "note": "Zero Standing Privileges志向で整理しやすい。"
+          },
+          "bastion": {
+            "score": "strong",
+            "note": "プロキシ型アクセス統制を構成しやすい。"
+          },
+          "windows_server": {
+            "score": "strong",
+            "note": "Windowsローカル管理者とドメイン運用の双方に強い。"
+          },
+          "active_directory": {
+            "score": "strong",
+            "note": "AD中心の運用で評価が高い。"
+          },
+          "linux_unix": {
+            "score": "strong",
+            "note": "Linux対象の特権セッションと資格情報統制も広い。"
+          },
+          "databases": {
+            "score": "strong",
+            "note": "Database targetsを含めて扱いやすい。"
+          },
+          "cloud_iam": {
+            "score": "strong",
+            "note": "ハイブリッド・マルチクラウドを前提に設計されている。"
+          },
+          "network_devices": {
+            "score": "strong",
+            "note": "ネットワーク機器の管理アカウント統制に向く。"
+          },
+          "saas_admin": {
+            "score": "medium",
+            "note": "SaaS管理者資格情報も対象化できるが、製品横断設計が必要。"
+          },
+          "cicd_secrets": {
+            "score": "strong",
+            "note": "Secrets ManagerによりDevOps寄りにも広げられる。"
+          },
+          "kubernetes": {
+            "score": "strong",
+            "note": "Kubernetes向け連携手段がある。"
+          },
+          "iac": {
+            "score": "strong",
+            "note": "API中心で自動化接続がしやすい。"
+          },
+          "microservices": {
+            "score": "strong",
+            "note": "マシンID管理まで広げられる。"
+          },
+          "deployment_choice": {
+            "score": "strong",
+            "note": "Self-HostedとSaaSを選べる。"
+          },
+          "api_extensibility": {
+            "score": "strong",
+            "note": "大規模連携前提の設計。"
+          },
+          "japanese_ui": {
+            "score": "medium",
+            "note": "日本語情報はあるが、全操作画面の日本語化前提では見ない方がよい。"
+          },
+          "japan_support": {
+            "score": "strong",
+            "note": "日本市場でのサポート経路が厚い。"
+          },
+          "financial_presence_jp": {
+            "score": "strong",
+            "note": "国内金融で比較的説明しやすい。"
+          },
+          "entry_cost": {
+            "score": "limited",
+            "note": "初期投資は重い。"
+          },
+          "fisc_alignment": {
+            "score": "strong",
+            "note": "承認、録画、証跡、棚卸しの論点をまとめやすい。"
+          },
+          "pci_alignment": {
+            "score": "strong",
+            "note": "最小権限、MFA連携、利用記録を設計しやすい。"
+          },
+          "sod_integration": {
+            "score": "strong",
+            "note": "ワークフローや外部IGAとの連携余地が大きい。"
+          },
+          "siem_integration": {
+            "score": "strong",
+            "note": "監査ログの外部転送設計が前提化されている。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_beyondtrust",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "strong",
+            "note": "Password Safeの中核機能。"
+          },
+          "session_management": {
+            "score": "strong",
+            "note": "PRA連携まで含めると対外接続監査が強い。"
+          },
+          "discovery": {
+            "score": "strong",
+            "note": "自動発見とオンボーディングが強み。"
+          },
+          "jit_access": {
+            "score": "strong",
+            "note": "JIT access controlを前面に出している。"
+          },
+          "bastion": {
+            "score": "strong",
+            "note": "Privileged Remote Accessと組み合わせやすい。"
+          },
+          "windows_server": {
+            "score": "strong",
+            "note": "Windows管理者統制で問題なく候補になる。"
+          },
+          "active_directory": {
+            "score": "strong",
+            "note": "AD連携は成熟している。"
+          },
+          "linux_unix": {
+            "score": "strong",
+            "note": "PowerBroker for Unix/Linuxが効く。"
+          },
+          "databases": {
+            "score": "medium",
+            "note": "標準対応範囲は広いが、CyberArkほどの存在感はない。"
+          },
+          "cloud_iam": {
+            "score": "medium",
+            "note": "ハイブリッド対応は可能だが、クラウド権限最適化の印象は相対的に弱い。"
+          },
+          "network_devices": {
+            "score": "strong",
+            "note": "委託先アクセスやネットワーク管理に向く。"
+          },
+          "saas_admin": {
+            "score": "medium",
+            "note": "SaaS側資格情報の統制は可能だが専用訴求は強くない。"
+          },
+          "cicd_secrets": {
+            "score": "medium",
+            "note": "Secretsまで扱えるがDevOps特化製品ほど深くない。"
+          },
+          "kubernetes": {
+            "score": "limited",
+            "note": "Kubernetes中心案件ではVaultやCyberArkが先に残りやすい。"
+          },
+          "iac": {
+            "score": "medium",
+            "note": "Extensible APIはある。"
+          },
+          "microservices": {
+            "score": "medium",
+            "note": "機密管理は可能だがアプリ基盤色は相対的に弱い。"
+          },
+          "deployment_choice": {
+            "score": "medium",
+            "note": "クラウドやアプライアンス型で柔軟性はある。"
+          },
+          "api_extensibility": {
+            "score": "strong",
+            "note": "IAM、SIEM、ITSM連携を前提にしやすい。"
+          },
+          "japanese_ui": {
+            "score": "medium",
+            "note": "案件ごとの評価が必要。"
+          },
+          "japan_support": {
+            "score": "medium",
+            "note": "パートナー主導の確認が必要。"
+          },
+          "financial_presence_jp": {
+            "score": "medium",
+            "note": "国内金融で十分候補になるがCyberArkほどの定番感はない。"
+          },
+          "entry_cost": {
+            "score": "limited",
+            "note": "統合導入では高額化しやすい。"
+          },
+          "fisc_alignment": {
+            "score": "strong",
+            "note": "外部委託先接続監査まで含めて説明しやすい。"
+          },
+          "pci_alignment": {
+            "score": "strong",
+            "note": "アクセス制御と監査の組み立てがしやすい。"
+          },
+          "sod_integration": {
+            "score": "medium",
+            "note": "外部ワークフローと組み合わせる前提。"
+          },
+          "siem_integration": {
+            "score": "strong",
+            "note": "SIEM連携の親和性が高い。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_delinea",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "strong",
+            "note": "Secret Serverの中心価値。"
+          },
+          "session_management": {
+            "score": "strong",
+            "note": "Secret ServerのSession Monitoringで十分戦える。"
+          },
+          "discovery": {
+            "score": "strong",
+            "note": "Secret ServerのDiscoveryが明確。"
+          },
+          "jit_access": {
+            "score": "medium",
+            "note": "PASやServer PAMの設計で実現しやすい。"
+          },
+          "bastion": {
+            "score": "medium",
+            "note": "Secret Serverのプロキシ機能はあるがBastion専業の印象ではない。"
+          },
+          "windows_server": {
+            "score": "strong",
+            "note": "Windowsも十分対象。"
+          },
+          "active_directory": {
+            "score": "strong",
+            "note": "旧Centrify系資産が効く。"
+          },
+          "linux_unix": {
+            "score": "strong",
+            "note": "Server Suite/Privilege Control for Serversが強み。"
+          },
+          "databases": {
+            "score": "medium",
+            "note": "標準的なDB統制は可能。"
+          },
+          "cloud_iam": {
+            "score": "medium",
+            "note": "Cloud Suite/PASでクラウド寄りに展開可能。"
+          },
+          "network_devices": {
+            "score": "medium",
+            "note": "一般的なPAM対象として扱える。"
+          },
+          "saas_admin": {
+            "score": "medium",
+            "note": "SaaS資格情報の統制も可能だが訴求の中心ではない。"
+          },
+          "cicd_secrets": {
+            "score": "medium",
+            "note": "DevOpsシークレットまで広げられるがVaultほどではない。"
+          },
+          "kubernetes": {
+            "score": "medium",
+            "note": "クラウドネイティブ適合は一定水準。"
+          },
+          "iac": {
+            "score": "medium",
+            "note": "API連携はできる。"
+          },
+          "microservices": {
+            "score": "medium",
+            "note": "アプリ側シークレット管理は補完設計が必要。"
+          },
+          "deployment_choice": {
+            "score": "strong",
+            "note": "オンプレとSaaSの両立がしやすい。"
+          },
+          "api_extensibility": {
+            "score": "medium",
+            "note": "一般的な連携は可能。"
+          },
+          "japanese_ui": {
+            "score": "medium",
+            "note": "案件単位で確認したい。"
+          },
+          "japan_support": {
+            "score": "medium",
+            "note": "パートナー依存度が高い。"
+          },
+          "financial_presence_jp": {
+            "score": "medium",
+            "note": "候補にはなるがトップ2より説明力は弱い。"
+          },
+          "entry_cost": {
+            "score": "medium",
+            "note": "CyberArkよりは導入障壁を下げやすい。"
+          },
+          "fisc_alignment": {
+            "score": "medium",
+            "note": "証跡設計は十分可能。"
+          },
+          "pci_alignment": {
+            "score": "medium",
+            "note": "Req.7/8向けの統制は組める。"
+          },
+          "sod_integration": {
+            "score": "medium",
+            "note": "外部IGA連携前提で設計する。"
+          },
+          "siem_integration": {
+            "score": "medium",
+            "note": "標準的なログ連携は可能。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_vault",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "strong",
+            "note": "動的シークレットと短命資格情報が強い。"
+          },
+          "session_management": {
+            "score": "none",
+            "note": "人のRDP/SSHセッション録画の守備範囲ではない。"
+          },
+          "discovery": {
+            "score": "limited",
+            "note": "アカウント棚卸し製品ではない。"
+          },
+          "jit_access": {
+            "score": "limited",
+            "note": "人のJITより機械向けの短命証明書・トークンが主。"
+          },
+          "bastion": {
+            "score": "none",
+            "note": "踏み台機能はない。"
+          },
+          "windows_server": {
+            "score": "limited",
+            "note": "Windows運用者統制の中核にはならない。"
+          },
+          "active_directory": {
+            "score": "limited",
+            "note": "AD運用監査を代替しない。"
+          },
+          "linux_unix": {
+            "score": "limited",
+            "note": "Linux資格情報を保護できるがsudo監査は別。"
+          },
+          "databases": {
+            "score": "strong",
+            "note": "動的DB認証情報に強い。"
+          },
+          "cloud_iam": {
+            "score": "strong",
+            "note": "クラウド認証情報の短命化とブローカー化に向く。"
+          },
+          "network_devices": {
+            "score": "limited",
+            "note": "ネットワーク機器PAMとしては弱い。"
+          },
+          "saas_admin": {
+            "score": "limited",
+            "note": "SaaS管理者統制の主製品ではない。"
+          },
+          "cicd_secrets": {
+            "score": "strong",
+            "note": "CI/CD用途の主戦場。"
+          },
+          "kubernetes": {
+            "score": "strong",
+            "note": "Kubernetes auth、Agent Injector、CSI連携で強い。"
+          },
+          "iac": {
+            "score": "strong",
+            "note": "Terraformとの親和性が高い。"
+          },
+          "microservices": {
+            "score": "strong",
+            "note": "マイクロサービス向けで最有力候補。"
+          },
+          "deployment_choice": {
+            "score": "strong",
+            "note": "Community、Enterprise、HCPがある。"
+          },
+          "api_extensibility": {
+            "score": "strong",
+            "note": "APIファースト。"
+          },
+          "japanese_ui": {
+            "score": "limited",
+            "note": "日本語UI期待値は低め。"
+          },
+          "japan_support": {
+            "score": "medium",
+            "note": "パートナーとエンタープライズ契約次第。"
+          },
+          "financial_presence_jp": {
+            "score": "medium",
+            "note": "金融でも機械ID領域なら十分あり得る。"
+          },
+          "entry_cost": {
+            "score": "strong",
+            "note": "Community Edition起点なら小さく始められる。"
+          },
+          "fisc_alignment": {
+            "score": "limited",
+            "note": "人の特権操作統制を単独では満たしにくい。"
+          },
+          "pci_alignment": {
+            "score": "medium",
+            "note": "アプリ・サービスアカウント保護には強いが人のPAMが別途必要。"
+          },
+          "sod_integration": {
+            "score": "limited",
+            "note": "SOD文脈は外部IGA前提。"
+          },
+          "siem_integration": {
+            "score": "medium",
+            "note": "監査ログは出せるが人のセッション証跡ではない。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_microsoft",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "medium",
+            "note": "Windows LAPSとAzure Key Vaultで一部代替できる。"
+          },
+          "session_management": {
+            "score": "limited",
+            "note": "JEAやPowerShellログで補えるが統合録画基盤ではない。"
+          },
+          "discovery": {
+            "score": "limited",
+            "note": "特権アカウント発見の統合機能は弱い。"
+          },
+          "jit_access": {
+            "score": "medium",
+            "note": "Entra ID Privileged Identity ManagementはクラウドロールJITに強い。"
+          },
+          "bastion": {
+            "score": "limited",
+            "note": "本比較の製品群だけでは統合Bastionが不足する。"
+          },
+          "windows_server": {
+            "score": "strong",
+            "note": "Windows LAPSとJEAの親和性が高い。"
+          },
+          "active_directory": {
+            "score": "medium",
+            "note": "AD残存環境では補助的。"
+          },
+          "linux_unix": {
+            "score": "limited",
+            "note": "Linux/Unixの特権統制は弱い。"
+          },
+          "databases": {
+            "score": "limited",
+            "note": "Azure系は守れるがオンプレDB横断のPAMにはならない。"
+          },
+          "cloud_iam": {
+            "score": "strong",
+            "note": "Azure/Entra文脈では非常に強い。"
+          },
+          "network_devices": {
+            "score": "none",
+            "note": "ネットワーク機器PAMの代替にはならない。"
+          },
+          "saas_admin": {
+            "score": "medium",
+            "note": "Entraロールや一部SaaS統制は可能。"
+          },
+          "cicd_secrets": {
+            "score": "strong",
+            "note": "Key VaultとOIDCでGitHub Actions等に適合。"
+          },
+          "kubernetes": {
+            "score": "medium",
+            "note": "AKS周辺では十分だがマルチクラウドでは限定。"
+          },
+          "iac": {
+            "score": "strong",
+            "note": "Azureネイティブ自動化との親和性が高い。"
+          },
+          "microservices": {
+            "score": "medium",
+            "note": "Azure中心なら成立しやすい。"
+          },
+          "deployment_choice": {
+            "score": "medium",
+            "note": "ビルトインとクラウドサービス中心。"
+          },
+          "api_extensibility": {
+            "score": "strong",
+            "note": "Microsoft GraphとAzure APIが使える。"
+          },
+          "japanese_ui": {
+            "score": "strong",
+            "note": "日本語UIと文書が充実。"
+          },
+          "japan_support": {
+            "score": "strong",
+            "note": "日本市場の支援体制は最も厚い。"
+          },
+          "financial_presence_jp": {
+            "score": "strong",
+            "note": "国内金融での説明力は高い。"
+          },
+          "entry_cost": {
+            "score": "strong",
+            "note": "既存ライセンス活用なら導入障壁が低い。"
+          },
+          "fisc_alignment": {
+            "score": "medium",
+            "note": "一部統制は満たせるがフルPAM証跡は不足しやすい。"
+          },
+          "pci_alignment": {
+            "score": "medium",
+            "note": "Azure/Entra領域には合うが横断的PAMは不足。"
+          },
+          "sod_integration": {
+            "score": "medium",
+            "note": "Entra ID Governanceと組み合わせる前提。"
+          },
+          "siem_integration": {
+            "score": "strong",
+            "note": "Microsoft Sentinel等と接続しやすい。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_oneidentity",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "strong",
+            "note": "Safeguardの中心機能。"
+          },
+          "session_management": {
+            "score": "strong",
+            "note": "Privileged Sessionsで監査に強い。"
+          },
+          "discovery": {
+            "score": "medium",
+            "note": "標準的な対応。"
+          },
+          "jit_access": {
+            "score": "medium",
+            "note": "承認型のアクセス統制は組める。"
+          },
+          "bastion": {
+            "score": "strong",
+            "note": "セッションブローカーとして使いやすい。"
+          },
+          "windows_server": {
+            "score": "strong",
+            "note": "Windows系は十分対象。"
+          },
+          "active_directory": {
+            "score": "strong",
+            "note": "AD統合は一般的に問題ない。"
+          },
+          "linux_unix": {
+            "score": "medium",
+            "note": "対応は可能だが専用製品ほどの訴求は弱い。"
+          },
+          "databases": {
+            "score": "medium",
+            "note": "標準的なPAM対象として扱える。"
+          },
+          "cloud_iam": {
+            "score": "medium",
+            "note": "ハイブリッド利用は可能。"
+          },
+          "network_devices": {
+            "score": "medium",
+            "note": "機器管理アカウントの統制に使える。"
+          },
+          "saas_admin": {
+            "score": "limited",
+            "note": "SaaS管理者統制は主領域ではない。"
+          },
+          "cicd_secrets": {
+            "score": "limited",
+            "note": "DevOps特化ではない。"
+          },
+          "kubernetes": {
+            "score": "limited",
+            "note": "Kubernetes中心案件では優先度が下がる。"
+          },
+          "iac": {
+            "score": "medium",
+            "note": "一般的なAPI連携で補う。"
+          },
+          "microservices": {
+            "score": "limited",
+            "note": "マシンシークレット主戦場ではない。"
+          },
+          "deployment_choice": {
+            "score": "strong",
+            "note": "On Demandを選べる。"
+          },
+          "api_extensibility": {
+            "score": "medium",
+            "note": "周辺製品連携はある。"
+          },
+          "japanese_ui": {
+            "score": "medium",
+            "note": "案件ごとの確認が必要。"
+          },
+          "japan_support": {
+            "score": "medium",
+            "note": "パートナー経由での確認が前提。"
+          },
+          "financial_presence_jp": {
+            "score": "medium",
+            "note": "監査重視案件で比較候補。"
+          },
+          "entry_cost": {
+            "score": "medium",
+            "note": "大手PAMとしては標準的。"
+          },
+          "fisc_alignment": {
+            "score": "medium",
+            "note": "セッション監査まで含めて組み立てやすい。"
+          },
+          "pci_alignment": {
+            "score": "medium",
+            "note": "Req.7/8向け要件には乗せやすい。"
+          },
+          "sod_integration": {
+            "score": "medium",
+            "note": "周辺IGAと合わせると評価しやすい。"
+          },
+          "siem_integration": {
+            "score": "medium",
+            "note": "外部ログ活用は可能。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_senhasegura",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "strong",
+            "note": "標準PAMの中核。"
+          },
+          "session_management": {
+            "score": "strong",
+            "note": "セッション動画が明確。"
+          },
+          "discovery": {
+            "score": "medium",
+            "note": "一般的なPAM水準。"
+          },
+          "jit_access": {
+            "score": "medium",
+            "note": "JITは可能だがトップベンダーほど説明しやすくはない。"
+          },
+          "bastion": {
+            "score": "strong",
+            "note": "Bastion型として使いやすい。"
+          },
+          "windows_server": {
+            "score": "medium",
+            "note": "標準対応範囲。"
+          },
+          "active_directory": {
+            "score": "medium",
+            "note": "一般的な統合は可能。"
+          },
+          "linux_unix": {
+            "score": "medium",
+            "note": "標準対応範囲。"
+          },
+          "databases": {
+            "score": "medium",
+            "note": "PAM対象として扱える。"
+          },
+          "cloud_iam": {
+            "score": "medium",
+            "note": "ハイブリッド対応は可能だが主訴求ではない。"
+          },
+          "network_devices": {
+            "score": "medium",
+            "note": "Bastion経由で扱いやすい。"
+          },
+          "saas_admin": {
+            "score": "limited",
+            "note": "SaaS管理者統制は深掘り確認が必要。"
+          },
+          "cicd_secrets": {
+            "score": "limited",
+            "note": "DevOps中心なら他製品が優位。"
+          },
+          "kubernetes": {
+            "score": "limited",
+            "note": "Kubernetes中心案件では優先度が落ちる。"
+          },
+          "iac": {
+            "score": "medium",
+            "note": "API前提で個別連携。"
+          },
+          "microservices": {
+            "score": "limited",
+            "note": "マシンID主戦場ではない。"
+          },
+          "deployment_choice": {
+            "score": "medium",
+            "note": "セルフホスト中心で考える。"
+          },
+          "api_extensibility": {
+            "score": "medium",
+            "note": "標準的。"
+          },
+          "japanese_ui": {
+            "score": "limited",
+            "note": "日本語UIは個別確認が必要。"
+          },
+          "japan_support": {
+            "score": "limited",
+            "note": "国内サポートは要確認。"
+          },
+          "financial_presence_jp": {
+            "score": "limited",
+            "note": "国内大手金融の説明には追加裏取りが要る。"
+          },
+          "entry_cost": {
+            "score": "medium",
+            "note": "大手トップベンダーよりは入りやすい可能性。"
+          },
+          "fisc_alignment": {
+            "score": "medium",
+            "note": "標準PAM統制としては成立する。"
+          },
+          "pci_alignment": {
+            "score": "medium",
+            "note": "証跡が取れれば要件に近づけられる。"
+          },
+          "sod_integration": {
+            "score": "limited",
+            "note": "外部ワークフロー前提。"
+          },
+          "siem_integration": {
+            "score": "medium",
+            "note": "ログ転送設計の確認が必要。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_wallix",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "medium",
+            "note": "Password ManagerとA2A Password Managementを持つ。"
+          },
+          "session_management": {
+            "score": "strong",
+            "note": "Session Managerが明確。"
+          },
+          "discovery": {
+            "score": "limited",
+            "note": "自動発見の印象は相対的に弱い。"
+          },
+          "jit_access": {
+            "score": "medium",
+            "note": "承認ベースのセッション統制は可能。"
+          },
+          "bastion": {
+            "score": "strong",
+            "note": "製品名どおりBastion型が中核。"
+          },
+          "windows_server": {
+            "score": "medium",
+            "note": "標準的な接続統制は可能。"
+          },
+          "active_directory": {
+            "score": "medium",
+            "note": "一般的な統合は可能。"
+          },
+          "linux_unix": {
+            "score": "medium",
+            "note": "SSH監査との相性がよい。"
+          },
+          "databases": {
+            "score": "medium",
+            "note": "DB接続の監査用途は検討可能。"
+          },
+          "cloud_iam": {
+            "score": "limited",
+            "note": "クラウドIAMネイティブ統制は強くない。"
+          },
+          "network_devices": {
+            "score": "strong",
+            "note": "Bastion経由で相性がよい。"
+          },
+          "saas_admin": {
+            "score": "limited",
+            "note": "SaaS管理者制御は限定的。"
+          },
+          "cicd_secrets": {
+            "score": "limited",
+            "note": "A2AはあるがDevOps中心なら他製品優位。"
+          },
+          "kubernetes": {
+            "score": "limited",
+            "note": "Kubernetes中心ではない。"
+          },
+          "iac": {
+            "score": "limited",
+            "note": "IaC連携は個別設計。"
+          },
+          "microservices": {
+            "score": "limited",
+            "note": "マシンシークレット主戦場ではない。"
+          },
+          "deployment_choice": {
+            "score": "medium",
+            "note": "One PAM側も含めて選択肢はある。"
+          },
+          "api_extensibility": {
+            "score": "medium",
+            "note": "標準的。"
+          },
+          "japanese_ui": {
+            "score": "limited",
+            "note": "日本語前提では見ない。"
+          },
+          "japan_support": {
+            "score": "limited",
+            "note": "代理店体制の深さ確認が必要。"
+          },
+          "financial_presence_jp": {
+            "score": "limited",
+            "note": "国内金融での説明には補強が必要。"
+          },
+          "entry_cost": {
+            "score": "medium",
+            "note": "トップベンダーよりは圧縮しやすい可能性。"
+          },
+          "fisc_alignment": {
+            "score": "medium",
+            "note": "Bastion監査中心の設計に向く。"
+          },
+          "pci_alignment": {
+            "score": "medium",
+            "note": "セッション監査を中心に要件へ寄せられる。"
+          },
+          "sod_integration": {
+            "score": "limited",
+            "note": "外部連携前提。"
+          },
+          "siem_integration": {
+            "score": "medium",
+            "note": "ログ取り込み設計の確認が必要。"
+          }
+        }
+      },
+      {
+        "product_id": "pam_arcon",
+        "ratings": {
+          "vaulting_rotation": {
+            "score": "strong",
+            "note": "Password Vaultが中核。"
+          },
+          "session_management": {
+            "score": "strong",
+            "note": "Session RecordingsとText Logsを持つ。"
+          },
+          "discovery": {
+            "score": "medium",
+            "note": "一般的なPAM機能として搭載。"
+          },
+          "jit_access": {
+            "score": "medium",
+            "note": "JIT privilegesを訴求。"
+          },
+          "bastion": {
+            "score": "strong",
+            "note": "標準PAMとしてBastion運用に適合。"
+          },
+          "windows_server": {
+            "score": "medium",
+            "note": "標準対応範囲。"
+          },
+          "active_directory": {
+            "score": "medium",
+            "note": "一般的な統合は可能。"
+          },
+          "linux_unix": {
+            "score": "medium",
+            "note": "標準対応範囲。"
+          },
+          "databases": {
+            "score": "medium",
+            "note": "標準的なDB特権統制。"
+          },
+          "cloud_iam": {
+            "score": "medium",
+            "note": "ハイブリッド、マルチクラウドを訴求。"
+          },
+          "network_devices": {
+            "score": "medium",
+            "note": "ネットワーク管理にも適用可能。"
+          },
+          "saas_admin": {
+            "score": "limited",
+            "note": "SaaS管理者統制は深掘りが必要。"
+          },
+          "cicd_secrets": {
+            "score": "limited",
+            "note": "DevOpsではVaultやCyberArkが優位。"
+          },
+          "kubernetes": {
+            "score": "limited",
+            "note": "Kubernetes中心案件では優先度が下がる。"
+          },
+          "iac": {
+            "score": "medium",
+            "note": "APIや個別連携で対応。"
+          },
+          "microservices": {
+            "score": "limited",
+            "note": "機械ID主戦場ではない。"
+          },
+          "deployment_choice": {
+            "score": "medium",
+            "note": "セルフホスト中心で評価。"
+          },
+          "api_extensibility": {
+            "score": "medium",
+            "note": "標準的。"
+          },
+          "japanese_ui": {
+            "score": "limited",
+            "note": "日本語UIは要確認。"
+          },
+          "japan_support": {
+            "score": "limited",
+            "note": "国内支援体制の確認が必要。"
+          },
+          "financial_presence_jp": {
+            "score": "limited",
+            "note": "国内大手金融の公開実績確認が必要。"
+          },
+          "entry_cost": {
+            "score": "medium",
+            "note": "価格競争力は期待できる。"
+          },
+          "fisc_alignment": {
+            "score": "medium",
+            "note": "標準的PAM統制で寄せられる。"
+          },
+          "pci_alignment": {
+            "score": "medium",
+            "note": "ログとJITの設計次第。"
+          },
+          "sod_integration": {
+            "score": "limited",
+            "note": "外部連携で補う。"
+          },
+          "siem_integration": {
+            "score": "medium",
+            "note": "ログ出力前提で設計。"
+          }
+        }
+      }
+    ]
+  },
+  "competitive_analysis": {
+    "cyberark": {
+      "strengths": [
+        "大規模金融で説明しやすい業界標準ポジション",
+        "人のPAMとマシンシークレットの両方を広くカバー",
+        "Zero Standing Privileges志向を取り込みやすい"
+      ],
+      "weaknesses": [
+        "価格と実装難易度が高い",
+        "要件整理が甘いと過剰設計になりやすい"
+      ]
+    },
+    "beyondtrust": {
+      "strengths": [
+        "Password SafeとPrivileged Remote Accessの組み合わせが強い",
+        "外部委託先・保守ベンダー接続統制に向く",
+        "Unix/Linux権限制御も候補に残しやすい"
+      ],
+      "weaknesses": [
+        "DevOps・クラウドネイティブの深さはVault/CyberArkに劣る",
+        "日本市場での案件密度はCyberArkより低い"
+      ]
+    },
+    "delinea": {
+      "strengths": [
+        "Secret Serverの導入しやすさ",
+        "旧Centrify由来のLinux/UnixとAD統合",
+        "CyberArkより軽量に始めたい案件に向く"
+      ],
+      "weaknesses": [
+        "製品再編後の位置付け理解が必要",
+        "大規模金融の定番指名では相対的に弱い"
+      ]
+    },
+    "vault": {
+      "strengths": [
+        "動的シークレットと短命資格情報",
+        "Kubernetes、Terraform、マイクロサービスへの適合性",
+        "Community Editionから始められる柔軟性"
+      ],
+      "weaknesses": [
+        "人の特権セッション管理を代替できない",
+        "監査部門が期待するPAM像とずれやすい"
+      ]
+    },
+    "microsoft_built_in": {
+      "substitution_range": [
+        "Windowsローカル管理者パスワード管理",
+        "EntraロールのJIT昇格",
+        "Azure中心のシークレット管理",
+        "PowerShell運用の最小権限化"
+      ],
+      "limits": [
+        "統合セッション録画がない",
+        "ベンダーリモートアクセス統制が弱い",
+        "オンプレDB、ネットワーク機器、SaaS特権資格情報の横断管理が弱い",
+        "金融監査で求められる単一証跡基盤を作りにくい"
+      ]
+    }
+  },
+  "financial_sector_evaluation": {
+    "fisc_view": {
+      "important_controls": [
+        "特権IDの申請・承認・払い出しの証跡",
+        "利用後の無効化またはローテーション",
+        "作業内容の追跡可能性",
+        "委託先を含む管理者アクセスの統制",
+        "定期棚卸しと職務分離"
+      ],
+      "best_fit_products": [
+        "CyberArk",
+        "BeyondTrust",
+        "One Identity Safeguard",
+        "Delinea"
+      ],
+      "comment": "FISC対応では、製品名よりも『誰が、いつ、何を申請し、どの承認で、どの接続先に、どの操作を実施し、終了後どう失効したか』を一連で追えることが重要。"
+    },
+    "pci_dss_req_7_8_view": {
+      "important_controls": [
+        "最小権限",
+        "一意なID",
+        "多要素認証",
+        "アクセス要求と認可",
+        "認証要素や資格情報の安全な保護",
+        "サービスアカウント管理"
+      ],
+      "best_fit_products": [
+        "CyberArk",
+        "BeyondTrust",
+        "Delinea",
+        "One Identity Safeguard"
+      ],
+      "machine_identity_fit": [
+        "HashiCorp Vault",
+        "Azure Key Vault"
+      ],
+      "comment": "PCI DSS Req.7/8では人の管理者統制とアプリケーション資格情報の両方が問われるため、PAM製品単独ではなく、Vault系やKey Vault系との併用が現実的。"
+    },
+    "sod_and_audit": {
+      "sod_integration_patterns": [
+        "IGAでロール申請、PAMで払い出し・セッション監査",
+        "チケット連携で作業理由と承認者を紐付ける",
+        "退職・異動時はIGA主導で資格剥奪、PAM側は即時失効"
+      ],
+      "siem_patterns": [
+        "PAM監査ログをSIEMへ送る",
+        "Windowsイベント、Linux監査、DB監査と相関分析する",
+        "不審操作時はEDR/NDRアラートと突合する"
+      ]
+    }
+  },
+  "privileged_access_evolution": {
+    "iaas_to_paas_to_saas": [
+      {
+        "stage": "IaaS",
+        "change": "OS管理者パスワードのVaultingが主役",
+        "architectural_shift": "Windows LAPSやPAM Vaultでローカル管理者と共用IDを排除し、将来的にManaged Identityや短命認証へ移行する。"
+      },
+      {
+        "stage": "PaaS",
+        "change": "OSではなくアプリシークレットと運用ロール管理が中心",
+        "architectural_shift": "Azure Key Vault、Vault、クラウドネイティブSecrets Managerへ移行し、管理者はPIMで時間制限付き昇格に寄せる。"
+      },
+      {
+        "stage": "SaaS",
+        "change": "SaaS管理者権限と連携コネクタの統制が中心",
+        "architectural_shift": "CyberArkのSaaS connectorやVaulted SaaS credentialsのように、SaaS管理者資格情報を保管し、必要時のみ利用させる。"
+      },
+      {
+        "stage": "Container/Kubernetes",
+        "change": "固定シークレットから短命トークンへ",
+        "architectural_shift": "Vault Agent InjectorやCSI Driverを使い、Pod起動時に注入し、長期静的シークレットを減らす。"
+      }
+    ],
+    "strategy_message": "PAM導入を『サーバー管理者の金庫』で止めると、PaaS・SaaS・Kubernetes移行後に再投資が発生する。人の特権操作統制と機械ID統制を分けて設計することが重要。"
+  },
+  "decision_guide": [
+    {
+      "id": "scenario_01",
+      "scenario": "大手銀行でAD、Windows、Linux、DB、ネットワーク機器が混在し、監査法人対応も重い",
+      "recommended_products": [
+        "CyberArk",
+        "BeyondTrust"
+      ],
+      "why_fit": "フルスコープPAMとして監査証跡を作りやすく、委託先や多拠点も含めた統制設計に向く。",
+      "watchouts": "CyberArkは高コスト、BeyondTrustは製品組み合わせ整理が必要。"
+    },
+    {
+      "id": "scenario_02",
+      "scenario": "証券会社で外部保守ベンダーや委託先のリモート接続統制が最優先",
+      "recommended_products": [
+        "BeyondTrust",
+        "WALLIX Bastion",
+        "One Identity Safeguard"
+      ],
+      "why_fit": "Bastion型、セッション監査、承認フローの説明がしやすい。",
+      "watchouts": "日本での保守体制と金融リファレンスは個別確認が必要。"
+    },
+    {
+      "id": "scenario_03",
+      "scenario": "製造業で工場、研究所、海外拠点を含むが、CyberArkほど重い導入体制は避けたい",
+      "recommended_products": [
+        "Delinea",
+        "BeyondTrust",
+        "ARCON Privileged Access Management"
+      ],
+      "why_fit": "標準PAM機能を確保しつつ導入負荷や価格のバランスを取りやすい。",
+      "watchouts": "工場系ネットワークやOT機器への適用は個別PoCが必要。"
+    },
+    {
+      "id": "scenario_04",
+      "scenario": "クラウドネイティブ開発組織でKubernetes、Terraform、CI/CDのシークレット管理が主課題",
+      "recommended_products": [
+        "HashiCorp Vault",
+        "CyberArk"
+      ],
+      "why_fit": "Vaultは機械IDと短命資格情報に最適。人のPAMが必要ならCyberArkを併用する。",
+      "watchouts": "Vault単独では監査部門が想定する人のPAMにならない。"
+    },
+    {
+      "id": "scenario_05",
+      "scenario": "Microsoft 365とAzure中心で、まず低コストに特権統制を始めたい",
+      "recommended_products": [
+        "Microsoft",
+        "CyberArk"
+      ],
+      "why_fit": "Windows LAPS、Entra ID Privileged Identity Management、Azure Key Vaultで初期統制を作りやすい。高度な監査が必要なら後からCyberArkを足す。",
+      "watchouts": "オンプレLinux、DB、ネットワーク機器まで広げると限界が来る。"
+    },
+    {
+      "id": "scenario_06",
+      "scenario": "金融機関でFISC監査向けに申請、承認、利用、録画、棚卸しの一連証跡を重視",
+      "recommended_products": [
+        "CyberArk",
+        "One Identity Safeguard",
+        "Delinea"
+      ],
+      "why_fit": "人の特権操作を一連で追いやすく、監査説明資料に落とし込みやすい。",
+      "watchouts": "SOD連携はIGAやITSMとの組み合わせが必要。"
+    },
+    {
+      "id": "scenario_07",
+      "scenario": "SaaS型PAMを優先し、運用インフラを極力持ちたくない",
+      "recommended_products": [
+        "CyberArk",
+        "Delinea",
+        "One Identity Safeguard"
+      ],
+      "why_fit": "SaaS選択肢があり、運用負荷を抑えやすい。",
+      "watchouts": "データ所在地、接続経路、閉域要件、委託先接続方式の確認が必要。"
+    },
+    {
+      "id": "scenario_08",
+      "scenario": "まずWindowsローカル管理者の共通パスワード問題とEntraロールJITだけを解決したい",
+      "recommended_products": [
+        "Microsoft"
+      ],
+      "why_fit": "Windows LAPSとEntra ID Privileged Identity Managementで短期間に改善しやすい。",
+      "watchouts": "これをもってPAM完了と見なすと、セッション録画や委託先統制が未解決のまま残る。"
+    },
+    {
+      "id": "scenario_09",
+      "scenario": "国内案件だがAPACでの調達柔軟性と価格競争力を優先したい",
+      "recommended_products": [
+        "ARCON Privileged Access Management",
+        "senhasegura",
+        "WALLIX Bastion"
+      ],
+      "why_fit": "標準PAM機能を比較的柔軟な条件で検討しやすい。",
+      "watchouts": "国内金融実績、日本語UI、24x7保守、SIer習熟度は必ずRFPで精査する。"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "PAM製品比較",
+      "object_type": "concept",
+      "description": "特権アクセス管理製品を、人のPAM、機械シークレット、日本市場適合性、金融統制適合性の観点で比較する参照ノード。",
+      "properties": {
+        "focus": [
+          "金融",
+          "製造",
+          "ハイブリッド環境",
+          "クラウド移行"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "CyberArk",
+      "object_type": "product",
+      "description": "大規模金融で説明力の高いPAM製品群。",
+      "properties": {
+        "vendor": "CyberArk",
+        "position": "leader"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "HashiCorp Vault",
+      "object_type": "product",
+      "description": "動的シークレットとマシンID統制に強い製品。",
+      "properties": {
+        "vendor": "HashiCorp",
+        "position": "specialist"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "Microsoft組み込み型PAM",
+      "object_type": "pattern",
+      "description": "Windows LAPS、Entra ID Privileged Identity Management、JEA、Azure Key Vaultを組み合わせて段階導入する設計パターン。",
+      "properties": {
+        "components": [
+          "Windows LAPS",
+          "Entra ID Privileged Identity Management",
+          "JEA",
+          "Azure Key Vault"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "example_of",
+      "description": "PAM製品比較におけるリーダー製品の代表例。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "人のPAMを補完する機械シークレット管理製品として位置付ける。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "フルPAMの代替としてではなく、段階導入パターンとして比較表で扱う。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "製品選定の前提",
+      "summary": "PAM製品は人の特権セッション統制と、機械シークレット管理を分けて評価しないと誤選定になりやすい。",
+      "details": [
+        "CyberArk、BeyondTrust、Delinea、One Identityは人のPAMが主戦場。",
+        "HashiCorp VaultとAzure Key Vaultはマシンシークレット管理が主戦場。",
+        "金融では申請、承認、払い出し、利用、失効、録画の一連証跡が重要。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_003",
+        "node_004"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "日本市場での見方",
+      "summary": "日本語UIの有無だけではなく、国内SIerの習熟度、金融実績、監査対応の定型化まで確認する必要がある。",
+      "details": [
+        "CyberArkとMicrosoftは日本市場での説明力が高い。",
+        "BeyondTrust、Delinea、One Identityは案件ごとのパートナー力量差を見極める必要がある。",
+        "senhasegura、WALLIX、ARCONはRFP段階で保守体制を厳密確認すべき。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_002",
+        "node_004"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "label": "CyberArk Privileged Access Manager",
+      "url": "https://www.cyberark.com/products/privileged-access-manager",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "CyberArk Privileged Access",
+      "url": "https://www.cyberark.com/products/privileged-access/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "CyberArk Privilege Cloud 14.4 Release",
+      "url": "https://www.cyberark.com/resources/product-announcements/cyberark-privilege-cloud-version-14-4-release",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "BeyondTrust Password Safe",
+      "url": "https://www.beyondtrust.com/products/password-safe",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Delinea Secret Server Session Management",
+      "url": "https://delinea.com/products/secret-server/features/privileged-session-management",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Delinea Secret Server Discovery",
+      "url": "https://delinea.com/products/secret-server/features/discovery",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Delinea Cloud Suite",
+      "url": "https://delinea.com/products/cloud-suite",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Delinea Privilege Control for Servers",
+      "url": "https://delinea.com/products/privilege-control-for-servers",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "HashiCorp Vault Kubernetes Secrets Engine",
+      "url": "https://developer.hashicorp.com/vault/docs/secrets/kubernetes",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "HashiCorp Vault on Kubernetes",
+      "url": "https://docs.hashicorp.com/vault/docs/deploy/kubernetes",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "HCP Vault",
+      "url": "https://www.hashicorp.com/en/lp/vault-hvd",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Windows LAPS Overview",
+      "url": "https://learn.microsoft.com/en-us/windows-server/identity/laps/laps-overview",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Microsoft Entra ID Privileged Identity Management",
+      "url": "https://learn.microsoft.com/en-us/azure/active-directory/active-directory-privileged-identity-management-configure",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Azure Key Vault Overview",
+      "url": "https://learn.microsoft.com/en-us/azure/key-vault/general/overview",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Managed Identities for Azure Resources",
+      "url": "https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/overview",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "Azure Key Vault with GitHub Actions",
+      "url": "https://learn.microsoft.com/en-us/azure/developer/github/github-actions-key-vault",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "One Identity Safeguard",
+      "url": "https://www.oneidentity.com/one-identity-safeguard/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "One Identity Safeguard for Privileged Sessions",
+      "url": "https://www.oneidentity.com/products/privileged-session-manager/",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "senhasegura Session Video",
+      "url": "https://docs.senhasegura.io/v3-33/docs/pam-session-view-and-download-the-session-video-2",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "WALLIX Privileged Access Management",
+      "url": "https://www.wallix.com/privileged-access-management",
+      "accessed": "2026-04-07"
+    },
+    {
+      "label": "ARCON PAM Features",
+      "url": "https://arconnet.com/wp-content/uploads/2022/11/ARCON_PAM-Features.pdf",
+      "accessed": "2026-04-07"
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "metadata": {
+    "scenario_id": "sim_fin_01",
+    "title": "地方銀行のFISC第11版対応：システム管理者リモートアクセスの是非",
+    "industry": "銀行",
+    "company_profile": {
+      "company_type": "地方銀行",
+      "employees": 800,
+      "locations": "本店 + 20支店",
+      "environment": [
+        "Windows Server 2019 Active Directory",
+        "オンプレミス勘定系",
+        "MIM 2016",
+        "在宅勤務併用"
+      ],
+      "current_constraints": [
+        "障害対応時の出社ルール",
+        "Excel中心の作業記録",
+        "MIM 2016 の将来更改未着手"
+      ]
+    },
+    "themes": [
+      "特権アクセス管理",
+      "FISC安全対策基準",
+      "リモートワーク",
+      "監査証跡",
+      "MIM 2016 更改"
+    ],
+    "knowledge_needs": [
+      "FISC安全対策基準における特権リモートアクセスの代替統制解釈",
+      "PAM（特権アクセス管理）導入時の承認・録画・ログ保全要件",
+      "特権アクセス ワークステーションと踏み台サーバーの使い分け",
+      "外部委託先を含む個人識別と共有アカウント廃止の進め方",
+      "MIM 2016 から次期ID管理基盤への移行論点",
+      "金融庁ガイドラインと内部監査が求める証跡粒度"
+    ]
+  },
+  "personas": [
+    {
+      "id": "fin_p01",
+      "name": "服部 恵",
+      "role": "情報システム部長",
+      "background": "20年以上銀行システム運用に従事し、FISC対応と障害対応統制を担ってきた。",
+      "stance": "FISC安全対策基準を厳格に解釈し、指定作業拠点中心の運用を維持したい。"
+    },
+    {
+      "id": "fin_p02",
+      "name": "越智 健",
+      "role": "情報セキュリティ担当",
+      "background": "監査対応とセキュリティ企画を担当し、PAMとMFAの導入経験がある。",
+      "stance": "PAM（特権アクセス管理）と多要素認証で、リモート特権作業を統制付きで許容できると考える。"
+    },
+    {
+      "id": "fin_p03",
+      "name": "吉田 仁",
+      "role": "SIer SE",
+      "background": "金融向け特権アクセス管理案件を複数担当し、CyberArk提案を準備している。",
+      "stance": "CyberArkを中核に証跡一元化と時間制限付きアクセスを実現したい。"
+    },
+    {
+      "id": "fin_p04",
+      "name": "内部監査担当",
+      "role": "内部監査部門",
+      "background": "システム監査と業務監査を担当し、ログの改ざん防止と個人帰属性を重視する。",
+      "stance": "Excel記録では不十分で、申請・承認・操作・結果確認を一続きで証明できることを求める。"
+    },
+    {
+      "id": "fin_p05",
+      "name": "MIM担当エンジニア",
+      "role": "ID管理基盤担当",
+      "background": "MIM 2016で人事連携と権限配布を保守している。",
+      "stance": "今回の見直しを機にMIM 2016のEOL対応も同時に検討すべきだと考える。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "fin_scene_01",
+      "title": "深夜障害での出社問題",
+      "setting": "休日深夜の障害対応反省会。情シス部員が本店へ2時間かけて出社した件を振り返る。",
+      "dialogue": [
+        {
+          "speaker": "服部 恵",
+          "text": "日曜の深夜に基幹連携が止まっても、結局は本店の管理端末まで来ないと作業できなかった。規程は守れたが、復旧開始まで二時間遅れたのは事実です。",
+          "subtext": "可用性と統制の板挟みに限界を感じている。"
+        },
+        {
+          "speaker": "越智 健",
+          "text": "あの遅れは事業継続上のリスクです。在宅そのものが問題ではなく、誰がどの端末で何をしたかを技術的に証明できない運用が問題だと思います。",
+          "subtext": "場所統制から証跡中心統制への転換を促したい。"
+        },
+        {
+          "speaker": "内部監査担当",
+          "text": "復旧後にExcelへ追記した記録では、接続時刻も承認時刻も断片的です。障害時ほど記録の完全性が問われますし、後から補記しただけでは弱いです。",
+          "subtext": "人手記録の限界を明確に示している。"
+        },
+        {
+          "speaker": "MIM担当エンジニア",
+          "text": "緊急対応のたびにMIM 2016の権限連携も手作業確認になります。基盤が古いので、例外運用が増えているのも根本原因です。",
+          "subtext": "運用問題と基盤老朽化を結び付けている。"
+        }
+      ],
+      "issues_surfaced": [
+        "深夜障害時の初動遅延",
+        "Excel中心の証跡管理",
+        "緊急時の例外運用増加",
+        "MIM 2016への運用依存"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/sysadmin_access_evolution.json",
+        "05_hybrid_scenarios/remote_work_id_reality.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    },
+    {
+      "scene_id": "fin_scene_02",
+      "title": "FISC第11版の条文解釈議論",
+      "setting": "情シス、セキュリティ、監査でFISC安全対策基準の読み合わせを行う会議。",
+      "dialogue": [
+        {
+          "speaker": "服部 恵",
+          "text": "私は『作業拠点から』という運用を崩すのが怖いのです。監督当局に説明できなければ、便利さのために統制を緩めたと見られます。",
+          "subtext": "規制解釈の失敗を最も恐れている。"
+        },
+        {
+          "speaker": "越智 健",
+          "text": "条文を場所固定で読むより、同等以上の統制をどう担保するかで整理すべきです。個人認証、MFA、承認、録画、即時失効まで揃えば説明可能性は上がります。",
+          "subtext": "代替統制の枠組みへ議論を移したい。"
+        },
+        {
+          "speaker": "内部監査担当",
+          "text": "重要なのは、事後に一連の操作を再現できることです。誰が、どの申請に基づき、どのサーバーで、何をしたかが一本で追えなければ認めにくいです。",
+          "subtext": "監査要件を具体化している。"
+        },
+        {
+          "speaker": "吉田 仁",
+          "text": "金融機関では、指定端末やPAMポータルを『管理された作業拠点』として設計する例があります。単純なVPNではなく、統制された接続経路として設計するのが前提です。",
+          "subtext": "規制実務の落としどころを提示している。"
+        }
+      ],
+      "issues_surfaced": [
+        "作業拠点要件の解釈不一致",
+        "VPN単独運用の限界",
+        "代替統制の定義不足",
+        "監督当局説明資料の未整備"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/sysadmin_access_evolution.json",
+        "07_migration_patterns/japan_security_frameworks.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    },
+    {
+      "scene_id": "fin_scene_03",
+      "title": "PAM/CyberArk提案",
+      "setting": "SIerがCyberArkを用いた特権アクセス管理の構成案を説明する提案会。",
+      "dialogue": [
+        {
+          "speaker": "吉田 仁",
+          "text": "CyberArkで特権IDを金庫化し、利用者は個人IDと多要素認証でポータルに入ります。申請番号と承認を通したセッションだけを発行し、パスワードは利用後にローテーションします。",
+          "subtext": "共有アカウント廃止と証跡統合を同時に実現したい。"
+        },
+        {
+          "speaker": "越智 健",
+          "text": "それなら在宅でも、銀行支給端末と特権アクセス ワークステーション条件を満たした人だけに絞れます。緊急時のブレークグラス手順も設計できますね。",
+          "subtext": "運用現実と統制を接続できると見ている。"
+        },
+        {
+          "speaker": "服部 恵",
+          "text": "導入しても、勘定系やMIM 2016が例外だらけでは困ります。Windows Server 2019、MIM、委託先保守まで本当に一気通貫で制御できますか。",
+          "subtext": "例外運用の残存を警戒している。"
+        },
+        {
+          "speaker": "吉田 仁",
+          "text": "フェーズ1はWindows管理者接続と委託先接続の集約、フェーズ2でMIM運用者権限や周辺サーバーへ広げます。古い基盤を前提に、先に管理経路を標準化します。",
+          "subtext": "段階導入で意思決定しやすくしている。"
+        }
+      ],
+      "issues_surfaced": [
+        "共有アカウント廃止の必要性",
+        "委託先接続の統制不足",
+        "MIM 2016運用の例外管理",
+        "段階導入のスコープ定義"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "03_identity_architecture/pam_tool_comparison.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    },
+    {
+      "scene_id": "fin_scene_04",
+      "title": "監査部門との摺り合わせ",
+      "setting": "内部監査部門を交え、証跡、録画、承認フローの要件を定義するワークショップ。",
+      "dialogue": [
+        {
+          "speaker": "内部監査担当",
+          "text": "私たちが欲しいのは録画だけではありません。申請、承認、接続、実行コマンド、作業後レビュー、パスワード変更まで時系列でつながることです。",
+          "subtext": "監査要件を技術要件に落とし込みたい。"
+        },
+        {
+          "speaker": "吉田 仁",
+          "text": "チケット連携、セッション録画、コマンドログ、保管先の改ざん防止まで設計します。緊急作業は事後承認でも、例外理由とレビュー責任者を必須にします。",
+          "subtext": "例外時も統制を崩さない方針を示している。"
+        },
+        {
+          "speaker": "越智 健",
+          "text": "SIEM連携も必要です。特権セッション開始と異常操作をリアルタイムで見たい。録画の保管年限は監査部と法務でそろえましょう。",
+          "subtext": "監視運用まで含めて設計したい。"
+        },
+        {
+          "speaker": "服部 恵",
+          "text": "承認者が形だけになるのは避けたいので、対象サーバーの分類と二者承認の範囲も整理してください。本番勘定系は特に厳格にします。",
+          "subtext": "運用ルールの現実性を担保したい。"
+        }
+      ],
+      "issues_surfaced": [
+        "申請からレビューまでの証跡連結不足",
+        "緊急作業の例外統制",
+        "SIEM連携の未整備",
+        "本番系の二者承認設計"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/privileged_access_management.json",
+        "06_security_hardening/ransomware_defense.json",
+        "07_migration_patterns/japan_security_frameworks.json"
+      ]
+    },
+    {
+      "scene_id": "fin_scene_05",
+      "title": "決断と計画",
+      "setting": "役員報告前の最終整理。フェーズ1の実行範囲と次年度検討事項を確定する。",
+      "dialogue": [
+        {
+          "speaker": "服部 恵",
+          "text": "全面解禁ではなく、障害時と保守時の特権リモートアクセスを管理対象に限定して始めます。本番勘定系は最初から監査部門立会いの要件を入れましょう。",
+          "subtext": "慎重だが方針転換を受け入れた。"
+        },
+        {
+          "speaker": "越智 健",
+          "text": "フェーズ1でWindows管理者と委託先接続をPAMへ集約し、フェーズ2でMIM 2016周辺も含めたIDライフサイクル更改に着手します。",
+          "subtext": "短期施策と中期更改を接続している。"
+        },
+        {
+          "speaker": "MIM担当エンジニア",
+          "text": "MIM 2016は2029年EOLを見据えて、後継候補の比較を今期から始めたいです。特権申請と人事連携を別々に延命すると、また例外が増えます。",
+          "subtext": "老朽基盤対策を正式課題化したい。"
+        },
+        {
+          "speaker": "内部監査担当",
+          "text": "方針に異論はありません。導入前に評価観点を明文化し、導入後三か月で証跡レビューを実施する前提で進めてください。",
+          "subtext": "条件付きで推進を容認している。"
+        }
+      ],
+      "issues_surfaced": [
+        "フェーズ1の対象限定",
+        "MIM 2016後継検討の着手",
+        "導入効果測定の必要性",
+        "監査レビュー前提での承認"
+      ],
+      "knowledge_ref": [
+        "06_security_hardening/sysadmin_access_evolution.json",
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "特権接続経路",
+      "current": "本店作業拠点と既存踏み台に依存し、深夜障害時は物理出社が前提",
+      "target": "PAM経由の統制付きリモート特権アクセスへ移行",
+      "gap": "管理対象端末、MFA、承認、セッション仲介の仕組みが不足している",
+      "priority": "high"
+    },
+    {
+      "category": "監査証跡",
+      "current": "Excel記録と個別ログの突合に依存",
+      "target": "申請から承認、接続、操作、レビューまで一貫した改ざん耐性付き証跡",
+      "gap": "チケット連携、録画、コマンドログ、保管ルールが未整備",
+      "priority": "high"
+    },
+    {
+      "category": "共有アカウント統制",
+      "current": "例外的に共有管理IDや固定パスワードが残存",
+      "target": "個人IDベースの特権利用と資格情報秘匿",
+      "gap": "PAM未導入で個人帰属性が技術的に担保できていない",
+      "priority": "high"
+    },
+    {
+      "category": "委託先管理",
+      "current": "SIerや保守ベンダーのアクセスが個別運用",
+      "target": "時間制限付き、承認付き、録画付きの外部委託先接続",
+      "gap": "契約条件、アカウント棚卸し、監査権の仕組みが不足",
+      "priority": "medium"
+    },
+    {
+      "category": "ID管理基盤の将来性",
+      "current": "MIM 2016が人事同期と権限配布の要となっている",
+      "target": "EOLを見据えた次期ID管理基盤への移行計画を持つ",
+      "gap": "後継選定とデータモデル整理が未着手",
+      "priority": "high"
+    },
+    {
+      "category": "例外運用管理",
+      "current": "緊急障害時の事後記録に頼る",
+      "target": "ブレークグラスを含む例外フローを正式手順化",
+      "gap": "事後承認、レビュー、即時失効の基準がない",
+      "priority": "medium"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "phase": "phase_1",
+      "action": "Windows管理者と委託先接続を対象にCyberArk中心のPAM導入範囲を定義する",
+      "owner": "情報システム部 + SIer",
+      "rationale": "深夜障害時の初動短縮と個人帰属性の確立を同時に進めるため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "特権アクセス ワークステーション、MFA、チケット連携、セッション録画の標準要件を策定する",
+      "owner": "情報セキュリティ担当",
+      "rationale": "FISC説明可能性を場所依存ではなく統制依存で示すため"
+    },
+    {
+      "phase": "phase_1",
+      "action": "内部監査部門と証跡レビュー観点、保存年限、緊急作業ルールを文書化する",
+      "owner": "内部監査部門 + 情報セキュリティ担当",
+      "rationale": "導入後の監査指摘を未然に減らすため"
+    },
+    {
+      "phase": "phase_2",
+      "action": "MIM 2016の依存機能を棚卸しし、後継ID管理基盤の選定を開始する",
+      "owner": "MIM担当エンジニア",
+      "rationale": "2029年EOLまでに人事連携と権限管理の再設計が必要なため"
+    },
+    {
+      "phase": "phase_2",
+      "action": "勘定系、本店系、周辺系で二者承認範囲と例外フローをサーバー分類別に定義する",
+      "owner": "情報システム部長",
+      "rationale": "一律運用を避け、統制強度を資産重要度に合わせるため"
+    }
+  ]
+}

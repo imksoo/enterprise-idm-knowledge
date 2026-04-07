@@ -1,0 +1,815 @@
+{
+  "metadata": {
+    "id": "topic_entra_hybrid_join",
+    "title": "Entra Hybrid Join とハイブリッド ID シナリオ",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "Entra ID",
+      "Active Directory",
+      "Entra Hybrid Join",
+      "Okta",
+      "Conditional Access",
+      "MFA",
+      "移行"
+    ],
+    "related_files": [
+      "../03_identity_architecture/identity_landscape.json",
+      "../03_identity_architecture/ad_current_state.json",
+      "../04_server_auth/os_auth_methods.json",
+      "../04_server_auth/kerberos_cifs_auth.json",
+      "../06_security_hardening/group_policy_alternatives.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "ハイブリッド ID 管理",
+      "object_type": "concept",
+      "description": "オンプレミス Active Directory と Entra ID を並行運用し、認証とデバイス管理を段階移行する設計領域。",
+      "properties": {
+        "scope": "identity",
+        "priority": "high"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "Active Directory Domain Join",
+      "object_type": "pattern",
+      "description": "Windows デバイスをオンプレミス Active Directory ドメインに参加させる従来方式。",
+      "properties": {
+        "device_dependency": "on-premises",
+        "cloud_readiness": "low"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "Entra Hybrid Join",
+      "object_type": "pattern",
+      "description": "Active Directory Domain Join と Entra ID デバイス登録を同時に成立させるハイブリッド方式。",
+      "properties": {
+        "device_dependency": "hybrid",
+        "cloud_readiness": "medium"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "Entra Join",
+      "object_type": "pattern",
+      "description": "デバイスを Entra ID のみへ参加させ、オンプレミス Active Directory ドメインに依存しない方式。",
+      "properties": {
+        "device_dependency": "cloud",
+        "cloud_readiness": "high"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "Entra Registered",
+      "object_type": "pattern",
+      "description": "個人所有端末や BYOD を Entra ID に登録する方式。完全な企業管理前提ではない。",
+      "properties": {
+        "device_dependency": "byod",
+        "management_strength": "light"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "オンプレミス Active Directory",
+      "object_type": "product",
+      "description": "既存の Windows 認証基盤。Kerberos、LDAP、グループポリシー、コンピューターアカウント管理を担う。",
+      "properties": {
+        "role": "identity_provider"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "Entra ID",
+      "object_type": "product",
+      "description": "クラウドベースの ID 管理基盤。SaaS 認証、Conditional Access、デバイス登録を提供する。",
+      "properties": {
+        "role": "cloud_identity"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "Entra Connect Sync",
+      "object_type": "product",
+      "description": "オンプレミス Active Directory のユーザー、グループ、一部デバイス属性を Entra ID に同期するコンポーネント。",
+      "properties": {
+        "role": "directory_sync",
+        "network_requirement": "outbound_to_cloud"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "Seamless SSO",
+      "object_type": "pattern",
+      "description": "ドメイン参加済み端末から、追加パスワード入力を抑えて Entra ID ベースのアプリ利用を可能にする方式。",
+      "properties": {
+        "user_experience": "improved",
+        "requires_domain_join": true
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "Device Writeback",
+      "object_type": "pattern",
+      "description": "クラウド側のデバイス情報をオンプレミス側へ反映し、特定のハイブリッド機能と連携する設計要素。",
+      "properties": {
+        "usage_frequency_in_japan": "limited",
+        "design_caution": "high"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "Password Hash Synchronization",
+      "object_type": "pattern",
+      "description": "オンプレミスの認証情報派生値を Entra ID に同期し、クラウド側で認証を完結させる方式。",
+      "properties": {
+        "abbreviation": "PHS",
+        "availability": "high"
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "Pass-through Authentication",
+      "object_type": "pattern",
+      "description": "クラウドのサインイン要求をオンプレミスの認証エージェント経由で Active Directory に委譲する方式。",
+      "properties": {
+        "abbreviation": "PTA",
+        "availability": "medium"
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "Federation",
+      "object_type": "pattern",
+      "description": "外部認証基盤にサインインを委譲する方式。Active Directory Federation Services が代表例。",
+      "properties": {
+        "abbreviation": "ADFS",
+        "operational_complexity": "high"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "Active Directory Federation Services",
+      "object_type": "product",
+      "description": "Active Directory と SAML/WS-Federation を橋渡しするフェデレーション基盤。",
+      "properties": {
+        "role": "federation_server"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "Conditional Access",
+      "object_type": "pattern",
+      "description": "ユーザー、端末状態、場所、リスクを条件に認証制御を行うクラウドアクセス制御方式。",
+      "properties": {
+        "control_plane": "cloud"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "多要素認証",
+      "object_type": "pattern",
+      "description": "パスワード以外の要素を追加し、認証強度を高める制御。",
+      "properties": {
+        "abbreviation": "MFA"
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "Intune",
+      "object_type": "product",
+      "description": "Windows、モバイル端末の構成管理、準拠性評価、アプリ配布を担う管理基盤。",
+      "properties": {
+        "role": "device_management"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "Okta",
+      "object_type": "product",
+      "description": "SaaS 中心の ID 管理とアクセス制御を提供するクラウド ID 基盤。",
+      "properties": {
+        "role": "cloud_identity"
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "Okta AD Agent",
+      "object_type": "product",
+      "description": "Okta とオンプレミス Active Directory を接続し、認証や属性取り込みを支援するエージェント。",
+      "properties": {
+        "role": "directory_bridge"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "Okta Universal Directory",
+      "object_type": "product",
+      "description": "Okta 上の属性正規化とライフサイクル制御の中核となるディレクトリ。",
+      "properties": {
+        "role": "attribute_hub"
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "Kerberos",
+      "object_type": "protocol",
+      "description": "オンプレミス Windows 認証とサービスチケット発行の中心プロトコル。",
+      "properties": {
+        "dependency_scope": "legacy_and_core_systems"
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "グループポリシー",
+      "object_type": "pattern",
+      "description": "Active Directory ドメイン参加端末へ構成を一括適用する従来の管理手段。",
+      "properties": {
+        "management_plane": "on-premises"
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "デバイス準拠性",
+      "object_type": "concept",
+      "description": "端末が暗号化、更新、マルウェア対策などの要求を満たしている状態。",
+      "properties": {
+        "used_by": "Conditional Access"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "レガシーアプリケーション",
+      "object_type": "risk",
+      "description": "Kerberos、LDAP、NTLM、ドメイン参加を前提に実装され、クラウド移行の制約となる業務アプリ。",
+      "properties": {
+        "migration_blocker": true
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "基幹システム",
+      "object_type": "concept",
+      "description": "高可用性と長期保守を重視し、認証方式変更に慎重な中核業務システム。",
+      "properties": {
+        "business_criticality": "high"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "SIer 運用依存",
+      "object_type": "risk",
+      "description": "ディレクトリや認証基盤の権限、運用手順、変更窓口が外部委託に偏ることで移行速度が低下する状態。",
+      "properties": {
+        "japan_specific": true
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "段階移行",
+      "object_type": "pattern",
+      "description": "認証、デバイス、アクセス制御、最終的な AD 依存排除を順次進める移行戦略。",
+      "properties": {
+        "risk_reduction": "high"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "フェーズ1: Entra Connect + PHS",
+      "object_type": "pattern",
+      "description": "ユーザー同期とクラウド認証を先行導入し、SaaS のサインイン統一を始める段階。",
+      "properties": {
+        "phase_order": 1
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "フェーズ2: Entra Hybrid Join",
+      "object_type": "pattern",
+      "description": "既存ドメイン参加端末を維持しつつ、クラウド側デバイス管理と条件付きアクセスを接続する段階。",
+      "properties": {
+        "phase_order": 2
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "フェーズ3: Conditional Access + MFA",
+      "object_type": "pattern",
+      "description": "クラウドアクセス制御と多要素認証を全社へ広げ、セキュリティ境界を ID 中心へ移す段階。",
+      "properties": {
+        "phase_order": 3
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "フェーズ4: 完全 Entra Join",
+      "object_type": "pattern",
+      "description": "新規端末や更新端末から Entra Join へ切り替え、Active Directory 依存を計画的に縮退させる段階。",
+      "properties": {
+        "phase_order": 4
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "日本企業の合意形成",
+      "object_type": "risk",
+      "description": "情報システム部門、CISO、SIer、業務部門の利害調整に時間を要し、技術より先に組織設計がボトルネックになる状態。",
+      "properties": {
+        "japan_specific": true
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "オンプレミス依存アプリ",
+      "object_type": "risk",
+      "description": "ファイル共有、社内 Web、VDI、古いクライアントなどが AD 参加と社内ネットワークを前提とする状態。",
+      "properties": {
+        "migration_blocker": true
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "クラウド SSO 開始",
+      "object_type": "concept",
+      "description": "ユーザーが主要 SaaS を Entra ID または連携 IdP で統一的に利用し始める移行初期の到達点。",
+      "properties": {
+        "business_value": "early_win"
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "セキュリティ ベースライン強化",
+      "object_type": "concept",
+      "description": "デバイス準拠性、MFA、管理者分離、条件付きアクセスを標準制御へ引き上げる状態。",
+      "properties": {
+        "security_value": "high"
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "日本での推奨パターン",
+      "object_type": "pattern",
+      "description": "PHS を基本線とし、必要な期間だけ Entra Hybrid Join を使い、最終的に Entra Join へ寄せる現実的な移行方針。",
+      "properties": {
+        "recommendation_level": "preferred"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "ハイブリッド ID 管理はオンプレミス Active Directory の実態把握から始まる。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "クラウド側の制御プレーンとして Entra ID が必要である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "Entra Hybrid Join は既存の Active Directory Domain Join を維持したまま拡張する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_007",
+      "relationship": "requires",
+      "description": "Entra Hybrid Join は Entra ID 側のデバイスオブジェクトを必要とする。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "デバイス同期と前提属性の整備に Entra Connect Sync が必要となる。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_002",
+      "relationship": "replaces",
+      "description": "完全な Entra Join は新規端末において従来のドメイン参加を置き換える。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_004",
+      "relationship": "complements",
+      "description": "Entra Registered は BYOD 領域で Entra Join を補完する。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "Entra Connect Sync はオンプレミス Active Directory を同期元とする。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_007",
+      "relationship": "implements",
+      "description": "Entra Connect Sync はディレクトリ同期を実装する。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "Seamless SSO は Entra Hybrid Join と相性がよく、利用者体験を改善する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "Device Writeback は一部のハイブリッド機能を補完する。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "PHS は同期基盤として Entra Connect Sync を必要とする。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "PTA はオンプレミス Active Directory へ到達できる認証経路を前提とする。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_014",
+      "relationship": "implements",
+      "description": "Federation の代表実装として Active Directory Federation Services が使われる。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_011",
+      "relationship": "replaces",
+      "description": "Federation はクラウド完結の PHS を別経路で置き換える。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "Conditional Access の強制力は多要素認証と組み合わせることで高まる。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_023",
+      "relationship": "requires",
+      "description": "端末状態に応じた制御にはデバイス準拠性が必要である。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_023",
+      "relationship": "implements",
+      "description": "Intune は準拠性評価と構成配布を実装する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "Okta がオンプレミス Active Directory と連携する際は Okta AD Agent が中継役になる。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_020",
+      "relationship": "implements",
+      "description": "Okta は Universal Directory を属性統合の中核として用いる。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "Okta AD Agent はオンプレミス Active Directory の属性と認証に依存する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "多くのレガシーアプリケーションは Kerberos または類似のドメイン依存認証を前提とする。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "基幹システムでは Kerberos 連携が長く残存しやすい。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "グループポリシーは Active Directory Domain Join を前提とする。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_027",
+      "relationship": "mitigates",
+      "description": "段階移行は SIer 運用依存による大規模一括変更リスクを低減する。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_028",
+      "relationship": "implements",
+      "description": "段階移行の初期段階として Entra Connect + PHS を位置づける。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_029",
+      "relationship": "implements",
+      "description": "既存端末を活かす中間段階として Entra Hybrid Join を配置する。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_030",
+      "relationship": "implements",
+      "description": "認証強化を本格化する段階として Conditional Access + MFA を配置する。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_031",
+      "relationship": "implements",
+      "description": "最終段階として完全 Entra Join を配置する。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "フェーズ1は PHS を基本方式として採用する。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_034",
+      "relationship": "implements",
+      "description": "フェーズ1の主要成果はクラウド SSO 開始である。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "フェーズ2は Entra Hybrid Join の成立が中心となる。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_017",
+      "relationship": "complements",
+      "description": "フェーズ2では Intune 連携によりデバイス管理の統合を進める。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "フェーズ3は Conditional Access 展開が中心課題である。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "フェーズ3は MFA 全社適用を伴う。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_035",
+      "relationship": "implements",
+      "description": "フェーズ3によりセキュリティ ベースライン強化が実現する。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "フェーズ4は Entra Join を標準端末参加方式とする。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_022",
+      "relationship": "replaces",
+      "description": "フェーズ4ではグループポリシー依存をクラウド管理へ段階的に置き換える。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_027",
+      "relationship": "mitigates",
+      "description": "段階移行は日本企業の合意形成の難しさを吸収しやすい。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_031",
+      "relationship": "mitigates",
+      "description": "完全 Entra Join 移行前にオンプレミス依存アプリの代替または分離が必要である。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "日本での推奨パターンは PHS を基礎として採用する。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_003",
+      "relationship": "complements",
+      "description": "日本での推奨パターンでは Entra Hybrid Join を中間ステップとして使う。"
+    },
+    {
+      "from": "node_036",
+      "to": "node_004",
+      "relationship": "requires",
+      "description": "最終到達点は Entra Join 中心の運用である。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_007",
+      "relationship": "complements",
+      "description": "Okta と Entra ID は役割分担または段階移行の形で共存できる。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "デバイス参加モデル比較",
+      "summary": "Active Directory Domain Join はグループポリシーや Kerberos 互換性で有利だが、クラウド条件付きアクセスとの直接連携は弱い。Entra Hybrid Join は既存端末を活かしながらクラウド管理へ橋渡しできる。Entra Join は最終形として望ましいが、オンプレミス依存アプリが多い段階では拙速に適用しない。Entra Registered は BYOD や外部協力会社端末向けであり、標準企業端末の置換ではない。",
+      "related_nodes": [
+        "node_002",
+        "node_003",
+        "node_004",
+        "node_005"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "Entra Hybrid Join の位置づけ",
+      "summary": "Entra Hybrid Join は完成形というより移行の中継地点である。既存の Active Directory Domain Join を壊さずに Entra ID 側のデバイス認識を与え、Conditional Access や Intune の適用対象を広げる役割が大きい。長期固定化すると運用二重化が残るため、出口戦略を持って導入する。",
+      "related_nodes": [
+        "node_003",
+        "node_015",
+        "node_017",
+        "node_027"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "前提条件とアーキテクチャ",
+      "summary": "Entra Hybrid Join では、Active Directory のコンピューターオブジェクト整備、Entra Connect Sync の健全性、クライアントの到達性、時刻同期、証明書や SCP 設定などの前提が崩れると登録不整合が起きやすい。設計段階で OU 構成、プロキシ、インターネット出口、端末更新方式を確認する必要がある。",
+      "related_nodes": [
+        "node_003",
+        "node_006",
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "Entra Connect Sync の役割",
+      "summary": "Entra Connect Sync はユーザー同期だけでなく、ハイブリッド構成ではデバイス属性と認証方式の一貫性維持にも影響する中核部品である。同期ルールの複雑化や委託運用の属人化は障害時の切り分けを難しくするため、変更管理と監視を厳格にする。",
+      "related_nodes": [
+        "node_008",
+        "node_011",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Seamless SSO の使いどころ",
+      "summary": "Seamless SSO は社内ネットワークやドメイン参加端末を前提にユーザー体験を改善するが、ゼロトラストそのものではない。PHS と組み合わせて SaaS サインインの摩擦を減らす用途には有効だが、認証強化の主役は Conditional Access と MFA である。",
+      "related_nodes": [
+        "node_009",
+        "node_011",
+        "node_015",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "Device Writeback の扱い",
+      "summary": "Device Writeback は一部シナリオでは有用だが、全社標準として必須ではない。目的が曖昧なまま有効化すると、Active Directory 側の設計複雑性だけが増える。必要機能を明示し、不要なら採用しない判断が妥当である。",
+      "related_nodes": [
+        "node_010",
+        "node_006",
+        "node_003"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "PHS の評価",
+      "summary": "Password Hash Synchronization は運用単純性、可用性、障害時の独立性で優れる。日本企業では AD FS の複雑運用を避けたいケースが多く、まず PHS を既定値として評価するのが現実的である。セキュリティ統制は MFA と Conditional Access で補強する前提で考える。",
+      "related_nodes": [
+        "node_011",
+        "node_015",
+        "node_016",
+        "node_036"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "PTA の評価",
+      "summary": "Pass-through Authentication は認証判定をオンプレミスに残せるため、一部統制要件には適合しやすい。一方で、エージェント可用性、ネットワーク経路、障害時の依存関係が増える。明確な要件がない限り、PHS より優先する理由は弱い。",
+      "related_nodes": [
+        "node_012",
+        "node_006",
+        "node_036"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "Federation の評価",
+      "summary": "Federation は高度な制御や既存投資活用を理由に残ることがあるが、Active Directory Federation Services の可用性設計、証明書、プロキシ、障害時対応は重い。新規導入の第一選択にはしにくく、既存運用がある場合も縮退計画を持つべきである。",
+      "related_nodes": [
+        "node_013",
+        "node_014",
+        "node_036"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "Okta との共存",
+      "summary": "Okta AD Agent と Okta Universal Directory を使う環境では、Okta をアプリ統合ハブ、Entra ID を Microsoft 系管理プレーンとして役割分担する設計があり得る。二重マスター化を避けるため、属性の正本、認証の責任境界、MFA 実施点を明文化する必要がある。",
+      "related_nodes": [
+        "node_018",
+        "node_019",
+        "node_020",
+        "node_007"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "フェーズ1の狙い",
+      "summary": "フェーズ1では端末更改や業務アプリ改修を待たずに、Entra Connect Sync と PHS でクラウド SSO を先に始める。早期の成功体験を作り、以後の MFA 展開やデバイス統合に必要な組織的支持を確保しやすくする。",
+      "related_nodes": [
+        "node_028",
+        "node_011",
+        "node_034",
+        "node_032"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "フェーズ2の狙い",
+      "summary": "フェーズ2では既存のドメイン参加 PC を生かしながら Entra Hybrid Join と Intune 連携を広げ、端末可視化とポリシー移行の土台を作る。グループポリシーを即時廃止するのではなく、競合を避けつつ新旧ポリシーを整理する進め方が重要である。",
+      "related_nodes": [
+        "node_029",
+        "node_003",
+        "node_017",
+        "node_022"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "フェーズ3の狙い",
+      "summary": "フェーズ3で初めてセキュリティ水準が実質的に引き上がる。全社 MFA、管理者への強化ポリシー、非準拠端末制限、国外アクセス制御などを段階的に適用し、ID を境界とする防御へ転換する。",
+      "related_nodes": [
+        "node_030",
+        "node_015",
+        "node_016",
+        "node_035"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "フェーズ4の狙い",
+      "summary": "完全 Entra Join への移行は、Windows 管理の主軸をクラウドへ移す最終段階である。新規配備端末から切り替え、既存端末は更改タイミングで置換するほうが現実的である。AD 依存アプリの残存分は隔離・限定運用で縮退させる。",
+      "related_nodes": [
+        "node_031",
+        "node_004",
+        "node_033"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "日本企業の課題",
+      "summary": "日本企業では、SIer が運用する Active Directory の変更に契約調整が必要で、技術的に可能でも意思決定が遅れることが多い。また、基幹システムや共有ファイル基盤が Kerberos 前提のため、認証モダナイズとアプリ刷新を切り離して段階設計する必要がある。",
+      "related_nodes": [
+        "node_026",
+        "node_025",
+        "node_021",
+        "node_032"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "レガシーアプリ共存期間の考え方",
+      "summary": "レガシーアプリケーションが Active Directory 認証に依存する期間は避けにくい。そのため、ユーザー認証のクラウド化と、サーバーサイドの Kerberos 依存解消は別トラックで管理する。端末参加方式だけを先に変えても、バックエンド認証が残れば Active Directory は直ちには消えない。",
+      "related_nodes": [
+        "node_024",
+        "node_025",
+        "node_021",
+        "node_031"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "日本での推奨",
+      "summary": "日本での推奨は、まず PHS でクラウド認証基盤を安定化し、既存 Windows 端末には期間限定で Entra Hybrid Join を適用し、Conditional Access と MFA を定着させた後に Entra Join へ移る流れである。PTA や Federation は明確な要件がある場合に限定し、標準アーキテクチャにはしない。",
+      "related_nodes": [
+        "node_036",
+        "node_011",
+        "node_003",
+        "node_004",
+        "node_012",
+        "node_013"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,952 @@
+{
+  "metadata": {
+    "id": "topic_kerberos_cifs_auth",
+    "title": "Kerberos認証とCIFS/SMB認証",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "Kerberos",
+      "CIFS",
+      "SMB",
+      "SPN",
+      "KDC",
+      "委任",
+      "SQL Server",
+      "IIS",
+      "SharePoint",
+      "PostgreSQL",
+      "NTLM",
+      "Microsoft Entra Kerberos"
+    ],
+    "related_files": [
+      "../03_identity_architecture/identity_landscape.json",
+      "./os_auth_methods.json",
+      "../05_hybrid_scenarios/entra_hybrid_join.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../06_security_hardening/ransomware_defense.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "Kerberos",
+      "object_type": "protocol",
+      "description": "AD DS を中心とした企業内で広く使われるチケットベース認証プロトコル。相互認証とシングルサインオンを提供する。",
+      "properties": {
+        "scope": "ユーザー認証・サービス認証",
+        "security_strength": "高"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "KDC",
+      "object_type": "concept",
+      "description": "Key Distribution Center。Windows 環境では通常ドメインコントローラー上で動作し、AS/TGS 機能を担う。",
+      "properties": {
+        "components": [
+          "Authentication Service",
+          "Ticket Granting Service"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "TGT",
+      "object_type": "concept",
+      "description": "Ticket Granting Ticket。初回認証後に KDC から払い出され、後続のサービスチケット取得に使われる。",
+      "properties": {
+        "issued_by": "Authentication Service",
+        "stored_on": "クライアント"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "サービスチケット",
+      "object_type": "concept",
+      "description": "特定サービスの SPN 宛に発行されるチケット。対象サービスは自身の秘密鍵で復号して利用者を検証する。",
+      "properties": {
+        "issued_by": "Ticket Granting Service",
+        "bound_to": "SPN"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "SPN",
+      "object_type": "concept",
+      "description": "Service Principal Name。サービスインスタンスを一意に識別する名前で、Kerberos 成否の中核となる。",
+      "properties": {
+        "examples": [
+          "HTTP/app.example.local",
+          "MSSQLSvc/sql01.example.local:1433",
+          "cifs/fs01.example.local"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "制約なし委任",
+      "object_type": "pattern",
+      "description": "フロントエンドが受け取った利用者の TGT 相当を広く再利用できる旧来方式。侵害時の横展開リスクが高い。",
+      "properties": {
+        "risk_level": "極めて高い",
+        "recommended": "原則廃止"
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "制約付き委任",
+      "object_type": "pattern",
+      "description": "委任先サービスを明示的に限定する Kerberos 委任。二重ホップの実装で現実的な基本選択肢になる。",
+      "properties": {
+        "scope_control": "委任先 SPN 単位",
+        "recommended": "限定用途で推奨"
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "リソースベース制約付き委任",
+      "object_type": "pattern",
+      "description": "委任先リソース側が許可主体を管理する方式。クロスドメインやアプリ主導設計で扱いやすい。",
+      "properties": {
+        "scope_control": "リソース側 ACL",
+        "recommended": "モダン設計で優先"
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "CIFS/SMB",
+      "object_type": "protocol",
+      "description": "Windows 系ファイル共有の実装群。現代では SMB が中心であり、CIFS は主に SMB1 系を指す旧称として扱う。",
+      "properties": {
+        "default_port": "445",
+        "typical_usage": "ファイル共有・管理共有"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "SMB1",
+      "object_type": "protocol",
+      "description": "旧式で安全性の低い SMB 世代。現代運用では無効化が前提であり、新規採用は避ける。",
+      "properties": {
+        "security_posture": "非推奨",
+        "legacy_alias": "CIFS"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "SMB2",
+      "object_type": "protocol",
+      "description": "SMB1 の非効率と脆弱性を大幅に改善した世代。性能面とメッセージ設計が刷新された。",
+      "properties": {
+        "security_posture": "許容",
+        "introduced_capabilities": [
+          "効率的なセッション処理",
+          "メッセージ簡素化"
+        ]
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "SMB3",
+      "object_type": "protocol",
+      "description": "暗号化・署名強化・Preauthentication integrity などを備えた現行世代。モダンファイル共有の基準となる。",
+      "properties": {
+        "security_posture": "推奨",
+        "notable_features": [
+          "SMB Encryption",
+          "署名強化",
+          "Preauthentication integrity"
+        ]
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "NTLM",
+      "object_type": "protocol",
+      "description": "Kerberos 不成立時の後方互換認証であり、設計上は縮退経路として扱うべき旧来方式。",
+      "properties": {
+        "status": "縮退互換",
+        "security_posture": "段階的廃止対象"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "DFS Namespaces",
+      "object_type": "concept",
+      "description": "論理パスを提供し、背後のファイルサーバーや共有を抽象化する仕組み。移行時の URL 安定化に有効。",
+      "properties": {
+        "purpose": "名前抽象化",
+        "migration_value": "高"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "DFS Referral",
+      "object_type": "concept",
+      "description": "クライアントを実際のターゲット共有へ誘導する応答。Kerberos の SPN 設計と名前整合が重要になる。",
+      "properties": {
+        "depends_on": "名前解決と共有設計"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "ファイルサーバー移行",
+      "object_type": "pattern",
+      "description": "DNS 切替、DFS 抽象化、SPN 継続性、ACL 保全を含む総合作業。認証破綻が業務停止に直結する。",
+      "properties": {
+        "critical_controls": [
+          "SPN 継続性",
+          "共有名継続",
+          "ACL 保全"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "SQL Server",
+      "object_type": "product",
+      "description": "Windows 統合認証で Kerberos を利用する代表的なサーバープロセス。SPN と二重ホップ設計が重要。",
+      "properties": {
+        "service_spn_prefix": "MSSQLSvc"
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "IIS",
+      "object_type": "product",
+      "description": "Windows 認証を前段に置く代表的な Web 基盤。Kerberos 委任やアプリケーションプール ID の設計が影響する。",
+      "properties": {
+        "service_spn_prefix": "HTTP"
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "SharePoint",
+      "object_type": "product",
+      "description": "Web アプリ、サービスアプリ、検索、Excel Services などが絡むため Kerberos 設定が複雑化しやすい製品。",
+      "properties": {
+        "complexity": "高",
+        "service_spn_prefix": "HTTP"
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "PostgreSQL",
+      "object_type": "product",
+      "description": "GSSAPI を介して Kerberos 連携できる RDBMS。Windows・Linux 混在環境でも採用される。",
+      "properties": {
+        "integration_method": "GSSAPI"
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "GSSAPI",
+      "object_type": "protocol",
+      "description": "Kerberos を含むセキュア認証の抽象 API。PostgreSQL など非 Windows 系ソフトウェアで広く利用される。",
+      "properties": {
+        "standard": "RFC 2743"
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "二重ホップ問題",
+      "object_type": "risk",
+      "description": "フロントエンドで認証した利用者の文脈を別サーバーへ安全に渡せず、バックエンド接続が失敗または過剰特権化する問題。",
+      "properties": {
+        "affected_workloads": [
+          "SQL Server",
+          "IIS",
+          "SharePoint"
+        ]
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "アプリケーションプール ID",
+      "object_type": "concept",
+      "description": "IIS ワーカープロセスの実行主体。SPN 登録先とチケット復号主体の整合を取る必要がある。",
+      "properties": {
+        "default": "ApplicationPoolIdentity"
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "Pass-the-Ticket",
+      "object_type": "risk",
+      "description": "窃取した Kerberos チケットを再利用して横展開する攻撃。特権端末のメモリ防御が重要となる。",
+      "properties": {
+        "attack_surface": "端末・サーバー上のチケット"
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "Kerberoasting",
+      "object_type": "risk",
+      "description": "SPN を持つサービスアカウントのサービスチケットを取得し、オフラインでパスワードクラックを試みる攻撃。",
+      "properties": {
+        "target": "SPN 付きサービスアカウント"
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "Golden Ticket",
+      "object_type": "risk",
+      "description": "KRBTGT 秘密情報を使って偽造 TGT を生成する攻撃。ドメイン全体の信頼基盤を侵害する。",
+      "properties": {
+        "blast_radius": "ドメイン全体"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "Silver Ticket",
+      "object_type": "risk",
+      "description": "特定サービスの秘密情報から偽造サービスチケットを作る攻撃。対象サービス単位で深刻な侵害になる。",
+      "properties": {
+        "blast_radius": "個別サービス"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "AS-REP Roasting",
+      "object_type": "risk",
+      "description": "事前認証不要なアカウントに対し AS-REP を取得してオフラインクラックする攻撃。",
+      "properties": {
+        "prerequisite": "Kerberos preauthentication 無効"
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "Kerberos AES",
+      "object_type": "concept",
+      "description": "Kerberos の推奨暗号化タイプ。RC4 依存からの脱却と鍵管理整備がモダン化の要件になる。",
+      "properties": {
+        "recommended_types": [
+          "AES128",
+          "AES256"
+        ]
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "RC4",
+      "object_type": "concept",
+      "description": "旧来 Kerberos 運用で残りやすい暗号。Kerberoasting 耐性の観点でも排除を進めるべき対象。",
+      "properties": {
+        "status": "非推奨"
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "Microsoft Entra Kerberos",
+      "object_type": "product",
+      "description": "クラウド側で Kerberos チケットを提供し、Azure Files などへ Kerberos 認証を拡張する仕組み。",
+      "properties": {
+        "supported_workloads": [
+          "Azure Files",
+          "Azure Virtual Desktop",
+          "Azure SQL Managed Instance"
+        ]
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "Azure Files",
+      "object_type": "product",
+      "description": "Azure 上の SMB ファイル共有。Microsoft Entra Kerberos によりクラウド側 Kerberos 認証を利用できる。",
+      "properties": {
+        "protocol": "SMB"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "NTLM廃止計画",
+      "object_type": "pattern",
+      "description": "監査、許可リスト、ブロック、代替実装への切替を段階実施して NTLM 依存を除去する計画。",
+      "properties": {
+        "phases": [
+          "棚卸し",
+          "監査",
+          "代替実装",
+          "段階ブロック"
+        ]
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "マネージドサービスアカウント",
+      "object_type": "pattern",
+      "description": "gMSA を含むサービス実行主体。長寿命静的パスワードを避け、SPN 運用も安定化しやすい。",
+      "properties": {
+        "examples": [
+          "gMSA",
+          "MSA"
+        ]
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "監査と検出",
+      "object_type": "pattern",
+      "description": "Kerberos/NTLM イベント、SPN 重複、暗号タイプ、委任設定、異常チケット発行を継続監視する運用。",
+      "properties": {
+        "telemetry_examples": [
+          "SPN 重複検出",
+          "NTLM 使用監査",
+          "委任設定レビュー"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "Kerberos はチケット発行のため KDC に依存する。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_003",
+      "relationship": "implements",
+      "description": "KDC の Authentication Service が TGT を発行する。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "KDC の Ticket Granting Service がサービスチケットを発行する。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_005",
+      "relationship": "requires",
+      "description": "サービスチケットは対象 SPN と一致していなければならない。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "SQL Server の Kerberos 利用には MSSQLSvc SPN の整備が必要である。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_018",
+      "relationship": "requires",
+      "description": "IIS の Kerberos 利用には HTTP SPN と実行主体の整合が必要である。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_019",
+      "relationship": "requires",
+      "description": "SharePoint は Web アプリやサービスアプリごとに SPN 設計の影響を受ける。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "SMB 共有への Kerberos 認証では cifs/hostname SPN が重要になる。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_022",
+      "relationship": "implements",
+      "description": "制約なし委任は二重ホップを解消できるが、過剰委任となる。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_022",
+      "relationship": "implements",
+      "description": "制約付き委任は二重ホップ対策の代表的手法である。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_022",
+      "relationship": "implements",
+      "description": "リソースベース制約付き委任も二重ホップ対策として有効である。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_006",
+      "relationship": "replaces",
+      "description": "制約付き委任は制約なし委任の代替として使う。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_007",
+      "relationship": "replaces",
+      "description": "リソースベース制約付き委任はより柔軟な代替となる。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_010",
+      "relationship": "implements",
+      "description": "CIFS/SMB の旧実装として SMB1 がある。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_011",
+      "relationship": "implements",
+      "description": "CIFS/SMB の改善世代として SMB2 がある。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_012",
+      "relationship": "implements",
+      "description": "CIFS/SMB の現代的な実装として SMB3 がある。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_010",
+      "relationship": "replaces",
+      "description": "SMB2 は SMB1 の非効率と危険性を改善した。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_011",
+      "relationship": "replaces",
+      "description": "SMB3 は SMB2 を継承しつつ暗号化と署名を強化した。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "NTLM は Negotiate 配下で Kerberos 不成立時の縮退先として残る。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_015",
+      "relationship": "implements",
+      "description": "DFS Namespaces は Referral を使って実体共有へ誘導する。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_016",
+      "relationship": "mitigates",
+      "description": "DFS により移行時の UNC パス変更影響を緩和できる。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_005",
+      "relationship": "requires",
+      "description": "Referral 先の名前と SPN が整合しないと Kerberos 失敗や NTLM フォールバックを招く。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_009",
+      "relationship": "requires",
+      "description": "ファイルサーバー移行では SMB セッション設計の見直しが必要になる。"
+    },
+    {
+      "from": "node_016",
+      "to": "node_005",
+      "relationship": "requires",
+      "description": "移行時は cifs SPN の継続性が重要である。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "SQL Server はフロントエンド経由接続で二重ホップ問題に直面しやすい。"
+    },
+    {
+      "from": "node_017",
+      "to": "node_034",
+      "relationship": "complements",
+      "description": "SQL Server のサービス実行主体として gMSA は SPN 運用を安定化する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_023",
+      "relationship": "requires",
+      "description": "IIS はアプリケーションプール ID と SPN の整合が必要である。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "IIS からバックエンド接続する場合は委任設計が必要になる。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "SharePoint は多段サービス構成のため二重ホップを頻繁に考慮する。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_018",
+      "relationship": "complements",
+      "description": "SharePoint の Web アクセス層は IIS に依存する。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "PostgreSQL の Kerberos 連携は GSSAPI を介して実装される。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "GSSAPI は Kerberos を含む認証方式の抽象化層として機能する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_001",
+      "relationship": "example_of",
+      "description": "Pass-the-Ticket は Kerberos のチケット悪用攻撃である。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_005",
+      "relationship": "requires",
+      "description": "Kerberoasting は SPN を持つアカウントを標的にする。"
+    },
+    {
+      "from": "node_026",
+      "to": "node_003",
+      "relationship": "example_of",
+      "description": "Golden Ticket は偽造 TGT を用いる攻撃である。"
+    },
+    {
+      "from": "node_027",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "Silver Ticket は偽造サービスチケットを用いる攻撃である。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_001",
+      "relationship": "example_of",
+      "description": "AS-REP Roasting は Kerberos 事前認証設定不備を突く攻撃である。"
+    },
+    {
+      "from": "node_029",
+      "to": "node_030",
+      "relationship": "replaces",
+      "description": "AES への移行は RC4 依存の脱却を意味する。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_001",
+      "relationship": "implements",
+      "description": "Microsoft Entra Kerberos はクラウド側で Kerberos チケットを発行する。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_032",
+      "relationship": "requires",
+      "description": "代表的利用先として Azure Files がある。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_013",
+      "relationship": "replaces",
+      "description": "NTLM廃止計画は NTLM 依存を段階的に除去する。"
+    },
+    {
+      "from": "node_033",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "NTLM の代替先は主に Kerberos になる。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_025",
+      "relationship": "mitigates",
+      "description": "gMSA は長寿命の人手管理パスワードを避け、Kerberoasting 面の露出を下げる。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_024",
+      "relationship": "mitigates",
+      "description": "異常チケット利用の監視は Pass-the-Ticket の検知強化に有効である。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_025",
+      "relationship": "mitigates",
+      "description": "高リスク SPN の棚卸しと暗号タイプ監視は Kerberoasting 対策になる。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_033",
+      "relationship": "complements",
+      "description": "NTLM 監査は廃止計画の前提になる。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "Kerberos の基本フロー",
+      "summary": "利用者は初回認証で TGT を取得し、その後に必要なサービスごとのサービスチケットを取得する。",
+      "details": [
+        "KDC は Authentication Service と Ticket Granting Service の役割を持つ。",
+        "クライアントは TGT を提示して対象 SPN 宛のサービスチケットを要求する。",
+        "相互認証が成立するため、なりすまし耐性は NTLM より高い。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_002",
+        "node_003",
+        "node_004"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "SPN 設計の原則",
+      "summary": "Kerberos 障害の多くは SPN 重複、誤登録、実行主体不整合で発生するため、命名と登録主体の統制が最重要である。",
+      "details": [
+        "1 サービスインスタンス 1 SPN の原則を守る。",
+        "CNAME やロードバランサー名を使う場合は実際に接続される名前で SPN を設計する。",
+        "重複 SPN は Kerberos の失敗や想定外の NTLM フォールバックを招く。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_035"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "委任方式の使い分け",
+      "summary": "制約なし委任は極力避け、制約付き委任またはリソースベース制約付き委任を用途別に選ぶ。",
+      "details": [
+        "制約なし委任は侵害されたフロントエンドから広範な横展開を許しやすい。",
+        "制約付き委任は委任先 SPN を列挙する従来方式で、運用範囲が明確なら扱いやすい。",
+        "リソースベース制約付き委任は委任先側で許可主体を管理でき、クロスドメインや運用委譲に向く。"
+      ],
+      "related_nodes": [
+        "node_006",
+        "node_007",
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "SMB1 から SMB3 への移行",
+      "summary": "SMB1 は旧称 CIFS とほぼ同義で扱われることが多く、現代運用では廃止対象である。標準は SMB3 である。",
+      "details": [
+        "SMB1 は古い探索機構や弱い設計に依存し、マルウェア横展開の温床になりやすい。",
+        "SMB2 は性能と効率を改善したが、暗号化は SMB3 世代が中心である。",
+        "SMB3 では暗号化、強化署名、Preauthentication integrity を活用できる。"
+      ],
+      "related_nodes": [
+        "node_009",
+        "node_010",
+        "node_011",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "Kerberos と NTLM の使い分け",
+      "summary": "設計原則は Kerberos 優先であり、NTLM は互換性確保のための縮退経路として棚卸し対象に置く。",
+      "details": [
+        "SPN 不整合、時刻同期不良、名前解決不備で Kerberos が失敗すると NTLM に落ちやすい。",
+        "NTLM は相互認証と委任の柔軟性で不利であり、攻撃面も広い。",
+        "段階的廃止には監査、例外整理、アプリ改修、ブロックの順序が現実的である。"
+      ],
+      "related_nodes": [
+        "node_001",
+        "node_013",
+        "node_033"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "DFS と Kerberos",
+      "summary": "DFS は名前の抽象化に有効だが、Referral 先の実体共有で Kerberos が成立するよう名前と SPN を揃える必要がある。",
+      "details": [
+        "利用者は論理 UNC を見ていても、最終的には Referral 先サーバーに接続する。",
+        "DNS 切替や DFS ターゲット変更だけで済むと考えると、cifs SPN の欠落で認証障害になる。",
+        "大規模移行では DFS によりクライアント変更量を抑えつつ認証継続性を確保できる。"
+      ],
+      "related_nodes": [
+        "node_014",
+        "node_015",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "ファイルサーバー移行時の認証継続性",
+      "summary": "共有名、DNS 名、SPN、ACL、バックアップエージェント依存を一体で移行しないと、アクセス障害や権限逸脱が起きる。",
+      "details": [
+        "利用者向けパスは DFS Namespaces で抽象化しておくと切替しやすい。",
+        "アプリ固定 UNC、サービスアカウントの保存資格情報、バッチジョブも移行対象に含める。",
+        "CNAME 利用時は Kerberos と SMB のサポート要件を事前に検証する。"
+      ],
+      "related_nodes": [
+        "node_005",
+        "node_014",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "SQL Server の Kerberos 統合認証",
+      "summary": "SQL Server で Kerberos を使うには MSSQLSvc SPN とサービス実行主体の整合が必須であり、静的ポート設計が安定運用に寄与する。",
+      "details": [
+        "SPN 自動登録には適切な権限が必要で、権限不足なら手動登録が必要になる。",
+        "Windows 統合認証そのものは単純でも、中継 Web アプリ経由では二重ホップ問題が表面化する。",
+        "運用上は gMSA や静的ポートで構成を安定化させる方が障害を減らしやすい。"
+      ],
+      "related_nodes": [
+        "node_017",
+        "node_022",
+        "node_034"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "IIS の Kerberos 委任",
+      "summary": "IIS はアプリケーションプール ID、カーネルモード認証、`useAppPoolCredentials` の整合を誤ると Kerberos が成立しない。",
+      "details": [
+        "既定の ApplicationPoolIdentity ではコンピューターアカウント前提の挙動を理解する必要がある。",
+        "カスタムドメインアカウントを使うなら HTTP SPN をその主体に関連付ける。",
+        "バックエンド接続で利用者文脈を渡す場合は KCD か RBCD を設計する。"
+      ],
+      "related_nodes": [
+        "node_018",
+        "node_023",
+        "node_007",
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "SharePoint の Kerberos 設定複雑性",
+      "summary": "SharePoint は単一 Web サイトの話ではなく、複数 Web アプリとサービスアプリの連鎖で Kerberos を考える必要がある。",
+      "details": [
+        "Web アプリの HTTP SPN だけでなく、Excel Services や外部データ接続の委任設計が影響する。",
+        "誤設定は認証失敗だけでなく、意図しない NTLM フォールバックや特権サービスアカウント集中を招く。",
+        "SharePoint 専用に例外的な強権アカウントを置くより、委任範囲を明示する方が安全である。"
+      ],
+      "related_nodes": [
+        "node_019",
+        "node_022",
+        "node_005"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "PostgreSQL の GSSAPI 認証",
+      "summary": "PostgreSQL は GSSAPI を通じて Kerberos SSO を実現できるが、`servicename/hostname@REALM` の principal 設計を明確にする必要がある。",
+      "details": [
+        "認証だけでなく、GSSAPI 暗号化を組み合わせる構成も選べる。",
+        "Linux 系サービスでも Kerberos 連携できるため、Windows 依存の知識だけでは不足する。",
+        "時刻同期と DNS 正引き・逆引き整合は Windows 系と同様に重要である。"
+      ],
+      "related_nodes": [
+        "node_020",
+        "node_021",
+        "node_001"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "Pass-the-Ticket 対策",
+      "summary": "チケット窃取への対策はサーバー側設定だけでは不十分で、特権端末の分離と資格情報露出削減が必要である。",
+      "details": [
+        "管理者が日常端末から高権限接続する運用は攻撃面を広げる。",
+        "特権アクセスワークステーション、Credential Guard、管理経路分離が有効である。",
+        "侵害対応ではチケット破棄だけでなく横展開元の資格情報窃取経路を断つ必要がある。"
+      ],
+      "related_nodes": [
+        "node_024",
+        "node_035"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "Kerberoasting 対策",
+      "summary": "人手管理パスワードのサービスアカウントと RC4 許容が Kerberoasting を成立しやすくする。",
+      "details": [
+        "高権限サービスアカウントに SPN が付いている構成は優先是正対象である。",
+        "gMSA への置換、AES のみ許容、長く複雑な鍵の強制が有効である。",
+        "定期的な SPN 棚卸しで不要な登録を削減する。"
+      ],
+      "related_nodes": [
+        "node_025",
+        "node_029",
+        "node_030",
+        "node_034"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "Golden Ticket / Silver Ticket の位置づけ",
+      "summary": "Golden Ticket はドメイン支配、Silver Ticket は個別サービス支配に近く、侵害影響範囲が異なる。",
+      "details": [
+        "Golden Ticket は KRBTGT 秘密情報流出が前提で、インシデント対応では KRBTGT 二段階ローテーションが必要になる。",
+        "Silver Ticket は対象サービスアカウント侵害だけでも成立しうるため、個別サーバー侵害を過小評価してはならない。",
+        "どちらも通常の失敗ログだけでは見落としやすく、チケット異常の検知が重要である。"
+      ],
+      "related_nodes": [
+        "node_026",
+        "node_027",
+        "node_035"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "AS-REP Roasting 対策",
+      "summary": "事前認証無効アカウントは原則禁止とし、例外が必要な場合は強い補完統制を置く。",
+      "details": [
+        "レガシー互換のために preauthentication を無効化したアカウントは攻撃面が大きい。",
+        "監査で該当アカウントを洗い出し、廃止または限定用途へ封じ込める。",
+        "高権限アカウントでこの設定が残っていれば即時是正対象である。"
+      ],
+      "related_nodes": [
+        "node_028",
+        "node_035"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "Kerberos AES への移行",
+      "summary": "RC4 依存を減らし、サービスアカウントとアプリの AES 対応を確認したうえで AES128/AES256 中心に移行する。",
+      "details": [
+        "古いアプリや古いドメイン信頼設定が RC4 を残す主因になる。",
+        "SharePoint など一部製品では AES 対応要件の確認を怠ると認証障害になる。",
+        "暗号タイプ変更は段階ロールアウトと監査をセットで進める。"
+      ],
+      "related_nodes": [
+        "node_029",
+        "node_030",
+        "node_019"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "NTLM 廃止のモダン化方針",
+      "summary": "Microsoft は NTLM 系を将来削減する方向で進めており、企業側も監査からブロックまでの計画を前倒しで持つべきである。",
+      "details": [
+        "まずは NTLM 使用箇所を可視化し、Kerberos 不成立理由を潰す。",
+        "SMB では署名・暗号化・NTLM ブロックの順で段階強化しやすい。",
+        "業務アプリの改修なしに全面停止する計画は失敗しやすく、例外管理が必要である。"
+      ],
+      "related_nodes": [
+        "node_013",
+        "node_033",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "クラウドへの Kerberos 拡張",
+      "summary": "Microsoft Entra Kerberos はオンプレミス KDC への常時到達を前提にしないクラウド側チケット発行を提供し、Azure Files などの採用を後押しする。",
+      "details": [
+        "ハイブリッド ID だけでなく、一部ワークロードではクラウド専用 ID も対象になっている。",
+        "Azure Files のアクセス制御モデルは従来のオンプレミス NTFS ACL と完全同一ではないため、権限制御設計を見直す必要がある。",
+        "クラウド移行では Kerberos が消えるのではなく、発行主体と認可モデルが変わる。"
+      ],
+      "related_nodes": [
+        "node_031",
+        "node_032",
+        "node_001"
+      ]
+    }
+  ]
+}

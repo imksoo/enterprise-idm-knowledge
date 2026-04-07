@@ -1,0 +1,361 @@
+{
+  "metadata": {
+    "scenario_id": "sim_sec_01",
+    "title": "Windows Server 2019のEOLとMIM 2016廃止が重なった証券会社の意思決定会議",
+    "industry": "証券業",
+    "company_profile": {
+      "name": "東都証券",
+      "size": "従業員1500人、東京本社＋支店10拠点",
+      "it_env": "Windows Server 2019 上の Active Directory、MIM 2016 による人事連携プロビジョニング、Exchange Online、Bloomberg 150席"
+    },
+    "themes": [
+      "Active Directory の将来像",
+      "MIM 2016 依存の可視化",
+      "Entra ID への段階移行",
+      "基幹系 AD 依存の影響分析",
+      "投資対効果とフェーズ計画"
+    ],
+    "knowledge_needs": [
+      {
+        "type": "comparison",
+        "topic": "MIM 2016 の機能をプロビジョニング、属性同期、承認、パスワード管理に分解して代替先へ割り付ける方法",
+        "why_needed": "どの機能が Entra ID、運用手順、周辺製品で代替できるかを整理しないと過大投資か見落としが起きるため",
+        "maps_to_file": "07_migration_patterns/ad_to_entra_migration.json"
+      },
+      {
+        "type": "fact",
+        "topic": "Windows Server 2019 と MIM 2016 の延長サポート終了タイムライン",
+        "why_needed": "2029年1月9日に向けた更改順序と予算化を経営層へ説明するため",
+        "maps_to_file": "04_server_auth/os_auth_methods.json"
+      },
+      {
+        "type": "framework",
+        "topic": "Entra ID Governance と Privileged Identity Management の適用範囲",
+        "why_needed": "MIM で担っていた承認と棚卸しをクラウド側でどこまで吸収できるかを見極めるため",
+        "maps_to_file": "06_security_hardening/privileged_access_management.json"
+      },
+      {
+        "type": "process",
+        "topic": "基幹系の Active Directory 依存を棚卸しする手順",
+        "why_needed": "認証方式、LDAP 参照、サービスアカウント、SPN 依存を洗い出さないと移行案の前提が崩れるため",
+        "maps_to_file": "04_server_auth/kerberos_cifs_auth.json"
+      },
+      {
+        "type": "comparison",
+        "topic": "Hybrid Coexistence と Application-first の使い分け",
+        "why_needed": "一括刷新が難しい証券会社で、どこから段階移行するかを意思決定するため",
+        "maps_to_file": "07_migration_patterns/ad_to_entra_migration.json"
+      },
+      {
+        "type": "process",
+        "topic": "グループポリシーと運用スクリプトの依存分析",
+        "why_needed": "MIM 廃止後も Windows Server 運用を維持するための代替統制を先に設計する必要があるため",
+        "maps_to_file": "06_security_hardening/group_policy_alternatives.json"
+      }
+    ]
+  },
+  "personas": [
+    {
+      "id": "p01",
+      "name": "田中 誠一",
+      "role": "情報システム部長",
+      "background": "AD 管理歴15年。支店網と本社サーバーを止めないことを最優先にしてきた。",
+      "stance": "動いている認証基盤を短期で大きく変えることに強い抵抗がある。"
+    },
+    {
+      "id": "p02",
+      "name": "鈴木 美咲",
+      "role": "情報セキュリティ部長",
+      "background": "前職でランサムウェア被害後の再建を経験。特権管理と監査証跡の不足に敏感。",
+      "stance": "延命ではなく、統制を強化できる移行を求める。"
+    },
+    {
+      "id": "p03",
+      "name": "佐藤 健",
+      "role": "インフラアーキテクト",
+      "background": "Entra ID と Entra Connect の技術検証を終えており、既存 AD 依存の洗い出しも進めている。",
+      "stance": "Hybrid Coexistence を軸に、MIM の機能を分解して段階移行したい。"
+    },
+    {
+      "id": "p04",
+      "name": "山田 浩二",
+      "role": "業務システム担当",
+      "background": "基幹系パッケージ、権限制御、ベンダー保守の窓口。改修不能な古い認証連携の存在を把握している。",
+      "stance": "業務停止リスクが見えるまでは認証変更に反対。"
+    },
+    {
+      "id": "p05",
+      "name": "中村 啓子",
+      "role": "提案SE",
+      "background": "大手 SIer で金融業の AD 更改と Entra ID 導入を担当。顧客課題の整理が得意。",
+      "stance": "一足飛びの刷新ではなく、現実的な移行ロードマップを提示したい。"
+    },
+    {
+      "id": "p06",
+      "name": "伊藤 隆",
+      "role": "CIO",
+      "background": "経営会議で IT 投資を統括。市場部門からはスピード、監査部門からは統制を求められている。",
+      "stance": "コスト増だけの案件は認めないが、事業継続に直結するなら段階投資を判断する。"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_id": "s1",
+      "title": "課題の認識",
+      "setting": "本社8階の大会議室。田中が MIM 2016 のサポート延長通知メールを印刷して机に置き、臨時会議を始める。",
+      "dialogue": [
+        {
+          "speaker": "p01",
+          "text": "今朝、Microsoft から MIM 2016 の延長サポートは 2029年1月9日までという通知が来た。Windows Server 2019 も同じ日付で切れる。まだ3年あると言えなくもないが、認証基盤は後ろ倒しが一番危ない。とはいえ、今の人員で全面刷新は現実的ではない。",
+          "subtext": "危機感はあるが、自分の管理領域を短期間で否定されたくない。"
+        },
+        {
+          "speaker": "p02",
+          "text": "前職でも『まだ数年ある』と言っている間に、特権アカウントの棚卸しが追い付かず、侵害後に再構築になった。今回は EOL が問題というより、MIM と Active Directory の境界が曖昧なまま運用されていることが危険です。今なら計画的に変えられます。",
+          "subtext": "単なる保守切れ対応ではなく、統制改革の起点にしたい。"
+        },
+        {
+          "speaker": "p03",
+          "text": "技術検証の範囲では、ユーザー同期は Entra Connect で整理できます。ただし MIM が担っている承認や属性加工まで一気に置き換えるのは無理です。MIM を機能単位で分解し、残すものと捨てるものを決めないと、移行案が全部きれいごとになります。",
+          "subtext": "議論を製品比較から機能分解へ移したい。"
+        },
+        {
+          "speaker": "p06",
+          "text": "経営として知りたいのは二つだ。2029年までに何をやらないと事業継続上まずいのか、そして何をやれば監査やセキュリティで再利用できるのか。単なる更改費用なら厳しい。だが支店業務や市場接続に影響するなら、投資判断は別になる。",
+          "subtext": "コストではなく経営リスクの言語で説明してほしい。"
+        }
+      ],
+      "issues_surfaced": [
+        "Windows Server 2019 と MIM 2016 の延長サポート終了が同時期に到来する",
+        "MIM の担当範囲が曖昧で、運用依存が可視化されていない",
+        "EOL 対応を単純更改で済ませるか統制改革へつなげるかで認識差がある"
+      ],
+      "knowledge_ref": [
+        "04_server_auth/os_auth_methods.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    },
+    {
+      "scene_id": "s2",
+      "title": "現状分析",
+      "setting": "佐藤が MIM フロー一覧を投影し、どの処理が人事、Exchange Online、共有フォルダー、業務パッケージに効いているかを説明する。",
+      "dialogue": [
+        {
+          "speaker": "p03",
+          "text": "棚卸ししたところ、MIM は単なるアカウント作成ではありません。人事システムから社員区分を受け取り、AD の OU とグループを振り分け、Exchange Online の属性を整え、退職時は一定期間後に無効化しています。さらに Bloomberg 用の申請フローも MIM のメール承認に乗っています。",
+          "subtext": "MIM 廃止は製品入替ではなく運用設計の再構成だと伝えたい。"
+        },
+        {
+          "speaker": "p04",
+          "text": "その中でも怖いのは基幹系パッケージです。店頭系の古いアプリは LDAP で AD 属性を直接見ていますし、夜間バッチは固定のサービスアカウントで共有フォルダーにアクセスしています。権限付与のタイミングがずれるだけで、翌朝の支店開店に影響が出る可能性があります。",
+          "subtext": "機能棚卸しだけでなく業務影響を前面に出して慎重論を強めたい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "金融案件では、MIM の代替検討で一番失敗しやすいのが『同期』しか見ないことです。実際には、属性正規化、承認、例外運用、退職処理の保留期間、ベンダー ID の発行停止条件まで含めて評価しないと移行後に運用崩壊します。まず機能マップを作り、廃止可能なフローを先に切り分けましょう。",
+          "subtext": "提案の主導権を握るため、整理の型を提示している。"
+        },
+        {
+          "speaker": "p02",
+          "text": "私は特権アカウントの扱いも別枠で見たいです。MIM の承認メールで管理者権限が付いているなら、それは監査上かなり弱い。承認者、実施者、利用期間、ログ保全が分かれていないと、今後の金融庁対応でも説明が苦しくなります。",
+          "subtext": "移行をきっかけに特権統制を組み込みたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "MIM が属性同期だけでなく承認や例外運用まで抱えている",
+        "基幹系パッケージが LDAP、サービスアカウント、共有フォルダー権限に依存している",
+        "特権付与の承認経路と監査証跡が弱い"
+      ],
+      "knowledge_ref": [
+        "04_server_auth/kerberos_cifs_auth.json",
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/ad_to_entra_migration.json"
+      ]
+    },
+    {
+      "scene_id": "s3",
+      "title": "選択肢の提示",
+      "setting": "中村が3案比較表を配布する。延命案、ハイブリッド併存案、アプリ優先移行案の前提条件が並ぶ。",
+      "dialogue": [
+        {
+          "speaker": "p05",
+          "text": "案1は MIM 2016 SP2 を維持しつつ Windows Server を更改する延命型です。短期コストは最も低いですが、2029年の崖を先送りするだけです。案2は Hybrid Coexistence で、社員 ID と基本属性は Entra ID 側へ寄せ、MIM は段階的に機能分解します。案3は Application-first で、Exchange Online や周辺 SaaS から先に寄せ、基幹系は AD 残置です。",
+          "subtext": "全面刷新ではなく比較可能な土俵をつくっている。"
+        },
+        {
+          "speaker": "p03",
+          "text": "技術的には案2が現実的です。Entra Connect で ID 同期、承認は Entra ID Governance と周辺ワークフローへ再設計、特権は Privileged Identity Management と既存踏み台運用を組み合わせる。MIM の全部を Microsoft 製品で埋めるというより、不要業務を捨てる前提で考えるべきです。",
+          "subtext": "製品機能の誤解を防ぎ、現実的な構成に誘導したい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "案2は分かるが、結局 MIM と Entra ID の二重運用期間が長くなるのではないか。現場の担当者は今でも人が足りない。運用が複雑になってインシデントが増えるなら、延命のほうが安全に見える。",
+          "subtext": "追加運用負荷を理由に慎重論を維持したい。"
+        },
+        {
+          "speaker": "p05",
+          "text": "二重運用を避けるためには、先に『MIM でしかできない機能』ではなく『MIM に残す価値がある機能』を決めることです。たとえば Bloomberg 申請は別ワークフローへ切り出せますし、単純な属性変換は人事側のデータ品質改善で消せます。そこで初めて案2の工数が現実的になります。",
+          "subtext": "工数の見え方を変え、案2の採用可能性を上げたい。"
+        }
+      ],
+      "issues_surfaced": [
+        "延命型は短期コストが低いが、2029年問題を先送りするだけ",
+        "Hybrid Coexistence では MIM の機能分解と不要業務の削減が前提になる",
+        "運用負荷を抑えるには技術移行より前に業務整理が必要"
+      ],
+      "knowledge_ref": [
+        "05_hybrid_scenarios/entra_hybrid_join.json",
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "06_security_hardening/privileged_access_management.json"
+      ]
+    },
+    {
+      "scene_id": "s4",
+      "title": "反対意見の噴出",
+      "setting": "比較表を見た山田が、基幹系パッケージと支店業務の影響を具体的に挙げて反論する。",
+      "dialogue": [
+        {
+          "speaker": "p04",
+          "text": "理屈は分かりますが、基幹系ベンダーは認証部分の改修に簡単には乗りません。店頭端末の一部は今もドメインアカウント前提ですし、共有フォルダーの権限は AD グループで細かく制御しています。人事属性の持ち方が変わるだけでも帳票の出力権限がずれる可能性があるんです。",
+          "subtext": "移行のリスクを最大限に見せて、業務側の発言力を確保したい。"
+        },
+        {
+          "speaker": "p03",
+          "text": "そこは認証基盤の切替と業務権限モデルの切替を分けて考えるべきです。まずは AD を権限ソースとして残したまま、上位の ID ライフサイクルだけを整理する。その間に LDAP 参照、SPN、サービスアカウント、共有フォルダー ACL を調査し、手を付けられないものは明示的に残置対象にします。",
+          "subtext": "全部を同時に変えない設計で懸念を抑えたい。"
+        },
+        {
+          "speaker": "p02",
+          "text": "残置は否定しません。ただ、今のまま共有アカウントや長寿命のサービスアカウントを放置するのは駄目です。ランサムウェアの初動で真っ先に悪用されるのは、こういう『誰も責任者がはっきりしないが動いている ID』です。残すなら残すで、統制計画を同時に付けましょう。",
+          "subtext": "セキュリティ要件を後回しにさせない。"
+        },
+        {
+          "speaker": "p01",
+          "text": "確かに、基幹系に手を出さない代わりに、周辺の共有アカウント整理や特権管理は先にやる、という切り分けなら現場も飲みやすいかもしれない。要は、何を 2026年度に決め、何を 2027年度以降へ送るかの線引きが欲しい。",
+          "subtext": "反対一辺倒ではなく、条件付き賛成へ軸足を移している。"
+        }
+      ],
+      "issues_surfaced": [
+        "基幹系の認証依存は権限モデルと一体化しており、切替不能領域がある",
+        "残置を許容しても共有アカウントと長寿命サービスアカウントは先に統制すべき",
+        "年度単位でのスコープ線引きが必要"
+      ],
+      "knowledge_ref": [
+        "04_server_auth/os_auth_methods.json",
+        "04_server_auth/kerberos_cifs_auth.json",
+        "06_security_hardening/ransomware_defense.json"
+      ]
+    },
+    {
+      "scene_id": "s5",
+      "title": "CIOの意思決定",
+      "setting": "議論を聞いた伊藤がホワイトボードに3年計画を書き、投資条件を確認する。",
+      "dialogue": [
+        {
+          "speaker": "p06",
+          "text": "結論として、延命単独案は採りません。2026年度は Day 0 として MIM 機能マップ、基幹系 AD 依存調査、特権アカウント整理を完了する。2027年度は Entra Connect と周辺ワークフロー再設計、2028年度は MIM 停止判定まで持っていく。基幹系は残置可ですが、残置理由を監査可能な形で残すことが条件です。",
+          "subtext": "段階投資は認めるが、曖昧な先送りは認めない。"
+        },
+        {
+          "speaker": "p05",
+          "text": "その前提なら、提案書は機能分解ベースで作り直します。MIM の残置機能、廃止機能、外部ワークフロー化する機能を分け、工数とリスクを年度別に見せます。金融庁監査と内部監査の説明資料まで含めて整理します。",
+          "subtext": "案件を確実に前進させるため、経営向け成果物を約束する。"
+        },
+        {
+          "speaker": "p02",
+          "text": "セキュリティ部としては、フェーズ1の KPI に共有アカウント削減数、特権棚卸し完了率、退職者アカウント削除のリードタイム短縮を入れたいです。EOL 対応だけで終わらせると、次の監査で同じ指摘が出ます。",
+          "subtext": "投資効果を統制指標で固定したい。"
+        },
+        {
+          "speaker": "p01",
+          "text": "分かりました。現場としては、まず MIM のフローと業務依存の実測を出します。動いているものを守るためにも、何が本当に動いているのかを数字で示すしかないですね。",
+          "subtext": "自分の守備範囲を守りつつ、変革に協力する姿勢を見せる。"
+        }
+      ],
+      "issues_surfaced": [
+        "段階投資の前提として Day 0 の調査項目を明確化できた",
+        "残置領域にも監査可能な理由付けと KPI が必要",
+        "EOL 対応を特権管理とライフサイクル統制の改善に接続する方針が決まった"
+      ],
+      "knowledge_ref": [
+        "07_migration_patterns/ad_to_entra_migration.json",
+        "06_security_hardening/privileged_access_management.json",
+        "07_migration_patterns/japan_security_frameworks.json"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "category": "技術",
+      "current": "MIM 2016 が人事連携、属性加工、承認、退職処理を一体で担っている",
+      "target": "機能を分解し、同期、承認、監査を別々に設計できる状態",
+      "gap": "MIM 依存の機能境界が不明確で代替設計ができない",
+      "priority": "high"
+    },
+    {
+      "category": "技術",
+      "current": "基幹系パッケージが LDAP、AD グループ、サービスアカウントに依存している",
+      "target": "認証依存の実態が一覧化され、残置対象と改修対象が区別されている",
+      "gap": "アプリ単位の認証棚卸しと影響分析が不足している",
+      "priority": "high"
+    },
+    {
+      "category": "プロセス",
+      "current": "特権付与がメール承認と属人的運用に依存している",
+      "target": "承認、利用期間、操作ログが一貫して管理される",
+      "gap": "JIT、監査証跡、権限定期レビューの仕組みが不足している",
+      "priority": "high"
+    },
+    {
+      "category": "組織",
+      "current": "情シス、業務、セキュリティで EOL 対応の目的が一致していない",
+      "target": "事業継続、監査、コストの観点で共通ロードマップが合意されている",
+      "gap": "更改案件と統制改善案件が別議論になっている",
+      "priority": "medium"
+    },
+    {
+      "category": "規制",
+      "current": "監査説明は現行運用の慣例に依存している",
+      "target": "残置理由、特権統制、退職者処理の根拠が文書化されている",
+      "gap": "金融業の監査・監督に耐える証跡設計が不足している",
+      "priority": "medium"
+    },
+    {
+      "category": "プロセス",
+      "current": "共有アカウントと退職者アカウントの削除が運用者任せになっている",
+      "target": "ライフサイクルイベントに連動して自動または準自動で失効できる",
+      "gap": "人事イベントと ID 停止の SLA が定義されていない",
+      "priority": "high"
+    }
+  ],
+  "recommended_actions": [
+    {
+      "action": "MIM 2016 のフローを機能別に分解し、残置、廃止、再設計の3区分で棚卸しする",
+      "owner": "情報システム部 + 提案SE",
+      "horizon": "0-3か月",
+      "expected_outcome": "製品入替前提ではなく、機能移行前提のロードマップを作成できる",
+      "related_knowledge": "07_migration_patterns/ad_to_entra_migration.json"
+    },
+    {
+      "action": "基幹系アプリの LDAP、Kerberos、サービスアカウント、共有フォルダー ACL 依存を調査する",
+      "owner": "業務システム担当 + インフラアーキテクト",
+      "horizon": "0-4か月",
+      "expected_outcome": "変更禁止領域と改修可能領域の線引きができる",
+      "related_knowledge": "04_server_auth/kerberos_cifs_auth.json"
+    },
+    {
+      "action": "特権アカウントの承認、利用、記録を見直し、JIT と定期レビューを設計する",
+      "owner": "情報セキュリティ部",
+      "horizon": "3-6か月",
+      "expected_outcome": "EOL 対応を監査改善につなげられる",
+      "related_knowledge": "06_security_hardening/privileged_access_management.json"
+    },
+    {
+      "action": "2026年度を Day 0、2027年度をハイブリッド構築、2028年度を MIM 停止判定の3段階で投資計画化する",
+      "owner": "CIO",
+      "horizon": "0-2か月で予算化",
+      "expected_outcome": "2029年1月9日を見据えた現実的な経営判断が可能になる",
+      "related_knowledge": "07_migration_patterns/ad_to_entra_migration.json"
+    }
+  ]
+}

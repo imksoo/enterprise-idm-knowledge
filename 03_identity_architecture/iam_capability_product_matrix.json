@@ -1,0 +1,2439 @@
+{
+  "metadata": {
+    "id": "iam_capability_product_matrix",
+    "title": "IAMケイパビリティ×製品マトリクス（日本市場版）",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "last_verified": "2026-04-07",
+    "tags": [
+      "IAM",
+      "IdP",
+      "IGA",
+      "PAM",
+      "MDM",
+      "SIEM",
+      "日本市場",
+      "金融",
+      "製造",
+      "エネルギー"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "./identity_landscape.json",
+      "./idp_comparison.json",
+      "./iga_tool_comparison.json",
+      "./pam_tool_comparison.json",
+      "../06_security_hardening/privileged_access_management.json"
+    ],
+    "score_definitions": {
+      "native": "製品の中核機能として提供し、主担当製品として採用しやすい。",
+      "strong": "標準機能で広く対応でき、有力候補になる。",
+      "partial": "一部対応はあるが、補完製品や個別設計が前提。",
+      "weak": "限定的な補助機能のみ。主担当製品にはなりにくい。",
+      "none": "主要守備範囲外。別製品が必須。"
+    },
+    "scope_note": "評価は単一SKUではなく、当該ベンダーの一般的な従業員IAM/PAM/証明書管理スイートを前提にした。価格と機能は契約モジュール、国内パートナー、導入形態で変動する。"
+  },
+  "capability_categories": [
+    {
+      "category_id": "cat_01",
+      "name": "SSO/フェデレーション",
+      "description": "SAML、OpenID Connect、OAuth 2.0、Kerberos を用いて SaaS、オンプレミスWeb、管理ポータルの認証を統合する領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_01_01",
+          "name": "SAML 2.0 IdP",
+          "description": "SaaS や業務Webへのフェデレーション認証。",
+          "typical_use_case": "社内ポータルから業務SaaSへシングルサインオンする。"
+        },
+        {
+          "id": "sub_01_02",
+          "name": "OpenID Connect/OAuth 2.0",
+          "description": "モダンアプリやAPIゲートウェイとの認証連携。",
+          "typical_use_case": "社内アプリをOIDCで統一する。"
+        },
+        {
+          "id": "sub_01_03",
+          "name": "Kerberos/レガシー連携",
+          "description": "Active Directory やレガシーWebとの橋渡し。",
+          "typical_use_case": "Windows統合認証を残しつつ外部IdPへ段階移行する。"
+        },
+        {
+          "id": "sub_01_04",
+          "name": "アプリ接続カタログ",
+          "description": "事前構築済みコネクタとテンプレート。",
+          "typical_use_case": "短期間でSaaS追加を繰り返す。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_02",
+      "name": "MFA",
+      "description": "TOTP、FIDO2、スマートカード、証明書、生体認証を含む多要素認証の領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_02_01",
+          "name": "TOTP/Push",
+          "description": "モバイルアプリやトークンによる追加認証。",
+          "typical_use_case": "SaaSログイン時に追加認証を要求する。"
+        },
+        {
+          "id": "sub_02_02",
+          "name": "FIDO2/Passkey",
+          "description": "フィッシング耐性の高い認証。",
+          "typical_use_case": "管理者をパスワードレスへ移行する。"
+        },
+        {
+          "id": "sub_02_03",
+          "name": "スマートカード/証明書",
+          "description": "PKI ベースの認証強化。",
+          "typical_use_case": "重要インフラ端末の強固な認証を実装する。"
+        },
+        {
+          "id": "sub_02_04",
+          "name": "生体認証連携",
+          "description": "Windows Hello や端末ネイティブ生体認証との連携。",
+          "typical_use_case": "業務端末の利便性を維持しつつ認証強度を上げる。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_03",
+      "name": "ディレクトリサービス",
+      "description": "LDAP マスター、クラウドディレクトリ、AD 統合、グループ管理を担う領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_03_01",
+          "name": "LDAP マスター",
+          "description": "属性とグループの正本を保持する。",
+          "typical_use_case": "複数システムの参照元を一本化する。"
+        },
+        {
+          "id": "sub_03_02",
+          "name": "AD 統合",
+          "description": "Active Directory との同期や信頼関係。",
+          "typical_use_case": "既存ADを残しつつクラウド化する。"
+        },
+        {
+          "id": "sub_03_03",
+          "name": "グループ管理",
+          "description": "権限付与に使うグループやロール束の管理。",
+          "typical_use_case": "部門異動に合わせてグループを自動更新する。"
+        },
+        {
+          "id": "sub_03_04",
+          "name": "属性同期",
+          "description": "SCIM、LDAP、API による属性連携。",
+          "typical_use_case": "人事属性をSaaSへ配布する。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_04",
+      "name": "ライフサイクル管理",
+      "description": "入社、異動、退職に連動する Joiner-Mover-Leaver を自動化する領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_04_01",
+          "name": "Joiner",
+          "description": "入社時のID発行と初期権限付与。",
+          "typical_use_case": "入社前にアカウントと端末設定を準備する。"
+        },
+        {
+          "id": "sub_04_02",
+          "name": "Mover",
+          "description": "異動時の属性更新と権限変更。",
+          "typical_use_case": "組織変更日に合わせて権限を切り替える。"
+        },
+        {
+          "id": "sub_04_03",
+          "name": "Leaver",
+          "description": "退職者や委託終了者の停止と削除。",
+          "typical_use_case": "終了日当日にアクセスを失効する。"
+        },
+        {
+          "id": "sub_04_04",
+          "name": "プロビジョニング",
+          "description": "SCIM、API、エージェントによる配布。",
+          "typical_use_case": "SaaS とADを横断して権限を自動更新する。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_05",
+      "name": "アクセスガバナンス",
+      "description": "アクセスレビュー、認定、SoD、ロール設計を行う IGA の領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_05_01",
+          "name": "アクセスレビュー",
+          "description": "定期棚卸しと認定。",
+          "typical_use_case": "四半期ごとに部門長へ棚卸しを依頼する。"
+        },
+        {
+          "id": "sub_05_02",
+          "name": "SoD",
+          "description": "職務分離ポリシーと違反検知。",
+          "typical_use_case": "申請時に相反権限を検知する。"
+        },
+        {
+          "id": "sub_05_03",
+          "name": "ロール管理",
+          "description": "ビジネスロールとITロールの設計。",
+          "typical_use_case": "職種ごとの標準権限セットを定義する。"
+        },
+        {
+          "id": "sub_05_04",
+          "name": "監査証跡",
+          "description": "誰が承認し、いつ付与したかを保持する。",
+          "typical_use_case": "内部監査へ付与履歴を提出する。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_06",
+      "name": "特権アクセス管理",
+      "description": "Vault、JIT、パスワードローテーション、セッション録画を含むPAMの領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_06_01",
+          "name": "Vault",
+          "description": "特権資格情報の保管とローテーション。",
+          "typical_use_case": "共有管理者パスワードを手入力させない。"
+        },
+        {
+          "id": "sub_06_02",
+          "name": "JIT/JEA",
+          "description": "必要時のみ昇格する。",
+          "typical_use_case": "障害対応時だけ管理者権限を付与する。"
+        },
+        {
+          "id": "sub_06_03",
+          "name": "セッション録画",
+          "description": "RDP、SSH、Web管理操作の記録。",
+          "typical_use_case": "特権作業の再現性と証跡を確保する。"
+        },
+        {
+          "id": "sub_06_04",
+          "name": "機械資格情報統制",
+          "description": "サービスアカウントやアプリ資格情報の保管。",
+          "typical_use_case": "ジョブ実行ユーザーの固定パスワードを廃止する。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_07",
+      "name": "踏み台・特権作業管理",
+      "description": "日本市場で重視される踏み台、接続仲介、申請承認、作業証跡の領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_07_01",
+          "name": "接続仲介",
+          "description": "RDP、SSH、Web管理の中継。",
+          "typical_use_case": "委託先保守を踏み台経由に統一する。"
+        },
+        {
+          "id": "sub_07_02",
+          "name": "作業申請承認",
+          "description": "夜間保守や緊急作業の承認フロー。",
+          "typical_use_case": "本番作業前に責任者承認を必須化する。"
+        },
+        {
+          "id": "sub_07_03",
+          "name": "作業録画",
+          "description": "画面、コマンド、ファイル操作の記録。",
+          "typical_use_case": "障害時対応の追跡可能性を高める。"
+        },
+        {
+          "id": "sub_07_04",
+          "name": "外部委託先統制",
+          "description": "ベンダーIDと保守作業の切り分け。",
+          "typical_use_case": "委託先ごとに到達範囲と時間帯を制御する。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_08",
+      "name": "デバイス管理",
+      "description": "MDM、EMM、構成管理、準拠判定、配布を含む端末管理領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_08_01",
+          "name": "モバイル管理",
+          "description": "iOS/Android の登録、配布、ワイプ。",
+          "typical_use_case": "紛失端末のリモートワイプを行う。"
+        },
+        {
+          "id": "sub_08_02",
+          "name": "PC/UEM 管理",
+          "description": "Windows/macOS の構成管理。",
+          "typical_use_case": "端末準拠状態を継続判定する。"
+        },
+        {
+          "id": "sub_08_03",
+          "name": "証明書配布",
+          "description": "デバイス証明書とWi-Fi/VPN設定の配布。",
+          "typical_use_case": "ゼロタッチで証明書を配る。"
+        },
+        {
+          "id": "sub_08_04",
+          "name": "端末リスク文脈",
+          "description": "IdP やSIEMへ準拠状態を渡す。",
+          "typical_use_case": "未準拠端末からのSaaSアクセスを制限する。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_09",
+      "name": "SIEM/監査ログ統合",
+      "description": "IAM、端末、特権操作、証明書イベントの収集、相関、アラートを行う領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_09_01",
+          "name": "ログ収集",
+          "description": "認証、端末、PAM、クラウドログの収集。",
+          "typical_use_case": "複数製品の監査ログを一元保管する。"
+        },
+        {
+          "id": "sub_09_02",
+          "name": "相関分析",
+          "description": "イベント間の関連付け。",
+          "typical_use_case": "MFA失敗と特権昇格を結び付ける。"
+        },
+        {
+          "id": "sub_09_03",
+          "name": "アラート/自動化",
+          "description": "異常時の通知とSOAR連携。",
+          "typical_use_case": "不正アクセス検知時にアカウントを停止する。"
+        },
+        {
+          "id": "sub_09_04",
+          "name": "監査レポート",
+          "description": "監査部門向けの証跡出力。",
+          "typical_use_case": "FISC や内部監査の報告を作成する。"
+        }
+      ]
+    },
+    {
+      "category_id": "cat_10",
+      "name": "シークレット管理",
+      "description": "APIキー、証明書、SSH鍵、gMSA、Vault を含む機械ID統制の領域。",
+      "sub_capabilities": [
+        {
+          "id": "sub_10_01",
+          "name": "API キー/トークン保管",
+          "description": "アプリ資格情報の秘匿化。",
+          "typical_use_case": "CI/CD から固定シークレットを排除する。"
+        },
+        {
+          "id": "sub_10_02",
+          "name": "証明書ライフサイクル",
+          "description": "発行、更新、失効の自動化。",
+          "typical_use_case": "証明書失効事故を防ぐ。"
+        },
+        {
+          "id": "sub_10_03",
+          "name": "SSH 鍵/マシンID",
+          "description": "サーバーやコンテナの機械ID統制。",
+          "typical_use_case": "Kubernetes と mTLS を統制する。"
+        },
+        {
+          "id": "sub_10_04",
+          "name": "サービスアカウント管理",
+          "description": "gMSA やジョブ実行資格情報の統制。",
+          "typical_use_case": "固定パスワード運用をやめる。"
+        }
+      ]
+    }
+  ],
+  "products": [
+    {
+      "product_id": "prod_entra",
+      "name": "Entra ID",
+      "vendor": "Microsoft",
+      "category": "idp",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "native",
+          "notes": "中核機能として提供し、日本企業の標準要件を広く満たす。"
+        },
+        "mfa": {
+          "score": "native",
+          "notes": "標準機能で多要素認証を提供し、追加製品なしでも主力候補になる。"
+        },
+        "directory": {
+          "score": "strong",
+          "notes": "クラウドディレクトリとして強いが、LDAPマスターやドメイン参加互換は Entra Domain Services や Active Directory 連携で補完する。"
+        },
+        "lifecycle": {
+          "score": "strong",
+          "notes": "主要なJML要件を実現しやすいが、複雑な例外運用は個別設計が必要。"
+        },
+        "governance": {
+          "score": "strong",
+          "notes": "主要な棚卸しと統制に対応するが、深いSoDは周辺設計が必要。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "PIM と JIT は強いが、フルセッション録画や共有資格情報Vaultは専業PAMの併用が現実的。"
+        },
+        "jumpserver": {
+          "score": "weak",
+          "notes": "運用補助レベルであり、専用製品の代替にはなりにくい。"
+        },
+        "device_mgmt": {
+          "score": "partial",
+          "notes": "Microsoft Intune 連携で価値が最大化する。単体ではUEMではない。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "主要ログ連携に強く、監査用途でも説明しやすい。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "Managed Identity や証明書ベース認証には寄与するが、Vault系の深い保管庫機能は弱い。"
+        }
+      },
+      "typical_combination": [
+        "prod_intune",
+        "prod_sentinel",
+        "prod_cyberark_pam",
+        "prod_sailpoint"
+      ],
+      "japan_notes": "Microsoft 365 採用企業では説明しやすく、日本の金融・製造・公共で導入実績とSIer体制が厚い。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_okta",
+      "name": "Okta Workforce Identity Cloud",
+      "vendor": "Okta",
+      "category": "idp",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "native",
+          "notes": "中核機能として提供し、日本企業の標準要件を広く満たす。"
+        },
+        "mfa": {
+          "score": "strong",
+          "notes": "主要方式に対応し、一般的な企業要件には十分強い。"
+        },
+        "directory": {
+          "score": "strong",
+          "notes": "Universal Directory と AD/LDAP Agent で実運用しやすいが、深いWindowsドメイン機能は持たない。"
+        },
+        "lifecycle": {
+          "score": "strong",
+          "notes": "主要なJML要件を実現しやすいが、複雑な例外運用は個別設計が必要。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "Okta Identity Governance はあるが、大規模SoDや複雑な棚卸しは専業IGAが安定する。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "Okta Privileged Access はあるが、日本での主流提案は CyberArk や BeyondTrust 併用になりやすい。"
+        },
+        "jumpserver": {
+          "score": "weak",
+          "notes": "運用補助レベルであり、専用製品の代替にはなりにくい。"
+        },
+        "device_mgmt": {
+          "score": "partial",
+          "notes": "FastPass やデバイス文脈は強いが、UEMそのものは他製品前提。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "主要ログ連携に強く、監査用途でも説明しやすい。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_jamf",
+        "prod_beyondtrust",
+        "prod_splunk",
+        "prod_saviynt"
+      ],
+      "japan_notes": "マルチクラウド企業や Microsoft 一色を避けたい組織で有力。日本法人とパートナー網は整っている。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_ping",
+      "name": "Ping Identity",
+      "vendor": "Ping Identity",
+      "category": "idp",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "native",
+          "notes": "PingFederate、PingOne、PingAccess 系で SAML/OIDC とレガシー中継に強く、金融の複雑フェデレーションに向く。"
+        },
+        "mfa": {
+          "score": "strong",
+          "notes": "主要方式に対応し、一般的な企業要件には十分強い。"
+        },
+        "directory": {
+          "score": "strong",
+          "notes": "PingDirectory を含むスイート前提ならLDAP系の要求にも強い。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "人事起点JMLは可能だが、選定時はIGA製品併用が前提になる。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "weak",
+          "notes": "運用補助レベルであり、専用製品の代替にはなりにくい。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_omada",
+        "prod_beyondtrust",
+        "prod_qradar"
+      ],
+      "japan_notes": "旧 ForgeRock 資産統合後の位置付け整理が必要だが、複雑なハイブリッド認証では依然有力。",
+      "pricing_tier": "individual_quote"
+    },
+    {
+      "product_id": "prod_forgerock",
+      "name": "ForgeRock Identity Platform",
+      "vendor": "Ping Identity",
+      "category": "idp",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "strong",
+          "notes": "OpenAM 系の既存導入資産では依然強い。新規案件では Ping プラットフォーム全体で評価すべき。"
+        },
+        "mfa": {
+          "score": "strong",
+          "notes": "主要方式に対応し、一般的な企業要件には十分強い。"
+        },
+        "directory": {
+          "score": "strong",
+          "notes": "Directory Services を組み込めば大規模LDAPとCIAM/従業員IAMの両方に対応しやすい。"
+        },
+        "lifecycle": {
+          "score": "strong",
+          "notes": "Identity Management を含む場合にJMLへ踏み込めるが、案件ごとの差が大きい。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "weak",
+          "notes": "運用補助レベルであり、専用製品の代替にはなりにくい。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_qradar",
+        "prod_cyberark_pam",
+        "prod_omada"
+      ],
+      "japan_notes": "既存導入の継続評価では重要。新規標準候補としてはPing製品群への再整理が必要。",
+      "pricing_tier": "individual_quote"
+    },
+    {
+      "product_id": "prod_onelogin",
+      "name": "OneLogin",
+      "vendor": "One Identity",
+      "category": "idp",
+      "tier": "mid",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "strong",
+          "notes": "中堅向けSaaS SSOとして扱いやすいが、超大規模の複雑要件ではPing/Okta/Entraが優勢。"
+        },
+        "mfa": {
+          "score": "strong",
+          "notes": "主要方式に対応し、一般的な企業要件には十分強い。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "基本的なプロビジョニングは可能だが、全社JML基盤としては補完が必要。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_intune",
+        "prod_splunk"
+      ],
+      "japan_notes": "中堅企業やSaaS統合で成立しやすいが、日本の大規模金融向けでは採用説明力がやや弱い。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_jumpcloud",
+      "name": "JumpCloud Directory Platform",
+      "vendor": "JumpCloud",
+      "category": "idp",
+      "tier": "mid",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "strong",
+          "notes": "標準機能で広く対応できるが、一部の周辺要件は補完が必要。"
+        },
+        "mfa": {
+          "score": "strong",
+          "notes": "主要方式に対応し、一般的な企業要件には十分強い。"
+        },
+        "directory": {
+          "score": "native",
+          "notes": "クラウドディレクトリ、LDAP、端末連携を一体で扱える点が特色。AD代替の軽量選択肢として検討しやすい。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "中堅向けのJMLは対応可能だが、大企業の複雑な承認統制には専業IGAが必要。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "weak",
+          "notes": "運用補助レベルであり、専用製品の代替にはなりにくい。"
+        },
+        "device_mgmt": {
+          "score": "strong",
+          "notes": "Windows、macOS、Linuxのデバイス管理とディレクトリの一体化が強み。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_splunk",
+        "prod_vault"
+      ],
+      "japan_notes": "Linux・macOS 混在環境や、ADを重く持ちたくない企業に向く。国内大型SIerの標準提案頻度はまだ限定的。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_hennge",
+      "name": "HENNGE One",
+      "vendor": "HENNGE",
+      "category": "idp",
+      "tier": "mid",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "strong",
+          "notes": "Microsoft 365 や Google Workspace 周辺のSaaS SSOとアクセス制御に強く、日本企業で説明しやすい。"
+        },
+        "mfa": {
+          "score": "strong",
+          "notes": "デバイス証明書やアクセス制御と組み合わせた実運用に強い。"
+        },
+        "directory": {
+          "score": "weak",
+          "notes": "属性参照や連携補助に留まり、マスター基盤には不足する。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "partial",
+          "notes": "SKYSEA Client View などと連携した端末証明書配布の運用に向くが、UEMそのものではない。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_skysea",
+        "prod_alog",
+        "prod_globalsign"
+      ],
+      "japan_notes": "国内企業向けの運用設計や日本語サポートが強く、SaaS統制の初期導入で有力。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_gmotrust",
+      "name": "GMO TrustLogin",
+      "vendor": "GMO GlobalSign Holdings",
+      "category": "idp",
+      "tier": "smb",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "strong",
+          "notes": "中堅・中小企業のSaaS SSOでは導入しやすい。複雑なレガシー統合は弱い。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "基本機能はあるが、広範な方式対応や運用性は限定的。"
+        },
+        "directory": {
+          "score": "weak",
+          "notes": "属性参照や連携補助に留まり、マスター基盤には不足する。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "SCIMや基本プロビジョニングは使えるが、全社JML基盤には不足が残る。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "weak",
+          "notes": "ログ出力はできても、分析や相関は外部製品前提。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_skysea",
+        "prod_alog"
+      ],
+      "japan_notes": "国内サポートと価格のわかりやすさが強み。大企業の深い統制は別製品補完が前提。",
+      "pricing_tier": "low"
+    },
+    {
+      "product_id": "prod_netattest",
+      "name": "Soliton NetAttest EPS",
+      "vendor": "Soliton Systems",
+      "category": "idp",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "strong",
+          "notes": "RADIUS、証明書、FIDO2、スマートカード文脈で日本企業のネットワーク認証強化に適合しやすい。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "LDAP/AD連携は可能だが、マスター基盤ではない。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "認証ログの出力先としてSIEM連携しやすい。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_securecube",
+        "prod_alog"
+      ],
+      "japan_notes": "VPN、無線LAN、端末証明書など日本企業のネットワーク境界認証で使いやすい。",
+      "pricing_tier": "individual_quote"
+    },
+    {
+      "product_id": "prod_skysea",
+      "name": "SKYSEA Client View",
+      "vendor": "Sky",
+      "category": "mdm",
+      "tier": "mid",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "weak",
+          "notes": "属性参照や連携補助に留まり、マスター基盤には不足する。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "ローカル管理者統制や操作監視の補助には使えるが、専業PAMの代替ではない。"
+        },
+        "jumpserver": {
+          "score": "weak",
+          "notes": "運用補助レベルであり、専用製品の代替にはなりにくい。"
+        },
+        "device_mgmt": {
+          "score": "native",
+          "notes": "資産管理、ログ管理、MDM、リモート操作を一体で扱える点が日本市場で強い。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "端末操作ログや資産情報を監査説明に使いやすく、ALog やSIEMの前段として有効。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_hennge",
+        "prod_alog",
+        "prod_entra"
+      ],
+      "japan_notes": "国内サポートと運用現場での浸透が強い。金融・製造のPC運用統制で説明しやすい。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_cyberark_pam",
+      "name": "CyberArk PAM Suite",
+      "vendor": "CyberArk",
+      "category": "pam",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "基本機能はあるが、広範な方式対応や運用性は限定的。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "native",
+          "notes": "Vault、セッション録画、JIT、申請統制まで含めて大規模企業の本命候補。"
+        },
+        "jumpserver": {
+          "score": "strong",
+          "notes": "踏み台、接続仲介、ベンダーアクセス統制まで一貫して設計しやすい。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "主要ログ連携に強く、監査用途でも説明しやすい。"
+        },
+        "secret_mgmt": {
+          "score": "strong",
+          "notes": "Conjur や Secrets Manager 系を含めると人と機械の両方に踏み込める。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_sailpoint",
+        "prod_splunk",
+        "prod_digicert"
+      ],
+      "japan_notes": "金融・重要インフラでの説明力が高く、日本の監査要件にも載せやすい。",
+      "pricing_tier": "very_high"
+    },
+    {
+      "product_id": "prod_delinea",
+      "name": "Delinea Secret Server",
+      "vendor": "Delinea",
+      "category": "pam",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "基本機能はあるが、広範な方式対応や運用性は限定的。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "strong",
+          "notes": "Secret Server は導入しやすさと機能のバランスが良く、中堅から大企業まで扱いやすい。"
+        },
+        "jumpserver": {
+          "score": "strong",
+          "notes": "セッション管理は強いが、外部委託先の高度な接続統制では BeyondTrust や CyberArk 比較が必要。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "strong",
+          "notes": "資格情報ローテーションや保管庫機能は強い。"
+        }
+      },
+      "typical_combination": [
+        "prod_okta",
+        "prod_splunk",
+        "prod_omada"
+      ],
+      "japan_notes": "CyberArkほど重くしたくない案件で有力。Linux/Unix 統制との相性も良い。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_beyondtrust",
+      "name": "BeyondTrust Password Safe",
+      "vendor": "BeyondTrust",
+      "category": "pam",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "基本機能はあるが、広範な方式対応や運用性は限定的。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "strong",
+          "notes": "Password Safe と Privileged Remote Access を組み合わせると委託先統制に強い。"
+        },
+        "jumpserver": {
+          "score": "strong",
+          "notes": "外部保守ベンダーの接続仲介、承認、録画で高評価を取りやすい。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "セッション監査ログをSIEMへ送りやすく、運用監査の説明力が高い。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "周辺機能としては使えるが、全社標準の保管庫にはなりにくい。"
+        }
+      },
+      "typical_combination": [
+        "prod_ping",
+        "prod_qradar",
+        "prod_jamf"
+      ],
+      "japan_notes": "ベンダーリモートアクセス統制を重視する製造・インフラ企業で有力。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_vault",
+      "name": "HashiCorp Vault",
+      "vendor": "HashiCorp",
+      "category": "secret",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "weak",
+          "notes": "補助的な認証強化に留まり、全社標準には不足しやすい。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "人のセッション録画や踏み台統制は守備範囲外。PAMとは分離して考えるべき。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "監査ログは出せるが、分析基盤は別途必要。"
+        },
+        "secret_mgmt": {
+          "score": "native",
+          "notes": "動的シークレット、PKI、Transit、Kubernetes連携まで含め、機械ID統制の主力。"
+        }
+      },
+      "typical_combination": [
+        "prod_okta",
+        "prod_splunk",
+        "prod_venafi",
+        "prod_cyberark_pam"
+      ],
+      "japan_notes": "クラウドネイティブやAPIキー管理で強い。伝統的な人のPAMとは別軸で評価すべき。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_wallix",
+      "name": "WALLIX Bastion",
+      "vendor": "WALLIX",
+      "category": "pam",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "基本機能はあるが、広範な方式対応や運用性は限定的。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "strong",
+          "notes": "Vaultや申請統制を広く求める場合はCyberArk系より範囲が狭い。"
+        },
+        "jumpserver": {
+          "score": "native",
+          "notes": "Bastion 製品としての一貫性があり、セッション仲介・記録が強い。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "周辺機能としては使えるが、全社標準の保管庫にはなりにくい。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_splunk"
+      ],
+      "japan_notes": "踏み台中心で設計したい案件では比較対象になるが、日本市場での案件密度は限定的。",
+      "pricing_tier": "individual_quote"
+    },
+    {
+      "product_id": "prod_securecube",
+      "name": "SecureCube Access Check",
+      "vendor": "NRI SecureTechnologies",
+      "category": "pam",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "基本機能はあるが、広範な方式対応や運用性は限定的。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "strong",
+          "notes": "特権IDの申請、承認、作業統制、監査証跡に強く、日本型運用に馴染みやすい。"
+        },
+        "jumpserver": {
+          "score": "native",
+          "notes": "踏み台・特権作業統制は中核機能。国内企業の夜間保守や委託先運用に説明しやすい。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "監査証跡を日本の内部監査部門へ説明しやすい形式で整理しやすい。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_netattest",
+        "prod_alog"
+      ],
+      "japan_notes": "日本市場での特権作業管理の説明力が高く、金融・社会インフラで相性が良い。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_trustbind",
+      "name": "TrustBind",
+      "vendor": "NTTテクノクロス / NTTデータ系",
+      "category": "idp",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "strong",
+          "notes": "認証連携エンジンとしての国内実績があり、既存Webや独自認証基盤の橋渡しに向く。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "基本機能はあるが、広範な方式対応や運用性は限定的。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携対象としてAD/LDAPを扱えるが、マスター基盤ではない。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_securecube",
+        "prod_alog",
+        "prod_qradar"
+      ],
+      "japan_notes": "NTTデータ系の案件で継続活用があり、レガシー認証連携の延命や移行橋渡しで有用。",
+      "pricing_tier": "individual_quote"
+    },
+    {
+      "product_id": "prod_eaudit",
+      "name": "eAudit",
+      "vendor": "住友電工情報システム",
+      "category": "siem",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "監査証跡やレビュー運用の補助としては使えるが、専業IGAではない。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "特権作業監査の周辺で評価されるが、VaultやJITは主領域ではない。"
+        },
+        "jumpserver": {
+          "score": "partial",
+          "notes": "踏み台そのものより監査・記録の補助機能として見るべき。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "監査用途の証跡整理で価値があるが、現行の公開機能範囲は個別確認が必要。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_securecube",
+        "prod_qradar"
+      ],
+      "japan_notes": "公開情報が限定的なため、現行機能はRFPで再確認が必要。国内監査運用との親和性を前提に位置付ける。",
+      "pricing_tier": "individual_quote"
+    },
+    {
+      "product_id": "prod_sailpoint",
+      "name": "SailPoint IdentityNow",
+      "vendor": "SailPoint",
+      "category": "iga",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "native",
+          "notes": "Joiner-Mover-Leaver の標準化とSCIM/AD/LDAP連携に強い。"
+        },
+        "governance": {
+          "score": "native",
+          "notes": "アクセスレビュー、認定、ロール管理、SoDで規制業種の本命候補。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "PAM連携で特権申請統制を補完しやすい。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_cyberark_pam",
+        "prod_splunk"
+      ],
+      "japan_notes": "金融・大企業でのIGA本命候補。設計自由度が高い分、権限整理プロジェクトは重い。",
+      "pricing_tier": "very_high"
+    },
+    {
+      "product_id": "prod_saviynt",
+      "name": "Saviynt Enterprise Identity Cloud",
+      "vendor": "Saviynt",
+      "category": "iga",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "native",
+          "notes": "SaaS中心のJML自動化に強く、ERPやクラウド権限まで踏み込みやすい。"
+        },
+        "governance": {
+          "score": "native",
+          "notes": "SoD、アプリ権限分析、クラウド権限統制まで含めて強い。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "一部の特権統制はできるが、専業PAMの代替には不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "クラウド権限やアプリ資格情報統制と近接するが、Vault専業ほどではない。"
+        }
+      },
+      "typical_combination": [
+        "prod_okta",
+        "prod_cyberark_pam",
+        "prod_splunk"
+      ],
+      "japan_notes": "ERP/クラウド権限統制を重視する大企業で有力。国内案件はパートナー依存度が高め。",
+      "pricing_tier": "very_high"
+    },
+    {
+      "product_id": "prod_oneidentity",
+      "name": "One Identity Manager",
+      "vendor": "One Identity",
+      "category": "iga",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "strong",
+          "notes": "Active Directory や各種ディレクトリとの深い連携が持ち味。"
+        },
+        "lifecycle": {
+          "score": "native",
+          "notes": "複雑な承認、属性変換、既存基幹連携に強い。"
+        },
+        "governance": {
+          "score": "strong",
+          "notes": "大規模ロール管理や棚卸しに強いが、SaaSネイティブ感は新興勢より弱い。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "一部の特権統制はできるが、専業PAMの代替には不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_onelogin",
+        "prod_delinea",
+        "prod_qradar"
+      ],
+      "japan_notes": "既存ADやOne Identity製品群との親和性が高い。設計の自由度は高いが導入難易度も高め。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_omada",
+      "name": "Omada Identity",
+      "vendor": "Omada",
+      "category": "iga",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "連携や補助機能はあるが、基幹ディレクトリにはなりにくい。"
+        },
+        "lifecycle": {
+          "score": "strong",
+          "notes": "ロール設計と申請承認を標準化しやすい。"
+        },
+        "governance": {
+          "score": "native",
+          "notes": "アクセス認定やSoDの運用を比較的整理しやすい。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "PAM連携前提で特権申請の統制を作りやすい。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "主要SIEMへ出力しやすいが、自製品だけでは分析が浅い。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_ping",
+        "prod_beyondtrust",
+        "prod_qradar"
+      ],
+      "japan_notes": "欧州で強いIGA。日本では大型案件中心で、パートナー体制確認が重要。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_intune",
+      "name": "Microsoft Intune",
+      "vendor": "Microsoft",
+      "category": "mdm",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "weak",
+          "notes": "多要素認証そのものは Entra ID 側が主。Intune はデバイス準拠の文脈提供が主役。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "Entra ID と組み合わせて価値が出る。単体ディレクトリではない。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "native",
+          "notes": "Windows、macOS、iOS、Android を企業標準で管理しやすい。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "Sentinel や Defender 連携で監査性が高い。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_sentinel",
+        "prod_digicert"
+      ],
+      "japan_notes": "Microsoft 365 と同時提案しやすく、中堅から大企業まで採用しやすい。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_jamf",
+      "name": "Jamf Pro",
+      "vendor": "Jamf",
+      "category": "mdm",
+      "tier": "mid",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "weak",
+          "notes": "補助的な認証強化に留まり、全社標準には不足しやすい。"
+        },
+        "directory": {
+          "score": "partial",
+          "notes": "IdP連携はできるが、基幹ディレクトリではない。"
+        },
+        "lifecycle": {
+          "score": "weak",
+          "notes": "手作業補完が多く、JMLの自動化基盤としては弱い。"
+        },
+        "governance": {
+          "score": "weak",
+          "notes": "監査補助はできても、認定やSoD運用は弱い。"
+        },
+        "pam": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "native",
+          "notes": "Apple端末管理では最有力候補。証明書配布や構成管理も強い。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "端末イベントの出力は可能だが、分析はSIEM側で補う。"
+        },
+        "secret_mgmt": {
+          "score": "weak",
+          "notes": "限定的な補助に留まり、機械ID統制の主担当には向かない。"
+        }
+      },
+      "typical_combination": [
+        "prod_okta",
+        "prod_beyondtrust",
+        "prod_splunk"
+      ],
+      "japan_notes": "Mac 利用比率が高い設計・開発部門やグローバル企業で有力。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_sentinel",
+      "name": "Microsoft Sentinel",
+      "vendor": "Microsoft",
+      "category": "siem",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "認定そのものは持たないが、異常権限利用の検知・監査補助に強い。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "PAMイベントを取り込み、アラートとSOARまで接続しやすい。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "partial",
+          "notes": "Intune/Defender連携で端末文脈を分析できる。"
+        },
+        "siem_audit": {
+          "score": "native",
+          "notes": "ログ収集、分析、相関、アラートを中核機能として提供する。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "Key Vault など周辺ログの可視化に強いが、保管庫ではない。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_intune",
+        "prod_cyberark_pam"
+      ],
+      "japan_notes": "Microsoftスタックとの連続性が強く、SOC運用とIAM監査をつなぎやすい。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_splunk",
+      "name": "Splunk Enterprise Security",
+      "vendor": "Cisco",
+      "category": "siem",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "CyberArk や BeyondTrust のイベント分析に向く。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "partial",
+          "notes": "端末、ネットワーク、クラウドの横断可視化がしやすい。"
+        },
+        "siem_audit": {
+          "score": "native",
+          "notes": "大規模ログ分析、相関、検知、監査レポートで依然強い。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "周辺機能としては使えるが、全社標準の保管庫にはなりにくい。"
+        }
+      },
+      "typical_combination": [
+        "prod_okta",
+        "prod_cyberark_pam",
+        "prod_vault"
+      ],
+      "japan_notes": "大規模SOCや複数ベンダー混在環境で採用しやすい。運用人材は必要。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_qradar",
+      "name": "IBM QRadar SIEM",
+      "vendor": "IBM",
+      "category": "siem",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "PAMや踏み台のイベント可視化に向く。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "partial",
+          "notes": "周辺連携はあるが、専用UEM/MDMほどの管理粒度はない。"
+        },
+        "siem_audit": {
+          "score": "native",
+          "notes": "ネットワークとセキュリティログの相関で実績があり、重要インフラでも説明しやすい。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "周辺機能としては使えるが、全社標準の保管庫にはなりにくい。"
+        }
+      },
+      "typical_combination": [
+        "prod_ping",
+        "prod_securecube",
+        "prod_omada"
+      ],
+      "japan_notes": "既存SOC資産がある企業では継続評価しやすい。IBM系運用体制との相性が重要。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_logrhythm",
+      "name": "LogRhythm SIEM Platform",
+      "vendor": "LogRhythm",
+      "category": "siem",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "一部の特権統制はできるが、専業PAMの代替には不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "partial",
+          "notes": "周辺連携はあるが、専用UEM/MDMほどの管理粒度はない。"
+        },
+        "siem_audit": {
+          "score": "native",
+          "notes": "SIEM/UEBA/SOARを一体で扱いやすいが、日本市場での案件数は限定的。"
+        },
+        "secret_mgmt": {
+          "score": "partial",
+          "notes": "周辺機能としては使えるが、全社標準の保管庫にはなりにくい。"
+        }
+      },
+      "typical_combination": [
+        "prod_okta",
+        "prod_delinea"
+      ],
+      "japan_notes": "海外標準寄りのSOC設計では候補になるが、日本での保守体制は要確認。",
+      "pricing_tier": "individual_quote"
+    },
+    {
+      "product_id": "prod_alog",
+      "name": "ALog ConVerter",
+      "vendor": "網屋",
+      "category": "siem",
+      "tier": "mid",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "アクセス証跡を監査部門に説明しやすい形へ翻訳しやすい。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "PAMの代替ではないが、特権作業の証跡補完として価値が高い。"
+        },
+        "jumpserver": {
+          "score": "weak",
+          "notes": "運用補助レベルであり、専用製品の代替にはなりにくい。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "strong",
+          "notes": "ファイルアクセスやサーバー操作ログの可視化に強く、日本の監査実務に馴染む。"
+        },
+        "secret_mgmt": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        }
+      },
+      "typical_combination": [
+        "prod_securecube",
+        "prod_skysea",
+        "prod_hennge"
+      ],
+      "japan_notes": "日本企業の内部監査、ファイルサーバー監査、端末ログ監査で説明しやすい。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_digicert",
+      "name": "DigiCert Trust Lifecycle Manager",
+      "vendor": "DigiCert",
+      "category": "secret",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "証明書ベース認証やS/MIMEの基盤として有効。"
+        },
+        "directory": {
+          "score": "weak",
+          "notes": "属性参照や連携補助に留まり、マスター基盤には不足する。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "証明書ライフサイクルという意味では強いが、JML全体を担う製品ではない。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "weak",
+          "notes": "ログ出力はできても、分析や相関は外部製品前提。"
+        },
+        "secret_mgmt": {
+          "score": "strong",
+          "notes": "証明書ライフサイクル、社内PKI、ユーザー/デバイス証明書管理に強い。"
+        }
+      },
+      "typical_combination": [
+        "prod_entra",
+        "prod_intune",
+        "prod_sentinel"
+      ],
+      "japan_notes": "証明書失効や有効期限管理の重要度が高い金融・製造で価値が高い。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_globalsign",
+      "name": "GMO GlobalSign Certificate Lifecycle Management",
+      "vendor": "GMO GlobalSign",
+      "category": "secret",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "weak",
+          "notes": "限定的な補助機能に留まり、主力IdPには向かない。"
+        },
+        "mfa": {
+          "score": "partial",
+          "notes": "クライアント証明書やデバイス証明書文脈で有効。"
+        },
+        "directory": {
+          "score": "weak",
+          "notes": "属性参照や連携補助に留まり、マスター基盤には不足する。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "基本的な自動化は可能だが、全社JML基盤には不足がある。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "weak",
+          "notes": "ログ出力はできても、分析や相関は外部製品前提。"
+        },
+        "secret_mgmt": {
+          "score": "strong",
+          "notes": "証明書発行、管理、失効、CLM を日本市場向けサポート込みで進めやすい。"
+        }
+      },
+      "typical_combination": [
+        "prod_hennge",
+        "prod_skysea",
+        "prod_alog"
+      ],
+      "japan_notes": "国内サポートと証明書運用の説明のしやすさが強み。デバイス証明書運用との相性が良い。",
+      "pricing_tier": "medium"
+    },
+    {
+      "product_id": "prod_venafi",
+      "name": "Venafi TLS Protect",
+      "vendor": "Venafi",
+      "category": "secret",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "weak",
+          "notes": "補助的な認証強化に留まり、全社標準には不足しやすい。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "機械IDのライフサイクル管理という軸では非常に強い。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "weak",
+          "notes": "局所対策には使えるが、全社PAMとしては不足する。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "weak",
+          "notes": "ログ出力はできても、分析や相関は外部製品前提。"
+        },
+        "secret_mgmt": {
+          "score": "native",
+          "notes": "TLS、mTLS、機械IDの可視化と自動更新で最有力クラス。"
+        }
+      },
+      "typical_combination": [
+        "prod_vault",
+        "prod_splunk",
+        "prod_okta"
+      ],
+      "japan_notes": "大規模証明書棚卸しや機械ID可視化の必要性が高い企業で有力。",
+      "pricing_tier": "high"
+    },
+    {
+      "product_id": "prod_cyberark_cert",
+      "name": "CyberArk Certificate Manager",
+      "vendor": "CyberArk",
+      "category": "secret",
+      "tier": "enterprise",
+      "japan_support": true,
+      "capabilities": {
+        "sso_federation": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "mfa": {
+          "score": "weak",
+          "notes": "補助的な認証強化に留まり、全社標準には不足しやすい。"
+        },
+        "directory": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "lifecycle": {
+          "score": "partial",
+          "notes": "基本的な自動化は可能だが、全社JML基盤には不足がある。"
+        },
+        "governance": {
+          "score": "partial",
+          "notes": "レビューや証跡補助は可能だが、専業IGAの深さはない。"
+        },
+        "pam": {
+          "score": "partial",
+          "notes": "人のPAMと機械ID管理を同一ベンダーで寄せたい場合に整合性が高い。"
+        },
+        "jumpserver": {
+          "score": "none",
+          "notes": "主要守備範囲外であり、別製品が前提となる。"
+        },
+        "device_mgmt": {
+          "score": "weak",
+          "notes": "周辺連携はあっても、本格的な端末管理は守備範囲外。"
+        },
+        "siem_audit": {
+          "score": "partial",
+          "notes": "Machine identity 監査イベントを SOC へ流しやすい。"
+        },
+        "secret_mgmt": {
+          "score": "strong",
+          "notes": "TLS、mTLS、SSH、SPIFFE を含む Machine Identity Security の文脈で評価すべき。"
+        }
+      },
+      "typical_combination": [
+        "prod_cyberark_pam",
+        "prod_sentinel",
+        "prod_entra"
+      ],
+      "japan_notes": "CyberArk を既に採用している企業では拡張提案しやすい。",
+      "pricing_tier": "high"
+    }
+  ],
+  "combination_patterns": [
+    {
+      "pattern_id": "comb_01",
+      "name": "Microsoftオールイン（中堅企業）",
+      "products": [
+        "prod_entra",
+        "prod_intune",
+        "prod_sentinel"
+      ],
+      "coverage_summary": "SSO、MFA、条件付きアクセス、端末準拠、監査ログ統合を短期間で揃えやすい。",
+      "gaps": [
+        "深いIGAは不足しやすい",
+        "セッション録画を伴うPAMは不足しやすい",
+        "証明書ライフサイクル管理は別製品が望ましい"
+      ],
+      "suitable_for": [
+        "Microsoft 365中心の中堅企業",
+        "短期でゼロトラスト基盤を立ち上げたい企業"
+      ]
+    },
+    {
+      "pattern_id": "comb_02",
+      "name": "金融統制フルスタック（大企業）",
+      "products": [
+        "prod_entra",
+        "prod_sailpoint",
+        "prod_cyberark_pam",
+        "prod_splunk",
+        "prod_digicert"
+      ],
+      "coverage_summary": "従業員IdP、IGA、PAM、SOC、証明書統制を分業させ、内部監査とFISC説明に耐えやすい。",
+      "gaps": [
+        "導入費用と運用人材の負荷が高い",
+        "権限モデル整備を別プロジェクト化する必要がある"
+      ],
+      "suitable_for": [
+        "銀行",
+        "証券",
+        "保険",
+        "重要システムを多く抱える持株会社"
+      ]
+    },
+    {
+      "pattern_id": "comb_03",
+      "name": "製造業ハイブリッド/OT境界型",
+      "products": [
+        "prod_ping",
+        "prod_omada",
+        "prod_beyondtrust",
+        "prod_skysea",
+        "prod_alog"
+      ],
+      "coverage_summary": "レガシー認証連携、委託先保守、端末運用、監査証跡を組み合わせ、工場・研究所・本社の差を吸収しやすい。",
+      "gaps": [
+        "クラウドネイティブのシークレット管理は別途必要",
+        "Apple端末比率が高い場合は Jamf Pro を足したい"
+      ],
+      "suitable_for": [
+        "製造業",
+        "多拠点工場",
+        "委託先保守が多い企業"
+      ]
+    },
+    {
+      "pattern_id": "comb_04",
+      "name": "国内SaaS統制型",
+      "products": [
+        "prod_hennge",
+        "prod_skysea",
+        "prod_alog",
+        "prod_globalsign"
+      ],
+      "coverage_summary": "国内サポート重視で、SaaS SSO、端末証明書、操作ログ監査をまとめて立ち上げやすい。",
+      "gaps": [
+        "全社IGAは不足",
+        "特権VaultやJITは別製品が必要",
+        "グローバル標準との整合性は確認が必要"
+      ],
+      "suitable_for": [
+        "国内中心の中堅企業",
+        "教育・自治体周辺",
+        "SaaS統制を急ぎたい企業"
+      ]
+    },
+    {
+      "pattern_id": "comb_05",
+      "name": "クラウドネイティブ機械ID重視型",
+      "products": [
+        "prod_okta",
+        "prod_vault",
+        "prod_venafi",
+        "prod_splunk"
+      ],
+      "coverage_summary": "人のSSO/MFAと機械ID、動的シークレット、SOCを分離し、DevOps と CISO の責任分界を明確にしやすい。",
+      "gaps": [
+        "人のPAMセッション録画は別途必要",
+        "JMLやアクセスレビューはIGA追加が望ましい"
+      ],
+      "suitable_for": [
+        "クラウドネイティブ企業",
+        "API連携が多い製造業",
+        "デジタル事業会社"
+      ]
+    },
+    {
+      "pattern_id": "comb_06",
+      "name": "国内特権作業統制型",
+      "products": [
+        "prod_entra",
+        "prod_securecube",
+        "prod_netattest",
+        "prod_alog"
+      ],
+      "coverage_summary": "本人性確認、踏み台、作業証跡、監査ログを日本企業の運用フローへ載せやすい。",
+      "gaps": [
+        "全社SaaSライフサイクル管理は弱い",
+        "証明書やAPIキー管理は別製品が必要"
+      ],
+      "suitable_for": [
+        "エネルギー",
+        "社会インフラ",
+        "24時間運用の基幹系"
+      ]
+    },
+    {
+      "pattern_id": "comb_07",
+      "name": "Mac混在ゼロトラスト型",
+      "products": [
+        "prod_okta",
+        "prod_jamf",
+        "prod_beyondtrust",
+        "prod_sentinel"
+      ],
+      "coverage_summary": "Apple端末、SaaS、委託先作業、SOC の分担が明確で、グローバル企業の実装と整合しやすい。",
+      "gaps": [
+        "深いSoDや認定は別途IGAが必要",
+        "Windows中心企業ではEntra/Intuneの方が自然な場合が多い"
+      ],
+      "suitable_for": [
+        "設計・研究開発部門",
+        "外資系企業",
+        "Apple端末比率が高い企業"
+      ]
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "ki_01",
+      "title": "単一製品で10カテゴリを完結させない前提が重要",
+      "content": "SSO/MFA/デバイス管理はEntra IDやOkta系で寄せやすいが、IGA、PAM、機械ID、監査ログは専業製品の方が統制説明力が高い。金融・製造・エネルギーでは分業設計の方が監査適合性を確保しやすい。",
+      "tags": [
+        "設計原則",
+        "分業",
+        "CISO"
+      ]
+    },
+    {
+      "id": "ki_02",
+      "title": "日本市場では踏み台と監査証跡が独立調達されやすい",
+      "content": "海外PAMはVaultやJITが強い一方、日本企業では夜間保守、委託先作業、承認、録画、報告書までを一気通貫で求めるため、SecureCube Access Check や ALog ConVerter のような国内製品が補完レイヤーとして残りやすい。",
+      "tags": [
+        "日本市場",
+        "踏み台",
+        "監査"
+      ]
+    },
+    {
+      "id": "ki_03",
+      "title": "IGA と PAM を混同しない",
+      "content": "IGA は権限付与の妥当性と棚卸しを扱い、PAM は高権限利用時の統制と証跡を扱う。監査で問われる観点が異なるため、金融と重要インフラでは別製品として整理する方が説明しやすい。",
+      "tags": [
+        "IGA",
+        "PAM",
+        "内部監査"
+      ]
+    },
+    {
+      "id": "ki_04",
+      "title": "デバイス準拠はIdP単体では完結しない",
+      "content": "ゼロトラスト設計では、IdP が認証判断を担い、Microsoft Intune、Jamf Pro、SKYSEA Client View などが端末文脈を供給する構成が現実的である。",
+      "tags": [
+        "ゼロトラスト",
+        "デバイス管理",
+        "IdP"
+      ]
+    },
+    {
+      "id": "ki_05",
+      "title": "機械IDは人のIAMとは別に評価する",
+      "content": "APIキー、証明書、mTLS、SSH鍵、gMSA は、Vault や Venafi、DigiCert、CyberArk Certificate Manager で評価すべきであり、従業員向けIdPの比較軸とは分けるべきである。",
+      "tags": [
+        "機械ID",
+        "証明書",
+        "シークレット管理"
+      ]
+    },
+    {
+      "id": "ki_06",
+      "title": "日本の金融・製造・エネルギーではレガシー残存を前提にする",
+      "content": "Kerberos、LDAP、RADIUS、Windows統合認証、委託先保守、オンプレミスDBが残るため、SAML/OIDCだけで完結する設計は現実とずれやすい。Ping Identity、ForgeRock、TrustBind、NetAttest EPS のような橋渡し製品の意義が残る。",
+      "tags": [
+        "ハイブリッドID",
+        "Kerberos",
+        "レガシー統合"
+      ]
+    }
+  ]
+}

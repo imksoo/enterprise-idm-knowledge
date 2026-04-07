@@ -1,0 +1,1046 @@
+{
+  "metadata": {
+    "id": "sysadmin_access_evolution",
+    "title": "システム管理者アクセス管理の現状・規制・10年後の将来像",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "research_date": "2026-04-07",
+    "tags": [
+      "sysadmin",
+      "privileged-access",
+      "fisc",
+      "pam",
+      "jit",
+      "zero-standing-privilege",
+      "future-roadmap"
+    ],
+    "related_files": [
+      "06_security_hardening/privileged_access_management.json",
+      "06_security_hardening/ransomware_defense.json",
+      "04_server_auth/os_auth_methods.json",
+      "05_hybrid_scenarios/entra_hybrid_join.json",
+      "07_migration_patterns/japan_security_frameworks.json",
+      "03_identity_architecture/identity_landscape.json"
+    ],
+    "notes": [
+      "本ファイルは 2023-05-17 公表の FISC 安全対策基準 第11版を分析起点とする。",
+      "ただし 2026-04-07 時点では FISC 公式サイト上で 2026-03-25 公表の第14版が確認できるため、規制環境の現在地は第14版まで見据えて記述する。",
+      "FISC 本文は公開全文が限定されるため、公開確認できる FISC 公表情報、FISC と金融庁ガイドラインの対比表、金融庁公式ガイドライン、主要製品の公式ドキュメントを中心に整理した。"
+    ]
+  },
+  "current_state": {
+    "as_of": "2026-04-07",
+    "sector_focus": [
+      "銀行",
+      "証券",
+      "保険"
+    ],
+    "structural_observation": "日本の金融機関では、一般業務はリモート化が進んでも、サーバー管理は依然として作業拠点、専用端末、踏み台サーバー、事前承認、事後レビューを組み合わせた保守運用が主流である。特にオンプレミス残存環境と SIer 常駐運用が強い組織ほど、場所ベース統制と手作業証跡に依存しやすい。",
+    "problem_statements": [
+      {
+        "id": "problem_001",
+        "title": "リモートワーク常態化との矛盾",
+        "description": "日中業務はリモートで成立しても、深夜障害対応や緊急メンテナンスだけは作業拠点への出社が必要になる運用が残る。可用性要求と人員負荷が衝突しやすい。 "
+      },
+      {
+        "id": "problem_002",
+        "title": "承認と証跡が手動",
+        "description": "申請、承認、作業、レビューが紙や Excel に分散し、チケット番号、接続ログ、変更結果の相関が弱い。監査対応に人手がかかる。 "
+      },
+      {
+        "id": "problem_003",
+        "title": "共有アカウントの残存",
+        "description": "Administrator、root、sa などの共有アカウントが例外運用として残ると、個人帰属性と事後追跡性が失われる。 "
+      },
+      {
+        "id": "problem_004",
+        "title": "委託先ライフサイクル管理の遅れ",
+        "description": "退職や契約終了後の SIer アカウント無効化が遅れると、長寿命な外部アクセス経路になる。 "
+      }
+    ],
+    "access_method_matrix": [
+      {
+        "id": "method_001",
+        "name": "物理作業拠点 + 専用端末",
+        "fisc_alignment": "◎",
+        "audit_quality": "◎",
+        "operational_load": "高",
+        "adoption": "大手金融で主流",
+        "authentication_flow": [
+          "利用者は指定作業拠点に入室する",
+          "専用管理端末へ個人 ID でサインインする",
+          "踏み台サーバーまたは管理ネットワーク経由で対象サーバーへ接続する",
+          "重要操作は別紙承認や立会い確認を伴う"
+        ],
+        "evidence_quality": "物理入退室、端末ログオン、踏み台接続、サーバーログの多層証跡を取りやすい。",
+        "cost_profile": "専用端末、専用回線、運用センター維持が必要で高コスト。",
+        "strengths": [
+          "規制説明がしやすい",
+          "作業場所制約により偶発的な不正接続を減らしやすい",
+          "二人原則との相性がよい"
+        ],
+        "weaknesses": [
+          "深夜障害時の初動が遅れやすい",
+          "人手依存が強い",
+          "場所統制に比べ ID ベース統制の成熟が遅れやすい"
+        ]
+      },
+      {
+        "id": "method_002",
+        "name": "VPN + 踏み台サーバー + 手動ログ",
+        "fisc_alignment": "△",
+        "audit_quality": "△",
+        "operational_load": "高",
+        "adoption": "中堅以下で多い",
+        "authentication_flow": [
+          "利用者は VPN に接続する",
+          "踏み台サーバーへ RDP または SSH で入る",
+          "踏み台から対象サーバーへ再接続する",
+          "作業記録は申請書や Excel に手入力する"
+        ],
+        "evidence_quality": "VPN ログ、踏み台ログ、対象ログは取れるが、申請との相関や録画品質が不足しやすい。",
+        "cost_profile": "既存設備を流用しやすく初期費用は低めだが、運用監査コストが高い。",
+        "strengths": [
+          "導入障壁が低い",
+          "オンプレミス残存環境に適用しやすい"
+        ],
+        "weaknesses": [
+          "共有アカウントが混在しやすい",
+          "セッション録画やコマンド単位監査が弱い",
+          "外部委託先ごとに例外接続が増えやすい"
+        ]
+      },
+      {
+        "id": "method_003",
+        "name": "CyberArk / BeyondTrust / Delinea + Just-in-Time アクセス",
+        "fisc_alignment": "○",
+        "audit_quality": "◎",
+        "operational_load": "低",
+        "adoption": "先進的大手",
+        "authentication_flow": [
+          "利用者は個人 ID と MFA で PAM ポータルへ入る",
+          "チケット番号、理由、対象、時間を指定して権限またはセッションを要求する",
+          "承認後、資格情報は秘匿されたままセッションが仲介される",
+          "作業終了後に権限やパスワードが回収またはローテーションされる"
+        ],
+        "evidence_quality": "要求、承認、接続、録画、コマンド、パスワード変更を 1 つの監査系で追いやすい。",
+        "cost_profile": "初期導入費は高いが、監査工数と長期運用負荷を下げやすい。",
+        "strengths": [
+          "共有アカウントを個人帰属化しやすい",
+          "委託先にも時間制限付きアクセスを適用しやすい",
+          "FISC と金融庁ガイドラインが重視する証跡、最小権限、第三者管理に整合しやすい"
+        ],
+        "weaknesses": [
+          "導入設計を誤ると例外運用が増える",
+          "オンプレとクラウド、Windows と Linux を跨ぐ設計力が必要"
+        ]
+      },
+      {
+        "id": "method_004",
+        "name": "Azure Bastion + Entra ID + Entra PIM",
+        "fisc_alignment": "○",
+        "audit_quality": "◎",
+        "operational_load": "低",
+        "adoption": "クラウド移行済み環境",
+        "authentication_flow": [
+          "利用者は Entra ID に MFA で認証する",
+          "Entra PIM で Azure ロールや管理グループの Eligible 権限を有効化する",
+          "Azure Bastion から RDP または SSH で対象 VM へ接続する",
+          "診断ログや Premium SKU のセッション録画で監査する"
+        ],
+        "evidence_quality": "クラウド側で認証、昇格、接続、録画、操作メタデータを比較的整然と取得できる。",
+        "cost_profile": "オンプレ踏み台より運用効率がよいが、Premium SKU、Log Analytics、Storage を含む設計が必要。",
+        "strengths": [
+          "インターネットへ RDP と SSH を露出させずに済む",
+          "JIT と条件付きアクセスと組み合わせやすい"
+        ],
+        "weaknesses": [
+          "オンプレ単独環境にはそのまま適用できない",
+          "OS 内部の sudo や Windows ローカル特権まで一貫制御するには追加設計が必要"
+        ]
+      },
+      {
+        "id": "method_005",
+        "name": "共有アカウント + 踏み台サーバー",
+        "fisc_alignment": "×",
+        "audit_quality": "×",
+        "operational_load": "低",
+        "adoption": "旧来型で残存",
+        "authentication_flow": [
+          "利用者は共通の踏み台 ID または共有管理 ID を利用する",
+          "対象サーバーでも共通管理者資格情報を使う",
+          "事後レビュー時に個人帰属性を別資料で補完しようとする"
+        ],
+        "evidence_quality": "誰が何を実施したかを技術的に断定しにくい。",
+        "cost_profile": "表面上は低コストだが、内部不正、退職者残存、監査是正コストが高い。",
+        "strengths": [
+          "短期的には運用が簡単"
+        ],
+        "weaknesses": [
+          "個人識別ができない",
+          "パスワード使い回しと横展開の温床になる",
+          "FISC と金融庁ガイドラインの方向性に逆行する"
+        ]
+      }
+    ]
+  },
+  "regulatory_requirements": {
+    "fisc": {
+      "baseline_edition": {
+        "edition": "第11版",
+        "published_date": "2023-05-17",
+        "official_note": "FISC 公式サイトで第11版 PDF 版公表日が確認できる。"
+      },
+      "current_context": {
+        "edition": "第14版",
+        "published_date": "2026-03-25",
+        "official_note": "2026-04-07 時点の最新公開版として FISC 公式サイトで確認できる。"
+      },
+      "publicly_verifiable_requirement_families": [
+        {
+          "id": "fisc_req_001",
+          "family": "認証・アクセス管理",
+          "public_ids_from_2025_fisc_mapping": [
+            "実14",
+            "統7",
+            "統12",
+            "実8",
+            "実9",
+            "実10",
+            "実25",
+            "実26",
+            "実27",
+            "実58",
+            "実138"
+          ],
+          "relevance_to_sysadmin_access": "特権アカウントの個人識別、最小権限、管理経路制御、MFA、セッション監視の実装根拠になる。",
+          "interpretation_for_11th": "第11版でも同趣旨の統制が求められていたとみるのが実務的である。番号の完全一致は版ごとに要確認。"
+        },
+        {
+          "id": "fisc_req_002",
+          "family": "ログ管理",
+          "public_ids_from_2025_fisc_mapping": [
+            "統12",
+            "実10",
+            "実14"
+          ],
+          "relevance_to_sysadmin_access": "申請、承認、接続、操作、結果確認の証跡を保全し、特権作業の追跡性を担保する。"
+        },
+        {
+          "id": "fisc_req_003",
+          "family": "監視",
+          "public_ids_from_2025_fisc_mapping": [
+            "実14-1",
+            "実73-1"
+          ],
+          "relevance_to_sysadmin_access": "特権セッションのリアルタイム監視と異常検知の根拠になる。"
+        },
+        {
+          "id": "fisc_req_004",
+          "family": "サードパーティリスク管理",
+          "public_ids_from_2025_fisc_mapping": [
+            "統28"
+          ],
+          "relevance_to_sysadmin_access": "SIer 常駐者、保守ベンダー、再委託先のアカウント管理と監査権の根拠になる。"
+        },
+        {
+          "id": "fisc_req_005",
+          "family": "クラウド利用時の対策",
+          "public_ids_from_2025_fisc_mapping": [
+            "統20",
+            "統24",
+            "実71"
+          ],
+          "relevance_to_sysadmin_access": "Azure Bastion、Entra ID、PaaS 管理面などクラウド特権運用の統制根拠になる。"
+        }
+      ],
+      "current_analysis": {
+        "privileged_account_management": "FISC は少なくとも現行公開対比表上、認証・アクセス管理とログ管理を中核に扱っている。実務上は共有アカウント廃止、個人 ID 化、MFA、承認付き昇格、作業後レビューが期待される。",
+        "work_site_requirement": "第11版本文の公開全文に依拠した断定は避けるべきだが、金融機関実務では『指定作業拠点または同等統制がある保守経路』という解釈運用が広く行われている。したがって、単純な在宅 VPN は弱く、PAM による強い本人確認、端末統制、録画、承認、即時遮断が代替統制として重要になる。",
+        "remote_maintenance": "公開情報からは 2023-05-17 の第11版でリモート保守が包括的に自由化されたとは確認できない。むしろクラウド・外部接続・第三者リスク管理を含む統制強化の流れの中で、条件付き許容の範囲が整理されたと解釈するのが妥当である。",
+        "audit_and_log_retention": "FISC と金融庁の双方が、個人識別可能な操作記録、ログ保全、監視、インシデント追跡性を重視している。PAM の導入効果はここで最も説明しやすい。",
+        "third_party_management": "SIer の専用踏み台を別に作る旧来設計より、契約、ID ライフサイクル、時間制限、録画、即時無効化を統一できる PAM の方が現在の規制説明に整合しやすい。"
+      },
+      "changes_in_2023_eleventh_edition": [
+        {
+          "change": "クラウド導入・運用解説書（試行版）の本体取り込み",
+          "meaning": "2020 年公表のクラウド導入・運用解説書の内容を第11版へ取り込んだことが FISC 公式サイトで確認できる。これにより、クラウド利用は例外論ではなく基準本体の管理対象へ移った。"
+        },
+        {
+          "change": "規制対象が場所基準だけではなく統制体系全体へ拡張",
+          "meaning": "第11版以降はクラウド、外部接続、第三者、オペレーショナル・レジリエンスへ論点が広がっている。作業拠点だけを守っていればよい、という時代ではない。"
+        },
+        {
+          "change": "PAM の個別認証制度は未確認",
+          "meaning": "公開情報上、FISC が特定 PAM 製品を公式認定した事実は確認できない。したがって『FISC 認定 PAM』ではなく、『FISC が求める統制を実装しやすい製品群』と表現すべきである。"
+        },
+        {
+          "change": "リモート保守の緩和より条件付き統制の強化が本筋",
+          "meaning": "公開根拠からは『正式緩和』よりも『証跡、監視、第三者管理、クラウド統制の高度化』の方が説明可能である。"
+        }
+      ],
+      "sources": [
+        "https://www.fisc.or.jp/publication/book/005831.php",
+        "https://www.fisc.or.jp/topics/005832.php",
+        "https://www.fisc.or.jp/publication/book/004842.php",
+        "https://www.fisc.or.jp/document/security/file/Cyber_mapping_202508.pdf",
+        "https://www.fisc.or.jp/publication/book/007219.php",
+        "https://www.fisc.or.jp/topics/007222.php"
+      ]
+    },
+    "fsa_cybersecurity_guideline_2024": {
+      "version_date": "2024-10-04",
+      "relationship_to_fisc": "金融庁ガイドラインはリスクベース・アプローチを明示し、FISC は金融機関実務での詳細統制に落とし込む参照軸として機能する。2025 年に FISC 自身が金融庁ガイドラインと第13版の対比表を公開しており、両者を別物ではなく相互補完として扱うべきである。",
+      "relevant_points": [
+        {
+          "point": "リスクベース・アプローチ",
+          "detail": "金融庁ガイドライン PDF では、形式的遵守より実質的で効果的なリスク低減を求めている。これにより、将来は作業拠点よりも統制実効性の説明が重要になる。"
+        },
+        {
+          "point": "認証・アクセス管理",
+          "detail": "管理者アクセスは一意識別、最小権限、MFA、監査可能性を前提に設計すべきである。"
+        },
+        {
+          "point": "ログと監視",
+          "detail": "検知から復旧までのログ一貫性が求められるため、PAM のセッション録画と SIEM 連携は相性がよい。"
+        },
+        {
+          "point": "サードパーティリスク管理",
+          "detail": "委託先アクセスは契約、監査権、モニタリング、終了時無効化まで含めて管理対象である。"
+        }
+      ],
+      "sources": [
+        "https://www.fsa.go.jp/news/r6/sonota/20241004/18.pdf",
+        "https://www.fsa.go.jp/policy/cybersecurity/",
+        "https://www.fisc.or.jp/document/security/file/Cyber_mapping_202508.pdf"
+      ]
+    },
+    "future_regulatory_signals": {
+      "japan": [
+        "金融庁 2024 年ガイドラインはリスクベース・アプローチを明記しているため、今後の FISC では場所統制を絶対視するより、統制実効性を重視する方向が強まる可能性が高い。",
+        "FISC 第13版は 2023 年 4 月の金融庁『オペレーショナル・レジリエンス確保に向けた基本的な考え方』を反映したと公開しており、可用性と安全性を両立する特権運用が今後の論点になる。"
+      ],
+      "global": [
+        "EU DORA は 2025-01-17 から適用され、ICT リスク、第三者管理、レジリエンスをより厳密に要求する。日本でも金融庁や FISC が海外実務を参照する蓋然性が高い。",
+        "EBA の ICT and security risk management は第三者リスクと ICT 統制を強調しており、日本の金融規制にも『委託先接続の強統制』を後押しする圧力として作用しうる。"
+      ],
+      "sources": [
+        "https://eur-lex.europa.eu/eli/reg/2022/2554/2022-12-27/eng/pdf",
+        "https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/internal-governance/guidelines-ict-and-security-risk-management?version=2019",
+        "https://www.eba.europa.eu/publications-and-media/press-releases/eba-amends-its-guidelines-ict-and-security-risk-management-measures-context-dora-application"
+      ]
+    }
+  },
+  "pam_tools_fisc_compliance": [
+    {
+      "id": "pam_tool_001",
+      "name": "CyberArk Privileged Access Manager",
+      "positioning": "大規模金融機関の人間特権と非人間特権を統合管理しやすい代表的 PAM 製品。",
+      "fisc_fit": "証跡、資格情報秘匿、承認、JIT、セッション管理の説明力が高い。",
+      "capabilities": [
+        "Vault による資格情報保管とローテーション",
+        "セッション管理と監査ログ",
+        "Just-in-Time アクセスと Zero Standing Privilege への発展",
+        "委託先向けアクセス制御との連携"
+      ],
+      "strength_for_finance": [
+        "オンプレミス AD、Windows Server、Linux、クラウドを横断しやすい",
+        "監査で重視される『誰が、いつ、何の理由で、どこへ、どう入ったか』を統合的に示しやすい"
+      ],
+      "limitations": [
+        "導入と運用設計が重い",
+        "例外フロー設計を誤ると運用が硬直化する"
+      ],
+      "japanese_finance_relevance": "日本金融での採用実績を示す公開事例は限定的だが、アジア太平洋の年金基金など規制業種事例は確認できる。日本では個別導入実績が非公開であることが多い。",
+      "sources": [
+        "https://www.cyberark.com/products/privileged-access/",
+        "https://www.cyberark.com/resources/hybrid-and-multi-cloud-security/cloud-access-simplified-secured-and-just-a-request-away",
+        "https://www.cyberark.com/resources/product-announcements/new-just-in-time-access-capabilities-in-session-management",
+        "https://www.cyberark.com/cs/leading-asia-pacific-region-pension-fund-transforms-operational-efficiency-and-protection-of-digital-assets-with-cyberark.pdf"
+      ]
+    },
+    {
+      "id": "pam_tool_002",
+      "name": "BeyondTrust Privileged Remote Access",
+      "positioning": "委託先やベンダーのリモート保守統制に強い製品。",
+      "fisc_fit": "リモート保守の本人性、資格情報非開示、画面録画、コマンド制御を 1 本化しやすい。",
+      "capabilities": [
+        "Credential Injection による資格情報非開示接続",
+        "Screen recording と shell recording",
+        "Command shell の制御と記録",
+        "外部保守接続の仲介"
+      ],
+      "strength_for_finance": [
+        "SIer や保守ベンダーの接続経路を集約しやすい",
+        "VPN を広く開けずに必要セッションのみ許可しやすい"
+      ],
+      "limitations": [
+        "フルスコープ PAM よりも資格情報ライフサイクルやアプリケーション秘密情報管理は別製品補完が必要な場合がある"
+      ],
+      "japanese_finance_relevance": "『SIer 用踏み台』を製品機能で近代化したい金融機関に適合しやすい。",
+      "sources": [
+        "https://www.beyondtrust.com/docs/archive/privileged-remote-access/23-2/pra-access-console-23-2.pdf"
+      ]
+    },
+    {
+      "id": "pam_tool_003",
+      "name": "Delinea Secret Server",
+      "positioning": "資格情報保管、リモートパスワード変更、セッション録画を組み合わせやすい PAM 製品。",
+      "fisc_fit": "共有アカウントの秘匿化、ローテーション、記録性を高めやすい。",
+      "capabilities": [
+        "Secret Vault",
+        "Remote Password Changing",
+        "Session Recording",
+        "SSH Proxy とメタデータ記録"
+      ],
+      "strength_for_finance": [
+        "Windows と Linux の資格情報棚卸しと自動ローテーションを進めやすい",
+        "高価値アカウントに録画対象を絞る設計を取りやすい"
+      ],
+      "limitations": [
+        "高度な録画やメタデータ取得は追加エージェントや追加機能を要する",
+        "大規模委託先接続は周辺設計の影響を受けやすい"
+      ],
+      "japanese_finance_relevance": "共有管理 ID の段階的廃止とパスワード変更自動化を先に進めたい組織で導入しやすい。",
+      "sources": [
+        "https://docs.delinea.com/online-help/secret-server/session-recording/configuring-session-recording/index.htm",
+        "https://docs.delinea.com/online-help/secret-server-11-6-x/session-recording/index.htm",
+        "https://docs.delinea.com/online-help/secret-server/security-hardening/hardening-guides/cchg/managing-secrets/index.htm",
+        "https://docs.delinea.com/online-help/secret-server-11-6-x/remote-password-changing/custom-password-changers/running-a-manual-rpc/index.htm"
+      ]
+    },
+    {
+      "id": "pam_tool_004",
+      "name": "Entra Privileged Identity Management",
+      "positioning": "Azure と Entra ID の管理ロールに対する Just-in-Time 特権の標準機能。",
+      "fisc_fit": "クラウド管理ロールの時間制限、承認、理由入力、MFA を公式機能で実装できる。",
+      "capabilities": [
+        "Eligible assignment",
+        "Activation 時の MFA と justification",
+        "Approval workflow",
+        "時間制限付きの role activation"
+      ],
+      "strength_for_finance": [
+        "Azure 管理面の常時権限を減らせる",
+        "Azure Bastion や条件付きアクセスと組み合わせやすい"
+      ],
+      "limitations": [
+        "オンプレミス AD の OS ログオンやドメイン管理者運用を直接代替できない",
+        "オンプレミス AD には MIM PAM や他社 PAM の補完が必要"
+      ],
+      "japanese_finance_relevance": "クラウド先行部門や Azure 運用チームでは最優先で標準化すべき機能である。一方、オンプレミス Tier 0 には単独では不十分である。",
+      "sources": [
+        "https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-how-to-change-default-settings",
+        "https://learn.microsoft.com/en-us/%20entra/identity/role-based-access-control/best-practices",
+        "https://learn.microsoft.com/en-us/azure/active-directory/privileged-identity-management/pim-how-to-activate-role",
+        "https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/groups-concept"
+      ]
+    }
+  ],
+  "future_scenarios": {
+    "target_year": 2036,
+    "scenario_a_incremental": {
+      "name": "シナリオA: 漸進的改善",
+      "likelihood": "高",
+      "description": "大手から中堅金融まで横展開しやすい現実路線。物理作業拠点は残るが、平時の特権作業は PAM と強化端末と FIDO2 によるリモート実行が標準になる。",
+      "characteristics": [
+        "PAM と Just-in-Time アクセスが標準化",
+        "MFA は SMS ではなく FIDO2 または同等のフィッシング耐性方式が主流",
+        "共有アカウントは原則廃止",
+        "セッション録画は AI により優先レビュー対象が自動抽出される",
+        "作業拠点は緊急時、Tier 0、立会い必須作業に限定"
+      ],
+      "required_preconditions": [
+        "個人 ID 化",
+        "委託先アカウントの時間制限化",
+        "SIEM 連携",
+        "承認ワークフロー電子化"
+      ]
+    },
+    "scenario_b_infrastructure_shift": {
+      "name": "シナリオB: インフラ変革",
+      "likelihood": "中",
+      "description": "管理対象サーバー自体を減らし、GitOps と IaC を前提にする路線。直接ログインは非定型作業だけに縮小する。",
+      "characteristics": [
+        "IaaS から PaaS と SaaS への移行で OS ログオン対象が減る",
+        "Ansible と Terraform による設定変更が標準化",
+        "人間の直接操作は例外チケット付きに限定",
+        "AI と Automation が定型保守を代替",
+        "FISC の説明軸が『誰がログインしたか』から『どの変更経路が統制されているか』へ移る"
+      ],
+      "required_preconditions": [
+        "アプリ刷新",
+        "運用部門のスキル転換",
+        "変更管理とコードレビューの高度化"
+      ]
+    },
+    "scenario_c_zero_trust_end_state": {
+      "name": "シナリオC: ゼロトラスト完成形",
+      "likelihood": "中低",
+      "description": "ネットワーク位置に依存しない ID ベース統制が完成し、常設特権がほぼ消える理想形。",
+      "characteristics": [
+        "すべての管理操作が ID ベースで評価される",
+        "Zero Standing Privilege が標準化",
+        "デバイス証明書 + FIDO2 + リスクベース認証の三層統制",
+        "PAM が作業拠点要件の代替統制として明文化される",
+        "ヒトの直接ログインより API と自動化経路の統制が主論点になる"
+      ],
+      "required_preconditions": [
+        "規制のリスクベース転換",
+        "高信頼デバイス基盤",
+        "全管理経路の中央可視化"
+      ]
+    }
+  },
+  "migration_roadmap": [
+    {
+      "phase": "フェーズ0",
+      "period": "2026",
+      "objective": "共有アカウントの可視化と既存踏み台の証跡強化",
+      "actions": [
+        "Administrator、root、sa、運用共通 ID を棚卸しする",
+        "委託先アカウントの契約、所属、最終利用日を突合する",
+        "踏み台サーバーの接続ログ、送信元、対象、チケット番号の相関を強化する",
+        "高リスクサーバーだけでもセッション録画対象を設定する"
+      ],
+      "success_metrics": [
+        "共有アカウントの台帳化率 100%",
+        "退職または契約終了後の外部アカウント残存ゼロ",
+        "全特権作業にチケット番号が紐づく状態"
+      ]
+    },
+    {
+      "phase": "フェーズ1",
+      "period": "2027-2028",
+      "objective": "PAM とフィッシング耐性 MFA の導入",
+      "actions": [
+        "CyberArk、BeyondTrust、Delinea のいずれかを選定する",
+        "Entra ID 側は Entra PIM を標準有効化する",
+        "FIDO2 または Windows Hello for Business を管理者優先で展開する",
+        "FISC 審査や内部監査向けに PAM ベースのリモート保守統制を文書化する",
+        "MIM 2016 を利用している場合は 2029-01-09 延長サポート終了前提で縮退計画を立てる"
+      ],
+      "success_metrics": [
+        "管理者の 80% 以上が PAM 経由で接続",
+        "管理者 MFA のフィッシング耐性方式比率 70% 以上",
+        "委託先の常設特権を半減"
+      ]
+    },
+    {
+      "phase": "フェーズ2",
+      "period": "2029-2031",
+      "objective": "Zero Standing Privilege への移行",
+      "actions": [
+        "常設ローカル管理者権限を例外化する",
+        "Windows Server Privileged Access Management やディレクトリ統制と連携する",
+        "セッション録画に対する AI ベースの優先レビューを導入する",
+        "委託先アクセスは事前申請よりもポリシーベース承認へ移行する"
+      ],
+      "success_metrics": [
+        "Tier 0 と Tier 1 の常設特権ゼロ化",
+        "高リスクセッションの自動抽出率向上",
+        "監査用証跡収集の手作業廃止"
+      ]
+    },
+    {
+      "phase": "フェーズ3",
+      "period": "2031-2036",
+      "objective": "直接ログイン作業の縮小とインフラ簡素化",
+      "actions": [
+        "サーバー数削減と PaaS 化を進める",
+        "設定変更を IaC 中心へ移す",
+        "PAM は非定型作業、緊急時、例外処理に集中させる",
+        "規制説明を『作業拠点』から『統制済み変更経路』へ転換する"
+      ],
+      "success_metrics": [
+        "直接 OS ログオン件数の大幅減少",
+        "人間による設定変更の大半がコードレビュー経由",
+        "監査論点の中心が場所から経路へ移行"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "FISC 安全対策基準 第11版",
+      "object_type": "concept",
+      "description": "2023-05-17 公表の第11版。システム管理アクセス統制の分析起点。",
+      "properties": {
+        "published": "2023-05-17"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "FISC 安全対策基準 第14版",
+      "object_type": "concept",
+      "description": "2026-03-25 公表の最新公開版。現在地確認用。",
+      "properties": {
+        "published": "2026-03-25"
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "金融庁サイバーセキュリティガイドライン",
+      "object_type": "concept",
+      "description": "2024-10-04 版を基準に参照する金融庁のリスクベース指針。",
+      "properties": {
+        "published": "2024-10-04"
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "作業拠点統制",
+      "object_type": "pattern",
+      "description": "指定拠点、専用端末、立会いを重視する従来型統制。",
+      "properties": {}
+    },
+    {
+      "id": "node_005",
+      "label": "踏み台サーバー",
+      "object_type": "pattern",
+      "description": "管理接続の中継点として利用される伝統的な管理経路。",
+      "properties": {}
+    },
+    {
+      "id": "node_006",
+      "label": "特権アクセス管理",
+      "object_type": "concept",
+      "description": "資格情報、昇格、セッション、監査を統合的に制御する領域。",
+      "properties": {}
+    },
+    {
+      "id": "node_007",
+      "label": "Just-in-Time アクセス",
+      "object_type": "pattern",
+      "description": "必要時のみ短時間の特権を有効化する方式。",
+      "properties": {}
+    },
+    {
+      "id": "node_008",
+      "label": "Zero Standing Privilege",
+      "object_type": "pattern",
+      "description": "常設特権を持たせない将来像。",
+      "properties": {}
+    },
+    {
+      "id": "node_009",
+      "label": "CyberArk",
+      "object_type": "product",
+      "description": "大規模 PAM 製品。",
+      "properties": {}
+    },
+    {
+      "id": "node_010",
+      "label": "BeyondTrust Privileged Remote Access",
+      "object_type": "product",
+      "description": "委託先リモート保守統制に強い製品。",
+      "properties": {}
+    },
+    {
+      "id": "node_011",
+      "label": "Delinea Secret Server",
+      "object_type": "product",
+      "description": "資格情報保管と録画とローテーションを統合する製品。",
+      "properties": {}
+    },
+    {
+      "id": "node_012",
+      "label": "Entra Privileged Identity Management",
+      "object_type": "product",
+      "description": "Entra ID と Azure の JIT 管理ロール機能。",
+      "properties": {}
+    },
+    {
+      "id": "node_013",
+      "label": "Azure Bastion",
+      "object_type": "product",
+      "description": "Azure 上の管理接続中継と録画を提供するサービス。",
+      "properties": {}
+    },
+    {
+      "id": "node_014",
+      "label": "FIDO2",
+      "object_type": "protocol",
+      "description": "フィッシング耐性の高い認証方式。",
+      "properties": {}
+    },
+    {
+      "id": "node_015",
+      "label": "SIer 委託先アクセス",
+      "object_type": "concept",
+      "description": "金融機関から外部委託先へ委ねられる保守アクセス。",
+      "properties": {}
+    },
+    {
+      "id": "node_016",
+      "label": "セッション録画",
+      "object_type": "pattern",
+      "description": "RDP、SSH、Web 管理の再生可能証跡。",
+      "properties": {}
+    },
+    {
+      "id": "node_017",
+      "label": "二人原則",
+      "object_type": "pattern",
+      "description": "重要操作に立会いや複数承認を要求する統制。",
+      "properties": {}
+    },
+    {
+      "id": "node_018",
+      "label": "GitOps / IaC",
+      "object_type": "pattern",
+      "description": "将来の直接ログイン削減を支える変更管理方式。",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_002",
+      "to": "node_001",
+      "relationship": "replaces",
+      "description": "第14版は第11版の後継版である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_002",
+      "relationship": "complements",
+      "description": "金融庁ガイドラインは FISC 詳細統制と相互補完で扱う。"
+    },
+    {
+      "from": "node_004",
+      "to": "node_017",
+      "relationship": "complements",
+      "description": "作業拠点統制は二人原則と組み合わせやすい。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "踏み台サーバーは録画と組み合わさって初めて監査価値が高まる。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_007",
+      "relationship": "implements",
+      "description": "PAM は Just-in-Time アクセスを実装する。"
+    },
+    {
+      "from": "node_007",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "JIT を徹底すると Zero Standing Privilege に近づく。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_006",
+      "relationship": "implements",
+      "description": "CyberArk は PAM を実装する。"
+    },
+    {
+      "from": "node_010",
+      "to": "node_006",
+      "relationship": "implements",
+      "description": "BeyondTrust PRA は PAM と委託先保守統制を実装する。"
+    },
+    {
+      "from": "node_011",
+      "to": "node_006",
+      "relationship": "implements",
+      "description": "Delinea Secret Server は PAM を実装する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_007",
+      "relationship": "implements",
+      "description": "Entra PIM は Azure と Entra ID の JIT 昇格を実装する。"
+    },
+    {
+      "from": "node_013",
+      "to": "node_016",
+      "relationship": "implements",
+      "description": "Azure Bastion Premium はセッション録画を実装できる。"
+    },
+    {
+      "from": "node_014",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "将来の PAM はフィッシング耐性 MFA を前提とする。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_010",
+      "relationship": "example_of",
+      "description": "委託先アクセス統制で BeyondTrust PRA は典型候補である。"
+    },
+    {
+      "from": "node_015",
+      "to": "node_006",
+      "relationship": "requires",
+      "description": "委託先アクセスは PAM による統制が必要である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_015",
+      "relationship": "requires",
+      "description": "金融庁ガイドラインはサードパーティリスク管理を要求する。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_008",
+      "relationship": "complements",
+      "description": "GitOps と IaC は常設特権の必要性を減らす。"
+    },
+    {
+      "from": "node_018",
+      "to": "node_004",
+      "relationship": "replaces",
+      "description": "将来は場所中心統制の一部を変更経路統制が代替する。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "knowledge_001",
+      "topic": "FISC 第11版は 2023-05-17 公表だが 2026 年時点の最新ではない",
+      "summary": "2026-04-07 時点では FISC 公式サイトで第14版が確認できる。したがって、第11版対応だけで満足すると、現在の監査対話に必要な文脈を落とす。",
+      "related_nodes": [
+        "node_001",
+        "node_002"
+      ]
+    },
+    {
+      "id": "knowledge_002",
+      "topic": "クラウド論点は第11版で本体化された",
+      "summary": "FISC 公式サイトでは、2020 年のクラウド導入・運用解説書の内容が第11版に取り込まれたと明記されている。クラウド管理面の特権統制は周辺論点ではない。",
+      "related_nodes": [
+        "node_001",
+        "node_013"
+      ]
+    },
+    {
+      "id": "knowledge_003",
+      "topic": "作業拠点統制は依然として強いが絶対ではない",
+      "summary": "金融機関実務では作業拠点要件が強く残る一方、金融庁ガイドラインはリスクベース・アプローチを明示する。将来は場所ではなく、本人性、端末性、承認、録画、即時遮断の束で説明する方向が強まる。",
+      "related_nodes": [
+        "node_003",
+        "node_004"
+      ]
+    },
+    {
+      "id": "knowledge_004",
+      "topic": "単純な VPN は説明力が弱い",
+      "summary": "VPN はネットワーク到達性を与えるだけで、特権作業の理由、承認、資格情報秘匿、操作再生性を担保しない。FISC と金融庁の双方が求める証跡要求を満たしにくい。",
+      "related_nodes": [
+        "node_004",
+        "node_005"
+      ]
+    },
+    {
+      "id": "knowledge_005",
+      "topic": "共有アカウントは規制論以前に運用上の負債",
+      "summary": "共有アカウントは個人帰属性を失わせ、退職者残存や内部不正時の切り分けを困難にする。PAM の第一の価値は技術先進性より個人帰属化にある。",
+      "related_nodes": [
+        "node_006",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_006",
+      "topic": "PAM は FISC 認定製品ではなく統制実装手段である",
+      "summary": "公開情報上、FISC が CyberArk などを公式認定している事実は確認できない。監査説明では『FISC が求める本人性、最小権限、録画、第三者統制を実装する仕組み』として示すべきである。",
+      "related_nodes": [
+        "node_001",
+        "node_006",
+        "node_009",
+        "node_010",
+        "node_011"
+      ]
+    },
+    {
+      "id": "knowledge_007",
+      "topic": "CyberArk は大規模統合型に向く",
+      "summary": "Vault、ローテーション、セッション管理、JIT、Zero Standing Privilege に発展しやすい点が強みであり、複数基盤を跨ぐ金融機関に向く。",
+      "related_nodes": [
+        "node_009",
+        "node_006",
+        "node_007"
+      ]
+    },
+    {
+      "id": "knowledge_008",
+      "topic": "BeyondTrust PRA は SIer リモート保守と相性がよい",
+      "summary": "Credential Injection、screen recording、shell recording により、『委託先にパスワードを見せずに接続させ、後から再生可能にする』設計を取りやすい。",
+      "related_nodes": [
+        "node_010",
+        "node_015",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_009",
+      "topic": "Delinea Secret Server は共有 ID 廃止の初手になりやすい",
+      "summary": "Remote Password Changing と Session Recording を組み合わせると、既存運用を大きく壊さずに『秘匿化と自動変更』から始めやすい。",
+      "related_nodes": [
+        "node_011",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_010",
+      "topic": "Entra PIM はクラウド管理面では必須に近い",
+      "summary": "Eligible assignment、activation、approval、justification、MFA が標準機能であり、Azure 管理ロールの常設権限を減らす最短手段である。",
+      "related_nodes": [
+        "node_012",
+        "node_007",
+        "node_014"
+      ]
+    },
+    {
+      "id": "knowledge_011",
+      "topic": "Entra PIM だけではオンプレミス AD は守れない",
+      "summary": "Entra PIM は Azure と Entra ID の管理ロールに強いが、Windows Server や Active Directory の OS ログオンやドメイン管理は別制御が必要である。",
+      "related_nodes": [
+        "node_012",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_012",
+      "topic": "Azure Bastion はクラウド側の作業拠点代替になりうる",
+      "summary": "Azure Bastion はパブリック RDP と SSH を減らし、診断ログや Premium の録画と合わせて強い監査経路を作れる。ただし OS 内の追加統制は別途必要である。",
+      "related_nodes": [
+        "node_013",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_013",
+      "topic": "ログは接続記録だけでは不十分",
+      "summary": "金融監査で必要なのは『誰が接続したか』だけではなく、『誰が承認し、どの理由で、何を変更し、どう確認したか』である。PAM はこの相関を作りやすい。",
+      "related_nodes": [
+        "node_006",
+        "node_016"
+      ]
+    },
+    {
+      "id": "knowledge_014",
+      "topic": "二人原則は PAM と競合しない",
+      "summary": "重要操作は、録画や JIT があっても二人原則や多段承認を残すべき場面がある。PAM は二人原則を電子化し、証跡として残す役割を持つ。",
+      "related_nodes": [
+        "node_017",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_015",
+      "topic": "委託先管理はアカウント管理より広い",
+      "summary": "契約、監査権、再委託、終了時削除、時間制限、セッション監視まで含めて初めて金融庁ガイドラインに沿う。PAM は技術面、契約はガバナンス面で補完する。",
+      "related_nodes": [
+        "node_003",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_016",
+      "topic": "FIDO2 は 2036 年に向けた管理者認証の本命",
+      "summary": "Microsoft Learn は Entra ID で Passkey と FIDO2 の組織有効化を明確に案内している。金融機関の管理者認証は SMS や TOTP から段階的に移すべきである。",
+      "related_nodes": [
+        "node_014",
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_017",
+      "topic": "MIM 2016 は 2029-01-09 まで延長された",
+      "summary": "2026 年 1 月終了という前提は古い。Microsoft は 2029-01-09 まで延長したため、移行は『今すぐ EOL 回避』ではなく『延長期間中に縮退計画を完了』と表現する方が正確である。",
+      "related_nodes": [
+        "node_012"
+      ]
+    },
+    {
+      "id": "knowledge_018",
+      "topic": "2036 年に重要なのは『どこから』より『どの経路で』",
+      "summary": "将来規制は、固定席や運用センターという場所より、承認済み ID、健全な端末、時間制限、完全証跡、即時停止可能性といった経路属性へ重心が移る可能性が高い。",
+      "related_nodes": [
+        "node_003",
+        "node_004",
+        "node_008"
+      ]
+    },
+    {
+      "id": "knowledge_019",
+      "topic": "GitOps と IaC は PAM を不要にしない",
+      "summary": "自動化が進んでも、例外作業、障害調査、切戻し、フォレンジックでは人間の特権操作が残る。PAM は例外経路として残り続ける。",
+      "related_nodes": [
+        "node_018",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_020",
+      "topic": "オペレーショナル・レジリエンスが場所統制の見直しを促す",
+      "summary": "規制は安全性だけでなく可用性も重視する。深夜障害時に毎回出社が必要な設計は、将来的にレジリエンスの観点から再評価されうる。",
+      "related_nodes": [
+        "node_002",
+        "node_003",
+        "node_004"
+      ]
+    },
+    {
+      "id": "knowledge_021",
+      "topic": "DORA と EBA は日本の規制解釈にも影響しうる",
+      "summary": "EU では 2025-01-17 から DORA が適用され、第三者リスクと ICT 統制を強化している。日本でも委託先特権アクセスの統制高度化を後押しする外圧になる。",
+      "related_nodes": [
+        "node_003",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_022",
+      "topic": "物理作業拠点は 2036 年にも消えない",
+      "summary": "Tier 0、重要更改、災対切替、金融市場接続など、高インパクト作業では物理統制が残る可能性が高い。将来像は全面撤廃ではなく、対象縮小と例外化である。",
+      "related_nodes": [
+        "node_004",
+        "node_017"
+      ]
+    },
+    {
+      "id": "knowledge_023",
+      "topic": "PAM 導入の最大失敗要因は例外運用の放置",
+      "summary": "緊急作業、委託先短期入場、バッチ障害、ローカル管理者退避口などの例外を先に潰さないと、PAM を入れても実際の高リスク作業は旧経路に残る。",
+      "related_nodes": [
+        "node_006",
+        "node_015"
+      ]
+    },
+    {
+      "id": "knowledge_024",
+      "topic": "セッション録画は量より優先順位付けが重要",
+      "summary": "2030 年代は全件録画が当たり前になっても、全件を人手レビューできない。AI による高リスク抽出、チケット差分との相関、禁止コマンド検知が運用価値を決める。",
+      "related_nodes": [
+        "node_016",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_025",
+      "topic": "金融機関の実務では『規制準拠』より『規制説明可能性』が重要",
+      "summary": "同じ統制でも、監査人と当局へどう説明できるかで評価が変わる。PAM と JIT は、技術的に強いだけでなく、証跡が説明しやすいことが採用理由になる。",
+      "related_nodes": [
+        "node_001",
+        "node_003",
+        "node_006"
+      ]
+    },
+    {
+      "id": "knowledge_026",
+      "topic": "2036 年の理想像はネットワーク境界より ID 境界",
+      "summary": "ゼロトラスト完成形では、社内網かどうかではなく、本人、端末、リスク、時間、対象資産で特権作業を判定する。これは金融庁ガイドラインのリスクベース方針とも整合する。",
+      "related_nodes": [
+        "node_003",
+        "node_008",
+        "node_014"
+      ]
+    }
+  ]
+}

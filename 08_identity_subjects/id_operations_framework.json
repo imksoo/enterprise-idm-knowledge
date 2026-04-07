@@ -1,0 +1,1138 @@
+{
+  "metadata": {
+    "id": "topic_id_operations_framework",
+    "title": "ID運用フレームワーク",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "identity-operations",
+      "lifecycle",
+      "governance",
+      "least-privilege",
+      "kpi",
+      "japan-context"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "../03_identity_architecture/identity_landscape.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/ad_to_entra_migration.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "ID運用フレームワーク",
+      "object_type": "concept",
+      "description": "ID管理を製品導入ではなく、申請、承認、棚卸し、削除、責任分担、可視化を継続運用する管理体系として扱う枠組み。",
+      "properties": {
+        "audience": [
+          "CIO",
+          "CISO",
+          "情報システム部門",
+          "業務部門"
+        ],
+        "goal": "誰に何をいつまで与え、誰が承認し、どう回収するかを定義する"
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "IDライフサイクル管理プロセス",
+      "object_type": "concept",
+      "description": "入社、異動、兼務、休職、退職、委託開始、契約終了までを通したID管理の基幹プロセス。",
+      "properties": {
+        "phases": [
+          "申請",
+          "承認",
+          "付与",
+          "棚卸し",
+          "変更",
+          "削除"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "アカウント申請・承認フロー",
+      "object_type": "pattern",
+      "description": "ID発行や権限変更を、業務根拠、承認責任、実装担当、証跡を伴って処理する標準フロー。",
+      "properties": {
+        "inputs": [
+          "申請理由",
+          "対象システム",
+          "要求ロール",
+          "利用期限",
+          "所属情報"
+        ]
+      }
+    },
+    {
+      "id": "node_004",
+      "label": "標準承認フロー",
+      "object_type": "pattern",
+      "description": "申請者、直属上長、システム管理者の順に確認し、付与対象と期間を明示して処理する通常フロー。",
+      "properties": {
+        "approvers": [
+          "申請者",
+          "直属上長",
+          "システム管理者"
+        ],
+        "default_channel": "ITSM"
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "例外承認フロー",
+      "object_type": "pattern",
+      "description": "障害対応、緊急保守、SIer作業などの例外ケースを通常申請から分離し、理由と期限を厳格化するフロー。",
+      "properties": {
+        "required_controls": [
+          "理由記載",
+          "利用期限",
+          "事後レビュー"
+        ]
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "緊急権限付与",
+      "object_type": "pattern",
+      "description": "障害復旧やインシデント対応時に限り、短時間の特権を付与し、事後レビューを必須とする運用。",
+      "properties": {
+        "target_sla_hours": 4,
+        "post_review_required": true
+      }
+    },
+    {
+      "id": "node_007",
+      "label": "一時アカウント",
+      "object_type": "pattern",
+      "description": "SIerやベンダー保守向けに利用期限付きで発行し、契約終了や作業完了で自動失効させるアカウント。",
+      "properties": {
+        "expiration_required": true,
+        "common_targets": [
+          "保守作業",
+          "移行作業",
+          "障害調査"
+        ]
+      }
+    },
+    {
+      "id": "node_008",
+      "label": "ITSM連携",
+      "object_type": "concept",
+      "description": "ID申請、承認、作業、証跡、SLA監視をITサービス管理のチケットと結び付ける統制設計。",
+      "properties": {
+        "example_products": [
+          "ServiceNow",
+          "Jira Service Management",
+          "BMC Remedy"
+        ],
+        "linked_fields": [
+          "ticket_id",
+          "requester",
+          "approver",
+          "target_role",
+          "expiration_date"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "セルフサービスポータル",
+      "object_type": "pattern",
+      "description": "定型ロールや標準アカウント申請を利用者自身が入力し、承認と自動化につなげる申請導線。",
+      "properties": {
+        "fit_for": [
+          "標準ロール追加",
+          "配布対象が明確なSaaS",
+          "入社時の定型申請"
+        ]
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "ヘルプデスク申請",
+      "object_type": "pattern",
+      "description": "例外ケースや利用者が自己入力しにくい案件を、オペレーター経由で受付する申請導線。",
+      "properties": {
+        "fit_for": [
+          "障害時の代理申請",
+          "複雑な権限変更",
+          "電話受付"
+        ]
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "承認SLA",
+      "object_type": "concept",
+      "description": "申請から承認、付与までの所要時間目標を定義し、滞留案件を管理する運用基準。",
+      "properties": {
+        "standard_hours": 24,
+        "emergency_hours": 4,
+        "breach_actions": [
+          "自動督促",
+          "上位者エスカレーション"
+        ]
+      }
+    },
+    {
+      "id": "node_012",
+      "label": "定期アクセスレビュー",
+      "object_type": "concept",
+      "description": "付与済み権限が現在も妥当かを定期的に確認し、不要権限を回収する棚卸し運用。",
+      "properties": {
+        "review_dimensions": [
+          "所属",
+          "業務必要性",
+          "利用実績",
+          "契約状態"
+        ]
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "半期レビュー",
+      "object_type": "pattern",
+      "description": "通常アカウントを年2回レビューし、異動や役割変更に伴う権限残存を削減する基本頻度。",
+      "properties": {
+        "cadence": "年2回",
+        "primary_scope": "通常アカウント"
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "四半期レビュー",
+      "object_type": "pattern",
+      "description": "特権アカウントや高リスク権限を四半期単位で確認するレビュー頻度。",
+      "properties": {
+        "cadence": "四半期",
+        "primary_scope": "特権アカウント"
+      }
+    },
+    {
+      "id": "node_015",
+      "label": "月次レビュー",
+      "object_type": "pattern",
+      "description": "外部者、委託先、短期契約者のアカウントを月次で確認し、未更新契約や無利用を早期に回収する頻度。",
+      "properties": {
+        "cadence": "月次",
+        "primary_scope": "外部者アカウント"
+      }
+    },
+    {
+      "id": "node_016",
+      "label": "データオーナー",
+      "object_type": "concept",
+      "description": "業務データや業務権限の妥当性に責任を持ち、アクセスレビューや承認で業務必要性を判断する責任者。",
+      "properties": {
+        "responsibilities": [
+          "業務必要性の承認",
+          "棚卸し回答",
+          "例外判断"
+        ]
+      }
+    },
+    {
+      "id": "node_017",
+      "label": "システム管理者",
+      "object_type": "concept",
+      "description": "対象システム上でロール実装、アカウント作成、削除、技術制約の確認を担う管理者。",
+      "properties": {
+        "responsibilities": [
+          "技術実装",
+          "ロール反映",
+          "削除確認"
+        ]
+      }
+    },
+    {
+      "id": "node_018",
+      "label": "ラバースタンプ問題",
+      "object_type": "risk",
+      "description": "アクセスレビューが形骸化し、内容確認なしに一括承認されることで不要権限が残るリスク。",
+      "properties": {
+        "symptoms": [
+          "一括承認率が高い",
+          "コメントが空欄",
+          "短時間で全件承認"
+        ]
+      }
+    },
+    {
+      "id": "node_019",
+      "label": "自動失効ポリシー",
+      "object_type": "pattern",
+      "description": "レビュー未回答や一時権限の期限超過時に、事前定義に従ってアクセスを自動停止する運用ポリシー。",
+      "properties": {
+        "triggers": [
+          "レビュー未回答",
+          "契約終了",
+          "期限到来"
+        ]
+      }
+    },
+    {
+      "id": "node_020",
+      "label": "証跡保存要件",
+      "object_type": "concept",
+      "description": "申請、承認、付与、レビュー、削除の証跡を法令や内部統制要件に応じて保管する要件。",
+      "properties": {
+        "financial_sector_years": 7,
+        "required_fields": [
+          "申請者",
+          "承認者",
+          "付与内容",
+          "作業日時",
+          "削除確認"
+        ]
+      }
+    },
+    {
+      "id": "node_021",
+      "label": "オフボーディングSLA",
+      "object_type": "concept",
+      "description": "退職、契約終了、業務終了に伴うアカウント停止と引き継ぎを、期限付きで完了させる運用基準。",
+      "properties": {
+        "critical_target": "退職当日",
+        "checkpoints": [
+          "ID停止",
+          "共有資産引き継ぎ",
+          "外部者終了確認"
+        ]
+      }
+    },
+    {
+      "id": "node_022",
+      "label": "即時無効化フロー",
+      "object_type": "pattern",
+      "description": "退職当日に対象IDを即時無効化し、認証基盤、VPN、SaaS、特権権限を一括停止するフロー。",
+      "properties": {
+        "target_timing": "退職当日",
+        "priority_scope": [
+          "Active Directory",
+          "Entra ID",
+          "VPN",
+          "特権アカウント"
+        ]
+      }
+    },
+    {
+      "id": "node_023",
+      "label": "引き継ぎフロー",
+      "object_type": "pattern",
+      "description": "退職者の共有フォルダ、メールボックス、業務引き継ぎ情報を、アクセス遮断と矛盾しない形で受け渡すフロー。",
+      "properties": {
+        "handover_targets": [
+          "共有フォルダ",
+          "メールボックス",
+          "運用手順書"
+        ]
+      }
+    },
+    {
+      "id": "node_024",
+      "label": "ベンダーアカウント終了確認",
+      "object_type": "pattern",
+      "description": "SIerや保守ベンダー向けアカウントを、契約終了、作業終了、システム更改の各時点で確認し回収する運用。",
+      "properties": {
+        "confirmation_points": [
+          "契約終了",
+          "案件終了",
+          "棚卸し未回答"
+        ]
+      }
+    },
+    {
+      "id": "node_025",
+      "label": "最小権限",
+      "object_type": "concept",
+      "description": "利用者や管理者に対し、業務に必要な最小限の権限だけを与える基本原則。",
+      "properties": {
+        "targets": [
+          "業務アカウント",
+          "特権アカウント",
+          "外部者アカウント",
+          "SaaS権限"
+        ]
+      }
+    },
+    {
+      "id": "node_026",
+      "label": "ロールカタログ",
+      "object_type": "pattern",
+      "description": "業務ロールとITロールを分けて定義し、権限付与を個別判断ではなく標準ロールに基づいて行う設計。",
+      "properties": {
+        "role_types": [
+          "業務ロール",
+          "ITロール"
+        ],
+        "design_goal": "ロールの再利用性と承認の明確化"
+      }
+    },
+    {
+      "id": "node_027",
+      "label": "デフォルト拒否",
+      "object_type": "pattern",
+      "description": "明示承認されたロールと例外以外はアクセスを付与しない前提で設計する原則。",
+      "properties": {
+        "principle": "Deny by Default",
+        "benefit": "権限の初期過多を抑制する"
+      }
+    },
+    {
+      "id": "node_028",
+      "label": "時限付き権限",
+      "object_type": "pattern",
+      "description": "管理作業や一時的な業務に必要な権限を期限付きで付与し、満了で回収する運用。",
+      "properties": {
+        "primary_use_cases": [
+          "障害対応",
+          "監査対応",
+          "棚卸し補正",
+          "移行作業"
+        ]
+      }
+    },
+    {
+      "id": "node_029",
+      "label": "権限蓄積",
+      "object_type": "risk",
+      "description": "異動、兼務、昇格のたびに旧権限が残り、利用者が過剰権限化していくリスク。",
+      "properties": {
+        "typical_causes": [
+          "ロール未整理",
+          "削除より追加が優先される運用",
+          "棚卸し未実施"
+        ]
+      }
+    },
+    {
+      "id": "node_030",
+      "label": "Usage-based Recertification",
+      "object_type": "pattern",
+      "description": "実利用のない権限や長期間使われていない特権を優先的に見直す利用実績ベースの再認定手法。",
+      "properties": {
+        "signals": [
+          "最終利用日",
+          "利用頻度",
+          "ログイン有無",
+          "権限行使履歴"
+        ]
+      }
+    },
+    {
+      "id": "node_031",
+      "label": "SaaS利用状況とライセンス最適化",
+      "object_type": "pattern",
+      "description": "SaaS権限の棚卸しとライセンス使用率を連動させ、不要権限と未使用ライセンスを同時に整理する運用。",
+      "properties": {
+        "outcomes": [
+          "未使用ライセンス削減",
+          "不要権限削除",
+          "コスト可視化"
+        ]
+      }
+    },
+    {
+      "id": "node_032",
+      "label": "責任分担モデル",
+      "object_type": "concept",
+      "description": "IT部門、業務部門、セキュリティ部門の役割分担を明確化し、承認責任と実装責任を分離する運営モデル。",
+      "properties": {
+        "parties": [
+          "IT部門",
+          "業務部門",
+          "セキュリティ部門"
+        ],
+        "separation_goal": "承認者と実装者の責任分離"
+      }
+    },
+    {
+      "id": "node_033",
+      "label": "Identity Admin",
+      "object_type": "concept",
+      "description": "ID基盤の運用設計、ロール整備、自動化連携、棚卸し運営を統括する専門責任者または機能。",
+      "properties": {
+        "owns": [
+          "申請モデル",
+          "承認モデル",
+          "ロール整備",
+          "運用KPI"
+        ]
+      }
+    },
+    {
+      "id": "node_034",
+      "label": "SIer責任分界",
+      "object_type": "pattern",
+      "description": "SIerへ委託する実装領域と、社内が保持すべきポリシー、承認、例外判断を分離する責任分界設計。",
+      "properties": {
+        "retain_in_house": [
+          "承認基準",
+          "例外判断",
+          "ロール定義",
+          "最終削除承認"
+        ],
+        "delegable_scope": [
+          "実装作業",
+          "定型運用",
+          "監視一次対応"
+        ]
+      }
+    },
+    {
+      "id": "node_035",
+      "label": "日本型IT組織課題",
+      "object_type": "risk",
+      "description": "情報システム部門がID管理を一手に抱え、業務部門やセキュリティ部門の責任が曖昧なまま運用される構造的課題。",
+      "properties": {
+        "symptoms": [
+          "ID管理が属人化",
+          "業務部門が承認責任を持たない",
+          "例外運用が恒常化"
+        ]
+      }
+    },
+    {
+      "id": "node_036",
+      "label": "ベンダー管理者が神様問題",
+      "object_type": "risk",
+      "description": "SIerや保守ベンダーが Active Directory の高権限を恒常保有し、社内で統制や監査が効かなくなるリスク。",
+      "properties": {
+        "high_risk_roles": [
+          "Enterprise Admin",
+          "Domain Admin"
+        ],
+        "impact": "権限回収不能と証跡欠落"
+      }
+    },
+    {
+      "id": "node_037",
+      "label": "内製化ロードマップ",
+      "object_type": "pattern",
+      "description": "運用委託の現実を前提にしつつ、承認基準、ロール設計、KPI管理を段階的に社内へ戻す計画。",
+      "properties": {
+        "phases": [
+          "可視化",
+          "標準化",
+          "運用内製化",
+          "自動化高度化"
+        ]
+      }
+    },
+    {
+      "id": "node_038",
+      "label": "CIO向け運用KPI",
+      "object_type": "concept",
+      "description": "アカウント運用の速度、品質、残存リスク、コスト最適化を経営視点で把握するための指標群。",
+      "properties": {
+        "indicators": [
+          "孤立アカウント数",
+          "権限超過ユーザー率",
+          "アクセスレビュー完了率",
+          "平均アカウント発行時間",
+          "特権アカウントの未使用率",
+          "多要素認証適用率",
+          "未棚卸し外部アカウント数"
+        ]
+      }
+    },
+    {
+      "id": "node_039",
+      "label": "CISO向けセキュリティKPI",
+      "object_type": "concept",
+      "description": "ID起因の攻撃兆候、特権異常、認証品質、インシデント対応速度を監視するための指標群。",
+      "properties": {
+        "indicators": [
+          "不正ログイン試行件数",
+          "特権アカウントの異常アクセス件数",
+          "パスワード未変更の特権アカウント数",
+          "認証失敗率の異常値アラート件数",
+          "ID起因インシデントの解決時間"
+        ]
+      }
+    },
+    {
+      "id": "node_040",
+      "label": "Identity Maturity Model",
+      "object_type": "concept",
+      "description": "ID管理運用の成熟度を、手動管理から自律型制御まで段階的に評価するモデル。",
+      "properties": {
+        "evaluation_axes": [
+          "自動化",
+          "承認統制",
+          "棚卸し統制",
+          "リスク検知",
+          "経営可視化"
+        ]
+      }
+    },
+    {
+      "id": "node_041",
+      "label": "Level 1: 手動管理",
+      "object_type": "pattern",
+      "description": "エクセル台帳やメール申請に依存し、承認、作成、削除、棚卸しの多くが手作業で行われる段階。",
+      "properties": {
+        "hallmarks": [
+          "台帳依存",
+          "属人運用",
+          "証跡分散"
+        ]
+      }
+    },
+    {
+      "id": "node_042",
+      "label": "Level 2: 基本自動化",
+      "object_type": "pattern",
+      "description": "Active Directory と人事連携により入社や退職の一部が自動化されるが、レビューや例外は手動運用が残る段階。",
+      "properties": {
+        "hallmarks": [
+          "人事連携",
+          "基本プロビジョニング",
+          "一部自動削除"
+        ]
+      }
+    },
+    {
+      "id": "node_043",
+      "label": "Level 3: IGA導入",
+      "object_type": "pattern",
+      "description": "申請、承認、棚卸し、自動失効がワークフロー化され、ロールと証跡が体系化される段階。",
+      "properties": {
+        "hallmarks": [
+          "申請自動化",
+          "承認統制",
+          "棚卸し自動化"
+        ]
+      }
+    },
+    {
+      "id": "node_044",
+      "label": "Level 4: 適応型",
+      "object_type": "pattern",
+      "description": "リスクベース評価、行動分析、利用実績分析を用いて、優先的に権限調整や追加認証を行う段階。",
+      "properties": {
+        "hallmarks": [
+          "リスクベース制御",
+          "行動分析",
+          "適応的レビュー"
+        ]
+      }
+    },
+    {
+      "id": "node_045",
+      "label": "Level 5: 自律型",
+      "object_type": "pattern",
+      "description": "AIや予測制御を用いて、権限見直し候補、異常兆候、SLA逸脱を先回りして提示する段階。",
+      "properties": {
+        "hallmarks": [
+          "予測制御",
+          "自動推奨",
+          "継続最適化"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_002",
+      "relationship": "requires",
+      "description": "ID運用フレームワークの中核はライフサイクル管理プロセスである。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_025",
+      "relationship": "requires",
+      "description": "運用フレームワークは最小権限の原則を前提にする。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_032",
+      "relationship": "requires",
+      "description": "責任分担が曖昧なままでは運用フレームワークは定着しない。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_038",
+      "relationship": "complements",
+      "description": "運用フレームワークはCIO向け運用KPIで可視化する。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "運用フレームワークはCISO向けセキュリティKPIで監視する。"
+    },
+    {
+      "from": "node_001",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "成熟度モデルは運用フレームワークの到達度を測る。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_003",
+      "relationship": "requires",
+      "description": "ライフサイクル管理では申請・承認フローが起点となる。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_012",
+      "relationship": "requires",
+      "description": "付与後の妥当性確認として定期アクセスレビューが必要である。"
+    },
+    {
+      "from": "node_002",
+      "to": "node_021",
+      "relationship": "requires",
+      "description": "退職や契約終了時の回収フローもライフサイクル管理の一部である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "通常申請は標準承認フローで運用する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_005",
+      "relationship": "complements",
+      "description": "例外ケースは通常フローから分離して扱う。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "申請と承認の統制にはITSM連携が必要である。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_009",
+      "relationship": "complements",
+      "description": "定型申請はセルフサービスポータルと相性がよい。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_010",
+      "relationship": "complements",
+      "description": "非定型案件はヘルプデスク申請で補完する。"
+    },
+    {
+      "from": "node_003",
+      "to": "node_011",
+      "relationship": "requires",
+      "description": "申請滞留を防ぐには承認SLAを明示する必要がある。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_006",
+      "relationship": "implements",
+      "description": "例外承認フローには緊急権限付与が含まれる。"
+    },
+    {
+      "from": "node_005",
+      "to": "node_007",
+      "relationship": "implements",
+      "description": "例外承認フローには一時アカウント発行も含まれる。"
+    },
+    {
+      "from": "node_006",
+      "to": "node_028",
+      "relationship": "complements",
+      "description": "緊急権限付与は時限付き権限で実装するのが望ましい。"
+    },
+    {
+      "from": "node_008",
+      "to": "node_011",
+      "relationship": "complements",
+      "description": "ITSM連携により承認SLAの可視化と督促を自動化しやすい。"
+    },
+    {
+      "from": "node_009",
+      "to": "node_010",
+      "relationship": "complements",
+      "description": "セルフサービスとヘルプデスクは対象ケースで使い分ける。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_013",
+      "relationship": "implements",
+      "description": "通常アカウントの基本頻度として半期レビューを用いる。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_014",
+      "relationship": "implements",
+      "description": "特権アカウントは四半期レビューで確認する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_015",
+      "relationship": "implements",
+      "description": "外部者アカウントは月次レビューで確認する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "業務妥当性の判断にはデータオーナーの関与が必要である。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_017",
+      "relationship": "complements",
+      "description": "技術実装や削除確認ではシステム管理者が補完する。"
+    },
+    {
+      "from": "node_012",
+      "to": "node_018",
+      "relationship": "mitigates",
+      "description": "設計されたレビュー運用はラバースタンプ問題を抑制する。"
+    },
+    {
+      "from": "node_019",
+      "to": "node_018",
+      "relationship": "mitigates",
+      "description": "未回答時の自動失効は形骸化した承認を抑える。"
+    },
+    {
+      "from": "node_020",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "レビュー証跡の保存要件が棚卸し運用の設計条件になる。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_022",
+      "relationship": "requires",
+      "description": "オフボーディングでは退職当日の即時無効化が最優先である。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_023",
+      "relationship": "requires",
+      "description": "業務継続のためには引き継ぎフローも同時に必要である。"
+    },
+    {
+      "from": "node_021",
+      "to": "node_024",
+      "relationship": "requires",
+      "description": "外部者や委託先は終了確認を明示しないと残存しやすい。"
+    },
+    {
+      "from": "node_022",
+      "to": "node_019",
+      "relationship": "complements",
+      "description": "即時無効化フローは期限や契約連動の自動失効ポリシーを補完する。"
+    },
+    {
+      "from": "node_024",
+      "to": "node_020",
+      "relationship": "complements",
+      "description": "ベンダーアカウント終了確認では証跡保存が重要である。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_026",
+      "relationship": "requires",
+      "description": "最小権限を実装するにはロールカタログが必要である。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_027",
+      "relationship": "requires",
+      "description": "最小権限はデフォルト拒否の設計で安定する。"
+    },
+    {
+      "from": "node_025",
+      "to": "node_028",
+      "relationship": "complements",
+      "description": "常時付与を避けるには時限付き権限が有効である。"
+    },
+    {
+      "from": "node_028",
+      "to": "node_029",
+      "relationship": "mitigates",
+      "description": "時限付き権限は異動や障害対応での権限蓄積を抑える。"
+    },
+    {
+      "from": "node_030",
+      "to": "node_029",
+      "relationship": "mitigates",
+      "description": "利用実績ベースの再認定は未使用権限の残存を減らす。"
+    },
+    {
+      "from": "node_031",
+      "to": "node_030",
+      "relationship": "complements",
+      "description": "SaaS利用状況とライセンス情報は再認定の優先順位付けを補完する。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_016",
+      "relationship": "requires",
+      "description": "責任分担モデルではデータオーナーの判断責任を明確にする。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_017",
+      "relationship": "requires",
+      "description": "システム管理者は技術実装責任を担う。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_033",
+      "relationship": "requires",
+      "description": "Identity Adminが横断設計と運用品質を統括する。"
+    },
+    {
+      "from": "node_032",
+      "to": "node_034",
+      "relationship": "requires",
+      "description": "委託運用ではSIer責任分界を明文化する必要がある。"
+    },
+    {
+      "from": "node_034",
+      "to": "node_037",
+      "relationship": "complements",
+      "description": "責任分界の明確化は内製化ロードマップの前提になる。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_036",
+      "relationship": "complements",
+      "description": "日本型IT組織課題の典型例がベンダー管理者が神様問題である。"
+    },
+    {
+      "from": "node_035",
+      "to": "node_037",
+      "relationship": "requires",
+      "description": "構造課題を解消するには段階的な内製化ロードマップが必要である。"
+    },
+    {
+      "from": "node_037",
+      "to": "node_035",
+      "relationship": "mitigates",
+      "description": "内製化ロードマップは属人化と責任曖昧化を抑える。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_039",
+      "relationship": "complements",
+      "description": "CIO向け指標とCISO向け指標を合わせて経営判断を行う。"
+    },
+    {
+      "from": "node_038",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "運用KPIは成熟度の実測値として使える。"
+    },
+    {
+      "from": "node_039",
+      "to": "node_040",
+      "relationship": "complements",
+      "description": "セキュリティKPIは成熟度モデルの上位段階を支える。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_041",
+      "relationship": "example_of",
+      "description": "成熟度モデルの初期段階として手動管理がある。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_042",
+      "relationship": "example_of",
+      "description": "成熟度モデルの第二段階として基本自動化がある。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_043",
+      "relationship": "example_of",
+      "description": "成熟度モデルの第三段階としてIGA導入がある。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_044",
+      "relationship": "example_of",
+      "description": "成熟度モデルの第四段階として適応型がある。"
+    },
+    {
+      "from": "node_040",
+      "to": "node_045",
+      "relationship": "example_of",
+      "description": "成熟度モデルの第五段階として自律型がある。"
+    },
+    {
+      "from": "node_042",
+      "to": "node_041",
+      "relationship": "replaces",
+      "description": "基本自動化は手動管理の限界を置き換える。"
+    },
+    {
+      "from": "node_043",
+      "to": "node_042",
+      "relationship": "replaces",
+      "description": "IGA導入は部分自動化から統制型ワークフローへ進化させる。"
+    },
+    {
+      "from": "node_044",
+      "to": "node_043",
+      "relationship": "replaces",
+      "description": "適応型は固定ルール中心のIGA運用を高度化する。"
+    },
+    {
+      "from": "node_045",
+      "to": "node_044",
+      "relationship": "replaces",
+      "description": "自律型は適応型の分析結果を予測制御へ発展させる。"
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "k_001",
+      "topic": "ID管理は製品導入だけでは閉じない",
+      "content": "Active Directory や Entra ID を導入しても、申請、承認、棚卸し、削除、例外管理の運用設計が弱いと、孤立アカウントと過剰権限は減らない。CIO と CISO は製品比較より先に運用責任の流れを見るべきである。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_002",
+      "topic": "標準フローと例外フローの分離が重要",
+      "content": "通常申請と緊急対応を同じ承認経路に載せると、緊急案件が恒常化しやすい。例外フローは短期権限、事後レビュー、強い証跡を前提に標準フローから分離する方が統制しやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_003",
+      "topic": "承認SLAは利用者満足ではなく統制の指標でもある",
+      "content": "承認SLAが未定義だと、利用者は電話や口頭で例外運用を作りやすくなる。通常24時間、緊急4時間などの明示基準は、滞留可視化と野良運用抑止の両方に有効である。",
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "k_004",
+      "topic": "セルフサービスは万能ではない",
+      "content": "セルフサービスポータルは定型ロール付与には有効だが、複雑な例外案件まで無理に載せると誤申請が増える。ヘルプデスク申請を残し、対象範囲を明確に分ける方が運用品質は安定する。",
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "k_005",
+      "topic": "アクセスレビューの頻度はリスク別に変えるべきである",
+      "content": "全アカウントを同一頻度で棚卸しすると、重要対象が埋もれやすい。通常アカウントは年2回、特権アカウントは四半期、外部者は月次のように分けると、レビュー負荷とリスクの釣り合いが取りやすい。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_006",
+      "topic": "ラバースタンプ問題はレビュー設計の失敗で起きる",
+      "content": "承認画面が使いにくい、件数が多すぎる、利用実績が見えない、未回答に罰則がない場合、棚卸しは形骸化しやすい。利用実績表示、リスク順ソート、自動失効、コメント必須化が抑止策になる。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_007",
+      "topic": "未回答時の自動失効は外部者管理で効果が高い",
+      "content": "委託先や短期契約者は、レビュー未回答のまま残存しやすい。月次レビューと自動失効を組み合わせると、契約終了漏れや棚卸し放置によるアカウント残存を減らしやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_008",
+      "topic": "証跡保存年限は業種で差がある",
+      "content": "申請や承認のログは、障害対応メモとは異なり統制証跡として扱う必要がある。金融では7年など長期保存を求める前提で、検索性と改ざん耐性を先に設計すべきである。",
+      "evidence_level": "medium",
+      "japan_specific": true
+    },
+    {
+      "id": "k_009",
+      "topic": "オフボーディングは退職当日の即時無効化が基準",
+      "content": "退職処理を翌営業日まで遅らせると、VPN、メール、SaaS、特権権限が残る。特に日本企業では人事通知とIT作業が別系統になりやすいため、退職当日の即時無効化を運用SLAとして固定すべきである。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_010",
+      "topic": "引き継ぎフローを設けないと業務継続と衝突する",
+      "content": "共有フォルダやメールボックスの引き継ぎ手順がないと、現場は退職者IDの延命を求めやすい。引き継ぎフローを明示し、本人IDを残さずに業務継続する方法を先に示す必要がある。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_011",
+      "topic": "最小権限はロール設計なしでは実装できない",
+      "content": "個別判断で権限を積み上げる運用では、最小権限は掛け声で終わる。業務ロールとITロールを分離したロールカタログと、明示承認以外を拒否する設計が必要である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_012",
+      "topic": "権限蓄積は異動文化の強い組織で起きやすい",
+      "content": "日本企業では兼務、応援、異動が多く、追加権限は早いが削除は後回しになりやすい。このため、異動トリガーで旧ロールを見直す運用を入れないと権限蓄積が慢性化する。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_013",
+      "topic": "利用実績ベースの再認定は棚卸し負荷を下げる",
+      "content": "全権限を同じ粒度で確認するより、未使用権限や長期間未利用の特権から優先的に見直す方が効率的である。Usage-based Recertification はレビュー対象の優先順位付けに向く。",
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "k_014",
+      "topic": "SaaSライセンス最適化はID運用の経営価値になりやすい",
+      "content": "未使用ライセンス削減はCIOに説明しやすく、不要権限削除はCISOに説明しやすい。同じ利用データをコスト最適化と統制強化の両方に使える点が重要である。",
+      "evidence_level": "medium",
+      "japan_specific": false
+    },
+    {
+      "id": "k_015",
+      "topic": "責任分担モデルでは承認責任と実装責任を分ける",
+      "content": "業務必要性はデータオーナー、技術実装はシステム管理者、横断設計はIdentity Adminが持つと、承認と実装が混在しにくい。セキュリティ部門は基準と監視を担う位置付けが現実的である。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_016",
+      "topic": "情報システム部門が全部やる構造は持続しにくい",
+      "content": "情報システム部門だけで申請受付、承認判断、実装、監査対応まで抱えると、業務妥当性判断が現場から切り離される。結果として、レビュー形骸化と例外増殖が起きやすい。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_017",
+      "topic": "ベンダー管理者が神様問題は高権限の外部依存である",
+      "content": "SIerが Enterprise Admin や Domain Admin を恒常保有すると、社内は何が設定され、誰が承認し、いつ使われたかを追いにくい。委託継続の有無とは別に、承認基準と証跡管理は社内保持が必要である。",
+      "evidence_level": "high",
+      "japan_specific": true
+    },
+    {
+      "id": "k_018",
+      "topic": "KPIは件数だけでなく時間と割合を見るべきである",
+      "content": "孤立アカウント数や不正試行件数の絶対数だけでは改善が見えにくい。平均発行時間、レビュー完了率、多要素認証適用率、ID起因インシデントの解決時間のような時間軸と割合指標を併用すべきである。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_019",
+      "topic": "成熟度モデルはツール成熟度ではなく運用成熟度で測る",
+      "content": "IGA製品を導入していても、例外管理や削除統制が手動なら成熟度は高くない。成熟度は自動化率だけでなく、責任分担、証跡、レビュー品質、リスク検知まで含めて評価するべきである。",
+      "evidence_level": "high",
+      "japan_specific": false
+    },
+    {
+      "id": "k_020",
+      "topic": "Level 5は完全無人運用ではない",
+      "content": "自律型運用でも、AIが承認責任者を置き換えるわけではない。予測制御や推奨は有効だが、例外承認、契約判断、外部者管理の最終責任は人間に残る前提で設計すべきである。",
+      "evidence_level": "medium",
+      "japan_specific": false
+    }
+  ]
+}

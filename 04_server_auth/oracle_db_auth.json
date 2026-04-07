@@ -1,0 +1,575 @@
+{
+  "metadata": {
+    "id": "oracle_db_auth",
+    "title": "Oracle Database認証・認可・特権管理",
+    "category": "database_auth",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "Oracle Database",
+      "Kerberos",
+      "RADIUS",
+      "PKI",
+      "特権アクセス管理",
+      "監査",
+      "J-SOX",
+      "FISC",
+      "AIX",
+      "Oracle Solaris",
+      "OCI"
+    ],
+    "related_files": [
+      "../01_entry/knowledge_graph.json",
+      "../01_entry/navigation_indices.json",
+      "./kerberos_cifs_auth.json",
+      "./commercial_unix_survival.json",
+      "../03_identity_architecture/pam_tool_comparison.json",
+      "../06_security_hardening/privileged_access_management.json",
+      "../07_migration_patterns/japan_security_frameworks.json"
+    ]
+  },
+  "authentication_methods": [
+    {
+      "method_id": "auth_password_default",
+      "name": "ローカルパスワード認証",
+      "type": "password",
+      "description": "Oracle Databaseの標準認証。データベース内ユーザーに対してパスワード・プロファイル・ロックアウト・期限管理を適用する。古い10G verifierを残す構成は段階廃止が必要で、12c以降は11G/12C password version中心へ移行する。",
+      "use_cases": [
+        "業務アプリケーションの接続ユーザー",
+        "DBA以外の個人管理者アカウント",
+        "移行前の既存基幹系で最も多い認証方式"
+      ],
+      "pros": [
+        "導入が最も容易で既存アプリ互換性が高い",
+        "プロファイルで失敗回数、期限、複雑性、アイドル時間を制御しやすい",
+        "PAM（特権アクセス管理）製品のパスワードローテーション対象にしやすい"
+      ],
+      "cons": [
+        "アプリ接続ユーザーの共有化が起きやすく、個人責任追跡が弱い",
+        "古いpassword versionを残すと辞書攻撃や互換性のための弱い設定を温存しやすい",
+        "OSやディレクトリサービスと認証を分離しやすく、退職・異動時の一元統制が難しい"
+      ],
+      "version_support": {
+        "min_version": "Oracle Database 8i以降",
+        "notes": "12c以降はcase-insensitive passwordを前提にした旧10G verifierを縮退扱いにし、`SQLNET.ALLOWED_LOGON_VERSION_SERVER` と password versionの整理が重要。"
+      }
+    },
+    {
+      "method_id": "auth_password_file_exclusive",
+      "name": "管理者用パスワードファイル認証（Exclusive Mode）",
+      "type": "password",
+      "description": "SYSDBA/SYSOPERなど管理者権限用のパスワードファイルを`REMOTE_LOGIN_PASSWORDFILE=EXCLUSIVE`で個別データベースに割り当てる方式。共有SYSアカウントの代替として、名前付きDBAアカウントへ管理権限を付与する前提を作れる。",
+      "use_cases": [
+        "Data GuardやRMANを含むリモート管理",
+        "運用自動化ジョブの限定的な管理接続",
+        "PAM経由での一時的な特権接続"
+      ],
+      "pros": [
+        "名前付きユーザーにSYSDBA/SYSOPERを付与でき、共有SYS運用から脱却しやすい",
+        "Oracle Net経由の管理接続を標準機能で扱える",
+        "パスワードファイルをPAMで金庫管理しやすい"
+      ],
+      "cons": [
+        "日本企業では依然として`sys as sysdba`の共有慣行が残りやすい",
+        "パスワードファイル配布やData Guard同期を雑に扱うと横展開リスクが高い",
+        "セッション記録なしでは誰が何を実行したかが曖昧になる"
+      ],
+      "version_support": {
+        "min_version": "旧版から利用可能",
+        "notes": "`EXCLUSIVE`が実務上の標準。管理者権限はパスワードファイルとUnified Auditingを組み合わせて個人単位で追跡する。"
+      }
+    },
+    {
+      "method_id": "auth_kerberos_ad",
+      "name": "Kerberos認証",
+      "type": "kerberos",
+      "description": "Active DirectoryやMIT KerberosをKDCとして利用し、Oracle Databaseクライアントとサーバーをチケットベースで認証する方式。Windows統合認証に近い運用が可能で、AD残存環境の基幹DBで有力である。",
+      "use_cases": [
+        "Windowsクライアント主体の社内業務システム",
+        "Active Directoryと整合した個人単位のDBアクセス",
+        "AIXやOracle Solaris上のOracle DatabaseでAD連携を維持したい場合"
+      ],
+      "pros": [
+        "パスワードをDB側へ保持せずに個人認証を統合しやすい",
+        "Active Directoryと退職・異動連動を取りやすい",
+        "SQL*Net経由でもSSOに近い利用感を実現できる"
+      ],
+      "cons": [
+        "DNS、時刻同期、service principal、keytab、`sqlnet.ora`整合が崩れると障害切り分けが難しい",
+        "Javaミドルウェア、バッチ、ETL製品がKerberos対応でも実装差異が大きい",
+        "日本企業ではDBAとAD管理者が別組織で、鍵表更新や暗号スイート変更が運用ボトルネックになりやすい"
+      ],
+      "version_support": {
+        "min_version": "Oracle8i以降",
+        "notes": "19c/21c/23ai/26aiでも継続利用可能。Windows統合の延長で使えるが、商用UNIXではOS側Kerberos設定との差分管理が重要。"
+      }
+    },
+    {
+      "method_id": "auth_tls_ssl_pki",
+      "name": "TLS/SSL・PKI証明書認証",
+      "type": "pki",
+      "description": "Oracle Advanced Securityの一部として、TLSで通信路を暗号化し、必要に応じてX.509証明書ベースのクライアント認証を行う方式。サーバー証明書のみで通信保護に使う構成と、相互TLSで個人またはアプリを識別する構成に分かれる。",
+      "use_cases": [
+        "機微データを扱う金融・公共の基幹系",
+        "DBリンクや中継サーバー間の暗号化",
+        "証明書で接続主体を識別したいB2B連携"
+      ],
+      "pros": [
+        "盗聴対策とサーバー真正性確認を同時に実現できる",
+        "パスワードレスまたはパスワード依存低減の設計が可能",
+        "ネットワーク暗号化要件やJ-SOXのログ改ざん抑止補完に有効"
+      ],
+      "cons": [
+        "証明書配布、失効、ウォレット管理、HSM連携の運用負荷が高い",
+        "TLS導入だけではDB権限設計や共有アカウント問題は解決しない",
+        "古いクライアントや周辺製品でTLSバージョン互換性問題が起きやすい"
+      ],
+      "version_support": {
+        "min_version": "Oracle Advanced Security適用版で利用",
+        "notes": "OracleはTLS/SSL認証をKerberosやRADIUSと組み合わせ可能と案内している。新規案件ではNative Network EncryptionよりTLS優先で整理しやすい。"
+      }
+    },
+    {
+      "method_id": "auth_radius",
+      "name": "RADIUS認証",
+      "type": "radius",
+      "description": "RADIUSサーバーに認証を委譲し、外部認証基盤と連携する方式。VPNやネットワーク機器と同じ認証ストアを使いたい環境で採用余地があるが、日本企業のOracle DB本番では主流ではない。",
+      "use_cases": [
+        "既存RADIUS基盤を延命しながら管理者認証を統合したい場合",
+        "外部トークンやOTP基盤と連携したい限定案件",
+        "オンプレミスの共通認証ハブにDBを接続したい場合"
+      ],
+      "pros": [
+        "既存RADIUS連携基盤を活用できる",
+        "一部MFA基盤とつなぎやすい",
+        "Oracle Database側に個別認証ロジックを持たせずに済む"
+      ],
+      "cons": [
+        "アプリ接続の大量利用には向かず、運用対象が管理者や一部ユーザーに寄りやすい",
+        "認証成功後のDBロール付与や職務分離は別設計が必要",
+        "RADIUS自体が日本企業の次世代ID戦略では縮退技術になりやすい"
+      ],
+      "version_support": {
+        "min_version": "Oracle Advanced Security適用版で利用",
+        "notes": "KerberosやTLSに比べると新規採用は限定的。将来標準としてはEntra IDやOCI IAM連携に置き換えられやすい。"
+      }
+    },
+    {
+      "method_id": "auth_external_os",
+      "name": "External Authentication（OS認証）",
+      "type": "external",
+      "description": "OSアカウントや外部サービスに認証を委ね、データベース内では`IDENTIFIED EXTERNALLY`等で受ける方式。ローカルサーバー上の運用やバッチで古くから使われるが、商用UNIXや共有サーバーでの扱いは慎重さが要る。",
+      "use_cases": [
+        "同一ホスト上で動く運用スクリプトやバッチ",
+        "OSアカウントとDBアカウントを厳密に対応付ける構成",
+        "AIXやOracle Solarisで旧来運用を継続している案件"
+      ],
+      "pros": [
+        "DBパスワードをアプリやスクリプトへ埋め込まない設計ができる",
+        "OS側の認証強化やPAM設定をDBへ波及しやすい",
+        "ローカル保守作業ではシンプルに実装できる"
+      ],
+      "cons": [
+        "OSアカウント共有が残るとDB監査も個人追跡できない",
+        "AIXやOracle SolarisではOS認証方式、ゾーン、sudo、非対話実行の差分で複雑化しやすい",
+        "クラウド移行後はホスト同居前提が崩れ、再設計が必要になる"
+      ],
+      "version_support": {
+        "min_version": "旧版から利用可能",
+        "notes": "サーバー統合運用では便利だが、現代の内部統制では個人ID化、PAM経由化、監査補強が前提になる。"
+      }
+    },
+    {
+      "method_id": "auth_oig_integration",
+      "name": "Oracle Identity Governance連携",
+      "type": "external",
+      "description": "Oracle Identity Governance（OIG）は認証方式そのものではなく、Oracle Databaseアカウントのプロビジョニング、権限申請、アクセスレビュー、退職時削除を統制する連携レイヤーである。認証はパスワード、Kerberos、証明書、外部認証のいずれかと組み合わせる。",
+      "use_cases": [
+        "J-SOXで申請・承認・棚卸の証跡を一元化したい場合",
+        "ERPや基幹系ごとに分散したOracle DBアカウントのライフサイクル統制",
+        "職務分離違反をIGAで検出したい場合"
+      ],
+      "pros": [
+        "入社・異動・退職に伴うDBアカウント作成と削除をワークフロー化できる",
+        "共有アカウント削減とアクセスレビューの定着に有効",
+        "監査法人向けに承認履歴と棚卸結果を提示しやすい"
+      ],
+      "cons": [
+        "OIGだけではSYSDBA共有やアプリ接続共有IDは解消しない",
+        "DBロール設計が粗いとIGA連携しても最小権限にならない",
+        "導入済みOracle IAM資産がない企業では新規採用の優先度は高くない"
+      ],
+      "version_support": {
+        "min_version": "Oracle Identity Governance 12c系など外部製品連携",
+        "notes": "認証近代化というより認可・統制近代化の要素。日本企業ではOracle E-Business SuiteやFusion Middleware残存案件で整合しやすい。"
+      }
+    }
+  ],
+  "privileged_access": {
+    "problem_statement": "Oracle Databaseの最大の実務課題は、技術的な認証方式よりも、`SYS`・`SYSTEM`・共有運用ID・アプリ接続IDに特権が集中し、誰が何をしたかを個人単位で追跡しにくい点にある。特に日本企業の金融・製造・公共では、夜間保守、SIer常駐、障害対応優先の文化により、`sys as sysdba`共有、パスワード固定、監査ログの保全不足が同時に残存しやすい。",
+    "common_issues_japan": [
+      "本番障害対応を理由に`SYSDBA`共有IDを複数ベンダーで使い回す",
+      "運用自動化ジョブが高権限の固定パスワードを長期間保持する",
+      "アプリケーション接続ユーザーにDDLや広範なテーブル権限が残っている",
+      "監査ログは取得していても、OS上のファイル配置で改ざん耐性が弱い",
+      "監査部門がDB固有権限を理解しづらく、アクセスレビューが名義貸しになりやすい"
+    ],
+    "solutions": [
+      {
+        "solution_id": "priv_named_admins",
+        "name": "名前付き管理者アカウント + パスワードファイル個別化",
+        "description": "共有`SYS`運用をやめ、個人名義のDBAアカウントへ必要な管理権限を付与し、管理接続はPAMまたは厳格な申請・承認経路へ集約する。",
+        "capabilities": [
+          "個人単位の責任追跡",
+          "パスワードローテーション",
+          "ベンダー別の利用停止",
+          "監査証跡の精度向上"
+        ]
+      },
+      {
+        "solution_id": "priv_database_vault",
+        "name": "Oracle Database Vault",
+        "description": "Realm、Command Rule、Factorなどで、`SYSDBA`を含む特権ユーザーでも業務データへ無制限に触れないようにする。運用者とデータ所有者を分離しやすい。",
+        "capabilities": [
+          "特権ユーザーのデータアクセス制限",
+          "職務分離",
+          "本番データ参照の禁止",
+          "高権限コマンドの条件付き実行"
+        ]
+      },
+      {
+        "solution_id": "priv_unified_auditing",
+        "name": "Unified Auditing",
+        "description": "12c以降の統合監査。ログオン、権限使用、ポリシー、特権操作を一元取得し、従来監査より管理性を高める。21c以降はUnified Auditing前提で設計するのが現実的。",
+        "capabilities": [
+          "監査ポリシーの一元化",
+          "特権操作監査",
+          "標準化された監査ビュー",
+          "AVDFへの連携容易化"
+        ]
+      },
+      {
+        "solution_id": "priv_fga",
+        "name": "Fine-Grained Auditing",
+        "description": "給与、個人情報、口座番号など機微列・機微条件にだけ監査を掛ける。監査量を抑えつつ、監査法人が求める重点追跡を実装できる。",
+        "capabilities": [
+          "列単位の監査",
+          "条件付き監査",
+          "機微データアクセスの重点追跡",
+          "誤検知抑制"
+        ]
+      },
+      {
+        "solution_id": "priv_avdf",
+        "name": "Oracle Audit Vault and Database Firewall (AVDF)",
+        "description": "複数DBの監査ログ集約、保持、レポート、データベースファイアウォール監視を提供する。Oracle Database以外も含めた監査集約基盤として有効で、改ざん耐性と保管統制を強化しやすい。",
+        "capabilities": [
+          "監査証跡の集中保管",
+          "保持ポリシー管理",
+          "ユーザー権限スナップショット取得",
+          "SQLトラフィック監視"
+        ]
+      },
+      {
+        "solution_id": "priv_pam_broker",
+        "name": "PAM（特権アクセス管理）製品との接続ブローカリング",
+        "description": "CyberArkやDelineaで管理者資格情報を金庫化し、申請・承認・セッション記録・自動ローテーションをかけてOracle管理接続へ入る。",
+        "capabilities": [
+          "資格情報の金庫管理",
+          "セッション記録",
+          "JIT的な利用統制",
+          "外部委託先接続の証跡化"
+        ]
+      }
+    ]
+  },
+  "compliance_requirements": {
+    "jsox": {
+      "requirements": [
+        "特権IDを個人単位で識別し、共有禁止または厳格な代替統制を置く",
+        "本番DBに対する設定変更、権限変更、機微データ参照の監査証跡を保持する",
+        "ログの改ざん防止と、監査部門が追跡可能な保管方式を持つ",
+        "定期的なアクセスレビューと職務分離確認を実施する"
+      ],
+      "oracle_controls": [
+        "名前付きDBA + `SYSDBA`付与最小化",
+        "Unified Auditingでログオン・権限使用・DDLを監査",
+        "FGAで個人情報や財務データの列単位監査",
+        "Database Vaultで運用者とデータ所有者を分離",
+        "AVDFまたは外部SIEMへ監査証跡を転送し長期保管"
+      ]
+    },
+    "fisc": {
+      "requirements": [
+        "金融機関等の重要システムでは共有アカウントを禁止し、特権利用を記録する",
+        "外部委託先や保守ベンダーの特権操作は申請・承認・経路統制を伴う",
+        "ログは改ざん防止措置を備え、社内基準・規制要件に応じて保存する",
+        "特権操作や機微データ参照は定期的にレビューし、不正兆候を検知する"
+      ],
+      "oracle_controls": [
+        "PAM経由の管理接続とセッション記録",
+        "Database Vaultによる本番データ隔離",
+        "Unified AuditingとAVDFの組み合わせによる集中監査",
+        "Oracle Key VaultやHSM連携による鍵・ウォレット統制",
+        "アクセスレビューに使えるユーザー権限スナップショットの定期取得"
+      ]
+    }
+  },
+  "version_lifecycle": [
+    {
+      "version": "11.2 (Oracle Database 11g Release 2)",
+      "release": "2009-09",
+      "premier_support_end": "2015-01",
+      "extended_support_end": "2020-12",
+      "status_2026": "Sustaining Supportのみ",
+      "recommendation": "本番継続は非推奨。Extended Support 2023年終了という認識はMarket Driven Supportや個別契約と混同しやすく、標準ライフサイクルでは2020年末でExtended Support終了。"
+    },
+    {
+      "version": "12.1.0.2 (Oracle Database 12c Release 1)",
+      "release": "2013-06",
+      "premier_support_end": "2018-07",
+      "extended_support_end": "2022-07",
+      "status_2026": "Sustaining Supportのみ",
+      "recommendation": "残存している場合は19c以上への移行を優先。AIX、Oracle Solaris、Windowsなど一部プラットフォーム向けの限定延長に依存した設計は避ける。"
+    },
+    {
+      "version": "12.2.0.1 (Oracle Database 12c Release 2)",
+      "release": "2017-03",
+      "premier_support_end": "2022-03-31",
+      "extended_support_end": "提供なし",
+      "status_2026": "Sustaining Supportのみ",
+      "recommendation": "『2024年までExtended Support』という整理は現行Oracle公開ポリシーと一致しない。19cへの標準化対象とみなすべき。"
+    },
+    {
+      "version": "18c",
+      "release": "2018-07",
+      "premier_support_end": "2021-06",
+      "extended_support_end": "提供なし",
+      "status_2026": "Sustaining Supportのみ",
+      "recommendation": "短期系リリースのため長期残置に不向き。実運用で残っているなら早期に19cまたは26aiへ統合する。"
+    },
+    {
+      "version": "19c",
+      "release": "2019-04",
+      "premier_support_end": "2029-12",
+      "extended_support_end": "2032-12",
+      "status_2026": "Premier Support期間中",
+      "recommendation": "2026年時点の現実的な標準版。既存基幹系の更改先として最も説明しやすく、AIX・Oracle Solaris残存案件でも受け皿になりやすい。"
+    },
+    {
+      "version": "21c",
+      "release": "2021-08",
+      "premier_support_end": "2027-07",
+      "extended_support_end": "提供なし",
+      "status_2026": "Premier Support期間中だがInnovation Release",
+      "recommendation": "新機能検証向け。日本企業の基幹系標準には不向きで、長期残置を前提とするなら19cまたは26aiを優先する。"
+    },
+    {
+      "version": "23ai",
+      "release": "2024-04頃からOCI/Exadata系で展開",
+      "premier_support_end": "資料差異あり",
+      "extended_support_end": "資料差異あり",
+      "status_2026": "製品呼称移行期",
+      "recommendation": "23aiを最新LTSとみなす古い説明が残るが、2025-11-07付Oracle Lifetime Support Policyでは26aiがLong Term Support Releaseとして掲載されている。新規標準化時は26aiの採用可否を確認する。"
+    },
+    {
+      "version": "26ai",
+      "release": "2025-10",
+      "premier_support_end": "2031-12",
+      "extended_support_end": "TBD",
+      "status_2026": "最新Long Term Support Release",
+      "recommendation": "OCIやEngineered Systemsを前提とした新規案件で有力。ただし国内基幹系では周辺製品認証、監査手順、SIer運用知見を確認したうえで採用判断する。"
+    }
+  ],
+  "pam_integration": [
+    {
+      "solution_name": "CyberArk PSM for Oracle",
+      "vendor": "CyberArk",
+      "oracle_integration_method": "PSM経由でSQL*PlusやOracle管理ツールのセッションを仲介し、Vaultで資格情報を保管・ローテーションする。",
+      "features": [
+        "共有SYSDBA運用の削減",
+        "セッション記録",
+        "申請・承認連携",
+        "パスワード自動変更",
+        "外部委託先の接続経路統制"
+      ]
+    },
+    {
+      "solution_name": "Delinea Secret Server + Oracle",
+      "vendor": "Delinea",
+      "oracle_integration_method": "Secret ServerでOracle資格情報を保管し、Discovery・Password Changer・Launcher機能で接続とローテーションを統制する。",
+      "features": [
+        "資格情報の金庫化",
+        "定期ローテーション",
+        "利用履歴記録",
+        "簡易導入",
+        "中堅から大企業向けの現実的運用"
+      ]
+    },
+    {
+      "solution_name": "Oracle Key Vault",
+      "vendor": "Oracle",
+      "oracle_integration_method": "TDE鍵、Oracle Wallet、Java Keystore、証明書を集中的に管理し、DB暗号化や証明書認証の運用をOracle製品群内で標準化する。",
+      "features": [
+        "TDE master key管理",
+        "Oracle Wallet配布",
+        "証明書ライフサイクル管理",
+        "鍵の集中統制",
+        "Exadata/OCI連携の親和性"
+      ]
+    }
+  ],
+  "migration_patterns": [
+    {
+      "from": "共有`SYSDBA`運用",
+      "to": "名前付きDBA + PAM + Database Vault",
+      "steps": [
+        "共有管理作業を棚卸しし、個人名義アカウントへ置換可能な操作を分類する",
+        "PAMで管理者資格情報を金庫化し、申請・承認・セッション記録を有効化する",
+        "Unified Auditingで特権操作監査を標準化する",
+        "Database Vaultで本番データ参照や危険コマンドを制限する",
+        "共有IDをBreak Glass用途へ縮小し、使用後レビューを必須化する"
+      ],
+      "risks": [
+        "現場が緊急対応遅延を懸念して共有IDへ逆戻りする",
+        "自動化ジョブが未整理のまま高権限共有IDに残る",
+        "監査ポリシー過剰設定で性能・保管量が悪化する"
+      ]
+    },
+    {
+      "from": "ローカルパスワード認証中心",
+      "to": "Kerberos認証または証明書認証中心",
+      "steps": [
+        "個人ユーザーとアプリ接続ユーザーを分離棚卸しする",
+        "Active DirectoryまたはPKIとの信頼設定を実装する",
+        "Kerberos keytabや証明書ウォレットの配布・更新手順を確立する",
+        "失敗時のフォールバックを限定し、旧password versionを段階廃止する",
+        "監査・権限レビューをOIGまたは既存IGAへ接続する"
+      ],
+      "risks": [
+        "ADや証明書更新障害がDB接続障害へ波及する",
+        "中間層やバッチが新認証に未対応で例外運用が増える",
+        "認証統合だけ先行し、DBロール最小化が置き去りになる"
+      ]
+    },
+    {
+      "from": "11g/12c on AIX・Oracle Solaris",
+      "to": "19cまたは26ai on OCI / Linux",
+      "steps": [
+        "OS依存の外部認証、ローカルスクリプト、監査出力先を棚卸しする",
+        "AIXのKerberos/LDAP設定やOracle Solaris Zones/RBAC依存を洗い出す",
+        "移行先でPAM、監査、鍵管理、バックアップを再設計する",
+        "19cで安定化するか、OCI前提なら26aiの周辺製品認証を確認する",
+        "移行後に共有運用IDを残さないよう運用標準を更新する"
+      ],
+      "risks": [
+        "商用UNIX固有のOS認証やジョブ制御がLinux/OCIで再現できない",
+        "ネットワークACLや名前解決差分でKerberos/TLSが不安定化する",
+        "サポート切れOS・DBのまま更改が遅延し、監査指摘が継続する"
+      ]
+    },
+    {
+      "from": "オンプレミス中心のOracle認証管理",
+      "to": "OCI移行後のIAM・鍵管理・監査統合",
+      "steps": [
+        "OCI IAM、DB local user、Federated userの役割分担を定義する",
+        "Oracle Key VaultまたはOCI KMSとの鍵管理境界を決める",
+        "監査ログをAVDF、Logging、SIEMへどう流すか決める",
+        "委託先アクセスはPAMまたはOCI Bastion等の経路統制へ寄せる",
+        "クラウド運用チームとDBAチームの責任分界をRunbook化する"
+      ],
+      "risks": [
+        "クラウド管理権限とDB内権限の二重管理で責任境界が曖昧になる",
+        "IAM統合してもDBロール設計が古いままなら過剰権限が残る",
+        "監査ログ保管先が分散し、J-SOX証跡提示が難しくなる"
+      ]
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "oracle_knowledge_001",
+      "title": "日本企業では認証方式より共有特権IDの解消が優先課題",
+      "content": "Oracle Databaseの近代化では、Kerberosや証明書認証の導入より先に、共有`SYSDBA`、固定アプリ接続ID、ベンダー共用アカウントの整理が必要である。認証強化だけでは内部統制の主要指摘は解消しない。",
+      "tags": [
+        "Oracle Database",
+        "特権アクセス管理",
+        "J-SOX",
+        "FISC"
+      ],
+      "references": [
+        "https://docs.oracle.com/en/database/oracle/oracle-database/26/dbseg/database-security-guide.pdf",
+        "https://www.oracle.com/us/assets/lifetime-support-technology-069183.pdf",
+        "../06_security_hardening/privileged_access_management.json",
+        "../07_migration_patterns/japan_security_frameworks.json"
+      ]
+    },
+    {
+      "id": "oracle_knowledge_002",
+      "title": "Database Vaultは『DBA=全データ閲覧可』を崩す主要手段",
+      "content": "金融・公共では、運用者が本番データに自由アクセスできる状態が最も説明困難である。Database VaultのRealmとCommand Ruleを使うと、管理権限とデータ閲覧権限を分離しやすい。",
+      "tags": [
+        "Database Vault",
+        "特権アクセス管理",
+        "金融"
+      ],
+      "references": [
+        "https://docs.oracle.com/en/database/oracle/oracle-database/26/dbseg/database-vault.html"
+      ]
+    },
+    {
+      "id": "oracle_knowledge_003",
+      "title": "Unified AuditingとFGAを分けて設計する",
+      "content": "Unified Auditingは基盤全体の標準監査、FGAは機微テーブル・機微列への重点監査として役割分担すると、監査量と説明性のバランスを取りやすい。全件FGA化は保守性が低い。",
+      "tags": [
+        "Unified Auditing",
+        "FGA",
+        "監査"
+      ],
+      "references": [
+        "https://docs.oracle.com/en/database/oracle/oracle-database/21/dbseg/configuring-audit-policies.html",
+        "https://docs.oracle.com/en/database/oracle/audit-vault-database-firewall/20/sigau/oracle-audit-vault-and-database-firewall-auditors-guide.pdf"
+      ]
+    },
+    {
+      "id": "oracle_knowledge_004",
+      "title": "AIX・Oracle SolarisではOS認証依存の棚卸しが必須",
+      "content": "商用UNIX上のOracle Databaseは、OS認証、Kerberos、RBAC、sudo、Zones、ローカルバッチが密結合していることが多い。DBだけ上げても認証運用は近代化されないため、OSと一体で設計し直す必要がある。",
+      "tags": [
+        "AIX",
+        "Oracle Solaris",
+        "商用UNIX"
+      ],
+      "references": [
+        "./commercial_unix_survival.json"
+      ]
+    },
+    {
+      "id": "oracle_knowledge_005",
+      "title": "19cは依然として現実的な標準版だが、26aiが最新LTS",
+      "content": "2026年時点では19cが最も安定した標準化先である一方、Oracle公式の2025-11-07付Lifetime Support Policyでは26aiがLong Term Support Releaseとして掲示されている。『19cは2027年終了』『23aiが最新LTS』という整理は更新が必要である。",
+      "tags": [
+        "ライフサイクル",
+        "19c",
+        "26ai"
+      ],
+      "references": [
+        "https://www.oracle.com/us/assets/lifetime-support-technology-069183.pdf"
+      ]
+    },
+    {
+      "id": "oracle_knowledge_006",
+      "title": "OCI移行後は『クラウド管理権限』と『DB権限』を別管理で考える",
+      "content": "OCIへ移行すると、クラウド管理者、DBシステム管理者、スキーマ所有者、監査閲覧者の責任境界が分かれる。OS同居前提の外部認証は減り、IAM、鍵管理、PAM、AVDFの組み合わせ設計が重要になる。",
+      "tags": [
+        "OCI",
+        "クラウド移行",
+        "責任分界"
+      ],
+      "references": [
+        "https://docs.oracle.com/en/database/oracle/oracle-database/26/dbseg/database-security-guide.pdf",
+        "https://docs.oracle.com/en-us/iaas/autonomous-database-serverless/doc/encryption-keys-oracle-key-vault.html"
+      ]
+    }
+  ]
+}

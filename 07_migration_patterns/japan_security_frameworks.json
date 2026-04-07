@@ -1,0 +1,998 @@
+{
+  "metadata": {
+    "id": "japan_security_frameworks_v1",
+    "title": "日本業種別セキュリティフレームワーク・ガイドライン",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "description": "日本の業種別セキュリティフレームワーク・ガイドラインのID管理・アクセス制御要件を体系的にまとめたリファレンス",
+    "research_date": "2026-04-07",
+    "total_frameworks": 18
+  },
+  "frameworks": [
+    {
+      "id": "fw_001",
+      "name": "FISC安全対策基準（金融機関等コンピュータシステムの安全対策基準・解説書）",
+      "name_en": "FISC Security Guidelines for Computer Systems of Financial Institutions",
+      "issuer": "公益財団法人金融情報システムセンター（FISC）",
+      "latest_version": "第11版",
+      "latest_update": "2023-05",
+      "url": "https://www.fisc.or.jp/publication/",
+      "target_industry": [
+        "銀行",
+        "証券",
+        "保険",
+        "クレジット",
+        "その他金融機関"
+      ],
+      "target_scale": "すべて（金融機関全般）",
+      "legal_basis": "任意（業界標準として金融庁検査・監督において実質的に参照される）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "技安-35",
+          "title": "アクセス管理・利用者識別",
+          "content": "システムへのアクセスは正当な利用者のみに限定する。利用者IDを一意に識別・管理し、共有アカウントを禁止する。IDの発行・変更・削除は承認手続きを経て実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "技安-36",
+          "title": "特権アカウント管理",
+          "content": "特権アカウント（管理者権限）は明確に定義し、業務上必要な最小限の者にのみ付与する。特権アカウントのパスワードは一元管理し、定期的に変更する。特権アカウント利用時は申請・承認手続きを経て利用し、すべての操作を記録する。リモートアクセスによる特権操作は専用のジャンプサーバ経由に限定する。汎用的な特権共有アカウントの使用を廃止する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "特権管理"
+          ]
+        },
+        {
+          "requirement_id": "技安-37",
+          "title": "多要素認証（MFA）",
+          "content": "重要システムへのアクセス、リモートアクセス、特権アカウント利用時には多要素認証（パスワード＋トークン・スマートカード・生体認証等の組み合わせ）を必須とする。外部ベンダーの内部システムアクセスにも多要素認証を要求する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "技安-38",
+          "title": "ログ・監査証跡の取得と保全",
+          "content": "特権アカウントを含むすべてのシステムアクセスについてログを記録する。ログには操作日時・ユーザーID・実施操作・対象システムを含む。ログは改ざん防止措置（暗号化・書き込み専用ストレージ等）を講じ、規制要件及び社内ポリシーで定めた期間保存する。定期的なログ分析・異常検知を実施する。重要操作にはセッション録画を推奨する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "技安-49",
+          "title": "外部委託先管理",
+          "content": "外部ベンダーによるシステムアクセスは契約上明確に定義し、最小権限の原則を適用する。ベンダーアクセスは監視・記録し、契約終了時には速やかに無効化する。委託先に対してFISC基準同等のセキュリティ要件を契約に明記する。定期的な委託先セキュリティ監査の実施権を確保する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "FISC基準は法律ではなく任意規格だが、金融庁の検査・監督において準拠状況が確認される。不備がある場合は金融庁から業務改善命令（銀行法第26条、保険業法第132条等）が発出される可能性がある。",
+      "notes": "第11版（2023年5月）では、クラウドサービス導入・運用ガイドライン（試行版）が本体に統合された。技術基準（技安）・管理基準（技管）・設備基準（技設）の3区分で構成される。2026年時点で第14版が最新版との情報もあるが、公式確認が必要。"
+    },
+    {
+      "id": "fw_002",
+      "name": "金融庁「金融分野におけるサイバーセキュリティに関するガイドライン」",
+      "name_en": "FSA Guidelines on Cybersecurity in the Financial Sector",
+      "issuer": "金融庁（Financial Services Agency, FSA）",
+      "latest_version": "2024年10月版",
+      "latest_update": "2024-10-04",
+      "url": "https://www.fsa.go.jp/news/r6/sonota/20241004/20241004.html",
+      "target_industry": [
+        "銀行",
+        "証券",
+        "保険",
+        "資金移動業",
+        "暗号資産交換業",
+        "その他金融機関"
+      ],
+      "target_scale": "すべて（規模に応じた実施が求められる）",
+      "legal_basis": "銀行法、金融商品取引法、保険業法等に基づく監督指針の一部として実質的に義務的効力を持つ",
+      "id_management_requirements": [
+        {
+          "requirement_id": "III-3-1",
+          "title": "アクセス管理・利用者認証",
+          "content": "システムアクセスに先立ち、利用者のアクセス権限の適切性を確認する。利用者を一意に識別可能とし、すべての操作をその個人に紐付けて記録・追跡できる体制を整備する。システム・情報の重要度に応じたリスクベース認証を採用する。リモートアクセスには多要素認証（MFA）を義務付ける。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "III-3-2",
+          "title": "特権アカウント管理",
+          "content": "管理者権限等の特権アカウントには強化されたアクセス制御を適用する。ジャストインタイム（JIT）アクセス、セッション監視、定期的な権限見直しを実施する。特権操作はすべてログに記録する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "特権管理"
+          ]
+        },
+        {
+          "requirement_id": "III-4-1",
+          "title": "ログ・監視",
+          "content": "ハードウェア、ソフトウェア、ネットワーク、利用者行動、外部アクセスを対象にセキュリティ監視を実施する。ログはインシデント分析・対応全体をカバーし、検知から復旧まで一貫して記録する。ログには事象内容・対応行動・フォレンジックデータを含む。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "III-6-1",
+          "title": "外部委託先（第三者）リスク管理",
+          "content": "業務上の重要度、データ取り扱い、システム接続性に基づき外部委託リスクを評価・特定する。契約に役割・責任の明確化、監査権、インシデント通知義務、契約終了時のデータ管理・削除、再委託条項を盛り込む。高リスク関係先については継続的なセキュリティ状況モニタリングを実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "金融庁による業務改善命令（銀行法第26条、金融商品取引法第52条、保険業法第132条等）、業務停止命令、免許・登録取消しが法的根拠。2024年版ガイドラインへの非準拠は監督上の問題として扱われる。",
+      "notes": "2024年版は6つの主要カテゴリ（①リーダーシップとガバナンス、②サイバーリスクの識別、③防御、④検知、⑤インシデント対応・回復、⑥サードパーティリスク管理）で構成。NIST CSFを参照。100項目超の基本要求事項と追加推奨事項からなる二層構造。"
+    },
+    {
+      "id": "fw_003",
+      "name": "日本証券業協会「インターネット取引における不正アクセス防止に関するガイドライン」",
+      "name_en": "JSDA Guidelines for Prevention of Unauthorized Access in Internet Trading",
+      "issuer": "日本証券業協会（JSDA）",
+      "latest_version": "2025年改訂版",
+      "latest_update": "2025",
+      "url": "https://www.jsda.or.jp/",
+      "target_industry": [
+        "証券会社",
+        "金融商品取引業者"
+      ],
+      "target_scale": "すべて",
+      "legal_basis": "金融商品取引法に基づく自主規制規則（金融庁監督下）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "JSDA-MFA-1",
+          "title": "フィッシング耐性MFAの義務的実装",
+          "content": "ログイン時・出金申請時・出金先口座変更時にフィッシング耐性のある多要素認証を必須とする。承認方式はFIDO標準に基づくパスキー（Passkey）またはPKIベース認証を推奨。SMSやTOTPはリアルタイムフィッシングに脆弱なため、代替手段に移行することが求められる。スマートフォン非保有顧客への代替セキュアMFA提供も義務付ける。",
+          "id_relevance": "high",
+          "specific_to": [
+            "MFA",
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "JSDA-MON-1",
+          "title": "リアルタイムアクセス監視・ログ記録",
+          "content": "すべての利用者アクセス・操作をリアルタイムで記録・監視する。不審なログイン（通常と異なる端末・場所・時間帯）を検知した場合は即座にアラートを発する。認証失敗後のアカウントロックアウト機能を実装する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "JSDA-COMM-1",
+          "title": "顧客通信の真正性確保",
+          "content": "顧客宛メール・SMSに技術的な真正性保証を実装する。SPF・DKIM・DMARCの実装を事実上の必須要件とする。BIMIの採用を推奨する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "ID管理"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "金融商品取引法第52条（業務改善命令・業務停止命令）、日本証券業協会規則に基づく自主規制処分（除名・業務停止等）。2025年以降、ガイドライン不備は金融庁・JSDAの重点検査対象。",
+      "notes": "2025年末改訂版では、従来のSMS-OTP等のMFAからパスキーベースのフィッシング耐性MFAへの移行が重点課題。2026年3月時点で大多数の証券会社が実装済みまたは実装中。"
+    },
+    {
+      "id": "fw_004",
+      "name": "全国銀行協会「サイバーセキュリティに関する方針」",
+      "name_en": "Japanese Bankers Association Cybersecurity Policy",
+      "issuer": "一般社団法人全国銀行協会（JBA）",
+      "latest_version": "随時更新",
+      "latest_update": "2024",
+      "url": "https://www.zenginkyo.or.jp/abstract/security/",
+      "target_industry": [
+        "銀行",
+        "信用金庫",
+        "信用組合"
+      ],
+      "target_scale": "すべて",
+      "legal_basis": "任意（金融庁ガイドライン・FISCとの整合性を基本とする自主規制）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "JBA-AC-1",
+          "title": "アクセス管理・利用者認証",
+          "content": "金融庁ガイドライン（2024年版）との整合を基本とし、利用者認証・アクセス管理を実施する。利用者を一意識別し、操作ログを個人単位で記録・追跡する。リスクに応じた認証強度（リモートアクセスはMFA必須）を適用する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "JBA-PRIV-1",
+          "title": "特権アカウント管理",
+          "content": "特権アカウントは最小権限の原則で付与し、利用都度の申請・承認記録、全操作ログの保全を実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "特権管理"
+          ]
+        },
+        {
+          "requirement_id": "JBA-OUT-1",
+          "title": "外部委託先管理",
+          "content": "システム開発・運用等の外部委託先に対し、自行相当のセキュリティ基準遵守を契約上義務付ける。委託先への監査権を確保し、定期的なセキュリティ評価を実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "直接的な法的ペナルティは規定なし。金融庁による間接的な業務改善命令（銀行法第26条）が根拠となる場合がある。",
+      "notes": "全銀協自体の独自ガイドラインに加え、FSAガイドライン（fw_002）・FISC基準（fw_001）への準拠を会員銀行に強く推奨。オンラインバンキング不正送金対策ガイドラインも別途整備。"
+    },
+    {
+      "id": "fw_005",
+      "name": "生命保険協会・損害保険協会「情報セキュリティ管理基準」",
+      "name_en": "Life Insurance Association and General Insurance Association Information Security Management Standards",
+      "issuer": "一般社団法人生命保険協会 / 一般社団法人日本損害保険協会",
+      "latest_version": "随時改定（2026年1月最新版）",
+      "latest_update": "2026-01",
+      "url": "https://www.seiho.or.jp/ / https://www.sonpo.or.jp/",
+      "target_industry": [
+        "生命保険会社",
+        "損害保険会社"
+      ],
+      "target_scale": "すべて",
+      "legal_basis": "保険業法第132条（業務改善命令）を根拠とする金融庁監督指針に沿った自主基準",
+      "id_management_requirements": [
+        {
+          "requirement_id": "INS-AC-1",
+          "title": "顧客データ保護とアクセス管理",
+          "content": "顧客データへのアクセスはロールベースで厳格に制限する。個人データ管理台帳を整備し、アクセス権者を明確に管理する。強固なパスワードポリシーおよびアカウント管理手続きを実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "INS-MFA-1",
+          "title": "多要素認証",
+          "content": "重要情報システム及び顧客データへのアクセスには多要素認証を適用する。代理店・外部パートナーアクセスにも同等の認証要件を適用する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "INS-OUT-1",
+          "title": "第三者（代理店・SIer等）管理",
+          "content": "代理店・外部委託先を含む第三者との間でセキュリティ要件を契約上定め、役割と責任を明確化する。監査権を確保し、インシデント通知義務を契約に明記する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "保険業法第132条（業務改善命令）・第133条（業務停止命令）・第134条（免許取消）が法的根拠。個人情報漏えい等は個人情報保護法の罰則も適用。",
+      "notes": "生命保険協会「業務品質評価基準ガイドライン」（2026年1月29日改定）では顧客データ保護を品質評価の中核に位置づけ。損害保険協会もFSAガイドラインとの整合を基本とした自主基準を整備。"
+    },
+    {
+      "id": "fw_006",
+      "name": "経済産業省「電力制御システムセキュリティガイドライン」（JEAG 1111）",
+      "name_en": "METI Power Control System Security Guidelines (JEAG 1111)",
+      "issuer": "経済産業省 資源エネルギー庁 / 日本電気協会（JEAG）",
+      "latest_version": "JEAG 1111-2016（及び関連改訂）",
+      "latest_update": "2022",
+      "url": "https://www.meti.go.jp/policy/safety_security/industrial_safety/oshirase/2022/06/20220610-1.html",
+      "target_industry": [
+        "電力（発電・送配電・小売）",
+        "自家用電気工作物管理者"
+      ],
+      "target_scale": "電気事業者全般（2022年改正で自家用電気工作物へも拡大）",
+      "legal_basis": "電気事業法第40条（技術基準適合命令）、電気設備の技術基準を定める省令第15条の2（2022年6月改正・2022年10月施行）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "JEAG-AC-1",
+          "title": "制御システムへのアクセス管理",
+          "content": "電力制御システムへのアクセスは正当な担当者のみに限定する。最小権限の原則を適用し、ロールベースアクセス制御を実装する。リモートアクセスには多要素認証を要求し、専用ゲートウェイ経由に限定する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "JEAG-MON-1",
+          "title": "監視・ログ記録",
+          "content": "制御システムへのアクセスログを記録・保全する。不審なアクセスや異常を検知するための監視体制を整備する。ログは定期的にレビューし、インシデント対応に活用する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "JEAG-NET-1",
+          "title": "ネットワーク分離・外部アクセス制御",
+          "content": "制御系ネットワークをインターネット等の外部ネットワークから分離する。外部からのアクセスは専用通信網経由に限定し、ファイアウォール等で保護する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "JEAG-SUP-1",
+          "title": "供給チェーン・外部委託管理",
+          "content": "制御システムの保守委託先に対してセキュリティ要件を契約上定める。委託先のアクセスは監視・記録し、作業完了後は速やかに無効化する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "電気事業法第40条（技術基準不適合時の改善命令）・第106条以下の罰則規定（業務停止命令違反等で1年以下懲役または100万円以下罰金）が適用される。",
+      "notes": "2022年改訂で自家用電気工作物（工場・ビル等の高圧受電設備）にもサイバーセキュリティ対策が義務化。2024年3月にはMETIが「電力系統サイバーセキュリティリスクチェックガイド」を公表し、自己評価ツールを提供。"
+    },
+    {
+      "id": "fw_007",
+      "name": "電力ISAC（電力情報共有・分析センター）",
+      "name_en": "Electricity Information Sharing and Analysis Center (E-ISAC Japan)",
+      "issuer": "電力広域的運営推進機関（OCCTO）/ 電気事業連合会",
+      "latest_version": "継続活動（年次報告）",
+      "latest_update": "2024",
+      "url": "https://www.occto.or.jp/",
+      "target_industry": [
+        "電力（発電・送配電・小売）"
+      ],
+      "target_scale": "電力事業者（主要事業者が参加）",
+      "legal_basis": "電気事業法・NISC行動計画に基づく任意の情報共有・分析活動",
+      "id_management_requirements": [
+        {
+          "requirement_id": "EISAC-INFO-1",
+          "title": "サイバー脅威情報共有・アクセス管理",
+          "content": "電力ISAC参加事業者間での脅威情報・インシデント情報の共有体制を整備する。共有情報へのアクセスは参加事業者の認証済み担当者に限定する。情報共有の際は情報格付け（TLP等）に従ったアクセス制御を実施する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "アクセス制御",
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "EISAC-INC-1",
+          "title": "インシデント対応・報告",
+          "content": "重大なサイバーインシデントは電力ISACを通じてMETI・NISCへ報告する体制を構築する。インシデントログは証跡として保全し、原因分析に活用する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "電力ISACへの参加・情報共有自体は現時点で法的義務ではない。ただし重大インシデント時の報告遅延・怠慢は電気事業法上の問題となり得る。",
+      "notes": "電力ISACは主に脅威インテリジェンス共有・インシデント情報交換を目的とする業界横断的な組織。米国のE-ISACに相当。NERC CIPに相当する日本版制度整備の一環。"
+    },
+    {
+      "id": "fw_008",
+      "name": "ガス事業法に基づくサイバーセキュリティ要件（都市ガス監視制御システムセキュリティ対策）",
+      "name_en": "Cybersecurity Requirements under the Gas Business Act",
+      "issuer": "経済産業省 / 日本ガス協会（JGA）",
+      "latest_version": "2023年1月改正・2024年4月施行",
+      "latest_update": "2024-04",
+      "url": "https://www.meti.go.jp/press/2022/01/20230130003/20230130003.html",
+      "target_industry": [
+        "都市ガス事業者"
+      ],
+      "target_scale": "監視制御システムを保有する都市ガス事業者すべて",
+      "legal_basis": "ガス事業法施行規則第24条・第92条・第148条改正（2023年1月30日改正、2024年4月1日施行）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "GAS-AC-1",
+          "title": "制御システムへのアクセス管理",
+          "content": "監視制御システムへの入退室管理を実施する（ICカード・キーパッド等）。システムアクセスは業務上必要なユーザーのみに限定し、ユーザー権限を管理する。外部からのアクセスをインターネットと分離された専用通信網に限定する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御",
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "GAS-MGMT-1",
+          "title": "セキュリティ管理責任者の任命・組織体制",
+          "content": "セキュリティ管理責任者を任命し、技術担当・運用担当・経営層を含む全社的なサイバーセキュリティ管理体制を構築する。セキュリティポリシー・インシデント対応計画を文書化する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "GAS-NET-1",
+          "title": "ネットワーク分離と電源セキュリティ",
+          "content": "制御系ネットワークをインターネット等外部ネットワークから物理的・論理的に分離する。バッテリーや非常用電源によるシステム継続性を確保する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "アクセス制御"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "ガス事業法第176条以下の罰則規定（業務停止命令違反等）。経産省による技術基準適合命令も根拠となる。2024年9月末までに既存ガス事業者の対応猶予期間が終了。",
+      "notes": "JGAが2023年4月に「都市ガスの製造・供給に係る監視・制御システムのセキュリティ対策マニュアル（例）」と解説書を公表。2006年・2016年のJGAガイドラインから法的義務化へ移行した重要な改正。"
+    },
+    {
+      "id": "fw_009",
+      "name": "経済産業省「工場システムにおけるサイバー・フィジカル・セキュリティ対策ガイドライン」",
+      "name_en": "METI Guidelines for Cyber-Physical Security Measures in Factory Systems",
+      "issuer": "経済産業省（METI）",
+      "latest_version": "Ver2.0（2024年4月）",
+      "latest_update": "2024-04",
+      "url": "https://www.meti.go.jp/policy/netsecurity/wg1/factory-guideline.html",
+      "target_industry": [
+        "製造業",
+        "工場を有するすべての業種"
+      ],
+      "target_scale": "すべて（OT/IT連携環境を持つ製造事業者）",
+      "legal_basis": "任意（経産省ガイドライン）。半導体製造業向け特別版（2024年）も公表。",
+      "id_management_requirements": [
+        {
+          "requirement_id": "FACTORY-STEP1-AC",
+          "title": "STEP1：資産特定とゾーニング",
+          "content": "工場ネットワークをゾーニング（Purdueモデル等）し、OTゾーン・IT/OT DMZ・外部サービスゾーンに分割する。各ゾーンへのアクセス権限を明確化し、ゾーン間アクセスを厳格に制御する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御",
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "FACTORY-STEP2-IAM",
+          "title": "STEP2：論理アクセス制御・ID管理",
+          "content": "IAM（アイデンティティ・アクセス管理）を実装し、MFA・最小権限管理・定期的なアカウント監査を適用する。レガシーOTシステムへのモダンIAM統合においては、運用停止を避けた段階的導入を推奨する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "FACTORY-STEP2-PHY",
+          "title": "STEP2：物理アクセス制御",
+          "content": "製造エリア（ファブエリア等）への入退管理を実施する。個人デバイスの持ち込みを制限する。OT機器への不正な物理アクセスを防止する接続ポイントセキュリティを確保する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "FACTORY-STEP3-LOG",
+          "title": "STEP3：継続的監視・ログ管理",
+          "content": "OT/ITシステム双方のアクセスログを記録・保全する。異常検知システムを導入し、PDCAサイクルでセキュリティ態勢を継続的に改善する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "FACTORY-SC-1",
+          "title": "サプライチェーン・外部委託管理",
+          "content": "設備保守委託先・SIer等に対してセキュリティ要件を契約上定める。委託先のリモートアクセスは監視・記録し、作業完了後は速やかに権限を失効させる。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "ガイドラインは任意だが、重大なサイバーインシデント発生時には経産省への報告義務（一定業種）が適用される。半導体産業等では国際競争力・認定要件との関係で実質的な遵守プレッシャーあり。",
+      "notes": "2024年4月版（Ver2.0）は半導体製造施設向け「OTセキュリティガイドライン Ver1.0」と同時公表。3ステップアプローチ（評価・計画・実装・PDCA）を基本構造とする。IEC 62443・NIST CSFと整合。"
+    },
+    {
+      "id": "fw_010",
+      "name": "経済産業省「産業サイバーセキュリティ研究会（WG1：制御系）報告書」",
+      "name_en": "METI Industrial Cybersecurity Study Group WG1 (Control Systems) Report",
+      "issuer": "経済産業省（METI）産業サイバーセキュリティ研究会",
+      "latest_version": "2024年度報告書（随時更新）",
+      "latest_update": "2024",
+      "url": "https://www.meti.go.jp/shingikai/mono_info_service/sangyo_cyber/wg_seigyo/",
+      "target_industry": [
+        "製造業",
+        "エネルギー",
+        "重要インフラ全般"
+      ],
+      "target_scale": "産業用制御システム（ICS/OT）を有する事業者",
+      "legal_basis": "任意（経産省政策研究・ガイドライン策定の基盤）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "WG1-AC-1",
+          "title": "制御系システムへのアクセス管理",
+          "content": "制御系（OT）システムへのアクセスはロールベースで厳格に管理する。IT・OT双方にまたがるアカウント管理体制を整備し、ゼロトラスト的なアプローチを推進する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御",
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "WG1-SC-1",
+          "title": "サプライチェーンセキュリティ",
+          "content": "制御システム構成機器・ソフトウェアのサプライチェーンリスクを評価し、SBOMの活用を推進する。機器調達・導入・廃棄の全ライフサイクルにわたるセキュリティ管理を実施する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "報告書・ガイドラインは任意。ただし研究会の成果は経産省の法令・基準策定に反映されるため、将来的な義務化の先行指標となる。",
+      "notes": "産業サイバーセキュリティ研究会はWG1（制御系）、WG2（産業技術・スタートアップ）等の作業部会から構成。WG1は工場システムガイドライン（fw_009）策定の母体組織。"
+    },
+    {
+      "id": "fw_011",
+      "name": "JPCERT/CC 制御システムセキュリティ（J-CLICS等）",
+      "name_en": "JPCERT/CC ICS Security (J-CLICS and Related Materials)",
+      "issuer": "一般社団法人JPCERTコーディネーションセンター（JPCERT/CC）",
+      "latest_version": "J-CLICS攻撃経路対策編（2023年9月）",
+      "latest_update": "2023-09",
+      "url": "https://www.jpcert.or.jp/ics/",
+      "target_industry": [
+        "製造業",
+        "重要インフラ",
+        "ICS/OT環境を持つ全業種"
+      ],
+      "target_scale": "中小企業を含むICS/OT保有事業者",
+      "legal_basis": "任意（技術ガイドライン・啓発資料）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "JCLICS-AC-1",
+          "title": "アクセス管理・認証（J-CLICS）",
+          "content": "ICS環境での認証強度を確保する。パスワードは8文字以上（英数字記号混在）またはNISC推奨10文字以上（大小英数記号混在）を適用する。多層防御（デバイス・ネットワーク・サーバ・クラウド層）を実装する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "JCLICS-LOG-1",
+          "title": "ログ・インシデント検知",
+          "content": "制御システムのアクセスログを記録・保全する。異常アクセスパターン（時間外アクセス・大量ダウンロード等）を検知するアラート機能を実装する。インシデント対応手順を事前に整備し、3〜6ヶ月ごとに見直す。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "JCLICS-NET-1",
+          "title": "外部ネットワーク接続制限",
+          "content": "制御システムへの外部からのリモートアクセスを制限する。インターネット経由の不審な通信をブロックするファイアウォール・フィルタリングを実装する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "JPCERT/CCのガイドラインは任意。ただし制御システムでのインシデント発生時、JPCERT/CCへの報告・協力が求められる場合がある。",
+      "notes": "J-CLICS（制御システム向けチェックリスト）はSICE・JEITA・JEMIMAとの共同開発。2023年9月版「攻撃経路対策編」ではランサムウェア等の攻撃経路特定・対策手順を詳細化。IEC 62443との整合性を持つ。"
+    },
+    {
+      "id": "fw_012",
+      "name": "NISC「重要インフラのサイバーセキュリティに係る行動計画」",
+      "name_en": "NISC Action Plan for Cybersecurity of Critical Infrastructure",
+      "issuer": "内閣サイバーセキュリティセンター（NISC）",
+      "latest_version": "2024年版（サイバーセキュリティ戦略2024に基づく）",
+      "latest_update": "2024-07-10",
+      "url": "https://www.nisc.go.jp/policy/group/infra/",
+      "target_industry": [
+        "情報通信",
+        "金融",
+        "航空",
+        "空港",
+        "鉄道",
+        "電力",
+        "ガス",
+        "政府・行政サービス",
+        "医療",
+        "水道",
+        "物流",
+        "化学",
+        "クレジット",
+        "石油",
+        "港湾"
+      ],
+      "target_scale": "15分野の重要インフラ事業者",
+      "legal_basis": "サイバーセキュリティ基本法（2014年法律第104号）に基づく。改正重要経済安保情報保護法等との関連も強まりつつある。",
+      "id_management_requirements": [
+        {
+          "requirement_id": "NISC-RM-1",
+          "title": "リスクマネジメントの枠組み",
+          "content": "重要インフラ事業者は組織特性に応じたリスクアセスメントを実施し、その結果に基づきアクセス管理・ID管理・特権管理・MFA等の適切な保護措置を実装する。PDCAサイクルによる継続的改善を求める。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "NISC-SS-1",
+          "title": "安全基準等の整備・遵守",
+          "content": "各分野の安全基準等（法令・業界ガイドライン・事業者内規程）に基づくセキュリティ措置を実施する。安全基準等には特権管理・MFA・監査ログ等の要件が含まれる場合がある。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御",
+            "特権管理",
+            "MFA",
+            "ログ"
+          ]
+        },
+        {
+          "requirement_id": "NISC-INC-1",
+          "title": "インシデント報告・情報共有",
+          "content": "重大なサイバーインシデントはNISCおよび所管省庁へ速やかに報告する。インシデントログ・証跡を保全し、原因分析・再発防止策の策定に活用する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "NISC-SC-1",
+          "title": "サプライチェーン・委託先管理",
+          "content": "重要インフラの構成要素に関わるサプライヤー・委託先に対してセキュリティ要件を課す。委託先のアクセス管理状況の確認・監査を実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "行動計画自体に直接の罰則はないが、サイバーセキュリティ基本法・各分野の個別法令（電気事業法・ガス事業法・電気通信事業法等）の罰則が適用される。2022年経済安保推進法による供給確保計画とも連携。",
+      "notes": "2024年版はサイバーセキュリティ戦略2024（2024年7月10日策定）に基づき年度別計画として策定。15分野のセクター別ガイドライン策定を推進。NISCによるリスクマネジメントガイドライン（2025年7月1日改訂版）も整備。"
+    },
+    {
+      "id": "fw_013",
+      "name": "IPA「情報セキュリティ10大脅威 2025」",
+      "name_en": "IPA Top 10 Information Security Threats 2025",
+      "issuer": "独立行政法人情報処理推進機構（IPA）",
+      "latest_version": "2025年版",
+      "latest_update": "2025-01-30",
+      "url": "https://www.ipa.go.jp/security/10threats/2025.html",
+      "target_industry": [
+        "全業種"
+      ],
+      "target_scale": "組織向け・個人向け",
+      "legal_basis": "任意（啓発・参照資料）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "IPA10-1",
+          "title": "ランサムウェア攻撃への対策（第1位）",
+          "content": "オフラインバックアップ維持、EDR導入、ゼロトラストアーキテクチャの実装。特権アカウントの強化的管理とMFAの適用が主要対策として推奨される。",
+          "id_relevance": "high",
+          "specific_to": [
+            "特権管理",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "IPA10-2",
+          "title": "サプライチェーン攻撃への対策（第2位）",
+          "content": "取引先・委託先のセキュリティ監査、ソフトウェア署名検証、アクセス制御の強化。外部委託先のID管理・アクセス権を定期的にレビューする。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託",
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "IPA10-5",
+          "title": "標的型攻撃への対策（第5位）",
+          "content": "メールセキュリティ強化、MFA（多要素認証）の全社的導入、SIEM（セキュリティ情報・イベント管理）の活用。すべての特権操作・重要システムアクセスのログ記録・監視。",
+          "id_relevance": "high",
+          "specific_to": [
+            "MFA",
+            "ログ",
+            "特権管理"
+          ]
+        },
+        {
+          "requirement_id": "IPA10-4",
+          "title": "内部不正への対策（第4位）",
+          "content": "DLP（データ損失防止）の導入、ユーザー権限の最小化（最小権限の原則）、定期的なセキュリティ教育。すべてのデータアクセスのログ記録と定期的な監査を実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御",
+            "ログ",
+            "特権管理"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "IPA脅威情報は啓発目的であり直接の罰則はない。ただし脅威への未対処がインシデントを招いた場合、各種法令（個人情報保護法・サイバーセキュリティ基本法等）の義務違反となり得る。",
+      "notes": "2025年版の新追加脅威：「地政学的リスクに基づくサイバー攻撃（第7位）」「DDoS攻撃（第8位・5年ぶり再登場）」。ランサムウェアは10年連続第1位。選考委員会によるボーティング方式で選出。組織向け・個人向けそれぞれ10位まで発表。"
+    },
+    {
+      "id": "fw_014",
+      "name": "ISMAP（政府情報システムのためのセキュリティ評価制度）",
+      "name_en": "Information system Security Management and Assessment Program (ISMAP)",
+      "issuer": "内閣サイバーセキュリティセンター（NISC）/ デジタル庁 / 総務省 / 経済産業省（共同運営）。IPA（技術・管理運営支援）",
+      "latest_version": "2021年3月開始（随時更新）",
+      "latest_update": "2024",
+      "url": "https://www.ismap.go.jp/",
+      "target_industry": [
+        "政府・行政機関（対象）",
+        "クラウドサービスプロバイダー（登録申請者）"
+      ],
+      "target_scale": "政府機関（調達要件）・クラウドプロバイダー（全規模）",
+      "legal_basis": "政府情報システムのためのセキュリティ評価制度（ISMAP）運用基準。「クラウドファースト原則」（2018年6月）に基づく政府調達要件として実質義務的。",
+      "id_management_requirements": [
+        {
+          "requirement_id": "ISMAP-CTRL-AC",
+          "title": "アクセス管理（管理策基準）",
+          "content": "ISMAPの管理策基準（JIS Q 27001/27002・NIST SP800-53に準拠）においてアクセス制御を必須要件とする。RBAC（ロールベースアクセス制御）・最小権限の原則・MFA・定期的なアクセス権見直しを義務付ける。すべての特権操作のログ記録と保全を要求する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御",
+            "MFA",
+            "特権管理"
+          ]
+        },
+        {
+          "requirement_id": "ISMAP-CTRL-LOG",
+          "title": "監査ログ（管理策基準）",
+          "content": "すべての特権操作・重要システムアクセスを包括的にログ記録する。ログは改ざん防止措置を施した状態で定義期間保存する。不審な活動を検知・対応するためのログ分析・アラート体制を整備する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "ISMAP-GOV-1",
+          "title": "ガバナンス基準",
+          "content": "経営層によるセキュリティ方針策定・リスクガバナンスを実施する。ISMSポリシーを全組織に適用し、第三者監査で検証する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "ISMAP-3PA-1",
+          "title": "サードパーティ（外部委託）管理",
+          "content": "クラウドサービスプロバイダーはISMAP登録を維持するため、外部委託先管理要件（JIS Q 27001相当）を満たす必要がある。委託先のアクセス管理・ログ管理状況を第三者審査で確認。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "ISMAP非登録サービスは政府機関の調達対象から除外される（実質的な経済的ペナルティ）。登録維持には年次更新審査が必要。審査不合格・虚偽申請は登録取消しとなる。",
+      "notes": "ISMAPの管理策基準はJIS Q（ISO/IEC）27001・27002・27014・27017およびNIST SP800-53に準拠した3構造（ガバナンス・管理・管理策）で構成。政府機関のクラウド調達の実質的な関門として機能。ISMAP-LIU（低信頼度クラウド向け）も設置。"
+    },
+    {
+      "id": "fw_015",
+      "name": "個人情報保護委員会「個人情報の保護に関する法律についてのガイドライン（通則編）」",
+      "name_en": "PPC Guidelines on the Act on the Protection of Personal Information (General Provisions)",
+      "issuer": "個人情報保護委員会（PPC）",
+      "latest_version": "2022年3月改正（令和4年通則編）",
+      "latest_update": "2022-03",
+      "url": "https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/",
+      "target_industry": [
+        "全業種（個人情報を取り扱うすべての事業者）"
+      ],
+      "target_scale": "すべて（個人情報取扱事業者）",
+      "legal_basis": "個人情報の保護に関する法律（個人情報保護法）第23条（安全管理措置）・第24条（従業者の監督）・第25条（委託先の監督）・第26条（漏えい等の報告）",
+      "id_management_requirements": [
+        {
+          "requirement_id": "PPC-10-6",
+          "title": "技術的安全管理措置（第10-6項）",
+          "content": "個人データを取り扱うシステムへのアクセス制御を実施する。ユーザーID・パスワード・ICカード等による認証を実施し、アクセス権者を限定する。外部からの不正アクセスを防止するためのファイアウォール・ウイルス対策・自動更新を適用する。不審な活動を検知するための定期的なログ分析を実施する。個人データ送信時の暗号化通信を確保する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "PPC-10-3",
+          "title": "組織的安全管理措置（第10-3項）",
+          "content": "個人情報保護責任者を任命し、役割・責任・報告体制を明確化する。インシデント対応体制を整備し、アクセスログ・媒体利用記録を管理する。定期的な自己点検・監査を実施する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "ログ",
+            "アクセス制御"
+          ]
+        },
+        {
+          "requirement_id": "PPC-3-4-4",
+          "title": "委託先の監督（第3-4-4項、法第25条）",
+          "content": "個人データ取り扱いを委託する場合、委託先が適切な安全管理措置を講じているかを確認・選定する。自社相当のセキュリティ要件（アクセス制御・MFA・ログ管理等）を契約上義務付ける。定期的な監査によるコンプライアンス確認を実施する。委託先の再委託も同等の管理下に置く。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託",
+            "アクセス制御"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "個人情報保護法第178条等：不正提供等に対し1年以下の懲役または100万円以下の罰金（法人は1億円以下）。PPCによる勧告・命令・業務停止命令が可能。重大漏えい（要配慮個人情報等）はPPCへの報告・本人への通知が義務（法第26条）。2022年改正で罰則が大幅強化。",
+      "notes": "2022年改正（令和3年改正法）の主な変更点：漏えい報告の義務化・罰則強化・課徴金制度（一部）・外国への第三者提供規制強化。ガイドライン（通則編）は2022年3月改正、2026年4月にさらなる改訂が予定。"
+    },
+    {
+      "id": "fw_016",
+      "name": "経済産業省「サイバーセキュリティ経営ガイドライン Ver3.0」",
+      "name_en": "METI Cybersecurity Management Guidelines Ver3.0",
+      "issuer": "経済産業省（METI）/ 独立行政法人情報処理推進機構（IPA）",
+      "latest_version": "Ver3.0",
+      "latest_update": "2023-03-24",
+      "url": "https://www.meti.go.jp/policy/netsecurity/mng_guideline.html",
+      "target_industry": [
+        "全業種（IT・OT活用企業）"
+      ],
+      "target_scale": "主として大企業・中核企業（中小企業向けには「中小企業の情報セキュリティ対策ガイドライン」が別途）",
+      "legal_basis": "任意（経営者向けガイドライン）。ただし取引先・委託先選定基準として実質的な圧力となる場合がある。",
+      "id_management_requirements": [
+        {
+          "requirement_id": "CSM-ITEM5",
+          "title": "指示5：サイバーセキュリティリスクに効果的に対応するための仕組みの構築",
+          "content": "機密情報・重要情報を取り扱う際には多要素認証（MFA）・暗号化・デジタル署名を実装する。クラウドサービス利用時はアクセス制御・ID管理を徹底し、ユーザー活動を監視する。特権ユーザーの行動を含む異常検知・分析機能を整備する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "MFA",
+            "ID管理",
+            "アクセス制御",
+            "特権管理"
+          ]
+        },
+        {
+          "requirement_id": "CSM-ITEM6",
+          "title": "指示6：PDCAサイクルによるサイバーセキュリティ対策の継続的改善",
+          "content": "監視ツールを展開してシステム操作を記録する。監査ログを維持してインシデント調査の根拠資料とする。IT・OTシステム双方を対象とした監視ログ体制を整備する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "CSM-ITEM9",
+          "title": "指示9：サプライチェーン全体のサイバーセキュリティ強化への取組",
+          "content": "取引先・委託先との契約においてセキュリティ役割・責任を明確化する。委託先のセキュリティ対策実施を支援し、実効性を確認する。セキュリティ要件を満たさない委託先との取引見直しも選択肢とする。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        },
+        {
+          "requirement_id": "CSM-ITEM7",
+          "title": "指示7：インシデント発生に備えた体制の構築",
+          "content": "インシデント対応チーム内での役割を明確化する（特権ユーザーを含む）。インシデント時のログ保全・フォレンジック分析手順を事前に整備する。",
+          "id_relevance": "medium",
+          "specific_to": [
+            "特権管理",
+            "ログ"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "ガイドラインは任意だが、Ver3.0（2023年）はサプライチェーンリスク管理の観点から、大企業が委託先のCSM準拠を取引条件とするケースが増加。経産省の表彰・認定制度（DX認定等）との関連も生まれつつある。",
+      "notes": "Ver3.0（2023年3月24日）はVer2.0から大幅改訂。3原則（①経営者のコミットメント、②CISO等の対応権限・リソース確保、③関係者全体とのコミュニケーション）と10指示事項の構成。特にVer3.0でサプライチェーン（指示9）とテレワーク環境（指示5）が大幅強化。"
+    },
+    {
+      "id": "fw_017",
+      "name": "厚生労働省「医療情報システムの安全管理に関するガイドライン 第6.0版」",
+      "name_en": "MHLW Guidelines for the Security Management of Medical Information Systems Version 6.0",
+      "issuer": "厚生労働省（MHLW）",
+      "latest_version": "第6.0版",
+      "latest_update": "2023-05",
+      "url": "https://www.mhlw.go.jp/stf/shingi/0000516275.html",
+      "target_industry": [
+        "医療機関（病院・診療所・薬局等）",
+        "医療情報システム関連事業者"
+      ],
+      "target_scale": "すべての医療機関・電子カルテ等医療情報システム保有施設",
+      "legal_basis": "医療法・保険医療機関及び保険医療養担当規則・電子帳簿保存法・個人情報保護法等に基づく省令・告示との整合。義務的効力あり（医療機関の管理責任として）。",
+      "id_management_requirements": [
+        {
+          "requirement_id": "MHLW-11-1",
+          "title": "第11章1節：システム運用管理（日常的運用）",
+          "content": "医療情報の重要性に応じた利用者認証機構を実装する。高リスクシステムには多要素認証（MFA：バイオメトリクス・トークン等）を適用する。共有アカウントを禁止し、個人単位のアカウント管理を徹底する。非アクティブ・退職者のアカウントは速やかに失効させる。定期的なアクセス権レビューを実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御",
+            "MFA"
+          ]
+        },
+        {
+          "requirement_id": "MHLW-2-2",
+          "title": "第2章2節：計画管理（リスク評価と責任境界）",
+          "content": "医療機関はロールに基づくアクセスポリシーを策定する（RBAC：役割ベースアクセス制御）。アクセス権の適切性を定期的に見直す。患者情報へのアクセスは必要最小限の役割に限定する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御",
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "MHLW-3-1",
+          "title": "第3章1節：システム運用（認証・セッション管理）",
+          "content": "安全なパスワードポリシー（長さ・複雑さ・更新頻度）を設定する。バイオメトリクス・トークン等のモダン認証技術の導入を推奨する。認証情報の安全な取り扱いとセッション管理を実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "MFA",
+            "ID管理"
+          ]
+        },
+        {
+          "requirement_id": "MHLW-11-2",
+          "title": "第11章2節：システム運用管理（監視・ログ）",
+          "content": "電子カルテへのアクセスを含む利用者の操作をログ記録する。ログには利用者ID・タイムスタンプ・アクセスデータ・操作種別（閲覧・編集・削除）・送信元IPを記録する。ログは改ざん防止措置を講じ、法的要件に沿った期間保存する。時間外アクセス・大量ダウンロード等の異常パターンの自動検知と記録を実施する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ログ",
+            "監査証跡"
+          ]
+        },
+        {
+          "requirement_id": "MHLW-2-2-3",
+          "title": "第2章2節3項：外部委託管理（責任境界と委託先管理）",
+          "content": "クラウドEHR（電子カルテ）等のシステムを外部委託する場合、委託先との間で責任境界を明確化する。委託先に対して医療機関相当のセキュリティ要件（アクセス管理・ログ管理・インシデント対応等）を契約上定める。委託先の再委託管理・監査権を確保する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "外部委託"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "医療法第25条（立入検査・改善命令）・第29条（開設許可の取消・閉鎖命令）が法的根拠。個人情報保護法違反時はPPCによる措置命令・罰則も適用。重大インシデント発生時は厚労省への報告が求められる。",
+      "notes": "第6.0版（2023年5月）は第5.0版（2021年）から大幅改訂。電子処方箋・クラウドEHR・医療IoTへの対応を強化。ガバナンス（G）・管理（M）・制御（C）の3編構成。2024年以降も随時改訂が予定される。"
+    },
+    {
+      "id": "fw_018",
+      "name": "経済産業省「電力系統サイバーセキュリティリスクチェックガイド」",
+      "name_en": "METI Cybersecurity Risk Check Guide for Power Systems",
+      "issuer": "経済産業省 資源エネルギー庁",
+      "latest_version": "2024年3月版",
+      "latest_update": "2024-03",
+      "url": "https://www.meti.go.jp/policy/safety_security/industrial_safety/oshirase/2024/",
+      "target_industry": [
+        "電力（発電・送電・配電・小売）",
+        "アグリゲーター",
+        "VPP事業者",
+        "自家用電気工作物管理者"
+      ],
+      "target_scale": "電力系統に関わるすべての事業者",
+      "legal_basis": "電気事業法第40条・電気設備の技術基準省令第15条の2（2022年改正）に基づく自己評価支援ツール",
+      "id_management_requirements": [
+        {
+          "requirement_id": "PWRCHK-AC-1",
+          "title": "アクセス制御の自己評価",
+          "content": "電力制御システムへのアクセス管理の成熟度を自己評価する。アクセス制御・ユーザー認証・特権管理の実施状況を可視化する。評価結果に基づき優先的な改善領域を特定する。",
+          "id_relevance": "high",
+          "specific_to": [
+            "アクセス制御",
+            "ID管理",
+            "特権管理"
+          ]
+        },
+        {
+          "requirement_id": "PWRCHK-NIST-1",
+          "title": "NIST CSF準拠の評価フレームワーク",
+          "content": "NIST CSF（特定・防御・検知・対応・復旧）および経産省CPSFに準拠したセキュリティ措置の実施状況を評価する。ID・アクセス管理（IAM）は防御（Protect）機能の中核として評価対象に含まれる。",
+          "id_relevance": "high",
+          "specific_to": [
+            "ID管理",
+            "アクセス制御"
+          ]
+        }
+      ],
+      "penalty_non_compliance": "リスクチェックガイドは自己評価支援ツールであり直接の罰則はない。ただし電気事業法上の技術基準不適合が認定された場合は同法第40条（改善命令）が適用。",
+      "notes": "2024年3月公表のリスクチェックガイドはExcelベースの可視化ツール付き。電力系統に参入した新規プレーヤー（アグリゲーター・VPP事業者等）も対象。NIST CSFおよびMETI CPSFとのマッピングを提供。"
+    }
+  ]
+}
