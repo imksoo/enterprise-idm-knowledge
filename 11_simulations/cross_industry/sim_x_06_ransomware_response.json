@@ -1,0 +1,129 @@
+{
+  "metadata": {
+    "id": "sim_x_06",
+    "title": "ランサムウェア侵害後のID緊急対応：タイムトライアル演習",
+    "industry": "cross_industry",
+    "difficulty": "advanced"
+  },
+  "personas": [
+    {
+      "id": "incident_lead",
+      "name": "村田（CISO室）",
+      "role": "インシデント対応リーダー"
+    },
+    {
+      "id": "ad_admin",
+      "name": "林（ADエンジニア）",
+      "role": "Active Directory管理者"
+    },
+    {
+      "id": "nssol_se",
+      "name": "松本（NSSol）",
+      "role": "IDMセキュリティSE（支援者）"
+    }
+  ],
+  "background": "中規模製造業。社員2,500名。深夜2時に社内PCが次々と暗号化。EDRアラートで翌朝3時に検知。ランサムウェアはBlackMatterの亜種。Domain Adminアカウントが侵害されている疑い。",
+  "scenes": [
+    {
+      "title": "場面1：検知後1時間以内のトリアージ",
+      "setting": "午前3時15分。緊急対応部屋。",
+      "dialogue": [
+        {
+          "speaker": "村田（CISO室）",
+          "text": "EDRログを見ると、Domain AdminアカウントのService01が3つの本番サーバーにRDPしています。Service01は今誰が使っているんですか？"
+        },
+        {
+          "speaker": "林（ADエンジニア）",
+          "text": "Service01はバッチ処理用のサービスアカウントです。夜中にRDPするはずがありません。間違いなく侵害されています！"
+        },
+        {
+          "speaker": "松本（NSSol）",
+          "text": "今すぐService01を無効化してください。ただしその前に、Active Directory上でService01が他にどの権限グループに入っているか確認が必要です。Kerberos TGTがメモリにある可能性も。"
+        },
+        {
+          "speaker": "林（ADエンジニア）",
+          "text": "確認します…Domain Admins、Enterprise Admins、両方に入っています。"
+        },
+        {
+          "speaker": "松本（NSSol）",
+          "text": "Enterprise Adminsは全フォレストに影響します。即刻グループから外してID無効化。さらにKRBTGTアカウントのパスワードを2回変更してください。これをしないとGolden Ticketが使われ続けます。",
+          "subtext": "KRBTGT二重変更は24時間間隔推奨だが緊急時は間隔短縮も実施。"
+        },
+        {
+          "speaker": "村田（CISO室）",
+          "text": "Golden Ticket…それはどんな攻撃ですか？"
+        },
+        {
+          "speaker": "松本（NSSol）",
+          "text": "KRBTGTのハッシュを盗むと、攻撃者は任意の有効なKerberosチケットを作り続けられます。アカウント無効化をしても侵害が続く最悪のシナリオです。KRBTGT変更は最優先です。"
+        }
+      ],
+      "issues_surfaced": [
+        "Service01がDomain/Enterprise Adminsに入っている設計ミス",
+        "KRBTGTアカウントのGolden Ticket悪用リスク",
+        "インシデント対応者がGolden Ticketを知らない"
+      ]
+    },
+    {
+      "title": "場面2：事後の根本対策",
+      "setting": "翌週。事後レビュー会議。",
+      "dialogue": [
+        {
+          "speaker": "村田（CISO室）",
+          "text": "今回の侵入経路は判明しましたか？"
+        },
+        {
+          "speaker": "松本（NSSol）",
+          "text": "DCのログを分析した結果、侵入はVPN経由でした。パスワードスプレー攻撃でService01のパスワードが推測されたようです。パスワードが'Welcome1234'でした。"
+        },
+        {
+          "speaker": "林（ADエンジニア）",
+          "text": "…それは恥ずかしい。設定した人が引き継ぎなく退職してしまって、パスワードが変えられていませんでした。"
+        },
+        {
+          "speaker": "松本（NSSol）",
+          "text": "サービスアカウントをgMSA（グループマネージドサービスアカウント）に移行してください。gMSAはWindowsが自動的に120文字のランダムパスワードを管理し、人間は絶対に知ることができません。パスワードスプレーが完全に無効化されます。"
+        },
+        {
+          "speaker": "村田（CISO室）",
+          "text": "今回の一番の教訓は何ですか？"
+        },
+        {
+          "speaker": "松本（NSSol）",
+          "text": "バッチ用のService01がDomain Adminsに入っていたこと、これが全ての元凶です。最小権限の原則が守られていれば、侵害の範囲が格段に限定されていました。Tier 0/1/2のAD管理モデルの導入が急務です。"
+        }
+      ],
+      "issues_surfaced": [
+        "サービスアカウントへのDomain Admin付与（最小権限違反）",
+        "単純パスワードの長期使用",
+        "Tiered Adminモデル未導入"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "サービスアカウント管理",
+      "current": "手動パスワード・Domain Admin過剰権限",
+      "target": "gMSA化・最小権限・Vault管理",
+      "priority": "critical"
+    },
+    {
+      "item": "ADのTier分離",
+      "current": "未分離（全管理者が同一権限層）",
+      "target": "Tier 0/1/2 Admin Model",
+      "priority": "critical"
+    },
+    {
+      "item": "VPN認証",
+      "current": "パスワードのみ",
+      "target": "MFA必須（FIDO2/TOTP）",
+      "priority": "high"
+    },
+    {
+      "item": "インシデント対応手順",
+      "current": "なし（今回が初）",
+      "target": "定期机上演習・KRBTGT変更手順整備",
+      "priority": "high"
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "id": "jml_process_design",
+  "title": "JML（Joiner-Mover-Leaver）プロセス設計ガイド",
+  "overview": "JML（Joiner: 入社、Mover: 異動、Leaver: 退職）はID管理の根幹プロセス。HR部門とIT部門の連携が鍵であり、自動化の成熟度によって組織のIDセキュリティ水準が決まる。",
+  "joiner_process": {
+    "trigger": "HR情報（入社予定日・所属・役職・雇用形態）の確定",
+    "best_practice_timeline": [
+      {
+        "timing": "内定承諾後（最大2週間前）",
+        "actions": [
+          "アカウント予約・ID割り当て（IDの事前生成）",
+          "マネージャーへの通知・初期権限申請依頼",
+          "IT機器発注"
+        ]
+      },
+      {
+        "timing": "入社前日",
+        "actions": [
+          "AD/IdP アカウント有効化",
+          "初期パスワード通知（セキュアな方法で）",
+          "メール・チャット設定"
+        ]
+      },
+      {
+        "timing": "入社当日",
+        "actions": [
+          "業務系アプリプロビジョニング完了",
+          "MFAセットアップ案内",
+          "初回ログインガイド提供"
+        ]
+      },
+      {
+        "timing": "入社30日後",
+        "actions": [
+          "権限適切性の初回レビュー",
+          "余剰権限の棚卸"
+        ]
+      }
+    ],
+    "common_failures": [
+      "入社日に権限がなくて業務できない",
+      "仮パスワードがSlack/メールで平文送信",
+      "所属部署より過剰な権限が付与される"
+    ],
+    "automation_points": [
+      "HRISトリガーによるAD/IdP自動作成",
+      "ロールマッピング（職種＝アプリセット）による自動権限付与",
+      "MFAセットアップ招待の自動送信"
+    ]
+  },
+  "mover_process": {
+    "trigger": "人事異動・昇格・出向・兼務発令",
+    "key_principle": "異動時は「旧権限の剥奪」と「新権限の付与」を同時に行う。剥奪忘れが権限の肥大化（Privilege Creep）の主因。",
+    "scenarios": [
+      {
+        "scenario": "部署異動（水平移動）",
+        "actions": [
+          "旧部署アプリ権限の削除",
+          "新部署アプリ権限の付与",
+          "共有メーリングリスト変更"
+        ],
+        "risk": "旧部署システムへのアクセスが残留"
+      },
+      {
+        "scenario": "昇格（マネージャーへ）",
+        "actions": [
+          "部下の閲覧権限付与",
+          "承認ワークフロー権限付与",
+          "経費承認権限付与"
+        ],
+        "risk": "一般社員権限＋管理職権限の累積（最小権限違反）"
+      },
+      {
+        "scenario": "出向・兼務",
+        "actions": [
+          "出向先テナントへのB2B招待",
+          "元組織の権限を維持するか停止するか判断",
+          "機密情報アクセスの是非判断"
+        ],
+        "risk": "競合他社への出向時の情報漏洩リスク"
+      },
+      {
+        "scenario": "海外赴任",
+        "actions": [
+          "グローバルADへの移行or現地ADへの追加",
+          "VPN設定変更",
+          "法令遵守チェック（米国EAR等）"
+        ],
+        "risk": "現地データ法規制への準拠（GDPR等）"
+      }
+    ]
+  },
+  "leaver_process": {
+    "trigger": "退職予告・解雇・定年・派遣終了",
+    "criticality": "最も重要なプロセス。退職者IDが有効なまま残ると、内部不正・元従業員による侵害のリスクになる。",
+    "recommended_timeline": {
+      "voluntary_resignation": {
+        "D-60日": "退職日確定・引き継ぎ計画",
+        "D-1": "システム読み取り専用化・メール転送設定",
+        "D+0（退職日）": "全ID無効化（MFA・メール・VPN含む）",
+        "D+30": "バックアップデータ確認後ID削除"
+      },
+      "involuntary_termination": {
+        "即時": "全IDの即時無効化（30分以内）",
+        "1時間以内": "物理バッジ回収確認",
+        "24時間以内": "メールアーカイブ保全・ログ確認"
+      },
+      "contractor_end": {
+        "契約終了前24時間": "全ID無効化手順確認",
+        "終了時刻": "全アクセス遮断",
+        "30日後": "データ保持ポリシーに従いID削除"
+      }
+    },
+    "common_failures": [
+      {
+        "failure": "ADは無効化したがSaaSアプリのIDが残存",
+        "prevalence": "非常に多い",
+        "mitigation": "IdP/IGA経由でプロビジョニングしたSaaSの一斉無効化"
+      },
+      {
+        "failure": "退職者の個人所有デバイスにMDM登録データが残存",
+        "prevalence": "多い",
+        "mitigation": "MDMリモートワイプ・データ分離（MAM）"
+      },
+      {
+        "failure": "共有メールボックスのパスワードを退職者が知っている",
+        "prevalence": "多い",
+        "mitigation": "共有メールボックスのパスワードリセット・MFA再設定"
+      },
+      {
+        "failure": "GitHub/GitLab等開発ツールへのアクセスが残存",
+        "prevalence": "多い",
+        "mitigation": "SCIM連携またはIGAコネクタでの統合管理"
+      }
+    ]
+  },
+  "hr_it_integration": {
+    "overview": "JMLプロセス自動化の鍵はHRIS（人事情報システム）とID管理基盤の連携。",
+    "common_hris_japan": [
+      "SAP SuccessFactors",
+      "COMPANY（Works Human Intelligence）",
+      "POSITIVE（日本独自）",
+      "GLOVIA（富士通）",
+      "Oracle HCM Cloud"
+    ],
+    "integration_methods": [
+      {
+        "method": "CSV/ファイル連携",
+        "pros": "シンプル・既存HRIS対応",
+        "cons": "バッチ処理・リアルタイム性なし",
+        "maturity": "低"
+      },
+      {
+        "method": "REST API/SCIM",
+        "pros": "リアルタイム・標準的",
+        "cons": "HRIS側のAPI公開が必要",
+        "maturity": "高"
+      },
+      {
+        "method": "Webhook/Event Driven",
+        "pros": "即時処理・疎結合",
+        "cons": "エラーハンドリング複雑",
+        "maturity": "高"
+      }
+    ]
+  },
+  "knowledge_items": [
+    {
+      "id": "ki_jml_001",
+      "term": "Privilege Creep（権限の肥大化）",
+      "definition": "異動・昇格を繰り返すたびに権限が追加されていき、本来不要な権限が累積する現象。定期棚卸（Access Certification）で検出・削除する必要がある。"
+    },
+    {
+      "id": "ki_jml_002",
+      "term": "HRIS（Human Resource Information System）",
+      "definition": "人事情報を管理するシステム。JMLプロセスの自動化ではHRISを「真のIDソース（Source of Truth）」として扱い、IDライフサイクルのトリガーにする。"
+    },
+    {
+      "id": "ki_jml_003",
+      "term": "SCIM（System for Cross-domain Identity Management）",
+      "definition": "IdPとアプリ間でユーザー情報を同期するREST APIの標準仕様（RFC7643/7644）。SCIMに対応したHRISとIGAを接続することでJMLの自動化が可能になる。"
+    }
+  ]
+}

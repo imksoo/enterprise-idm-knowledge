@@ -1,0 +1,119 @@
+{
+  "id": "oracle_database_auth_guide",
+  "title": "Oracle Databaseの認証・ID管理：エンタープライズ環境の実態と課題",
+  "overview": "Oracle Databaseは日本の大企業・金融機関・官公庁で圧倒的なシェアを持つ。DBレベルの認証、特権ユーザー管理、監査機能は専門知識が必要であり、OSやIdPとは独立した管理体系が存在する。",
+  "oracle_id_types": [
+    {
+      "type": "DBローカルユーザー",
+      "description": "Oracle DB内で定義されたユーザー。パスワードはDB内部に保管。SYSやSYSTEMが代表例。",
+      "risk": "高。パスワードが固定・共有されがち。"
+    },
+    {
+      "type": "Kerberos認証ユーザー",
+      "description": "ADのKerberosで認証し、DBはパスワード不要でログイン。Enterprise Userセキュリティ（EUS）利用。",
+      "risk": "低〜中。AD側でユーザー管理集約可能。"
+    },
+    {
+      "type": "OS認証ユーザー",
+      "description": "OS（OEL/RHEL）のグループdbaに所属するユーザーは `/`として認証なしでDB接続可能。",
+      "risk": "極高。OS権限＝DB最高権限になるため隔離必須。"
+    },
+    {
+      "type": "プロキシ認証",
+      "description": "アプリサーバーが共通DBユーザーでDB接続し、アプリレベルでユーザーを切り替える。接続プーリングとセキュリティのトレードオフ。",
+      "risk": "中。DBレベルでの個人特定が困難になる。"
+    },
+    {
+      "type": "Enterprise User Security（EUS）",
+      "description": "Oracle Identity DirectoryとActive Directoryを連携。ADのGroupでDBロールをマッピング可能。",
+      "risk": "低。AD管理に統合できる。"
+    },
+    {
+      "type": "Oracle Database Vault",
+      "description": "DBAでもデータにアクセスできないよう、特権ユーザーの権限を制限する機能。",
+      "risk": "低。内部不正抑止効果が高い。"
+    }
+  ],
+  "privileged_account_management": {
+    "sys_and_system": {
+      "description": "SYSはOracle最高権限（SYSDBA）。SYSTEMは管理ユーザー。どちらも共有・デフォルトパスワードが問題。",
+      "best_practices": [
+        "SYSDBAアクセスはPAMによるチェックアウト制",
+        "SYSパスワードはVaultで管理・定期ローテーション",
+        "OS認証（/ as sysdba）は本番禁止"
+      ]
+    },
+    "application_schemas": {
+      "description": "APスキーマ（APユーザー）はアプリの接続ユーザー。パスワードが設定ファイルやソースコードにハードコードされるリスク。",
+      "best_practices": [
+        "Vaultのデータベースシークレットエンジンで動的パスワード",
+        "Oracle Wallet（orapki）によるパスワードレス接続",
+        "Kerberos認証またはSSPIによるパスワード不要接続"
+      ]
+    }
+  },
+  "auditing": {
+    "unified_auditing": {
+      "description": "Oracle 12c以降。AUDIT POLICY構文でポリシーベースの監査。SYS操作・データ変更・ログイン失敗等を記録。",
+      "storage": "AUDSYS.AUD$UNIFIED（内部テーブル）またはsyslogに送信"
+    },
+    "fine_grained_auditing": {
+      "description": "特定の条件（特定の行・列へのアクセス）を監査するFGA。個人情報アクセス監査に有効。"
+    },
+    "database_activity_monitoring": {
+      "description": "Imperva DAM・IBM Guardium・Oracle Audit Vault等の外部ツールで全SQLをリアルタイム監視。FISCや金融機関の証跡要件に対応。"
+    },
+    "siem_integration": {
+      "description": "Oracle DBのAuditログをSplunk・IBM QRadar・Securonixに送信して相関分析。未認可のSELECT/DDL検出。"
+    }
+  },
+  "entra_id_integration": {
+    "overview": "Azure Database for Oracle（なし）だが、Oracle DB on Azure VMまたはOracle Cloud（OCI）においてEntra IDとの統合が進んでいる。",
+    "options": [
+      {
+        "method": "EUS + Entra ID（AD経由）",
+        "description": "EntraHybrid JoinのオンプレADをEUSのLDAPに設定。ADのグループをOracleロールにマッピング。"
+      },
+      {
+        "method": "Oracle Database@Azure",
+        "description": "OracleとMicrosoftの提携でAzure上にOracle Exadata等を展開。EntraIDでのMFAが選択肢に。"
+      },
+      {
+        "method": "OCI IAM統合",
+        "description": "Oracle Cloud Infrastructure上ではOCI IAMによるID管理。SamlをOkta/EntraとFederate可能。"
+      }
+    ]
+  },
+  "japan_adoption": {
+    "overview": "Oracle Databaseは日本市場で圧倒的シェア。大手IT調査では基幹系RDBMS市場の40〜50%と推定。",
+    "typical_users": [
+      "メガバンクの勘定系・顧客DB",
+      "証券会社の取引系",
+      "大手製造業のSAP+OracleDB構成",
+      "官公庁の基幹システム",
+      "大手保険会社の契約管理"
+    ]
+  },
+  "knowledge_items": [
+    {
+      "id": "ki_ora_001",
+      "term": "SYSDBA権限",
+      "definition": "Oracle DBの最高権限。OS認証（/ as sysdba）を許可するとOSのdbaグループ所属ユーザーがパスワードなしでDB接続可能になる。本番環境では制限必須。"
+    },
+    {
+      "id": "ki_ora_002",
+      "term": "Oracle Unified Auditing",
+      "definition": "Oracle 12c以降の統合監査機能。AUDIT POLICY構文でセキュリティ審査ポリシーを作成し、特定操作を自動記録。FISCや金融庁要件の証跡確保に活用。"
+    },
+    {
+      "id": "ki_ora_003",
+      "term": "Oracle Database Vault",
+      "definition": "DBA（データベース管理者）であっても特定のデータやスキーマにアクセスできなくするオプション機能。内部不正・権限昇格攻撃を抑止。"
+    },
+    {
+      "id": "ki_ora_004",
+      "term": "Enterprise User Security（EUS）",
+      "definition": "Oracle DBのエンタープライズ認証機能。Active DirectoryやLDAPと連携し、DBユーザーをADアカウントにマッピング。集中管理が可能。"
+    }
+  ]
+}

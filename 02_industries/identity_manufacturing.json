@@ -1,0 +1,133 @@
+{
+  "id": "industry_manufacturing_identity",
+  "title": "製造業におけるID管理：OT/IT統合、SAP、サプライチェーンの課題",
+  "industry": "manufacturing",
+  "overview": "日本の製造業は、IT（情報技術）とOT（運用技術）の統合が急速に進む中、ID管理の複雑さが増している。工場のPLC・SCADA・MESなど産業制御系と、SAPなどのERPシステム、クラウドが混在する環境で、一貫したID管理が必要になっている。",
+  "typical_it_ot_environment": {
+    "it_layer": {
+      "description": "基幹系・情報系システム",
+      "components": [
+        "SAP ERP/S4HANA（生産管理・財務・販売）",
+        "Oracle Database（マスタ管理・工程DB）",
+        "Active Directory（Windows拠点）",
+        "Azure/AWS（クラウド移行中）",
+        "CAD/PDMシステム（Dassault CATIA等）"
+      ],
+      "id_management": "AD中心。SAP IDはSAP独自で二重管理になりがち。"
+    },
+    "ot_layer": {
+      "description": "製造現場の制御系",
+      "components": [
+        "SCADA（Supervisory Control and Data Acquisition）",
+        "DCS（分散制御システム）",
+        "PLC（プログラマブルロジックコントローラ）",
+        "MES（製造実行システム）",
+        "産業用HMI端末"
+      ],
+      "id_management": "ベンダー専用ID・共有アカウントが多く、現代的ID管理が適用困難。ネットワーク的にも閉鎖環境。"
+    },
+    "convergence_zone": {
+      "description": "IT/OT境界の課題",
+      "challenges": [
+        "OT環境へのランサムウェア侵入（Colonial Pipeline型攻撃）",
+        "IT管理者がOT設備にアクセスする際の権限管理",
+        "工場網とオフィス網のID連携",
+        "OTベンダーのリモートメンテナンスID管理"
+      ]
+    }
+  },
+  "sap_id_management": {
+    "overview": "SAPは独自のID管理機能（SU01, ロール管理）を持つが、ADとの統合・権限過剰付与・SOD違反が日本製造業の主要な監査指摘項目。",
+    "common_issues": [
+      {
+        "issue": "SAP IDとADの二重管理",
+        "description": "SAP UserとADアカウントが1:1対応していないため、退職時にどちらかが残留する。",
+        "frequency": "非常に多い"
+      },
+      {
+        "issue": "SOD（職務分離）違反",
+        "description": "購買担当者が支払処理も実行できるなど、不正のリスクがある権限組み合わせ。SAP GRC Access Controlで検出。",
+        "frequency": "多い"
+      },
+      {
+        "issue": "Basisアカウントの管理不足",
+        "description": "SAP BASIS管理者アカウント（SAP*、DDICなど）のパスワードが変更されていない。",
+        "frequency": "中"
+      },
+      {
+        "issue": "RFC接続の固定ID",
+        "description": "SAP間のシステム間連携でサービスアカウントが固定パスワードで設定されたまま。",
+        "frequency": "多い"
+      }
+    ],
+    "governance_tools": [
+      "SAP GRC Access Control（ロールマイニング・SOD検出）",
+      "SAP Identity Management（SAPのIDM製品）",
+      "Saviynt Security Manager（SAP特化IAM）",
+      "SailPoint（SAP connector）"
+    ]
+  },
+  "supply_chain_identity": {
+    "overview": "自動車・電機の製造業では、一次〜三次サプライヤーが社内システムにアクセスするケースが多い。IDの管理範囲が自社外に広がる。",
+    "access_patterns": [
+      {
+        "pattern": "EDI連携",
+        "description": "発注書・納品書のEDI（XML/AS2/FTP）。固定IPやクライアント証明書での認証が多い。"
+      },
+      {
+        "pattern": "設計データ共有（PDM/CAD）",
+        "description": "設計図面をDassault ENOVIA等で共有。外部IDのプロビジョニングが手動になりがち。"
+      },
+      {
+        "pattern": "工場リモートメンテナンス",
+        "description": "設備ベンダーが工場のSCADA/PLCにVPN接続。特権ID管理なしで運用されるリスク。"
+      },
+      {
+        "pattern": "調達ポータル",
+        "description": "サプライヤー向けWebポータル。SAML/OIDCベースのフェデレーション、またはIDセルフサービス登録。"
+      }
+    ],
+    "risks": [
+      "サプライヤー経由の侵害（SolarWinds型攻撃）",
+      "退職したサプライヤー担当者のIDが残留",
+      "サプライヤーのセキュリティレベルの不均一性",
+      "サプライヤーM&Aによるドメイン変更対応"
+    ]
+  },
+  "ot_security_frameworks": [
+    {
+      "name": "IEC 62443",
+      "relevance": "産業制御システム（ICS）のセキュリティ標準。ゾーン・コンジット概念でネットワーク分離とID管理を定義。"
+    },
+    {
+      "name": "NIST SP 800-82",
+      "relevance": "OT向けセキュリティガイド。ID管理章でOT環境の特殊要件（長いパスワード変更周期等）を許容しつつリスク管理を要求。"
+    },
+    {
+      "name": "経産省「産業サイバーセキュリティ研究会」報告書",
+      "relevance": "日本のOTセキュリティ指針。重要インフラのSCMセキュリティ強化を推進。"
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "ki_mfg_001",
+      "term": "OT（Operational Technology）",
+      "definition": "製造現場の設備・制御システム（PLC, SCADA, DCSなど）を管理する技術。IT（情報技術）と対比して使われる。近年の接続化でID管理が課題化。"
+    },
+    {
+      "id": "ki_mfg_002",
+      "term": "SOD（Segregation of Duties）",
+      "definition": "職務分離。一人が注文・支払・承認を全部できないよう権限を分割するガバナンス原則。SAPのGRCで検出・矯正。"
+    },
+    {
+      "id": "ki_mfg_003",
+      "term": "SAP BASIS",
+      "definition": "SAPシステム管理者（技術者）。SAPに搭載されたシステムユーザー（SAP*, DDIC）は初期設定のまま放置されるリスクがある。"
+    },
+    {
+      "id": "ki_mfg_004",
+      "term": "SCADA（スカダ）",
+      "definition": "Supervisory Control and Data Acquisition。工場の機械・プラントをリアルタイム監視・制御するシステム。Windows XP/7上で動作する老朽環境も多い。"
+    }
+  ]
+}

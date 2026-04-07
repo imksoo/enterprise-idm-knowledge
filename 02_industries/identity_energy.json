@@ -1,0 +1,132 @@
+{
+  "id": "industry_energy_identity",
+  "title": "エネルギー業におけるID管理：電力・ガス・石油の重要インフラ保護",
+  "industry": "energy",
+  "overview": "電力・ガス・石油精製は「重要インフラ」に指定され、政府のサイバーセキュリティ戦略下で特に厳格な要件が課される。2016年の電力システム改革（発送電分離）・2022年のロシアによるウクライナ電力インフラ攻撃以降、ID管理の重要性が再認識されている。",
+  "regulatory_requirements": [
+    {
+      "name": "電力セキュリティガイドライン（電気事業者向け）",
+      "issuer": "経産省/電力・ガス取引監視等委員会",
+      "key_requirements": [
+        "制御システムの外部接続管理",
+        "特権IDの二要素認証",
+        "サイバーインシデントの報告義務（24時間以内）",
+        "年次セキュリティ監査の実施"
+      ]
+    },
+    {
+      "name": "NERC CIP（北米基準）",
+      "relevance_japan": "日本の電力ガスへの直接適用はないが参照される国際標準",
+      "key_requirements": [
+        "CIP-004: 人員・訓練（ID管理を含む）",
+        "CIP-007: システムセキュリティ（認証強化）",
+        "CIP-010: 変更管理・脆弱性管理"
+      ]
+    },
+    {
+      "name": "ガス事業者向けサイバーセキュリティガイドライン",
+      "issuer": "経産省",
+      "key_requirements": [
+        "SCADA/DCSへのアクセス制御",
+        "リモートアクセスの多要素認証",
+        "ベンダーアクセス管理"
+      ]
+    },
+    {
+      "name": "経産省「重要インフラのサイバーセキュリティに係る行動計画」2022年改訂",
+      "key_requirements": [
+        "ゼロトラスト指針の参照",
+        "サプライチェーンリスク管理",
+        "セキュリティ投資の開示推進"
+      ]
+    }
+  ],
+  "it_ot_environment": {
+    "control_systems": [
+      {
+        "system": "EMS（Energy Management System）",
+        "description": "電力系統の需給制御。専用プロトコル（IEC 61850等）。外部接続は極めて限定的。"
+      },
+      {
+        "system": "SCADA/DCS",
+        "description": "発電所・変電所・ガスコンプレッサーの制御。Windows XP〜7ベースのHMIが現役のケースも。"
+      },
+      {
+        "system": "GIS（地理情報システム）",
+        "description": "配電線・ガス管路の資産管理。WebベースでAD連携が進んでいるケースも。"
+      },
+      {
+        "system": "DR（需要家応答）システム",
+        "description": "IoT機器・スマートメーターとのAPI連携。OAuth2/OIDCベースのID管理が必要。"
+      }
+    ],
+    "it_systems": [
+      "ERP（SAP IS-U / Oracle Utilities）",
+      "GIS（ESRI ArcGIS）",
+      "資産管理（Maximo等）",
+      "顧客管理（CRM）",
+      "社内AD/Entra ID"
+    ]
+  },
+  "unique_challenges": [
+    {
+      "challenge": "Old OT機器のID管理非対応",
+      "description": "1990年代〜2000年代製の制御機器はLDAPもKerberosも非対応。ローカル固定IDのみ。ベンダーも「変更禁止」と言う場合がある。",
+      "mitigation": "PAMによるセッション代理認証（Proxy PAM）、ネットワーク分離"
+    },
+    {
+      "challenge": "24時間365日の運用継続要件",
+      "description": "電力はシステム停止が社会的影響を持つため、ID管理変更作業の作業窓口が極めて限定的（年1〜2回の定期点検時のみ）。",
+      "mitigation": "変更管理との連携、リスク評価に基づく優先度付け"
+    },
+    {
+      "challenge": "発送電分離・グループ再編",
+      "description": "2016年以降、発電・送配電・小売に分社化。旧一体会社のIDをいかに分割・引き継ぐか。",
+      "mitigation": "M&A型ID統合プロジェクトに準じたアプローチ"
+    },
+    {
+      "challenge": "スマートメーターのID管理",
+      "description": "数百万台のIoTデバイスとの通信認証。証明書ベースのデバイスID（X.509）が使われるが、鍵管理が大規模化。",
+      "mitigation": "PKIインフラ整備、HSMによる鍵保護"
+    },
+    {
+      "challenge": "再生可能エネルギー事業者との連携",
+      "description": "太陽光・風力の発電事業者が多数参入。系統連系申請・設備情報連携でのID認証基盤が未整備。",
+      "mitigation": "B2Bフェデレーション（SAML/OIDC）の標準化"
+    }
+  ],
+  "attack_case_studies": [
+    {
+      "title": "ウクライナ電力インフラ攻撃（2015-2016）",
+      "description": "BlackEnergy/Industroyer型マルウェアでSCADA操作。VPN認証情報の窃取から開始。停電が発生。",
+      "id_lesson": "OT環境へのVPNアクセスにMFA必須、JIT特権アクセスの重要性"
+    },
+    {
+      "title": "フロリダ水処理施設攻撃（2021）",
+      "description": "AnyDeskリモートアクセスで浸水処理剤を操作しようとした事案。共有パスワード・旧バージョンのWindowsが要因。",
+      "id_lesson": "共有ID禁止、OS・ソフト更新の重要性。制御系へのアクセス承認ワークフロー"
+    },
+    {
+      "title": "Colonial Pipeline（2021）",
+      "description": "ITシステムへのランサムウェア感染により、安全のため石油パイプラインが6日間停止。侵入はVPN不使用アカウントから。",
+      "id_lesson": "未使用VPNアカウントの即時無効化、MFA全面適用"
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "ki_egy_001",
+      "term": "OT/IT収束（Convergence）",
+      "description": "生産制御（OT）と情報技術（IT）が同一ネットワーク・システムで管理される動き。セキュリティ上の課題が増大。"
+    },
+    {
+      "id": "ki_egy_002",
+      "term": "EMS（Energy Management System）",
+      "description": "電力系統の需給バランスを管理する制御システム。送配電事業者が保有。極めてセキュリティ要件が高い。"
+    },
+    {
+      "id": "ki_egy_003",
+      "term": "IEC 62443",
+      "description": "産業用オートメーション・制御システムのセキュリティ標準。エネルギー・製造業のOTセキュリティの国際規格。"
+    }
+  ]
+}

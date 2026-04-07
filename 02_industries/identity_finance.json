@@ -1,0 +1,267 @@
+{
+  "id": "industry_finance_identity",
+  "title": "金融業におけるID管理：銀行・証券・保険・クレジットの実態と要件",
+  "industry": "finance",
+  "overview": "日本の金融機関は、FISC安全対策基準・PCI DSS・金融庁ガイドライン等の多重規制により、ID管理に最も厳格な要件が課される。メガバンクから地方銀行まで規模・レガシー度は異なるが、共通課題としてレガシーシステムとモダンIDの並存がある。",
+  "regulatory_landscape": {
+    "frameworks": [
+      {
+        "name": "FISC安全対策基準",
+        "version": "第11版（2022）",
+        "key_id_requirements": [
+          "特権IDの複数人管理",
+          "ID棚卸の年1回以上実施",
+          "ログの7年保存",
+          "退職者ID即時失効（翌営業日以内）"
+        ],
+        "penalty": "金融庁検査での指摘→行政指導"
+      },
+      {
+        "name": "PCI DSS v4.0",
+        "key_id_requirements": [
+          "MFA必須（Req8.4）",
+          "共有ID禁止（Req8.2）",
+          "パスワード最小12文字（Req8.3.6）",
+          "非アクティブID90日で無効化（Req8.2.6）"
+        ],
+        "penalty": "カード取扱停止・多額の罰金"
+      },
+      {
+        "name": "金融庁「サイバーセキュリティ管理態勢の強化」",
+        "year": "2023",
+        "key_id_requirements": [
+          "ゼロトラスト移行計画の提出",
+          "特権ID管理ツール導入推奨",
+          "インシデント72時間以内報告"
+        ],
+        "penalty": "報告徴求・業務改善命令"
+      },
+      {
+        "name": "SWIFT CSCF v2024",
+        "key_id_requirements": [
+          "MFA必須（Control 4.2）",
+          "特権ID制限（Control 5.1）",
+          "接続環境分離（Control 1.1）"
+        ],
+        "penalty": "SWIFTネットワーク接続停止"
+      },
+      {
+        "name": "J-SOX（金融商品取引法内部統制）",
+        "key_id_requirements": [
+          "アクセス権限記録・承認証跡",
+          "分掌原則（職務分離）",
+          "四半期ごとの権限棚卸推奨"
+        ],
+        "penalty": "有価証券報告書虚偽記載"
+      }
+    ]
+  },
+  "typical_it_environments": [
+    {
+      "segment": "メガバンク",
+      "examples": [
+        "三菱UFJ",
+        "三井住友",
+        "みずほ"
+      ],
+      "characteristics": [
+        "勘定系：IBM z/OS上のCOBOLシステム",
+        "ACF2/RACF/Top SecretによるメインフレームID",
+        "AWSおよびAzure上のマルチクラウド",
+        "Entra ID × オンプレAD連携（ハイブリッド）",
+        "専任ID管理部門（50名超）"
+      ],
+      "id_challenges": [
+        "メインフレームIDとADの統合",
+        "派遣社員・委託先IDの管理（数万ID）",
+        "合併後のマルチフォレスト整理",
+        "システム数1000超のID棚卸"
+      ]
+    },
+    {
+      "segment": "地方銀行",
+      "examples": [
+        "地銀64行",
+        "第二地銀"
+      ],
+      "characteristics": [
+        "NTTデータ地銀共同センター（BankVision）",
+        "オンプレActive Directory",
+        "VPN接続のテレワーク",
+        "IT人員 数名〜数十名"
+      ],
+      "id_challenges": [
+        "マンパワー不足によるID管理形骸化",
+        "ベンダー委託先の特権ID管理",
+        "FISC準拠のためのツール選定コスト",
+        "パッケージシステムのID管理API非対応"
+      ]
+    },
+    {
+      "segment": "証券会社",
+      "examples": [
+        "野村",
+        "大和",
+        "SMBC日興"
+      ],
+      "characteristics": [
+        "高速取引システム（低レイテンシ優先）",
+        "SWIFT接続・外部取引所連携",
+        "トレーダー向けBloomberg端末",
+        "海外拠点との連携（AD信頼）"
+      ],
+      "id_challenges": [
+        "トレーダーと管理者の権限分離",
+        "外部接続の認証強化（SWIFT）",
+        "取引データアクセスログの証跡要件",
+        "短期間IPO担当者へのアクセス権付与"
+      ]
+    },
+    {
+      "segment": "保険会社",
+      "examples": [
+        "日本生命",
+        "東京海上",
+        "第一生命"
+      ],
+      "characteristics": [
+        "代理店チャネル（外部ID数十万）",
+        "長期保有の契約基幹システム",
+        "外交員端末の多様性（iPad等）"
+      ],
+      "id_challenges": [
+        "外部代理店IDの大量プロビジョニング",
+        "契約者情報アクセスの厳密な権限管理",
+        "外交員離職時の即時アクセス遮断",
+        "古いホストシステムのLDAP非対応"
+      ]
+    },
+    {
+      "segment": "クレジット・消費者金融",
+      "examples": [
+        "JCB",
+        "三井住友カード",
+        "セゾン"
+      ],
+      "characteristics": [
+        "PCI DSS必須対応",
+        "コールセンター多拠点",
+        "ECサイト連携（OAuth/OIDC）"
+      ],
+      "id_challenges": [
+        "コールセンター要員の大量ID管理",
+        "PCI DSS CDE環境の厳格なID分離",
+        "ECパートナーのFederation設定",
+        "不正検知システムとの連携"
+      ]
+    }
+  ],
+  "id_architecture_patterns": [
+    {
+      "pattern": "メインフレーム＋AD二層構造",
+      "description": "勘定系はRACF/ACF2、周辺はADで管理。IDマスターが統合されておらず手動同期が発生。",
+      "prevalence": "メガバンク・地銀で多い",
+      "risks": [
+        "二重管理による退職者ID残留",
+        "監査時の突合作業に多大な工数"
+      ],
+      "modernization_path": "MIM/SCIM連携またはIGAツールによるコネクタ統合"
+    },
+    {
+      "pattern": "AD＋IdPハイブリッド",
+      "description": "オンプレAD（認証）＋Okta/Entra ID（SSO・MFA）。両者の同期はAD ConnectまたはOktaのAD Agent。",
+      "prevalence": "増加中（メガバンク・証券）",
+      "risks": [
+        "同期ラグ（数分〜数十分）による即時無効化遅延",
+        "ADとIdPで権限が乖離"
+      ],
+      "modernization_path": "Entra ID P2化 + Conditional Access強化"
+    },
+    {
+      "pattern": "ゼロトラスト移行中",
+      "description": "ZTNA（Zscaler ZPA等）でVPN廃止検討。PAMと連携した特権アクセス管理。MFAはFIDO2化推進中。",
+      "prevalence": "メガバンク・大手証券の先行事例",
+      "risks": [
+        "レガシーシステムのZTNA非対応",
+        "ゼロトラスト移行期間中の二重運用コスト"
+      ],
+      "modernization_path": "段階的ZTNA展開 + 既存アプリのSAML/OIDC対応"
+    }
+  ],
+  "privileged_access_management": {
+    "requirements": [
+      "特権IDの個人化（共有admin禁止）",
+      "作業前申請・承認ワークフロー",
+      "セッション録画（5年保存）",
+      "Just-in-Time（JIT）アクセス",
+      "特権昇格ログのSIEM連携"
+    ],
+    "common_tools_japan": [
+      "CyberArk PAM（大手金融シェア首位）",
+      "BeyondTrust Password Safe",
+      "SecureCube Access Check（地銀・地保険に浸透）",
+      "KAIDEN（国内PAM製品）",
+      "Arcon PAM（一部採用）"
+    ],
+    "case_study": {
+      "bank_type": "地方銀行",
+      "challenge": "ベンダー保守作業時の特権IDをパスワードシート管理。FISC指摘を受けPAM導入。",
+      "solution": "SecureCube Access Checkを導入。作業記録・VLAN経由接続・チケット連携を3ヶ月で実装。",
+      "result": "FISC再検査でE判定（良好）取得。ベンダー作業の全ログ化。"
+    }
+  },
+  "nonhuman_id_challenges": [
+    {
+      "type": "バッチ処理サービスアカウント",
+      "count_estimate": "数百〜数千",
+      "risks": [
+        "パスワード無期限・共有化",
+        "棚卸未実施"
+      ],
+      "solution": "gMSA化（Windows）/ Vault secretsエンジン"
+    },
+    {
+      "type": "HostToHostファイル転送（SFTP/FTP）",
+      "risks": [
+        "固定パスワード・SSH鍵の管理不全"
+      ],
+      "solution": "Hashicorp VaultまたはCyberArkによる鍵ローテーション"
+    },
+    {
+      "type": "EDI連携・SWIFT接続",
+      "risks": [
+        "固定証明書・長期未更新"
+      ],
+      "solution": "証明書ライフサイクル管理ツール（Venafi等）"
+    },
+    {
+      "type": "APIキー（BaaSサービス連携）",
+      "risks": [
+        "ハードコード、長期間無効化なし"
+      ],
+      "solution": "GitHub Secret Scanning、Vaultダイナミックシークレット"
+    }
+  ],
+  "knowledge_items": [
+    {
+      "id": "ki_fin_001",
+      "term": "RACF",
+      "definition": "IBM z/OSのResource Access Control Facilityイン。メガバンクの勘定系において今も主要なID管理基盤。"
+    },
+    {
+      "id": "ki_fin_002",
+      "term": "FISC安全対策基準",
+      "definition": "公益財団法人金融情報システムセンターが発行するガイドライン。法的強制力はないが金融庁検査のデファクト基準。"
+    },
+    {
+      "id": "ki_fin_003",
+      "term": "CDE（Cardholder Data Environment）",
+      "definition": "PCI DSSにおけるカード会員データを処理・保存・転送する環境。このスコープ内は特に厳格なID管理が求められる。"
+    },
+    {
+      "id": "ki_fin_004",
+      "term": "SWIFT CSCF",
+      "definition": "SWIFTが金融機関に義務付けるCustomer Security Controls Framework。SWIFT接続端末へのMFA・特権管理が必須。"
+    }
+  ]
+}

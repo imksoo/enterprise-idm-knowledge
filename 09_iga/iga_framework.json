@@ -1,0 +1,207 @@
+{
+  "id": "iga_framework_guide",
+  "title": "IGA（Identity Governance & Administration）フレームワーク完全ガイド",
+  "overview": "IGA（Identity Governance & Administration）は、ID管理（プロビジョニング・デプロビジョニング）とID統治（アクセス認証・SOD・棚卸）を統合したアプローチ。従来のIDMの進化形として、特に規制業種で必須化している。",
+  "iga_vs_idm_vs_iam": {
+    "comparison": [
+      {
+        "term": "IDM（Identity Management）",
+        "focus": "IDのライフサイクル管理（作成・変更・削除）",
+        "scope": "ユーザーとシステムへのプロビジョニング",
+        "governance": "弱い"
+      },
+      {
+        "term": "IAM（Identity & Access Management）",
+        "focus": "IDとアクセス権の管理",
+        "scope": "認証・認可・プロビジョニング",
+        "governance": "中程度"
+      },
+      {
+        "term": "IGA（Identity Governance & Administration）",
+        "focus": "IDガバナンス＋ライフサイクル管理",
+        "scope": "棚卸・認証・SOD・ロールマイニング・リスク分析まで",
+        "governance": "強い"
+      }
+    ],
+    "driver": "規制強化（SOX/FISC/PCI DSS）と大規模インシデントへの反省から、IT部門だけでなく経営・内部監査まで巻き込む「ガバナンス」が重視されるようになった。"
+  },
+  "core_capabilities": [
+    {
+      "capability": "ユーザーライフサイクル管理（JML）",
+      "description": "入社（Joiner）・異動（Mover）・退職（Leaver）のイベントに連動した自動プロビジョニング。HRシステムとの連携が鍵。",
+      "maturity_levels": [
+        {
+          "level": 1,
+          "name": "手動管理",
+          "description": "申請書ベース。IT担当者が手作業でID作成・削除。"
+        },
+        {
+          "level": 2,
+          "name": "半自動",
+          "description": "HR連携スクリプト。退職イベントのみ自動無効化。"
+        },
+        {
+          "level": 3,
+          "name": "完全自動",
+          "description": "IGA製品のHRコネクタで全ライフサイクルイベントをリアルタイム処理。"
+        },
+        {
+          "level": 4,
+          "name": "AI補助",
+          "description": "ロールマイニング・異常検知でプロビジョニングを最適化。"
+        }
+      ]
+    },
+    {
+      "capability": "アクセス認証・棚卸（Access Certification）",
+      "description": "定期的に管理者・業務責任者がアクセス権の妥当性を確認・承認するプロセス。J-SOXやFISCで必須。",
+      "common_issues": [
+        "年1回のExcel棚卸で形骸化",
+        "承認者が内容を理解せず全承認",
+        "承認されたのに是正アクションが未実施"
+      ]
+    },
+    {
+      "capability": "SOD（職務分離）管理",
+      "description": "不正を防ぐためリスクのある権限の組み合わせを検出・防止。SAPのGRC Access Controlが代表。",
+      "example_violations": [
+        "購買担当者が支払承認も実行",
+        "IT管理者が監査ログを削除可能",
+        "入金処理と出金処理を同一ユーザーが実行"
+      ]
+    },
+    {
+      "capability": "ロールマイニング・RBAC設計",
+      "description": "既存のアクセス権実態を分析し、最適なロール定義を半自動で提案。手作業では数ヶ月かかる作業をAIで短縮。"
+    },
+    {
+      "capability": "リスクベースアクセス制御（RBAC→ABAC移行）",
+      "description": "静的ロールだけでなく、コンテキスト（場所・デバイス・時刻・行動）を考慮した動的アクセス制御へ移行するトレンド。"
+    },
+    {
+      "capability": "サービスアカウント・非人間ID管理",
+      "description": "ITPA・RPA・システム間連携のサービスアカウントのライフサイクル・棚卸管理。人間IDより多い組織も存在。"
+    },
+    {
+      "capability": "監査・レポーティング",
+      "description": "コンプライアンス証跡の自動生成。ISO/FISC/SOX向けレポートをワンクリックで出力。"
+    }
+  ],
+  "product_comparison": [
+    {
+      "product": "SailPoint Identity Security Cloud",
+      "vendor": "SailPoint",
+      "strength": "業界トップシェア。AIロールマイニング・SaaS接続が豊富。SAP・Salesforceコネクタ強い。",
+      "weakness": "価格が高い。日本語UIは対応済みだが日本サポートは海外経由。",
+      "japan_adoption": "メガバンク・大手製造業で採用事例あり。"
+    },
+    {
+      "product": "Saviynt Security Manager",
+      "vendor": "Saviynt",
+      "strength": "SAP・AWS・クラウドに強い。IGA+CPAM（Cloud PAM）統合可能。",
+      "weakness": "SailPointより認知度低い。国内SIパートナーが限られる。",
+      "japan_adoption": "大手製造業（SAP大規模環境）での採用事例"
+    },
+    {
+      "product": "One Identity Manager",
+      "vendor": "One Identity（Quest）",
+      "strength": "オンプレ環境に強い。Active Directory・SAP・Unix連携が成熟。",
+      "weakness": "UIが古め。クラウドSaaS接続はSailPointに劣る。",
+      "japan_adoption": "官公庁・製造業・エネルギーで採用"
+    },
+    {
+      "product": "Microsoft Entra ID Governance",
+      "vendor": "Microsoft",
+      "strength": "Entra ID/Azure環境との深い統合。Entitlement Management・Access Reviewsが標準機能。コスト優位性。",
+      "weakness": "非Microsoft環境への連携はコネクタが限定的。大規模ロールマイニングは別途SaaS要。",
+      "japan_adoption": "Microsoft 365導入企業での採用拡大中"
+    },
+    {
+      "product": "Omada Identity",
+      "vendor": "Omada",
+      "strength": "EUで強い。GDPRコンプライアンス機能充実。クラウドネイティブIGA。",
+      "weakness": "日本市場での認知度・パートナーが少ない。",
+      "japan_adoption": "一部グローバル企業"
+    },
+    {
+      "product": "ISID OpenIAM",
+      "vendor": "電通国際情報サービス（ISID）",
+      "strength": "日本語サポート。ISIDのSI力。国内要件対応。",
+      "weakness": "グローバル製品と比較するとコネクタ数が限られる。",
+      "japan_adoption": "大手日本企業での採用実績多数"
+    }
+  ],
+  "implementation_phases": [
+    {
+      "phase": 1,
+      "name": "現状把握・要件定義",
+      "duration_weeks": "6〜8週",
+      "tasks": [
+        "IDの全棚卸（HR・AD・SAP・各アプリ）",
+        "JMLプロセスのAs-Isフロー整理",
+        "規制要件マッピング（FISC/SOX/PCI）",
+        "ステークホルダーアライメント（CISO・人事・業務部門）"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "IGA製品選定・PoC",
+      "duration_weeks": "8〜12週",
+      "tasks": [
+        "RFP作成・ベンダー評価（SailPoint/One Identity等）",
+        "PoC環境でのAD・HRコネクタ接続確認",
+        "アクセス認証ワークフローの操作性評価",
+        "TCO・ライセンス試算"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "コアシステム実装",
+      "duration_weeks": "12〜20週",
+      "tasks": [
+        "HR連携・JMLプロセス自動化",
+        "Active Directory/主要アプリのプロビジョニング",
+        "アクセス認証（棚卸）機能実装",
+        "SODルール設定（主要リスクのみまず対応）"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "拡張・最適化",
+      "duration_weeks": "継続",
+      "tasks": [
+        "全アプリへのコネクタ拡張",
+        "ロールマイニングによるRBAC最適化",
+        "AI異常検知の有効化",
+        "KPIモニタリング開始"
+      ]
+    }
+  ],
+  "kpis": [
+    {
+      "kpi": "棚卸完了率",
+      "target": "100%",
+      "current_avg_japan": "60〜80%（形骸化問題）"
+    },
+    {
+      "kpi": "孤立ID（オーファンアカウント）数",
+      "target": "0件",
+      "measurement": "四半期棚卸で計測"
+    },
+    {
+      "kpi": "退職者ID無効化時間",
+      "target": "4時間以内（FISCは翌営業日）",
+      "current_avg_japan": "1〜3営業日"
+    },
+    {
+      "kpi": "SOD違反件数",
+      "target": "0件（または例外管理件数）",
+      "measurement": "月次レポートで追跡"
+    },
+    {
+      "kpi": "プロビジョニングリードタイム",
+      "target": "0日（入社日即日）",
+      "current_avg_japan": "3〜5営業日"
+    }
+  ]
+}

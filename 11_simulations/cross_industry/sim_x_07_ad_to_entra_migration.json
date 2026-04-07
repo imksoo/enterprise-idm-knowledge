@@ -1,0 +1,120 @@
+{
+  "metadata": {
+    "id": "sim_x_07",
+    "title": "オンプレADからEntra IDへの移行：ハイブリッド設計の判断",
+    "industry": "cross_industry",
+    "difficulty": "intermediate"
+  },
+  "personas": [
+    {
+      "id": "tanaka_se",
+      "name": "田中（NSSol クラウドSE）",
+      "role": "Entra ID設計担当"
+    },
+    {
+      "id": "director",
+      "name": "部長（サービス業）",
+      "role": "IT戦略部長"
+    },
+    {
+      "id": "win_admin",
+      "name": "担当者",
+      "role": "Windows管理者（AD歴15年）"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：なぜADだけでは不十分か",
+      "setting": "中規模サービス業（社員800名）。全員テレワーク移行の検討段階。",
+      "dialogue": [
+        {
+          "speaker": "部長（サービス業）",
+          "text": "今全員がテレワークに移行しています。でもVPN経由じゃないとADの認証ができなくて、VPNが遅いと苦情が続いています。"
+        },
+        {
+          "speaker": "田中（NSSol）",
+          "text": "ADはオンプレミスを前提に設計されているので、テレワークと相性が悪いんです。VPNでオフィスに引き込まないとKerberosが動かないので必然的にVPNが必要になります。"
+        },
+        {
+          "speaker": "担当者",
+          "text": "Entra IDに全部移行すれば解決しますか？"
+        },
+        {
+          "speaker": "田中（NSSol）",
+          "text": "クラウドのみにすると、今のオンプレサーバー（Windowsファイルサーバー、社内のLinux）にはどうやって認証しますか？EntraはKerberosを直接サポートしていません。"
+        },
+        {
+          "speaker": "部長（サービス業）",
+          "text": "あ、社内に基幹システムがあります。それはオンプレに残ります。"
+        },
+        {
+          "speaker": "田中（NSSol）",
+          "text": "であれば、Entra Hybrid Joinが現実的です。ADを残しつつ、デバイスをEntra IDに登録し、クラウドサービスはEntra IDで認証、オンプレはKerberosで認証という二つを使い分けます。VPNはZero Trust Network Access（ZTNA）に段階的に置き換えられます。"
+        }
+      ],
+      "issues_surfaced": [
+        "ADとEntra IDの役割分担が不明",
+        "オンプレシステムが残る場合の設計",
+        "VPN→ZTNAへの段階移行"
+      ]
+    },
+    {
+      "title": "場面2：Hybrid Join設計のポイント",
+      "setting": "設計詳細セッション。",
+      "dialogue": [
+        {
+          "speaker": "田中（NSSol）",
+          "text": "Hybrid Joinの設計で最初に決めることは、『AD ConnectのSyncスコープ』です。全ADユーザーをEntraに同期するか、特定OUのみにするか。"
+        },
+        {
+          "speaker": "担当者",
+          "text": "サービスアカウントもEntraに同期するとまずいですか？"
+        },
+        {
+          "speaker": "田中（NSSol）",
+          "text": "サービスアカウントを同期すると、EntraのMFAポリシーが適用されてバッチ処理が止まります。必ずフィルタリングしてください。OU分けをするか、AD Connectの除外フィルターを使います。",
+          "subtext": "AD ConnectのSynchronization Rules Editorでサービスアカウントを除外。"
+        },
+        {
+          "speaker": "担当者",
+          "text": "Conditional Accessはどう設定しますか？"
+        },
+        {
+          "speaker": "田中（NSSol）",
+          "text": "まずは『管理者は必ずMFA』から始めましょう。全ユーザーMFAはリスクが高いので段階的に。デバイスコンプライアンス（Intune管理デバイスのみ）を条件にするのも有効です。最初から完璧を目指さず、段階的に強化するのが成功のコツです。"
+        }
+      ],
+      "issues_surfaced": [
+        "AD ConnectでのサービスアカウントSync除外",
+        "Conditional Access設計の段階化",
+        "Intuneとの連携設計"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "テレワーク認証",
+      "current": "VPN必須（Kerberos）",
+      "target": "Entra ID + Hybrid Join（VPNレス化）",
+      "priority": "high"
+    },
+    {
+      "item": "MFA適用",
+      "current": "一部対応（管理者のみ）",
+      "target": "全ユーザーMFA（Conditional Access）",
+      "priority": "high"
+    },
+    {
+      "item": "デバイス管理",
+      "current": "GPO（AD SCCM）のみ",
+      "target": "Intune（MDM）＋Hybrid Join",
+      "priority": "medium"
+    },
+    {
+      "item": "ZTNAへの移行",
+      "current": "VPN（全トラフィック）",
+      "target": "Zscaler ZPA等のZTNA（段階的）",
+      "priority": "medium"
+    }
+  ]
+}

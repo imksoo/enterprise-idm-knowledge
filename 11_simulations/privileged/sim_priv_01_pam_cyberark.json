@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "id": "sim_priv_01",
+    "title": "特権管理の近代化：CyberArk PAM導入の判断プロセス",
+    "industry": "cross_industry",
+    "difficulty": "intermediate"
+  },
+  "personas": [
+    {
+      "id": "suzuki",
+      "name": "鈴木（NSSol PAMスペシャリスト）",
+      "role": "PAM製品提案担当"
+    },
+    {
+      "id": "kimura",
+      "name": "木村CISO",
+      "role": "大手メーカーCISO（元金融機関勤務）"
+    },
+    {
+      "id": "yoshida",
+      "name": "吉田リーダー",
+      "role": "インフラ運用チームリーダー"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：インシデントきっかけの相談",
+      "setting": "製造業の会議室。海外グループ会社でのランサムウェア被害の翌月。",
+      "dialogue": [
+        {
+          "speaker": "木村CISO",
+          "text": "先月、東南アジアの子会社でランサムウェア被害がありました。侵入経路を調査したところ、Windowsのローカルadministratorアカウントが入口でした。"
+        },
+        {
+          "speaker": "鈴木（NSSol）",
+          "text": "ローカルadminのパスワードが各サーバーで共通だったのではないでしょうか？"
+        },
+        {
+          "speaker": "木村CISO",
+          "text": "その通りです。全サーバーで同じパスワードを使い回していて、一台が侵害されると横展開が容易だったようです。"
+        },
+        {
+          "speaker": "鈴木（NSSol）",
+          "text": "これはPAM（特権アクセス管理）が解決できる典型的な問題です。CyberArk DPAMのLocal Account Management機能を使えば、全サーバーのローカルadminパスワードをCyberArkがランダム生成・ローテーションし、使い回しを防げます。",
+          "subtext": "LAPS（Local Administrator Password Solution）の企業版PAM適用。"
+        },
+        {
+          "speaker": "吉田リーダー",
+          "text": "ただ、国内外合わせてサーバーが3,000台あります。全台にCyberArkエージェントを入れるのは大変では？"
+        },
+        {
+          "speaker": "鈴木（NSSol）",
+          "text": "エージェントレスのアプローチも取れます。CyberArkのRotational Account ManagementはWinRM/SSH経由でエージェントレスにパスワードローテーションが可能です。3,000台でも段階的に導入できます。"
+        }
+      ],
+      "issues_surfaced": [
+        "ローカルadminパスワードの使い回し",
+        "エージェントレス導入への要望",
+        "3,000台規模の段階的展開計画"
+      ]
+    },
+    {
+      "title": "場面2：JIT特権アクセスの価値",
+      "setting": "同日午後。サーバーへの日常的な作業フローの確認。",
+      "dialogue": [
+        {
+          "speaker": "鈴木（NSSol）",
+          "text": "現状、サーバーへの特権作業はどのように行っていますか？"
+        },
+        {
+          "speaker": "吉田リーダー",
+          "text": "各担当者がadmin権限のついたWindowsアカウントで直接RDPしています。ログは…特に取っていないです。"
+        },
+        {
+          "speaker": "鈴木（NSSol）",
+          "text": "これが一番のリスクです。常時admin権限の付与は、アカウント盗取時に即座に全権限を渡してしまいます。CyberArk DPAMのJust-In-Time Access（JIT）を使えば、作業が必要な時だけ特権を付与し、作業終了後に自動剥奪できます。"
+        },
+        {
+          "speaker": "木村CISO",
+          "text": "セッション録画機能はありますか？うちのISO27001審査で『特権作業の証跡』を要求されています。"
+        },
+        {
+          "speaker": "鈴木（NSSol）",
+          "text": "はい。CyberArk PSMはRDP/SSHセッションを全録画し、キーストロークログも取得します。録画は検索・再生可能で、特定のコマンドが実行された時刻を素早く特定できます。ISO27001はもちろん、FISC・PCI DSSにも対応します。"
+        },
+        {
+          "speaker": "吉田リーダー",
+          "text": "コストはどれくらいですか？"
+        },
+        {
+          "speaker": "鈴木（NSSol）",
+          "text": "3,000台規模のCyberArk PAMは年間ライセンスで5,000万〜1億円程度になることが多いです。ただ、今回のような被害の損失と比較すると、1回の事案でもROIが出ます。予算が厳しい場合はBeyondTrustやSecureCubeも選択肢です。"
+        }
+      ],
+      "issues_surfaced": [
+        "常時admin権限による最小権限違反",
+        "証跡要件（ISO/FISC）",
+        "コストとROIの説明が必要"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "ローカルadminパスワード管理",
+      "current": "全台共通パスワード",
+      "target": "PAMによる個別ランダム化・自動ローテーション",
+      "priority": "critical"
+    },
+    {
+      "item": "特権作業ログ",
+      "current": "なし",
+      "target": "全セッション録画・キーストロークログ",
+      "priority": "high"
+    },
+    {
+      "item": "JIT特権アクセス",
+      "current": "常時admin権限付与",
+      "target": "申請→承認→一時付与→自動剥奪",
+      "priority": "high"
+    },
+    {
+      "item": "展開範囲",
+      "current": "未管理（3,000台）",
+      "target": "段階的全台展開（Phase1: 高リスク500台）",
+      "priority": "medium"
+    }
+  ]
+}

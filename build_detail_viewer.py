@@ -182,6 +182,18 @@ NAV_GROUPS = [
         ("sec-os-lifecycle","📅 OSライフサイクル"),
         ("sec-frameworks",  "⚖️ フレームワーク"),
     ]),
+    ("IGA・運用", [
+        ("sec-iga",         "🏛️ IGAフレームワーク"),
+        ("sec-jml",         "🔄 JMLプロセス"),
+    ]),
+    ("業種別", [
+        ("sec-industry-finance",  "🏦 金融業"),
+        ("sec-industry-mfg",      "🏭 製造業"),
+        ("sec-industry-energy",   "⚡ エネルギー業"),
+    ]),
+    ("DBセキュリティ", [
+        ("sec-oracle",      "🗄️ Oracle DB認証"),
+    ]),
     ("シナリオ", [
         ("sec-scenarios",   "🎭 シナリオ対話"),
     ]),
@@ -1157,6 +1169,354 @@ def build_scenarios():
     return section_wrap("sec-scenarios", "🎭 シナリオ対話", content)
 
 
+# ── 14. Industry: Finance ──────────────────────────────────────────────────────
+
+def build_industry_finance():
+    d = load("02_industries/identity_finance.json")
+    parts = [f'<p style="color:#475569;margin-bottom:20px">{e(d.get("overview",""))}</p>']
+
+    reg = d.get("regulatory_landscape", {})
+    fws = reg.get("frameworks", [])
+    if fws:
+        parts.append('<h2>📜 規制フレームワーク</h2>')
+        for fw in fws:
+            reqs = fw.get("key_id_requirements", fw.get("key_requirements", []))
+            req_html = "".join(f"<li>{e(r)}</li>" for r in reqs)
+            penalty = fw.get("penalty", fw.get("penalty_non_compliance", ""))
+            parts.append(card(
+                f'<strong>{e(fw.get("name",""))}</strong>'
+                + (f' <span style="color:#64748b;font-size:.82em">{e(fw.get("version",""))}</span>' if fw.get("version") else "")
+                + f'<ul style="margin:6px 0 0;padding-left:18px;font-size:.88em">{req_html}</ul>'
+                + (f'<p style="margin:6px 0 0;font-size:.82em;color:#991b1b">⚠️ 非準拠時: {e(str(penalty))}</p>' if penalty else ""),
+                border_left_color="#8b5cf6"
+            ))
+
+    envs = d.get("typical_it_environments", [])
+    if envs:
+        parts.append('<h2>🏦 業態別IT環境</h2>')
+        for env in envs:
+            chars = "".join(f"<li>{e(c)}</li>" for c in env.get("characteristics", []))
+            chs = "".join(f"<li>{e(c)}</li>" for c in env.get("id_challenges", []))
+            parts.append(card(
+                f'<strong style="font-size:1em">{e(env.get("segment",""))}</strong>'
+                f'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">'
+                f'<div><h4 style="font-size:.82em;color:#475569;margin-bottom:4px">システム構成</h4><ul style="padding-left:16px;font-size:.84em">{chars}</ul></div>'
+                f'<div><h4 style="font-size:.82em;color:#991b1b;margin-bottom:4px">ID管理課題</h4><ul style="padding-left:16px;font-size:.84em;color:#991b1b">{chs}</ul></div>'
+                f'</div>',
+                border_left_color="#3b82f6"
+            ))
+
+    pam = d.get("privileged_access_management", {})
+    if pam:
+        tools = pam.get("common_tools_japan", [])
+        cs = pam.get("case_study", {})
+        parts.append(
+            '<h2>🔑 特権アクセス管理（PAM）</h2>'
+            + '<div style="margin-bottom:12px">'
+            + "".join(badge(t, "purple") for t in tools)
+            + "</div>"
+        )
+        if cs:
+            parts.append(card(
+                f'<strong>事例: {e(cs.get("bank_type",""))}</strong>'
+                f'<p style="margin:5px 0;font-size:.88em"><strong>課題:</strong> {e(cs.get("challenge",""))}</p>'
+                f'<p style="margin:5px 0;font-size:.88em"><strong>対策:</strong> {e(cs.get("solution",""))}</p>'
+                f'<p style="margin:5px 0;font-size:.88em;color:#166534"><strong>効果:</strong> {e(cs.get("result",""))}</p>',
+                border_left_color="#22c55e"
+            ))
+
+    return section_wrap("sec-industry-finance", "🏦 金融業のID管理", "".join(parts))
+
+
+# ── 15. Industry: Manufacturing ───────────────────────────────────────────────
+
+def build_industry_mfg():
+    d = load("02_industries/identity_manufacturing.json")
+    parts = [f'<p style="color:#475569;margin-bottom:20px">{e(d.get("overview",""))}</p>']
+
+    env = d.get("typical_it_ot_environment", {})
+    it_layer = env.get("it_layer", {})
+    ot_layer = env.get("ot_layer", {})
+    conv = env.get("convergence_zone", {})
+    if it_layer or ot_layer:
+        it_html = "".join(f"<li>{e(c)}</li>" for c in it_layer.get("components", []))
+        ot_html = "".join(f"<li>{e(c)}</li>" for c in ot_layer.get("components", []))
+        conv_html = "".join(f"<li>{e(c)}</li>" for c in conv.get("challenges", []))
+        parts.append(
+            '<h2>🏭 IT/OT環境</h2>'
+            + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">'
+            + card(f'<h4>💻 IT層</h4><p style="font-size:.82em;color:#64748b">{e(it_layer.get("description",""))}</p><ul style="padding-left:14px;font-size:.84em">{it_html}</ul><p style="font-size:.82em;color:#64748b;margin-top:6px">{e(it_layer.get("id_management",""))}</p>', border_left_color="#3b82f6")
+            + card(f'<h4>⚙️ OT層</h4><p style="font-size:.82em;color:#64748b">{e(ot_layer.get("description",""))}</p><ul style="padding-left:14px;font-size:.84em">{ot_html}</ul><p style="font-size:.82em;color:#ef4444;margin-top:6px">{e(ot_layer.get("id_management",""))}</p>', border_left_color="#f97316")
+            + card(f'<h4>⚠️ IT/OT境界</h4><ul style="padding-left:14px;font-size:.84em;color:#991b1b">{conv_html}</ul>', border_left_color="#ef4444")
+            + '</div>'
+        )
+
+    sap = d.get("sap_id_management", {})
+    if sap:
+        issues = sap.get("common_issues", [])
+        tools = sap.get("governance_tools", [])
+        iss_rows = "".join(
+            f'<tr><td>{e(i.get("issue",""))}</td><td>{e(i.get("description",""))}</td>'
+            f'<td>{badge(i.get("frequency",""), "orange" if i.get("frequency")=="非常に多い" else "yellow")}</td></tr>'
+            for i in issues
+        )
+        parts.append(
+            '<h2>💼 SAP ID管理</h2>'
+            + f'<p style="margin-bottom:10px">{e(sap.get("overview",""))}</p>'
+            + table(["問題", "説明", "頻度"], [])
+            .replace("</tbody>", iss_rows + "</tbody>")
+            + '<div style="margin:8px 0">' + "".join(badge(t, "blue") for t in tools) + "</div>"
+        )
+
+    sc = d.get("supply_chain_identity", {})
+    if sc:
+        patterns = sc.get("access_patterns", [])
+        p_html = "".join(
+            card(f'<strong>{e(p.get("pattern",""))}</strong><p style="font-size:.88em;margin-top:4px">{e(p.get("description",""))}</p>')
+            for p in patterns
+        )
+        parts.append(f'<h2>🔗 サプライチェーンID管理</h2><p>{e(sc.get("overview",""))}</p>' + grid(p_html, cols=2))
+
+    return section_wrap("sec-industry-mfg", "🏭 製造業のID管理", "".join(parts))
+
+
+# ── 16. Industry: Energy ──────────────────────────────────────────────────────
+
+def build_industry_energy():
+    d = load("02_industries/identity_energy.json")
+    parts = [f'<p style="color:#475569;margin-bottom:20px">{e(d.get("overview",""))}</p>']
+
+    reqs = d.get("regulatory_requirements", [])
+    if reqs:
+        parts.append('<h2>📋 規制要件</h2>')
+        for req in reqs:
+            kr = req.get("key_requirements", [])
+            kr_html = "".join(f"<li>{e(r)}</li>" for r in kr)
+            parts.append(card(
+                f'<strong>{e(req.get("name",""))}</strong>'
+                + (f' <span style="color:#64748b;font-size:.82em">（{e(req.get("issuer",""))}）</span>' if req.get("issuer") else "")
+                + f'<ul style="padding-left:16px;font-size:.85em;margin-top:6px">{kr_html}</ul>',
+                border_left_color="#8b5cf6"
+            ))
+
+    challenges = d.get("unique_challenges", [])
+    if challenges:
+        parts.append('<h2>⚡ 固有の課題</h2>')
+        rows = "".join(
+            f'<tr><td><strong>{e(ch.get("challenge",""))}</strong></td>'
+            f'<td style="font-size:.88em">{e(ch.get("description",""))}</td>'
+            f'<td style="font-size:.88em;color:#166534">{e(ch.get("mitigation",""))}</td></tr>'
+            for ch in challenges
+        )
+        parts.append(table(["課題", "詳細", "対策"], []).replace("</tbody>", rows + "</tbody>"))
+
+    attacks = d.get("attack_case_studies", [])
+    if attacks:
+        parts.append('<h2>🔴 重大インシデント事例</h2>')
+        for atk in attacks:
+            parts.append(card(
+                f'<strong style="color:#dc2626">{e(atk.get("title",""))}</strong>'
+                f'<p style="margin:6px 0;font-size:.88em">{e(atk.get("description",""))}</p>'
+                f'<p style="margin:4px 0;font-size:.85em;color:#1d4ed8">💡 ID教訓: {e(atk.get("id_lesson",""))}</p>',
+                border_left_color="#ef4444"
+            ))
+
+    return section_wrap("sec-industry-energy", "⚡ エネルギー業のID管理", "".join(parts))
+
+
+# ── 17. IGA Framework ─────────────────────────────────────────────────────────
+
+def build_iga():
+    d = load("09_iga/iga_framework.json")
+    parts = [f'<p style="color:#475569;margin-bottom:20px">{e(d.get("overview",""))}</p>']
+
+    comp = d.get("iga_vs_idm_vs_iam", {})
+    if comp.get("comparison"):
+        rows = "".join(
+            f'<tr><td><strong>{e(c.get("term",""))}</strong></td><td>{e(c.get("focus",""))}</td>'
+            f'<td>{e(c.get("scope",""))}</td><td>{badge(c.get("governance",""), "green" if c.get("governance")=="強い" else "yellow" if c.get("governance")=="中程度" else "gray")}</td></tr>'
+            for c in comp["comparison"]
+        )
+        parts.append('<h2>📊 IDM / IAM / IGA の違い</h2>' + table(["用語", "フォーカス", "スコープ", "ガバナンス"], []).replace("</tbody>", rows + "</tbody>"))
+        parts.append(f'<p style="background:#eff6ff;padding:10px 14px;border-radius:7px;margin-bottom:16px;font-size:.9em">{e(comp.get("driver",""))}</p>')
+
+    caps = d.get("core_capabilities", [])
+    if caps:
+        parts.append('<h2>🔧 コア機能</h2>')
+        for cap in caps:
+            levels = cap.get("maturity_levels", [])
+            issues = cap.get("common_issues", [])
+            examples = cap.get("example_violations", [])
+            inner = f'<p style="font-size:.88em;margin-bottom:6px">{e(cap.get("description",""))}</p>'
+            if levels:
+                inner += '<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">'
+                for lv in levels:
+                    color = ["gray","yellow","orange","green","blue"][min(lv.get("level",0), 4)]
+                    inner += f'<div style="flex:1;min-width:120px;background:#f8f9fc;border-radius:5px;padding:7px;font-size:.8em"><strong>Lv{lv.get("level","")}: {e(lv.get("name",""))}</strong><br><span style="color:#64748b">{e(lv.get("description",""))}</span></div>'
+                inner += '</div>'
+            if issues:
+                inner += '<ul style="padding-left:16px;margin-top:6px;font-size:.85em;color:#991b1b">' + "".join(f"<li>{e(i)}</li>" for i in issues) + "</ul>"
+            if examples:
+                inner += '<ul style="padding-left:16px;margin-top:6px;font-size:.85em;color:#b45309">' + "".join(f"<li>{e(x)}</li>" for x in examples) + "</ul>"
+            parts.append(card(f'<strong>{e(cap.get("capability",""))}</strong>' + inner, border_left_color="#3b82f6"))
+
+    prods = d.get("product_comparison", [])
+    if prods:
+        parts.append('<h2>🛒 IGA製品比較</h2>')
+        rows = "".join(
+            f'<tr><td><strong>{e(p.get("product",""))}</strong><br><span style="color:#64748b;font-size:.8em">{e(p.get("vendor",""))}</span></td>'
+            f'<td style="font-size:.85em">{e(p.get("strength",""))}</td>'
+            f'<td style="font-size:.85em;color:#991b1b">{e(p.get("weakness",""))}</td>'
+            f'<td style="font-size:.82em">{e(p.get("japan_adoption",""))}</td></tr>'
+            for p in prods
+        )
+        parts.append(table(["製品名", "強み", "弱み", "日本採用"], []).replace("</tbody>", rows + "</tbody>"))
+
+    kpis = d.get("kpis", [])
+    if kpis:
+        parts.append('<h2>📈 KPI指標</h2>')
+        rows = "".join(
+            f'<tr><td>{e(k.get("kpi",""))}</td><td><strong>{e(str(k.get("target","")))}</strong></td>'
+            f'<td style="color:#d97706">{e(k.get("current_avg_japan",""))}</td></tr>'
+            for k in kpis
+        )
+        parts.append(table(["KPI", "目標値", "現状（日本平均）"], []).replace("</tbody>", rows + "</tbody>"))
+
+    return section_wrap("sec-iga", "🏛️ IGAフレームワーク", "".join(parts))
+
+
+# ── 18. JML Process ───────────────────────────────────────────────────────────
+
+def build_jml():
+    d = load("09_iga/jml_process_design.json")
+    parts = [f'<p style="color:#475569;margin-bottom:20px">{e(d.get("overview",""))}</p>']
+
+    joiner = d.get("joiner_process", {})
+    if joiner:
+        tl = joiner.get("best_practice_timeline", [])
+        tl_html = ""
+        for step in tl:
+            acts = "".join(f"<li>{e(a)}</li>" for a in step.get("actions", []))
+            tl_html += f'<div style="border-left:3px solid #3b82f6;padding:8px 12px;margin-bottom:8px"><strong>{e(step.get("timing",""))}</strong><ul style="padding-left:14px;margin-top:4px;font-size:.85em">{acts}</ul></div>'
+        fails = "".join(f"<li style='color:#991b1b'>{e(f)}</li>" for f in joiner.get("common_failures", []))
+        parts.append(
+            '<h2>➡️ Joiner（入社）</h2>'
+            + f'<p style="background:#f0fdf4;padding:8px 12px;border-radius:6px;font-size:.88em">{e(joiner.get("trigger",""))}</p>'
+            + tl_html
+            + f'<ul style="padding-left:16px;font-size:.85em;margin-bottom:14px">{fails}</ul>'
+        )
+
+    mover = d.get("mover_process", {})
+    if mover:
+        principle = mover.get("key_principle", "")
+        scenarios = mover.get("scenarios", [])
+        sc_rows = "".join(
+            f'<tr><td>{e(sc.get("scenario",""))}</td>'
+            f'<td style="font-size:.84em">{e("; ".join(sc.get("actions",[])))}</td>'
+            f'<td style="font-size:.84em;color:#b45309">{e(sc.get("risk",""))}</td></tr>'
+            for sc in scenarios
+        )
+        parts.append(
+            '<h2>🔄 Mover（異動）</h2>'
+            + f'<p style="background:#fffbeb;padding:8px 12px;border-radius:6px;font-size:.9em;margin-bottom:10px">{e(principle)}</p>'
+            + table(["シナリオ", "対応アクション", "リスク"], []).replace("</tbody>", sc_rows + "</tbody>")
+        )
+
+    leaver = d.get("leaver_process", {})
+    if leaver:
+        tl_data = leaver.get("recommended_timeline", {})
+        fails = leaver.get("common_failures", [])
+        fail_rows = "".join(
+            f'<tr><td>{e(f.get("failure",""))}</td>'
+            f'<td>{badge(f.get("prevalence",""), "red" if f.get("prevalence")=="非常に多い" else "orange")}</td>'
+            f'<td style="font-size:.84em">{e(f.get("mitigation",""))}</td></tr>'
+            for f in fails
+        )
+        parts.append(
+            '<h2>⬅️ Leaver（退職）</h2>'
+            + f'<p style="background:#fef2f2;padding:8px 12px;border-radius:6px;margin-bottom:10px;font-size:.9em"><strong>⚠️ 最重要プロセス：</strong> {e(leaver.get("criticality",""))}</p>'
+            + '<h4>よくある失敗パターン</h4>'
+            + table(["失敗", "頻度", "対策"], []).replace("</tbody>", fail_rows + "</tbody>")
+        )
+
+    hr = d.get("hr_it_integration", {})
+    if hr:
+        methods = hr.get("integration_methods", [])
+        hris = hr.get("common_hris_japan", [])
+        m_rows = "".join(
+            f'<tr><td>{e(m.get("method",""))}</td><td style="color:#166534;font-size:.85em">{e(m.get("pros",""))}</td>'
+            f'<td style="color:#991b1b;font-size:.85em">{e(m.get("cons",""))}</td>'
+            f'<td>{badge(m.get("maturity",""), "green" if m.get("maturity")=="高" else "yellow" if m.get("maturity")=="中" else "gray")}</td></tr>'
+            for m in methods
+        )
+        parts.append(
+            '<h2>🔗 HR・IT連携</h2>'
+            + f'<p style="margin-bottom:8px">{e(hr.get("overview",""))}</p>'
+            + '<div style="margin-bottom:8px">' + "".join(badge(h, "teal") for h in hris) + "</div>"
+            + table(["連携方式", "メリット", "デメリット", "成熟度"], []).replace("</tbody>", m_rows + "</tbody>")
+        )
+
+    return section_wrap("sec-jml", "🔄 JMLプロセス設計", "".join(parts))
+
+
+# ── 19. Oracle Auth ───────────────────────────────────────────────────────────
+
+def build_oracle():
+    d = load("04_server_auth/oracle_database_auth.json")
+    parts = [f'<p style="color:#475569;margin-bottom:20px">{e(d.get("overview",""))}</p>']
+
+    id_types = d.get("oracle_id_types", [])
+    if id_types:
+        risk_color_map = {"高": "orange", "極高": "red", "低": "green", "低〜中": "yellow", "中": "yellow"}
+        rows = "".join(
+            f'<tr><td><strong>{e(t.get("type",""))}</strong></td>'
+            f'<td style="font-size:.85em">{e(t.get("description",""))}</td>'
+            f'<td>{badge(t.get("risk",""), risk_color_map.get(t.get("risk",""), "gray"))}</td></tr>'
+            for t in id_types
+        )
+        parts.append('<h2>🔐 Oracle DBのIDタイプ</h2>' + table(["IDタイプ", "説明", "リスク"], []).replace("</tbody>", rows + "</tbody>"))
+
+    pam = d.get("privileged_account_management", {})
+    if pam:
+        sys_sec = pam.get("sys_and_system", {})
+        app_sec = pam.get("application_schemas", {})
+        if sys_sec or app_sec:
+            parts.append('<h2>🛡️ 特権アカウント管理</h2>')
+        if sys_sec:
+            bps = "".join(f"<li>{e(bp)}</li>" for bp in sys_sec.get("best_practices", []))
+            parts.append(card(f'<strong>SYS / SYSTEM アカウント</strong><p style="font-size:.88em;margin:6px 0">{e(sys_sec.get("description",""))}</p><ul style="padding-left:14px;font-size:.85em">{bps}</ul>', border_left_color="#ef4444"))
+        if app_sec:
+            bps = "".join(f"<li>{e(bp)}</li>" for bp in app_sec.get("best_practices", []))
+            parts.append(card(f'<strong>アプリケーションスキーマ</strong><p style="font-size:.88em;margin:6px 0">{e(app_sec.get("description",""))}</p><ul style="padding-left:14px;font-size:.85em">{bps}</ul>', border_left_color="#f97316"))
+
+    audit = d.get("auditing", {})
+    if audit:
+        ua = audit.get("unified_auditing", {})
+        dam = audit.get("database_activity_monitoring", {})
+        siem = audit.get("siem_integration", {})
+        parts.append('<h2>📋 監査・ログ管理</h2>')
+        for title, sec in [("Unified Auditing", ua), ("Database Activity Monitoring (DAM)", dam), ("SIEM連携", siem)]:
+            if sec:
+                desc = sec.get("description", "")
+                storage = sec.get("storage", "")
+                parts.append(card(
+                    f'<strong>{e(title)}</strong><p style="font-size:.88em;margin:5px 0">{e(desc)}</p>'
+                    + (f'<p style="font-size:.82em;color:#64748b">格納先: {e(storage)}</p>' if storage else ""),
+                    border_left_color="#3b82f6"
+                ))
+
+    ja = d.get("japan_adoption", {})
+    if ja:
+        users = ja.get("typical_users", [])
+        parts.append('<h2>🇯🇵 日本市場での採用</h2>')
+        parts.append(card(
+            f'<p style="margin-bottom:8px">{e(ja.get("overview",""))}</p>'
+            + '<ul style="padding-left:16px">' + "".join(f"<li>{e(u)}</li>" for u in users) + "</ul>"
+        ))
+
+    return section_wrap("sec-oracle", "🗄️ Oracle DB認証", "".join(parts))
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1176,6 +1536,12 @@ def main():
         build_ldap(),
         build_os_lifecycle(),
         build_frameworks(),
+        build_iga(),
+        build_jml(),
+        build_industry_finance(),
+        build_industry_mfg(),
+        build_industry_energy(),
+        build_oracle(),
         build_scenarios(),
     ]
     print("All sections built.")

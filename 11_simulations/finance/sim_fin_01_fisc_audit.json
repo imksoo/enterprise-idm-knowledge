@@ -1,0 +1,133 @@
+{
+  "metadata": {
+    "id": "sim_fin_01",
+    "title": "金融機関FISC監査：ID棚卸での実態と対策",
+    "industry": "finance",
+    "difficulty": "intermediate"
+  },
+  "personas": [
+    {
+      "id": "yamada",
+      "name": "山田（NSSol上級SE）",
+      "role": "IGA提案担当"
+    },
+    {
+      "id": "tanaka",
+      "name": "田中課長",
+      "role": "対象行IT統括課長（地銀勤務歴20年）"
+    },
+    {
+      "id": "saito",
+      "name": "斉藤主任",
+      "role": "IT担当（Excelで棚卸管理）"
+    }
+  ],
+  "scenes": [
+    {
+      "title": "場面1：棚卸の実態確認",
+      "setting": "地方銀行IT部門の会議室。FISC検査の指摘を受けた翌週。",
+      "dialogue": [
+        {
+          "speaker": "山田（NSSol）",
+          "text": "田中課長、今年のFISC検査での指摘内容について教えていただけますか？"
+        },
+        {
+          "speaker": "田中課長",
+          "text": "はい…恥ずかしながら、退職者のIDが3名分残っていたと指摘を受けまして。"
+        },
+        {
+          "speaker": "山田（NSSol）",
+          "text": "退職後どれくらいで発覚したのでしょうか？"
+        },
+        {
+          "speaker": "斉藤主任",
+          "text": "半年くらいです。年に一度の棚卸Excelに名前が載っていて、初めて気づきました。",
+          "subtext": "退職者リストとシステムIDのExcel突合が主な手法。半期に1回。"
+        },
+        {
+          "speaker": "山田（NSSol）",
+          "text": "つまり、HR（人事）システムからの退職通知とIT部門への連絡に時間差があった、と。"
+        },
+        {
+          "speaker": "田中課長",
+          "text": "そうなんです。人事部から『退職しました』という連絡が来るのが月末まとめて、しかも書面で…。最近は在宅勤務でFAXも遅れがちで。"
+        },
+        {
+          "speaker": "山田（NSSol）",
+          "text": "典型的な課題ですね。FISCは翌営業日以内の無効化を求めていますが、月末バッチでは構造的に達成困難です。HRISとのリアルタイム連携が必要です。"
+        }
+      ],
+      "issues_surfaced": [
+        "HR→ITの退職通知が月次バッチ（書面）",
+        "棚卸が年1回のExcel突合",
+        "システムが多数（AD・銀行コアシステム・勘定系）で個別対応"
+      ]
+    },
+    {
+      "title": "場面2：自動化への道",
+      "setting": "同日午後、システム構成図を広げながら。",
+      "dialogue": [
+        {
+          "speaker": "山田（NSSol）",
+          "text": "現在どんなシステムのIDを管理されていますか？"
+        },
+        {
+          "speaker": "斉藤主任",
+          "text": "えーと、Active Directory、銀行勘定系（NTTデータのBankVision）、インターネットバンキング基盤、あとSalesforceですね。"
+        },
+        {
+          "speaker": "山田（NSSol）",
+          "text": "勘定系はAPIを持っていますか？"
+        },
+        {
+          "speaker": "斉藤主任",
+          "text": "BankVisionは…ないと思います。CSVインポートのみです。"
+        },
+        {
+          "speaker": "山田（NSSol）",
+          "text": "わかりました。その場合でも、IGA（Identity Governance）製品がCSVコネクタでBankVisionに連携し、ADの無効化イベントをトリガーに自動でBankVisionのIDも無効化できます。",
+          "subtext": "SecureCube/One Identity等のCSVファイル連携コネクタが有効。"
+        },
+        {
+          "speaker": "田中課長",
+          "text": "それ、どれくらいのコストと工期になりますか？"
+        },
+        {
+          "speaker": "山田（NSSol）",
+          "text": "地銀規模であれば、SecureCubeまたはOne Identity Managerでシステム5〜8本の連携、6ヶ月〜1年、初期投資2000万〜5000万円が目安です。FISC対応効果でROIは明確に出ます。"
+        }
+      ],
+      "issues_surfaced": [
+        "勘定系パッケージのAPI非対応（CSVのみ）",
+        "コスト・工期の具体化が重要",
+        "ROI根拠：FISC指摘コスト・監査工数削減"
+      ]
+    }
+  ],
+  "gap_analysis": [
+    {
+      "item": "退職者ID無効化",
+      "current": "月次手動（翌月末まで）",
+      "target": "当日自動（退職日4時間以内）",
+      "priority": "critical"
+    },
+    {
+      "item": "棚卸頻度",
+      "current": "年1回Excelで突合",
+      "target": "月次自動レポート＋四半期承認",
+      "priority": "high"
+    },
+    {
+      "item": "HRとITの連携",
+      "current": "書面FAX（月次）",
+      "target": "HR API/SCIM連携（リアルタイム）",
+      "priority": "high"
+    },
+    {
+      "item": "システムカバレッジ",
+      "current": "AD・勘定系（手動）",
+      "target": "全8システム自動化",
+      "priority": "medium"
+    }
+  ]
+}
