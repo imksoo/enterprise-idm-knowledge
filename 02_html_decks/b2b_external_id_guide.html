@@ -2,110 +2,786 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>B2B取引先ID管理ガイド</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B2B取引先・外部パートナーID管理ガイド</title>
 <style>
-:root{--p:#1a3a5c;--a:#2196f3;--bg:#f5f9ff;--card:#fff}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
-header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
-header h1{font-size:1.8rem;margin-bottom:.3rem}
-.badge{display:inline-block;background:var(--a);color:#fff;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
-.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
-section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
-.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
-.sec-b{padding:1.5rem}
-.box{background:#e3f2fd;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
-.box.warn{background:#fff8e1;border-color:#ffc107}
-.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
-table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
-th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
-td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
-tr:nth-child(even) td{background:var(--bg)}
-footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.wbs-l1{font-weight:700;color:#1e3a5f;background:#f0f4ff !important}
+.wbs-l2{padding-left:24px !important;color:#334155}
+.wbs-l3{padding-left:42px !important;color:#475569;font-size:.8rem}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+.checklist{list-style:none;padding:0;margin:10px 0}
+.checklist li{padding:5px 0 5px 24px;position:relative;border-bottom:1px solid #f1f5f9;font-size:.85rem}
+.checklist li::before{content:'☐';position:absolute;left:2px;color:#3b82f6;font-size:1rem}
+.checklist li.done::before{content:'☑';color:#16a34a}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.risk-matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.risk-item{background:#fff;border-radius:6px;border-left:4px solid #dc2626;padding:10px 12px;font-size:.83rem}
+.risk-item.med{border-left-color:#eab308}
+.risk-item.low{border-left-color:#16a34a}
+.risk-item .risk-title{font-weight:700;color:#1e293b;margin-bottom:4px}
+/* フロー図（CSSボックス） */
+.flow-wrap{overflow-x:auto;margin:16px 0}
+.flow-row{display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px}
+.flow-box{background:#2563eb;color:#fff;border-radius:6px;padding:10px 14px;min-width:100px;text-align:center;font-size:.78rem;font-weight:600;flex-shrink:0}
+.flow-box.green{background:#16a34a}
+.flow-box.orange{background:#ea580c}
+.flow-box.purple{background:#7c3aed}
+.flow-box.slate{background:#475569}
+.flow-box.red{background:#dc2626}
+.flow-arrow{color:#64748b;font-size:1.2rem;padding:0 4px;flex-shrink:0}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.kpi-card{background:#fff;border-radius:8px;border-top:4px solid #3b82f6;padding:12px;text-align:center}
+.kpi-card .kpi-val{font-size:1.4rem;font-weight:700;color:#1e3a5f}
+.kpi-card .kpi-label{font-size:.74rem;color:#64748b;margin-top:4px}
+.kpi-card.danger{border-top-color:#dc2626}
+.kpi-card.good{border-top-color:#16a34a}
+.kpi-card.warn{border-top-color:#eab308}
+.compare-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.82rem}
+.compare-table th{background:#1e3a5f;color:#fff;padding:8px 10px}
+.compare-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.compare-table tr:nth-child(even) td{background:#f8fafc}
+.compare-table .check{color:#16a34a;font-weight:700}
+.compare-table .cross{color:#dc2626;font-weight:700}
+.compare-table .partial{color:#eab308;font-weight:700}
+.roadmap-row{display:flex;gap:0;margin:14px 0}
+.roadmap-phase{flex:1;padding:14px;border-right:3px solid #fff}
+.roadmap-phase:nth-child(1){background:#dbeafe}
+.roadmap-phase:nth-child(2){background:#bbf7d0}
+.roadmap-phase:nth-child(3){background:#fef9c3}
+.roadmap-phase h4{font-size:.85rem;color:#1e3a5f;margin-bottom:8px}
+.roadmap-phase ul{padding-left:14px;font-size:.78rem;color:#334155}
+.roadmap-phase li{margin-bottom:4px}
+.cost-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.82rem}
+.cost-table th{background:#334155;color:#fff;padding:8px 10px}
+.cost-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.cost-table tr:nth-child(even) td{background:#f8fafc}
+.user-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.user-type{background:#fff;border-radius:8px;border-top:4px solid #3b82f6;padding:12px}
+.user-type.orange{border-top-color:#ea580c}
+.user-type.purple{border-top-color:#7c3aed}
+.user-type.green{border-top-color:#16a34a}
+.user-type.red{border-top-color:#dc2626}
+.user-type.slate{border-top-color:#475569}
+.user-type h4{font-size:.83rem;margin-bottom:6px;color:#1e3a5f}
+.user-type p{font-size:.78rem;color:#475569;margin:0}
+.compliance-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.comp-card{background:#fff;border-radius:8px;padding:14px;border-left:4px solid #7c3aed}
+.comp-card.green{border-left-color:#16a34a}
+.comp-card h4{font-size:.85rem;color:#1e3a5f;margin-bottom:8px}
+.comp-card ul{padding-left:16px;font-size:.8rem;color:#475569}
+.comp-card li{margin-bottom:4px}
+@media(max-width:900px){#toc{display:none}main{margin-left:0}}
 </style>
 </head>
 <body>
-<header>
-  <div class="badge">B2B取引先・パートナー向け</div>
-  <h1>🏭 B2B取引先ID管理ガイド</h1>
-  <p>仕入先・販売店・EDI取引先・業務パートナーのID管理設計</p>
-</header>
-<div class="container">
 
-<section>
-  <div class="sec-h">💡 B2Bとは何が違うのか（社内IDとの比較）</div>
-  <div class="sec-b">
-    <table>
-      <tr><th>項目</th><th>社内ユーザーID</th><th>B2B取引先ID</th></tr>
-      <tr><td>管理主体</td><td>自社HR + IT</td><td>自社IT + 相手企業の担当者</td></tr>
-      <tr><td>ライフサイクル</td><td>入社〜退職で明確</td><td>取引開始〜終了（曖昧になりがち）</td></tr>
-      <tr><td>ID数規模</td><td>数百〜数千</td><td>数千〜数十万（取引先多数）</td></tr>
-      <tr><td>MFA対応</td><td>会社支給デバイスで管理</td><td>相手企業のデバイス依存</td></tr>
-      <tr><td>認証方式</td><td>SSO + MFA</td><td>招待フロー / フェデレーション / セルフサービス</td></tr>
-      <tr><td>連絡チャネル</td><td>社内</td><td>メール依存（返信遅延・誤配信リスク）</td></tr>
-    </table>
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#overview">🌐 外部IDとは何か</a>
+  <a href="#problems">⚠️ 外部ID管理の3大問題</a>
+  <a href="#tech">🛠️ 技術的アプローチ比較</a>
+  <a class="toc-sub" href="#entra-ext">Entra External ID</a>
+  <a class="toc-sub" href="#okta-ciam">Okta Customer Identity</a>
+  <a class="toc-sub" href="#ping">Ping Identity</a>
+  <a class="toc-sub" href="#cognito">AWS Cognito</a>
+  <a href="#edi">🔌 EDI・API認証の近代化</a>
+  <a class="toc-sub" href="#edi-flow">EDI→OAuth移行パターン</a>
+  <a class="toc-sub" href="#mtls">mTLS証明書管理</a>
+  <a href="#security">🔒 セキュリティ要件</a>
+  <a href="#compliance">📜 規制対応</a>
+  <a href="#roadmap">📅 実装ロードマップ</a>
+  <a href="#cost">💰 費用感と規模別推奨</a>
+</nav>
+
+<main>
+<h1>B2B取引先・外部パートナーID管理ガイド</h1>
+<p class="subtitle">EDI連携・API認証含む外部アイデンティティ管理 — 情報システム部門・CISO向け実践ガイド</p>
+
+<!-- ===== 外部IDとは ===== -->
+<section id="overview">
+<h2>🌐 外部IDとは何か — 「外部ユーザー」の全類型</h2>
+
+<div class="lead">
+外部IDとは、<strong>自社の従業員ではないが、自社のシステム・データ・サービスにアクセスする必要がある人物やシステム</strong>のIDです。
+B2B取引・委託業務・規制対応・M&Aなど様々な文脈で「外部ユーザー」が発生しますが、多くの企業では従業員IDと同じ管理体制が適用されていなかったり、まったく管理されていないケースが見られます。
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi-card danger">
+    <div class="kpi-val">60%超</div>
+    <div class="kpi-label">データ侵害に外部アクセスが関与（Verizon DBIR 2023）</div>
   </div>
+  <div class="kpi-card warn">
+    <div class="kpi-val">平均3.4倍</div>
+    <div class="kpi-label">取引先数に対してゲストIDが存在する割合（棚卸し調査事例）</div>
+  </div>
+  <div class="kpi-card warn">
+    <div class="kpi-val">47%</div>
+    <div class="kpi-label">EDIシステムで5年以上更新されていない認証情報が存在（国内調査）</div>
+  </div>
+  <div class="kpi-card good">
+    <div class="kpi-val">95%削減</div>
+    <div class="kpi-label">適切な外部ID管理導入後のゴーストアカウント削減率</div>
+  </div>
+</div>
+
+<h3>外部ユーザーの6類型</h3>
+<div class="user-type-grid">
+  <div class="user-type">
+    <h4>🏢 取引先担当者</h4>
+    <p>仕入先・販売先・物流会社の担当者。受発注システム・EDI・サプライヤーポータルへのアクセスが必要。担当者が変わるたびにID更新が必要。</p>
+  </div>
+  <div class="user-type orange">
+    <h4>🔧 SIer・保守ベンダー</h4>
+    <p>システム構築・保守委託先の技術者。本番環境へのリモートアクセスが必要。プロジェクト終了後の即時無効化が最重要。特権アクセス管理（PAM）と連動すべき。</p>
+  </div>
+  <div class="user-type purple">
+    <h4>📋 監査法人・会計士</h4>
+    <p>内部監査・外部監査・会計監査の担当者。財務データへの読み取りアクセス。監査期間中のみJITアクセスで付与し、終了後は即時削除。</p>
+  </div>
+  <div class="user-type green">
+    <h4>🏛️ 規制当局・検査官</h4>
+    <p>金融庁・監督官庁の検査担当者。コンプライアンス証跡の提出用アクセス。強固な本人確認（eKYC）と全操作ログが必須。</p>
+  </div>
+  <div class="user-type red">
+    <h4>🤝 M&A相手先・JV</h4>
+    <p>買収企業・合弁会社・業務提携先。統合プロジェクト期間中の限定アクセス。将来的に内部ユーザーへ移行するケースも多い。</p>
+  </div>
+  <div class="user-type slate">
+    <h4>🤖 システム間連携（API/EDI）</h4>
+    <p>人ではなくシステムのID。EDIバイナリ接続・REST API・バッチファイル転送など。サービスアカウント・クライアント証明書・OAuth2クライアント資格情報フロー。</p>
+  </div>
+</div>
 </section>
 
-<section>
-  <div class="sec-h">🏗️ B2B認証パターン3選</div>
-  <div class="sec-b">
-    <div class="box">
-      <h3>パターンA: 相手企業のIdPとフェデレーション（推奨: 大手取引先）</h3>
-      <p>相手企業がEntra ID / Okta / 独自SAML IdPを持っている場合、自社システムとフェデレーション（信頼関係）を設定します。相手企業の認証（MFA含む）をそのまま利用できます。メンテナンスは最小。</p>
-      <p><strong>適用例</strong>：大手スーパー→食品メーカー（大手の場合）、製造業→大手部品メーカー</p>
-    </div>
-    <div class="box">
-      <h3>パターンB: 自社がIdPを提供（推奨: 中小取引先）</h3>
-      <p>自社がEntra External ID（旧Azure AD B2B）などでゲストIDを発行。招待メールで取引先担当者が登録し、自社IdPのMFAを使用します。取引先はIDを持つだけで構いません。</p>
-      <p><strong>適用例</strong>：小売業→中小取引先（数百社）、建設業→協力会社</p>
-    </div>
-    <div class="box">
-      <h3>パターンC: 取引先専用ポータル（大量低頻度アクセス向け）</h3>
-      <p>EDIポータル・受発注システムに専用の軽量認証を提供。取引先コード+ワンタイムコードや、取引先代表者メールで認証します。ITリテラシーが低い中小取引先向け。</p>
-      <p><strong>適用例</strong>：大手スーパーの食品取引先（数千社・中小零細含む）</p>
-    </div>
+<!-- ===== 3大問題 ===== -->
+<section id="problems">
+<h2>⚠️ 外部ID管理の3大問題</h2>
+
+<h3>問題1: ゲストアカウント野放し（ゴーストID問題）</h3>
+
+<div class="danger">
+<strong>典型的シナリオ:</strong> A社との業務提携時にEntra B2Bでゲストアカウントを発行。2年後に提携終了。
+しかし担当者の退職・引き継ぎ漏れでA社担当者のゲストアカウントが残存し続ける。
+退職後もA社の元担当者がTeamsの共有ファイルにアクセス可能な状態が継続。
+このようなゴーストIDはAzure ADテナントに数十〜数百件存在するケースが日本企業でも多数確認されている。
+</div>
+
+<p>Microsoft Entraでは <code>signInActivity</code> を確認し、90日間サインインがないゲストアカウントを抽出することができます。
+定期的な棚卸しと、招待元の責任者（スポンサー）によるレビュー承認ワークフローを整備することが対策の基本です。</p>
+
+<h3>問題2: EDI専用IDの長期放置</h3>
+
+<p>EDI（Electronic Data Interchange）システムとの接続に使われる専用ID・パスワード・証明書は、
+一度設定すると「動いているから触らない」という方針のまま数年〜十数年更新されないケースがあります。
+2024年の国内製造業のセキュリティ事故では、10年間更新されていないEDI接続パスワードが侵害され、
+取引先の受注データが外部流出した事例が報告されています。</p>
+
+<div class="risk-matrix">
+  <div class="risk-item">
+    <div class="risk-title">EDI接続パスワードの長期未更新</div>
+    <div>固定パスワードが辞書攻撃・ブルートフォースにさらされ続ける。EDIシステムのパスワード変更手順が文書化されていないため更新を避けがち。</div>
   </div>
+  <div class="risk-item">
+    <div class="risk-title">AS2/SFTP接続の鍵管理不在</div>
+    <div>AS2証明書の有効期限切れが業務停止につながる事例多数。鍵・証明書の台帳管理と期限通知が必要。</div>
+  </div>
+  <div class="risk-item med">
+    <div class="risk-title">複数取引先に同一鍵を使い回し</div>
+    <div>「運用上の都合」で同一証明書を複数取引先に配布したケース。1社の侵害で全接続が危険にさらされる。</div>
+  </div>
+  <div class="risk-item med">
+    <div class="risk-title">取引先担当者の退職後も接続継続</div>
+    <div>取引先のシステム担当者が退職した後も、その担当者のIDで接続が継続されていた事例。</div>
+  </div>
+</div>
+
+<h3>問題3: 退職後も残るパートナー接続</h3>
+
+<p>SIer・保守ベンダーの担当者がプロジェクトを離任した後も、VPN接続・踏み台サーバーへのアクセス権が残存するケースは非常に多いです。
+特に長期保守契約では「念のため」という理由でアクセスを残す慣行があります。
+これは内部不正・元委託先による不正アクセスの主要リスクとなります。</p>
+
+<div class="good">
+<strong>✅ 対策の基本方針:</strong> 外部ユーザーのIDにはすべて「スポンサー（社内の連絡責任者）」を設定し、
+スポンサーが四半期ごとにレビューし続けている限りのみアクセスを維持する仕組みを構築します。
+スポンサーが退職した場合は外部IDを自動停止する連動が理想的です。
+</div>
 </section>
 
-<section>
-  <div class="sec-h">📦 推奨製品比較（B2B IdP）</div>
-  <div class="sec-b">
-    <table>
-      <tr><th>製品</th><th>特徴</th><th>向いている規模</th><th>価格感</th></tr>
-      <tr><td>Entra External ID (Microsoft)</td><td>M365環境と統合・招待フロー標準</td><td>中〜大規模</td><td>MAU課金（安価）</td></tr>
-      <tr><td>Okta Customer Identity</td><td>B2B/B2C両対応・API充実</td><td>大規模</td><td>中〜高</td></tr>
-      <tr><td>Auth0 (by Okta)</td><td>開発者フレンドリー・カスタマイズ性高</td><td>中規模〜大規模</td><td>MAU課金</td></tr>
-      <tr><td>AWS Cognito</td><td>AWS環境に統合・低コスト</td><td>中規模</td><td>低（MAU課金）</td></tr>
-      <tr><td>独自開発（レガシー）</td><td>既存EDIシステム内蔵認証</td><td>既存維持のみ</td><td>維持コスト大</td></tr>
-    </table>
-  </div>
+<!-- ===== 技術比較 ===== -->
+<section id="tech">
+<h2>🛠️ 技術的アプローチ比較</h2>
+
+<div id="entra-ext">
+<div class="phase-header">
+  <h2>Microsoft Entra External ID（旧 Azure AD B2B / B2C）</h2>
+  <div class="phase-meta">M365・Azure環境に最も自然に統合される外部ID管理プラットフォーム</div>
+</div>
+
+<div class="two-col">
+<div class="card">
+  <h4>🎯 用途・強み</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>Microsoft 365・SharePoint・Teamsへのゲストアクセス（B2B）</li>
+    <li>外部ユーザーが自社IDPでサインイン（Google・Facebook・SAML統合）</li>
+    <li>条件付きアクセスポリシーが外部ユーザーにも適用可能</li>
+    <li>Entra ID Governanceとの連携でスポンサーレビュー自動化</li>
+    <li>クロステナントアクセス設定による信頼するテナントの制御</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>📊 仕様・価格</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>B2B基本機能: M365ライセンスに含まれる（無料）</li>
+    <li>External ID（旧B2C）: MAU課金 月間50,000MAUまで無料</li>
+    <li>50,000MAU超: ¥54/1,000MAU（認証）</li>
+    <li>MFA含む高度機能: ¥54〜¥108/1,000MAU</li>
+    <li>日本語UI: ◎ フル対応</li>
+  </ul>
+</div>
+</div>
+
+<h4>Entra B2B 招待フロー（CSSフロー図）</h4>
+<div class="flow-wrap">
+<div style="display:flex;align-items:center;gap:4px;min-width:700px">
+  <div class="flow-box" style="background:#1e3a5f;min-width:110px">社内スポンサー<br>招待送信</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="min-width:120px">外部ユーザーへ<br>招待メール</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="background:#16a34a;min-width:130px">外部IdPでサインイン<br>（Microsoft/Google等）</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="background:#7c3aed;min-width:120px">Entraゲスト<br>オブジェクト作成</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="background:#475569;min-width:120px">条件付きアクセス<br>ポリシー適用</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box green" style="min-width:110px">リソースへの<br>アクセス許可</div>
+</div>
+</div>
+</div>
+
+<div id="okta-ciam">
+<h3>Okta Customer Identity（CIAM）</h3>
+<div class="two-col">
+<div class="card">
+  <h4>🎯 用途・強み</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>マルチテナントSaaSやポータルサイトの顧客・パートナーID</li>
+    <li>Social Login（Google・LINE・Yahoo! JAPAN等）統合</li>
+    <li>ブランディングカスタマイズ可能なログイン画面</li>
+    <li>APIゲートウェイとの統合でB2Bシステム間認証</li>
+    <li>Okta Workforce + CIAMの統合（内部・外部ID統合管理）</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>📊 仕様・価格</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>Workforce Identity: 別途見積もり（ユーザー数課金）</li>
+    <li>Customer Identity: MAU課金ベース</li>
+    <li>無料枠: Developer Editionあり（本番は有料）</li>
+    <li>日本オフィスあり・日本語サポート対応</li>
+    <li>日本語UI: △ 一部英語UI</li>
+  </ul>
+</div>
+</div>
+</div>
+
+<div id="ping">
+<h3>Ping Identity PingOne for Customers</h3>
+<div class="two-col">
+<div class="card">
+  <h4>🎯 用途・強み</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>大規模金融・保険・通信でのCIAM実績</li>
+    <li>PingFederate（フェデレーション）との統合で既存SAML環境と共存</li>
+    <li>複雑なカスタムワークフローや規制対応に強い</li>
+    <li>PingDirectory（LDAP）との連携で大規模ディレクトリ管理</li>
+    <li>ハイブリッドクラウド・オンプレミス対応</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>📊 仕様・価格</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>エンタープライズ向け個別見積もり</li>
+    <li>初期費用: 1,000万円〜が多い</li>
+    <li>金融・公共・通信での日本実績あり</li>
+    <li>日本語UI: △ パートナー経由でのローカライズ</li>
+  </ul>
+</div>
+</div>
+</div>
+
+<div id="cognito">
+<h3>AWS Cognito</h3>
+<div class="two-col">
+<div class="card">
+  <h4>🎯 用途・強み</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>AWSベースのWebアプリ・モバイルアプリのユーザー認証</li>
+    <li>User Pools（認証）+ Identity Pools（認可）の二層構造</li>
+    <li>Lambda Triggerで認証フローをカスタマイズ可能</li>
+    <li>API Gatewayとの統合でAPIアクセス制御</li>
+    <li>開発者フレンドリー・AWS環境と自然に統合</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>📊 仕様・価格</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>無料枠: 月50,000 MAUまで無料（User Pools）</li>
+    <li>50,001〜以降: ¥0.0055〜/MAU（スケールダウン）</li>
+    <li>高機能（SAML/OIDC統合）: 別途料金</li>
+    <li>日本語UI: △ AWSコンソールは日本語対応</li>
+  </ul>
+</div>
+</div>
+</div>
+
+<h3>製品選択比較表</h3>
+<table class="compare-table">
+<tr>
+  <th>比較項目</th>
+  <th>Entra External ID</th>
+  <th>Okta CIAM</th>
+  <th>Ping Identity</th>
+  <th>AWS Cognito</th>
+</tr>
+<tr><td style="font-weight:700">オンプレAD連携</td><td class="check">◎</td><td class="partial">△</td><td class="check">◎</td><td class="cross">✕</td></tr>
+<tr><td style="font-weight:700">B2Bゲスト管理</td><td class="check">◎</td><td class="partial">△</td><td class="partial">△</td><td class="cross">✕</td></tr>
+<tr><td style="font-weight:700">カスタマーID（B2C）</td><td class="partial">△（External ID）</td><td class="check">◎</td><td class="check">◎</td><td class="check">◎</td></tr>
+<tr><td style="font-weight:700">SOC/J-SOX対応</td><td class="check">◎</td><td class="check">◎</td><td class="check">◎</td><td class="partial">△</td></tr>
+<tr><td style="font-weight:700">無料枠</td><td class="check">◎（B2B基本無料）</td><td class="cross">✕</td><td class="cross">✕</td><td class="check">◎（50kMAU）</td></tr>
+<tr><td style="font-weight:700">API認証統合</td><td class="partial">△</td><td class="check">◎</td><td class="check">◎</td><td class="check">◎（API GW連携）</td></tr>
+<tr><td style="font-weight:700">日本語対応</td><td class="check">◎</td><td class="partial">△</td><td class="partial">△</td><td class="partial">△</td></tr>
+<tr><td style="font-weight:700">M365環境との親和性</td><td class="check">◎</td><td class="partial">△</td><td class="partial">△</td><td class="cross">✕</td></tr>
+</table>
 </section>
 
-<section>
-  <div class="sec-h">📋 B2B ID移行の進め方（段階的）</div>
-  <div class="sec-b">
-    <table>
-      <tr><th>フェーズ</th><th>対象</th><th>方法</th><th>期間</th></tr>
-      <tr><td>Phase 1: 大手50社</td><td>売上上位取引先</td><td>個別対応・フェデレーション設定</td><td>3〜6ヶ月</td></tr>
-      <tr><td>Phase 2: 中堅500社</td><td>定期取引先</td><td>招待メール一括送信・セルフ登録</td><td>6〜12ヶ月</td></tr>
-      <tr><td>Phase 3: 長尾1500社</td><td>不定期・零細取引先</td><td>ワンタイムコード認証・管理代行</td><td>12〜18ヶ月</td></tr>
-    </table>
-    <div class="box warn" style="margin-top:1rem">
-      <h3>移行連絡で失敗しないために</h3>
-      <ul style="padding-left:1.5rem;line-height:2">
-        <li>移行連絡は3ヶ月前から：「○月○日に切り替わります」と明確な期日を示す</li>
-        <li>ヘルプデスクを用意：取引先の中小企業は「ID登録方法が分からない」電話が殺到する可能性</li>
-        <li>新旧並行期間：2〜3ヶ月の並行運用で取引先の対応を待つ</li>
-      </ul>
+<!-- ===== EDI近代化 ===== -->
+<section id="edi">
+<div class="phase-header">
+  <h2>🔌 EDI・API認証の近代化</h2>
+  <div class="phase-meta">固定パスワード接続・バイナリプロトコル から OAuth 2.0・APIゲートウェイへ</div>
+</div>
+
+<p>日本企業のEDI（電子データ交換）環境は、1990〜2000年代に構築されたJX手順・全銀TCP/IP手順・バイナリVPN接続が現役稼働しているケースが多く、
+認証は固定パスワードや共有秘密鍵に依存しています。これらのシステムの近代化は、セキュリティ向上だけでなくコスト削減・開発生産性向上にもつながります。</p>
+
+<div id="edi-flow">
+<h3>EDI → RESTful API 移行パターン（フロー図）</h3>
+
+<div class="flow-wrap">
+<div style="display:flex;flex-direction:column;gap:16px;padding:16px;background:#fff;border-radius:8px;border:1px solid #e2e8f0">
+
+  <div>
+    <div style="font-size:.78rem;font-weight:700;color:#dc2626;margin-bottom:6px">【現状】旧来のEDI接続パターン</div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <div class="flow-box red" style="min-width:120px">取引先システム<br>（AS2/SFTP/VAN）</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#64748b;min-width:130px">固定IP + 固定パスワード<br>（共有鍵方式）</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box red" style="min-width:120px">自社EDIサーバー<br>（オンプレ）</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#475569;min-width:120px">基幹システム<br>（SAP / 独自AP）</div>
     </div>
   </div>
-</section>
+
+  <div>
+    <div style="font-size:.78rem;font-weight:700;color:#16a34a;margin-bottom:6px">【目標】OAuth 2.0 + APIゲートウェイ方式</div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <div class="flow-box green" style="min-width:120px">取引先システム<br>（REST API Client）</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#2563eb;min-width:140px">OAuth 2.0<br>Client Credentials<br>（IdP: Entra/Okta）</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box" style="background:#7c3aed;min-width:130px">APIゲートウェイ<br>（Azure APIM/Kong）</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green" style="min-width:120px">基幹システム<br>REST API</div>
+    </div>
+  </div>
 
 </div>
-<footer>
-  <p>NSSol IDMナレッジベース — B2B取引先ID管理ガイド</p>
-</footer>
+</div>
+
+<h3>移行パターン選択ガイド</h3>
+<table class="wbs-table">
+<tr><th>現状の接続方式</th><th>推奨移行パターン</th><th>工数目安</th><th>注意点</th></tr>
+<tr>
+  <td class="wbs-l1">JX手順（電話回線・ISDN）</td>
+  <td>インターネットVPN + AS2（HTTPS）に切り替え → 段階的にREST API化</td>
+  <td>3〜6ヶ月</td>
+  <td>取引先全社との協調が必要。VAN業者との契約変更も発生</td>
+</tr>
+<tr>
+  <td class="wbs-l1">AS2（固定パスワード）</td>
+  <td>AS2証明書認証に切り替え → mTLS化 → OAuth 2.0クライアント資格情報フロー</td>
+  <td>1〜3ヶ月</td>
+  <td>AS2証明書の有効期限管理体制の整備が先決</td>
+</tr>
+<tr>
+  <td class="wbs-l1">SFTP（ID/パスワード）</td>
+  <td>SFTP鍵認証への移行（即効性高い） → 将来的にAPIへ</td>
+  <td>2〜4週間</td>
+  <td>最も優先度高い。パスワード認証はリスクが高い</td>
+</tr>
+<tr>
+  <td class="wbs-l1">REST API（APIキー認証）</td>
+  <td>OAuth 2.0 Client Credentials Flowへ移行</td>
+  <td>1〜4週間</td>
+  <td>APIキーの有効期限・ローテーション管理の自動化</td>
+</tr>
+</table>
+</div>
+
+<div id="mtls">
+<h3>mTLS（相互TLS）証明書管理</h3>
+
+<p>機密性の高いB2B接続（金融・医療・官公庁向け）では、OAuth 2.0にmTLS（RFC 8705）を組み合わせた「Certificate-Bound Access Token」が標準的な強化策です。
+クライアント証明書とアクセストークンをバインドすることで、トークンが盗まれても他のクライアントからは使用不可になります。</p>
+
+<div class="three-col">
+<div class="card">
+  <h4>🔐 証明書ライフサイクル管理</h4>
+  <ul style="padding-left:16px;font-size:.8rem;color:#475569">
+    <li>有効期限: 1〜2年（自動更新推奨）</li>
+    <li>プライベートCAの構築（Azure Private CA等）</li>
+    <li>証明書台帳のCMDB登録</li>
+    <li>期限30日前アラートの設定</li>
+    <li>失効（CRL/OCSP）確認の実装</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>🔑 証明書発行プロセス</h4>
+  <ul style="padding-left:16px;font-size:.8rem;color:#475569">
+    <li>取引先のCSR（証明書署名要求）を受領</li>
+    <li>担当者の本人確認（契約書との照合）</li>
+    <li>プライベートCAで署名・発行</li>
+    <li>セキュアチャネルで証明書を配布</li>
+    <li>発行記録のタイムスタンプ保存</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>⚠️ よくある落とし穴</h4>
+  <ul style="padding-left:16px;font-size:.8rem;color:#475569">
+    <li>証明書の有効期限切れによる業務停止</li>
+    <li>複数取引先への同一証明書配布</li>
+    <li>失効証明書の即時CRL反映遅延</li>
+    <li>中間CA証明書の管理漏れ</li>
+    <li>担当者異動時の証明書引き継ぎ</li>
+  </ul>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===== セキュリティ要件 ===== -->
+<section id="security">
+<h2>🔒 セキュリティ要件 — ゼロトラスト原則での外部アクセス</h2>
+
+<p>外部ユーザーはゼロトラストモデルにおいて最も検証が必要な存在です。
+「信頼するネットワーク内にいるから安全」という前提が通用しない外部アクセスは、
+すべてのリクエストを常に検証するゼロトラスト原則の適用が必要です。</p>
+
+<h3>外部アクセスに適用すべき条件付きアクセスポリシー</h3>
+<table class="wbs-table">
+<tr><th>ポリシー</th><th>設定内容</th><th>対象外部ユーザー種別</th><th>優先度</th></tr>
+<tr>
+  <td class="wbs-l1">MFA強制</td>
+  <td>全外部ユーザーに対しMFA（認証アプリ）を必須化。SMS OTPは除外推奨</td>
+  <td>全外部ユーザー</td>
+  <td><span class="tag tag-must">必須</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">デバイスコンプライアンス</td>
+  <td>管理デバイスからのアクセス要求。またはアクセス元IPのホワイトリスト</td>
+  <td>SIer・保守ベンダー</td>
+  <td><span class="tag tag-must">必須</span></td>
+</tr>
+<tr>
+  <td class="wbs-l2">セッションタイムアウト</td>
+  <td>外部ユーザーセッションは1〜4時間で強制失効。継続アクセス要リロール</td>
+  <td>監査法人・規制当局</td>
+  <td><span class="tag tag-high">高</span></td>
+</tr>
+<tr>
+  <td class="wbs-l2">JITアクセス（Just-In-Time）</td>
+  <td>アクセス時間・日時を事前申請し、承認された時間帯のみ有効化</td>
+  <td>保守ベンダー・特権アクセス</td>
+  <td><span class="tag tag-high">高</span></td>
+</tr>
+<tr>
+  <td class="wbs-l2">全操作のセッション録画</td>
+  <td>リモートデスクトップ・踏み台経由の操作を映像録画（PAM連携）</td>
+  <td>SIer・本番サーバー保守</td>
+  <td><span class="tag tag-high">高</span></td>
+</tr>
+<tr>
+  <td class="wbs-l3">ダウンロード制限</td>
+  <td>クラウドからのファイルダウンロードをブロック（CASB・ブラウザ制限）</td>
+  <td>取引先・監査担当者</td>
+  <td><span class="tag tag-med">中</span></td>
+</tr>
+<tr>
+  <td class="wbs-l3">国籍制限（地理的ブロック）</td>
+  <td>日本国内IPのみ許可。海外ベンダーは個別ホワイトリスト</td>
+  <td>全外部ユーザー</td>
+  <td><span class="tag tag-med">中</span></td>
+</tr>
+</table>
+
+<h3>JITアクセス（Just-In-Time）の実装フロー</h3>
+<div class="flow-wrap">
+<div style="display:flex;align-items:center;gap:4px;min-width:800px">
+  <div class="flow-box" style="background:#7c3aed;min-width:110px">外部ベンダーが<br>アクセス申請</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="min-width:120px">社内スポンサーが<br>承認（時間・目的）</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box green" style="min-width:130px">指定時間のみ<br>アクセス有効化</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="background:#ea580c;min-width:130px">PAMでセッション<br>録画・コマンド記録</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="background:#dc2626;min-width:110px">時間経過後<br>自動無効化</div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-box" style="background:#475569;min-width:110px">作業報告書提出<br>＋ログ確認</div>
+</div>
+</div>
+</section>
+
+<!-- ===== 規制対応 ===== -->
+<section id="compliance">
+<h2>📜 規制対応 — 個人情報保護法・金融庁GL対応での外部ID管理</h2>
+
+<div class="compliance-grid">
+  <div class="comp-card">
+    <h4>📋 改正個人情報保護法（2022年全面施行）対応</h4>
+    <ul>
+      <li>外部提供記録義務: 取引先への個人データ提供の記録（提供先・提供日・データ内容）</li>
+      <li>外部委託先への監督義務: 委託先が適切な安全管理措置を講じているかの確認・監査</li>
+      <li>越境データ移転規制: 外国の取引先への個人データ移転は同等措置の確認が必要</li>
+      <li>ID管理との連動: 外部ユーザーのアクセスログが「提供記録」の一部となる設計</li>
+    </ul>
+  </div>
+  <div class="comp-card">
+    <h4>🏦 金融庁 サイバーセキュリティGL対応</h4>
+    <ul>
+      <li>第三者委託管理: 委託先のセキュリティ管理レベルの定期評価</li>
+      <li>アクセス権管理: 委託先へのアクセス権は業務上必要な最小限に</li>
+      <li>ログ保全: 委託先のアクセスログを7年間保全（金融機関の場合）</li>
+      <li>インシデント報告: 委託先経由のインシデントも1時間以内の報告義務</li>
+    </ul>
+  </div>
+  <div class="comp-card green">
+    <h4>🔍 J-SOX（内部統制）での外部ID管理証跡</h4>
+    <ul>
+      <li>アクセス権の付与・変更・削除の承認記録</li>
+      <li>四半期ごとの外部ユーザーレビュー（Certification）記録</li>
+      <li>SOD（職務分離）チェック結果の記録</li>
+      <li>ITGCの一環としてアクセスログの定期レビュー</li>
+    </ul>
+  </div>
+  <div class="comp-card green">
+    <h4>🌐 その他規制・フレームワーク</h4>
+    <ul>
+      <li>ISMS（ISO/IEC 27001）A.9: アクセス制御管理への準拠</li>
+      <li>PCI DSS v4.0 要件8: IDおよびアクセス管理（外部ユーザー含む）</li>
+      <li>NIST SP800-63B: 外部ユーザーのIAL（本人確認レベル）定義</li>
+      <li>GDPR: EU取引先がある場合のデータ処理契約（DPA）</li>
+    </ul>
+  </div>
+</div>
+
+<h3>監査ログの設計要件</h3>
+<p>外部ユーザーのアクセスログは、内部ユーザーと同等以上の詳細度が必要です。
+特に「誰が・いつ・どのシステムに・何をしたか」を証明できるログ設計が監査対応の基本となります。</p>
+
+<table class="wbs-table">
+<tr><th>ログ種別</th><th>必須記録項目</th><th>保存期間</th><th>連携先</th></tr>
+<tr>
+  <td class="wbs-l1">認証ログ</td>
+  <td>ユーザーID・IPアドレス・タイムスタンプ・認証方式・成功/失敗・MFA状況</td>
+  <td>7年（金融）/ 3年（一般）</td>
+  <td>SIEM（Microsoft Sentinel等）</td>
+</tr>
+<tr>
+  <td class="wbs-l2">アクセスログ</td>
+  <td>アクセスリソース・操作種別（読取/書込/削除）・データ量・セッション時間</td>
+  <td>5年</td>
+  <td>SIEM / データレイク</td>
+</tr>
+<tr>
+  <td class="wbs-l2">権限変更ログ</td>
+  <td>変更者・変更日時・変更前後の権限・承認者・業務理由</td>
+  <td>7年</td>
+  <td>IGA / ITSM</td>
+</tr>
+<tr>
+  <td class="wbs-l3">セッション録画</td>
+  <td>特権アクセスセッションの動画・コマンド履歴（PAM録画）</td>
+  <td>3年</td>
+  <td>PAMシステム</td>
+</tr>
+</table>
+</section>
+
+<!-- ===== ロードマップ ===== -->
+<section id="roadmap">
+<h2>📅 実装ロードマップ</h2>
+
+<div class="roadmap-row">
+  <div class="roadmap-phase">
+    <h4>🔵 Phase 1（1〜3ヶ月）<br>棚卸し・現状把握</h4>
+    <ul>
+      <li>全外部ユーザーの棚卸し（Entra Guests / AD外部アカウント）</li>
+      <li>EDI接続の台帳作成（取引先・プロトコル・認証方式・最終更新日）</li>
+      <li>不活性アカウントの特定（90日以上未使用）</li>
+      <li>スポンサー（社内責任者）の割り当て</li>
+      <li>緊急削除（スポンサー不明・連絡先不存在）</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>🟢 Phase 2（3〜9ヶ月）<br>B2B IdP統合</h4>
+    <ul>
+      <li>Entra External ID / Okta等の選定・導入</li>
+      <li>取引先ポータルのSSO統合（SAML/OIDC）</li>
+      <li>MFA強制ポリシーの適用</li>
+      <li>スポンサーレビューワークフローの構築</li>
+      <li>JITアクセスの重要取引先への適用</li>
+      <li>SFTP/AS2の証明書認証への切り替え</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>🟡 Phase 3（9〜18ヶ月）<br>自動オンボーディング</h4>
+    <ul>
+      <li>取引先セルフサービスポータル構築</li>
+      <li>自動オンボーディング・オフボーディング</li>
+      <li>OAuth 2.0 / APIゲートウェイへのEDI移行</li>
+      <li>全操作ログのSIEM統合・アラート設定</li>
+      <li>コンプライアンスダッシュボード整備</li>
+      <li>定期棚卸い（Certification）の自動スケジュール</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Phase 1 棚卸しチェックリスト</h3>
+<div class="two-col">
+<div>
+<h4>Entra ID ゲストアカウント棚卸し</h4>
+<ul class="checklist">
+  <li>全ゲストユーザーの一覧取得（PowerShell / Graph API）</li>
+  <li>最終サインイン日時の確認（signInActivity）</li>
+  <li>90日以上未使用アカウントの特定</li>
+  <li>スポンサー（招待者）の在籍確認</li>
+  <li>取引先契約状況との照合</li>
+  <li>不要アカウントの削除実行</li>
+</ul>
+</div>
+<div>
+<h4>EDI・システム間接続の棚卸し</h4>
+<ul class="checklist">
+  <li>AS2/SFTP/VPN接続の全ポート確認</li>
+  <li>固定IPホワイトリストの現状把握</li>
+  <li>証明書・鍵の有効期限確認</li>
+  <li>最後に通信が発生した日の確認</li>
+  <li>取引先担当者の連絡先の現在有効性確認</li>
+  <li>パスワードポリシーの確認と更新計画策定</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- ===== 費用感 ===== -->
+<section id="cost">
+<h2>💰 費用感と規模別推奨構成</h2>
+
+<table class="cost-table">
+<tr><th>規模</th><th>外部ユーザー数目安</th><th>推奨構成</th><th>概算費用（年間）</th></tr>
+<tr>
+  <td style="font-weight:700">中小企業</td>
+  <td>〜100外部ユーザー</td>
+  <td>Entra ID P1 + ゲストアカウントB2B基本機能</td>
+  <td>ほぼ追加費用なし（M365 E3/E5ライセンス内）</td>
+</tr>
+<tr>
+  <td style="font-weight:700">中堅企業</td>
+  <td>100〜1,000外部ユーザー</td>
+  <td>Entra External ID + Entra ID Governance（Certification）</td>
+  <td>外部ユーザーあたり¥100〜¥300/月。導入工数200〜400万円</td>
+</tr>
+<tr>
+  <td style="font-weight:700">大企業</td>
+  <td>1,000〜10,000外部ユーザー</td>
+  <td>Okta CIAM または Ping Identity + カスタムポータル開発</td>
+  <td>500〜2,000万円/年（MAU課金）。初期構築2,000〜5,000万円</td>
+</tr>
+<tr>
+  <td style="font-weight:700">EDI近代化</td>
+  <td>取引先数50〜500社</td>
+  <td>Azure API Management + Entra 認証 + AS2→REST移行</td>
+  <td>初期500〜3,000万円。APIM運用費用月30〜100万円</td>
+</tr>
+</table>
+
+<div class="three-col">
+<div class="card">
+  <h4>💡 低コストで始める方法</h4>
+  <p style="font-size:.8rem;color:#475569">Phase 1（棚卸し）はコストゼロで可能。
+  PowerShell/Graph APIを使ったEntraゲストアカウント棚卸しスクリプトを実行するだけで
+  ゴーストIDを発見・削除でき、コスト削減と即時リスク低減が達成できます。</p>
+</div>
+<div class="card">
+  <h4>💼 M365既存環境の活用</h4>
+  <p style="font-size:.8rem;color:#475569">Microsoft 365 E3/E5を導入済みの企業は
+  Entra ID Governance（P2ライセンス）を追加するだけで高度なB2B管理が可能です。
+  追加投資は最小限でB2B Certificationを実現できます。</p>
+</div>
+<div class="card">
+  <h4>🏢 大規模EDI近代化のROI</h4>
+  <p style="font-size:.8rem;color:#475569">EDIのAPI化は「電文仕様の変更コスト削減」「取引先オンボーディング期間短縮（6ヶ月→2週間）」
+  「インシデント対応コスト削減」を合わせると、3〜5年でROI達成が一般的です。</p>
+</div>
+</div>
+
+<div class="good">
+<strong>✅ まとめ:</strong> 外部ID管理は「まず棚卸し」から始めることが最も重要です。
+既存のゴーストアカウントを発見・削除するだけで即時リスク削減とコスト削減が実現できます。
+その上でPhase 2（B2B IdP統合）でゼロトラスト原則に基づく外部アクセス制御を整備し、
+Phase 3（自動オンボーディング）で運用効率を最大化するロードマップを推奨します。
+EDI近代化は長期的なセキュリティ基盤強化として並行して進めることが理想的です。
+</div>
+</section>
+
+</main>
 </body>
 </html>

@@ -2,111 +2,671 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HR連携ID自動化ガイド（入社・異動・退職）</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>入社・異動・退職のID自動化（JML）完全ガイド</title>
 <style>
-:root{--p:#1e4d2b;--a:#52c41a;--bg:#f6fff6;--card:#fff}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
-header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
-header h1{font-size:1.8rem;margin-bottom:.3rem}
-.badge{display:inline-block;background:var(--a);color:var(--p);font-weight:bold;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
-.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
-section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
-.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
-.sec-b{padding:1.5rem}
-.flow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
-.flow-box{background:var(--p);color:#fff;padding:.6rem 1rem;border-radius:6px;font-size:.9rem;font-weight:bold;min-width:100px;text-align:center}
-.flow-arrow{color:var(--a);font-size:1.4rem;font-weight:bold}
-.box{background:#f6fff6;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
-.box.warn{background:#fffbf0;border-color:#faad14}
-.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
-table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
-th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
-td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
-tr:nth-child(even) td{background:var(--bg)}
-footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.wbs-l1{font-weight:700;color:#1e3a5f;background:#f0f4ff !important}
+.wbs-l2{padding-left:24px !important;color:#334155}
+.wbs-l3{padding-left:42px !important;color:#475569;font-size:.8rem}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+.tag-day{background:#e0e7ff;color:#3730a3}
+.tag-wk{background:#fce7f3;color:#9d174d}
+.effort-chip{display:inline-block;background:#e2e8f0;color:#475569;border-radius:4px;padding:1px 7px;font-size:.72rem}
+.checklist{list-style:none;padding:0;margin:10px 0}
+.checklist li{padding:5px 0 5px 24px;position:relative;border-bottom:1px solid #f1f5f9;font-size:.85rem}
+.checklist li::before{content:'☐';position:absolute;left:2px;color:#3b82f6;font-size:1rem}
+.checklist li.done::before{content:'☑';color:#16a34a}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.risk-matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.risk-item{background:#fff;border-radius:6px;border-left:4px solid #dc2626;padding:10px 12px;font-size:.83rem}
+.risk-item.med{border-left-color:#eab308}
+.risk-item.low{border-left-color:#16a34a}
+.risk-item .risk-title{font-weight:700;color:#1e293b;margin-bottom:4px}
+.risk-item .risk-counter{color:#64748b;font-size:.78rem}
+/* フロー図（CSSボックス） */
+.flow-wrap{overflow-x:auto;margin:16px 0}
+.flow-row{display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px}
+.flow-box{background:#2563eb;color:#fff;border-radius:6px;padding:10px 14px;min-width:100px;text-align:center;font-size:.78rem;font-weight:600;flex-shrink:0}
+.flow-box.green{background:#16a34a}
+.flow-box.orange{background:#ea580c}
+.flow-box.purple{background:#7c3aed}
+.flow-box.slate{background:#475569}
+.flow-box.red{background:#dc2626}
+.flow-arrow{color:#64748b;font-size:1.2rem;padding:0 4px;flex-shrink:0}
+.flow-arrow-down{text-align:center;color:#64748b;font-size:1.2rem;margin:4px 0}
+.flow-col{display:flex;flex-direction:column;align-items:center;gap:0}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+.kpi-card{background:#fff;border-radius:8px;border-top:4px solid #3b82f6;padding:12px;text-align:center}
+.kpi-card .kpi-val{font-size:1.5rem;font-weight:700;color:#1e3a5f}
+.kpi-card .kpi-label{font-size:.75rem;color:#64748b;margin-top:4px}
+.kpi-card.danger{border-top-color:#dc2626}
+.kpi-card.good{border-top-color:#16a34a}
+.kpi-card.warn{border-top-color:#eab308}
+.compare-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.82rem}
+.compare-table th{background:#1e3a5f;color:#fff;padding:8px 10px}
+.compare-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.compare-table tr:nth-child(even) td{background:#f8fafc}
+.compare-table .check{color:#16a34a;font-weight:700}
+.compare-table .cross{color:#dc2626;font-weight:700}
+.compare-table .partial{color:#eab308;font-weight:700}
+.roadmap-row{display:flex;gap:0;margin:14px 0}
+.roadmap-phase{flex:1;padding:14px;border-right:3px solid #fff;position:relative}
+.roadmap-phase:nth-child(1){background:#dbeafe}
+.roadmap-phase:nth-child(2){background:#bbf7d0}
+.roadmap-phase:nth-child(3){background:#fef9c3}
+.roadmap-phase h4{font-size:.85rem;color:#1e3a5f;margin-bottom:8px}
+.roadmap-phase ul{padding-left:14px;font-size:.78rem;color:#334155}
+.roadmap-phase li{margin-bottom:4px}
+.cost-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:.82rem}
+.cost-table th{background:#334155;color:#fff;padding:8px 10px}
+.cost-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.cost-table tr:nth-child(even) td{background:#f8fafc}
+@media(max-width:900px){#toc{display:none}main{margin-left:0}}
 </style>
 </head>
 <body>
-<header>
-  <div class="badge">IT部門・HR担当向け</div>
-  <h1>🔄 HR連携ID自動化ガイド</h1>
-  <p>入社（Joiner）・異動（Mover）・退職（Leaver）のID管理を自動化する</p>
-</header>
-<div class="container">
 
-<section>
-  <div class="sec-h">📊 なぜ手作業が問題なのか</div>
-  <div class="sec-b">
-    <div class="box warn">
-      <h3>手作業管理の典型的な失敗</h3>
-      <table>
-        <tr><th>イベント</th><th>手作業の問題</th><th>リスク</th></tr>
-        <tr><td>入社</td><td>入社日当日にアカウント未作成で業務開始できない</td><td>業務損失・印象悪化</td></tr>
-        <tr><td>異動</td><td>異動後も旧部門の権限が残存（過剰権限）</td><td>情報漏洩・内部不正</td></tr>
-        <tr><td>退職</td><td>退職後数日〜数週間アカウントが有効のまま</td><td>不正アクセス・内部者脅威</td></tr>
-        <tr><td>兼務変更</td><td>兼務先の権限付与・剥奪が不確実</td><td>過剰権限</td></tr>
-        <tr><td>グループ転籍</td><td>旧会社のIDが残ったまま新会社IDが発行される</td><td>IDの二重保持</td></tr>
-      </table>
-    </div>
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#overview">📋 JMLとは何か</a>
+  <a href="#joiner">👤 Joiner（入社）プロセス</a>
+  <a class="toc-sub" href="#joiner-flow">自動化フロー</a>
+  <a class="toc-sub" href="#joiner-checklist">Day0/Day1チェックリスト</a>
+  <a href="#mover">🔄 Mover（異動・昇格）</a>
+  <a class="toc-sub" href="#zombie-rights">ゾンビ権限問題</a>
+  <a href="#leaver">🚪 Leaver（退職・休職）</a>
+  <a class="toc-sub" href="#leaver-flow">退職当日フロー</a>
+  <a class="toc-sub" href="#leaver-risk">残留リスク実例</a>
+  <a href="#tools">🛠️ 製品比較</a>
+  <a href="#hr-connect">🔗 HR連携パターン</a>
+  <a href="#roadmap">📅 導入ロードマップ</a>
+  <a href="#kpi">📊 KPIと効果測定</a>
+  <a href="#cost">💰 費用感とROI</a>
+</nav>
+
+<main>
+<h1>入社・異動・退職のID自動化（JML）完全ガイド</h1>
+<p class="subtitle">Joiner / Mover / Leaver 自動化 — 情報システム部門・IGA担当者向け実践ガイド</p>
+
+<!-- ===== JMLとは ===== -->
+<section id="overview">
+<h2>📋 JMLとは何か — HR→IT連携の重要性</h2>
+
+<div class="lead">
+JML（Joiner / Mover / Leaver）とは、従業員のライフサイクル（入社・異動・退職）に伴う<strong>IDとアクセス権限の変化を自動管理する仕組み</strong>です。
+人事システム（HRIS）をIDの「真実の源泉（Source of Truth）」として、AD・Entra ID・各SaaSへの自動プロビジョニング／デプロビジョニングを実現します。
+</div>
+
+<div class="danger">
+<strong>⚠️ 日本企業で頻出する問題:</strong> 退職者のIDが無効化されないまま残存し、数ヶ月〜数年後に不正アクセスや情報漏洩につながる事例が後を絶ちません。
+2023年の内部不正インシデントの約38%が「退職者・元委託先のID悪用」が関与していたとする調査報告があります（IPA「企業における情報セキュリティ実態調査2023」）。
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi-card danger">
+    <div class="kpi-val">38%</div>
+    <div class="kpi-label">内部不正の原因が退職者ID悪用</div>
   </div>
+  <div class="kpi-card warn">
+    <div class="kpi-val">平均72日</div>
+    <div class="kpi-label">退職後もアカウントが生存する期間（手動管理時）</div>
+  </div>
+  <div class="kpi-card warn">
+    <div class="kpi-val">15〜30%</div>
+    <div class="kpi-label">異動後に不要権限が残るユーザー割合</div>
+  </div>
+  <div class="kpi-card good">
+    <div class="kpi-val">当日</div>
+    <div class="kpi-label">自動化達成後の退職者ID無効化時間</div>
+  </div>
+</div>
+
+<h3>なぜ手動管理では限界なのか</h3>
+<p>従業員が100人規模の組織でも、年間10〜20%の人員変動（入社・退職・異動）が発生します。1,000人規模になると年間100〜200件のID操作が必要になり、
+IT担当者が手動でAD・Entra ID・Salesforce・kintone・Box・Slack・GitHubなど数十のシステムを個別に操作することは現実的ではありません。
+また手動プロセスは「退職連絡がITに届くまでのタイムラグ」「担当者の繁忙期の対応遅延」「作業ミスによる権限残存」などのリスクを本質的に排除できません。</p>
+
+<div class="two-col">
+<div class="card">
+  <h4>🔴 手動管理の典型的な問題</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>人事→IT連絡フローが不定形（口頭・メール・Excelが混在）</li>
+    <li>退職処理の担当者依存・引き継ぎ漏れ</li>
+    <li>SaaSアカウントの把握不完全（シャドーIT）</li>
+    <li>異動時の旧権限削除忘れ（ゾンビ権限の蓄積）</li>
+    <li>棚卸しが半年〜1年に1回程度で問題発見が遅延</li>
+    <li>J-SOX・ISMS監査での証跡提出が困難</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>🟢 JML自動化で実現すること</h4>
+  <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+    <li>HRISの退職日フラグ → 当日自動無効化</li>
+    <li>入社日前日にID・端末・アクセス権を準備完了</li>
+    <li>異動申請承認 → 旧権限削除・新権限付与が同時実行</li>
+    <li>全SaaS・オンプレシステムへの一括プロビジョニング</li>
+    <li>Certification（棚卸し）の自動スケジュールと通知</li>
+    <li>全操作の監査ログが自動生成・SIEM連携可能</li>
+  </ul>
+</div>
+</div>
 </section>
 
-<section>
-  <div class="sec-h">🏗️ HR連携自動化アーキテクチャ</div>
-  <div class="sec-b">
-    <p style="margin-bottom:1rem"><strong>データフロー：HRシステム → IGA → IDプロビジョニング先</strong></p>
-    <div class="flow">
-      <div class="flow-box">HR<br>システム<br>(SAP/Oracle)</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">IGA<br>(SailPoint/<br>Saviynt)</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">Active<br>Directory<br>/Entra ID</div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-box">各業務<br>システム<br>(SCIM/SAML)</div>
-    </div>
-    <table>
-      <tr><th>連携項目</th><th>HRシステム提供</th><th>IGA処理</th><th>結果</th></tr>
-      <tr><td>入社</td><td>入社日・社員番号・部門・役職</td><td>ロールマッピング→権限決定</td><td>D-3営業日前にID自動作成</td></tr>
-      <tr><td>異動</td><td>異動日・新旧部門・役職変更</td><td>権限差分計算→追加/剥奪</td><td>異動日に自動切り替え</td></tr>
-      <tr><td>退職</td><td>退職日・退職区分</td><td>全権限の棚卸し→無効化スケジュール</td><td>最終出社日翌日0:00に自動無効化</td></tr>
-    </table>
-  </div>
-</section>
+<!-- ===== Joiner ===== -->
+<section id="joiner">
+<div class="phase-header">
+  <h2>👤 Joiner（入社）プロセス</h2>
+  <div class="phase-meta">採用決定 → 入社当日のシステム準備完了 を自動化する</div>
+</div>
 
-<section>
-  <div class="sec-h">🛠️ 主要IGA製品のHR連携機能比較</div>
-  <div class="sec-b">
-    <table>
-      <tr><th>製品</th><th>SAP HCM/SF連携</th><th>Oracle HCM連携</th><th>日本語対応</th><th>価格帯</th></tr>
-      <tr><td>SailPoint IdentityNow</td><td>◎（標準コネクタ）</td><td>◎</td><td>○</td><td>高</td></tr>
-      <tr><td>Saviynt</td><td>◎</td><td>◎</td><td>△</td><td>中〜高</td></tr>
-      <tr><td>One Identity Manager</td><td>○</td><td>○</td><td>○</td><td>中〜高</td></tr>
-      <tr><td>Microsoft Entra ID Governance</td><td>△（カスタム要）</td><td>△</td><td>○</td><td>中（M365付帯）</td></tr>
-      <tr><td>OIM（Oracle IDM）</td><td>○</td><td>◎（同社製）</td><td>○</td><td>高</td></tr>
-      <tr><td>NRI セキュアサービス</td><td>○</td><td>○</td><td>◎（国産）</td><td>中</td></tr>
-    </table>
-  </div>
-</section>
+<p>Joinerプロセスの目標は「入社初日から必要なシステムにアクセスできる状態」を、IT担当者の手動作業なしに実現することです。
+内定承諾から入社日まで平均1〜3ヶ月あるため、この期間にHRISで登録された情報を元にID準備を進めることができます。</p>
 
-<section>
-  <div class="sec-h">📋 導入時のチェックリスト</div>
-  <div class="sec-b">
-    <ol style="padding-left:1.5rem;line-height:2.4">
-      <li><strong>HR側の確認</strong>：入退社情報の更新タイミング・データ品質・APIまたはファイル連携可否</li>
-      <li><strong>権限設計</strong>：部門×役職×システムのロールマトリクス作成（これが最難関）</li>
-      <li><strong>例外処理設計</strong>：派遣・業務委託・パート・兼務の扱い</li>
-      <li><strong>緊急停止フロー</strong>：懲戒解雇・不正疑いの場合の即時停止手順</li>
-      <li><strong>移行計画</strong>：既存の手作業フローとの切り替え方法</li>
-      <li><strong>テスト・UAT</strong>：HRとITが共同でシナリオテスト（入社・異動・退職各100件）</li>
-    </ol>
+<div id="joiner-flow">
+<h3>自動プロビジョニングフロー（CSSフロー図）</h3>
+
+<div class="flow-wrap">
+<div style="display:flex;flex-direction:column;gap:6px;min-width:900px">
+
+  <!-- Row 1: HR to IDP -->
+  <div style="display:flex;align-items:center;gap:4px">
+    <div class="flow-box" style="background:#7c3aed;min-width:130px">HRISシステム<br><span style="font-size:.68rem;opacity:.85">(SAP SF / Workday / COMPANY)</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#2563eb;min-width:130px">IGA/IDM<br><span style="font-size:.68rem;opacity:.85">(LifecycleWorkflow)</span></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="min-width:130px">Active Directory /<br>Entra ID</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green" style="min-width:110px">メール (M365)<br>Teams</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green" style="min-width:110px">Salesforce<br>kintone / Box</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green" style="min-width:100px">GitHub<br>Slack / Zoom</div>
   </div>
-</section>
+
+  <!-- Row 2: Trigger labels -->
+  <div style="display:flex;gap:4px;font-size:.72rem;color:#64748b;padding-left:0">
+    <div style="min-width:130px;text-align:center">入社日フィールド更新</div>
+    <div style="min-width:16px"></div>
+    <div style="min-width:130px;text-align:center">SCIM/API受信→ロール付与</div>
+    <div style="min-width:16px"></div>
+    <div style="min-width:130px;text-align:center">AD UPN生成・グループ追加</div>
+    <div style="min-width:16px"></div>
+    <div style="min-width:110px;text-align:center">ライセンス自動割当</div>
+    <div style="min-width:16px"></div>
+    <div style="min-width:110px;text-align:center">SCIMプロビジョニング</div>
+    <div style="min-width:16px"></div>
+    <div style="min-width:100px;text-align:center">招待メール自動送信</div>
+  </div>
 
 </div>
-<footer>
-  <p>NSSol IDMナレッジベース — HR連携ID自動化ガイド</p>
-</footer>
+</div>
+
+<div class="warn">
+<strong>⚠️ HRIS連携のポイント:</strong> SCIM 2.0（RFC 7644）対応のHRISであれば標準コネクタが使えますが、国内製HRISはSCIM未対応のケースが多く、
+カスタムAPIコネクタまたはCSVファイル連携（SFTP）での取り込みが必要になります。詳細は「HR連携パターン」セクションを参照してください。
+</div>
+</div>
+
+<div id="joiner-checklist">
+<h3>Day0 / Day1 チェックリスト</h3>
+<div class="two-col">
+<div>
+<h4>📅 Day0（入社前日まで）— 自動実行</h4>
+<ul class="checklist">
+  <li>ADアカウント作成（UPN: 姓名@company.com）</li>
+  <li>Entra IDへのプロビジョニング</li>
+  <li>M365ライセンス割当（E3/E5）</li>
+  <li>Teamsアカウント有効化</li>
+  <li>部署グループ・配布リストへの追加</li>
+  <li>業務システムロール付与（部署コードで自動判定）</li>
+  <li>PC（Intune）セットアップ開始</li>
+  <li>ウェルカムメール送付（上司・メンターCC）</li>
+</ul>
+</div>
+<div>
+<h4>📅 Day1（入社当日）— 確認チェック</h4>
+<ul class="checklist">
+  <li class="done">初回ログインのパスワードリセット確認</li>
+  <li class="done">MFA（Microsoft Authenticator）登録</li>
+  <li class="done">Teamsチャンネル参加確認</li>
+  <li>セキュリティ教育受講（eラーニング）</li>
+  <li>業務システム疎通確認</li>
+  <li>マネージャーによるアクセス権承認レビュー</li>
+  <li>ID帳票（システム利用規約）署名</li>
+  <li>外部SaaS（Salesforce等）初回ログイン</li>
+</ul>
+</div>
+</div>
+</div>
+
+<h3>入社プロビジョニングのロール設計</h3>
+<p>所属部署・職種・役職の組み合わせで自動的に付与するロールを決定するのが「ロールモデル設計」です。
+ABAC（属性ベースアクセス制御）を使い、<code>department=営業部 AND grade=一般</code> のように条件を定義します。
+入社時点で「最小権限」を付与し、必要に応じてリクエスト申請で追加付与する「Just-Enough-Access（JEA）」の原則が重要です。</p>
+
+<table class="wbs-table">
+<tr><th>属性</th><th>設定例</th><th>自動付与されるロール・グループ</th><th>注意点</th></tr>
+<tr><td class="wbs-l1">部署コード</td><td>SALES_001</td><td>営業部グループ、SFA閲覧、名刺管理</td><td>部署コードの正規化が必要</td></tr>
+<tr><td class="wbs-l2">職種コード</td><td>MGR（管理職）</td><td>部下のID管理申請権限、予算閲覧</td><td>昇格・降格時の即時変更が必要</td></tr>
+<tr><td class="wbs-l2">雇用区分</td><td>PART（パート）</td><td>基本業務のみ、リモートアクセス制限</td><td>契約期限フィールドをLeaver日時に連動</td></tr>
+<tr><td class="wbs-l3">勤務地</td><td>TOKYO_HQ</td><td>物理入退室（カードキー）グループ</td><td>施設管理システムとの連携が必要</td></tr>
+<tr><td class="wbs-l3">委託区分</td><td>PARTNER</td><td>外部委託専用ドメイン・VPN制限付き</td><td>B2Bガイドと合わせて設計</td></tr>
+</table>
+</section>
+
+<!-- ===== Mover ===== -->
+<section id="mover">
+<div class="phase-header">
+  <h2>🔄 Mover（異動・昇格）プロセス</h2>
+  <div class="phase-meta">部署異動・昇格・役職変更時の権限再評価を自動化する</div>
+</div>
+
+<p>Moverプロセスはしばしば最も実装が難しく、問題が見えにくい領域です。
+入社・退職と異なり「アカウントを消す」のではなく「権限の一部を変更する」ため、変更漏れが積み重なっていきます。</p>
+
+<div id="zombie-rights">
+<h3>⚠️ ゾンビ権限問題（Privilege Creep）</h3>
+
+<div class="danger">
+<strong>典型的なゾンビ権限の発生メカニズム:</strong><br>
+Aさん（営業部→マーケ部→開発部と3年で3回異動）→ 各異動時に新権限は追加されたが旧権限は削除されず →
+現在は営業・マーケ・開発の全システムにフルアクセス可能な「スーパーユーザー」に。
+本人も「まだ使えるなら便利だからいいや」と申告しない → 監査で発覚。
+</div>
+
+<div class="flow-wrap">
+<div style="display:flex;flex-direction:column;gap:8px;padding:12px;background:#fff;border-radius:8px;border:1px solid #e2e8f0">
+  <div style="font-size:.82rem;font-weight:700;color:#1e3a5f;margin-bottom:4px">Moverプロセス 権限変更フロー</div>
+  <div style="display:flex;align-items:center;gap:4px">
+    <div class="flow-box" style="background:#7c3aed;min-width:120px">異動申請<br>（人事システム）</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#2563eb;min-width:120px">IGA承認ワークフロー<br>（マネージャー承認）</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#ea580c;min-width:130px">旧部署権限の<br>全削除（重要！）</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box green" style="min-width:120px">新部署ロールの<br>自動付与</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#475569;min-width:110px">SOD検知・<br>棚卸しトリガー</div>
+  </div>
+</div>
+</div>
+
+<h3>Certification（棚卸し）との連携</h3>
+<p>異動イベントを検知した際に、新旧の権限が重複していないかを自動チェックする「イベント駆動型Certification」が有効です。
+SailPoint IdentityNow や Saviynt では、異動発生時に自動でレビュータスクをマネージャーへ通知し、不要権限の承認削除を促します。
+四半期ごとの定期棚卸しと組み合わせることで、ゾンビ権限をリアルタイムに抑制できます。</p>
+</div>
+
+<h3>SOD（職務分離）違反の自動検知</h3>
+<p>Mover処理後にSOD（Segregation of Duties）ルールに違反していないかを自動チェックします。
+たとえば「購買申請権限」と「購買承認権限」を同一人物が持つことは財務統制上の問題です。
+IGA製品はSODルールをあらかじめ定義し、異動後の権限組み合わせを自動評価します。</p>
+
+<table class="compare-table">
+<tr><th>SOD違反パターン</th><th>影響領域</th><th>検知後の対応</th></tr>
+<tr><td>購買申請 + 購買承認</td><td>財務・調達</td><td>承認権限を自動削除（変更承認必要）</td></tr>
+<tr><td>給与設定 + 給与支払実行</td><td>人事・給与</td><td>即時フラグ + CISO通知</td></tr>
+<tr><td>コード開発 + 本番リリース</td><td>情報システム</td><td>本番リリース権限を別担当者へ委譲</td></tr>
+<tr><td>取引先登録 + 支払承認</td><td>会計</td><td>アクセス停止 + 内部監査エスカレ</td></tr>
+</table>
+</section>
+
+<!-- ===== Leaver ===== -->
+<section id="leaver">
+<div class="phase-header">
+  <h2>🚪 Leaver（退職・休職）プロセス</h2>
+  <div class="phase-meta">退職当日の即時無効化 〜 60日後の完全削除 を自動化する</div>
+</div>
+
+<p>Leaverプロセスは3つの中で最も緊急性が高く、最初に自動化すべき領域です。
+退職者のID放置は「元従業員による不正アクセス」「退職後の機密情報持ち出し」「アカウント売買」など深刻なセキュリティリスクに直結します。</p>
+
+<div id="leaver-flow">
+<h3>退職当日の自動無効化フロー</h3>
+
+<div class="flow-wrap">
+<div style="display:flex;flex-direction:column;gap:6px;min-width:700px">
+  <div style="display:flex;align-items:center;gap:4px">
+    <div class="flow-box" style="background:#7c3aed;min-width:120px">HRISに退職日<br>登録・承認</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#dc2626;min-width:130px">退職日当日0:00<br>IGA自動トリガー</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#dc2626;min-width:130px">ADアカウント無効化<br>（パスワードリセット）</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#ea580c;min-width:130px">全セッション強制<br>サインアウト</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box" style="background:#475569;min-width:110px">上司へメール<br>データ移管依頼</div>
+  </div>
+  <div style="display:flex;gap:4px;font-size:.72rem;color:#64748b">
+    <div style="min-width:120px;text-align:center">N日前に通知開始</div>
+    <div style="min-width:20px"></div>
+    <div style="min-width:130px;text-align:center">当日0時自動実行</div>
+    <div style="min-width:20px"></div>
+    <div style="min-width:130px;text-align:center">AD・Entra ID同時</div>
+    <div style="min-width:20px"></div>
+    <div style="min-width:130px;text-align:center">Entra Revoke Tokens</div>
+    <div style="min-width:20px"></div>
+    <div style="min-width:110px;text-align:center">OneDrive等60日保持</div>
+  </div>
+</div>
+</div>
+
+<h3>退職後のタイムライン管理</h3>
+<table class="wbs-table">
+<tr><th>タイミング</th><th>自動アクション</th><th>担当/確認者</th></tr>
+<tr><td class="wbs-l1">退職日 当日</td><td>ADアカウント無効化、全トークン失効、VPN/MFA削除、物理カードキー無効化</td><td>IGA自動実行</td></tr>
+<tr><td class="wbs-l2">退職 +3日</td><td>未移管ファイルの上司移管、業務メール自動転送設定</td><td>IT管理者確認</td></tr>
+<tr><td class="wbs-l2">退職 +30日</td><td>メールボックス削除（共有メールへ変換）、SaaSライセンス解放</td><td>自動 + 確認</td></tr>
+<tr><td class="wbs-l2">退職 +60日</td><td>ADオブジェクト完全削除、OneDriveデータ削除、Entra IDアカウント削除</td><td>IGA自動実行</td></tr>
+<tr><td class="wbs-l3">退職 +90日</td><td>全監査ログのアーカイブ（7年保持）、ライセンスコスト回収確認</td><td>コンプライアンス確認</td></tr>
+</table>
+</div>
+
+<div id="leaver-risk">
+<h3>残留アカウントリスクと実被害例</h3>
+
+<div class="risk-matrix">
+  <div class="risk-item">
+    <div class="risk-title">元従業員による顧客データ持ち出し</div>
+    <div class="risk-counter">退職後もSalesforceアクセス継続 → 顧客リスト取得 → 競合他社へ転職</div>
+  </div>
+  <div class="risk-item">
+    <div class="risk-title">委託先終了後のVPN接続維持</div>
+    <div class="risk-counter">SIer契約終了後も保守用アカウントが生存 → 社内ネットワークへの不正侵入</div>
+  </div>
+  <div class="risk-item med">
+    <div class="risk-title">休職者IDの長期放置</div>
+    <div class="risk-counter">育休・病休中のアカウントが攻撃者に悪用（フィッシングで認証情報取得）</div>
+  </div>
+  <div class="risk-item med">
+    <div class="risk-title">SaaSライセンスコスト流出</div>
+    <div class="risk-counter">退職者のM365/Salesforceライセンスが解放されず月額費用を無駄に支払い続ける</div>
+  </div>
+</div>
+
+<div class="good">
+<strong>✅ 自動化で防げること:</strong> 上記の事例はいずれも「HRISの退職日フィールドとIDMを連動させる」だけで防止できます。
+最初のステップとして退職者の即日無効化だけを自動化するだけでも、リスクの大部分を排除できます。
+</div>
+</div>
+</section>
+
+<!-- ===== 製品比較 ===== -->
+<section id="tools">
+<h2>🛠️ JML自動化製品の比較</h2>
+
+<p>JML自動化を実現する主要製品を比較します。オンプレミスAD連携の深さ・国内製HRISへの対応・日本語サポートの観点が日本企業では特に重要です。</p>
+
+<table class="compare-table">
+<tr>
+  <th>製品</th>
+  <th>Entra ID Governance<br>（旧Azure AD Identity Governance）</th>
+  <th>Okta Lifecycle<br>Management</th>
+  <th>SailPoint<br>IdentityNow</th>
+  <th>Saviynt<br>CPAM</th>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">主な用途</td>
+  <td>M365中心環境のJML自動化</td>
+  <td>SaaS中心のID統合・自動化</td>
+  <td>大規模IGA・コンプライアンス対応</td>
+  <td>クラウドIGA・PAM統合</td>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">オンプレAD連携</td>
+  <td class="check">◎ Entra Connectで深い統合</td>
+  <td class="partial">△ AD Agentで対応</td>
+  <td class="check">◎ コネクタ豊富</td>
+  <td class="partial">△ 基本対応</td>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">国内HRISコネクタ</td>
+  <td class="cross">✕ カスタム開発必要</td>
+  <td class="cross">✕ カスタム開発必要</td>
+  <td class="partial">△ パートナー経由あり</td>
+  <td class="cross">✕ カスタム開発必要</td>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">Certification機能</td>
+  <td class="partial">△ アクセスレビュー（基本機能）</td>
+  <td class="partial">△ 外部ツール（Okta Privileged Access）</td>
+  <td class="check">◎ 業界最高水準</td>
+  <td class="check">◎ AIベースの棚卸し</td>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">価格帯</td>
+  <td>M365 E5含む / P2 ¥890/月/ユーザー</td>
+  <td>別途見積もり（Workforce Identity）</td>
+  <td>別途見積もり（大規模向け）</td>
+  <td>別途見積もり</td>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">導入の難易度</td>
+  <td>低〜中（M365既存環境なら低い）</td>
+  <td>中</td>
+  <td>高（専門SE要）</td>
+  <td>高（専門SE要）</td>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">日本語対応</td>
+  <td class="check">◎ UIフル日本語</td>
+  <td class="partial">△ 一部英語</td>
+  <td class="partial">△ パートナー経由</td>
+  <td class="cross">✕ 主に英語</td>
+</tr>
+<tr>
+  <td style="font-weight:700;color:#1e3a5f">推奨シナリオ</td>
+  <td>M365標準化済み・中堅企業</td>
+  <td>SaaS多数・モダン環境</td>
+  <td>1,000名超・J-SOX対応</td>
+  <td>クラウドネイティブ移行中</td>
+</tr>
+</table>
+
+<div class="warn">
+<strong>⚠️ One Identity Manager について:</strong> 国内SIerとの連携実績が多く、国内製HRIS（COMPANY / POSITIVE等）向けのカスタムコネクタが流通しています。
+オンプレ型のため初期コストは高いですが、自社データセンター内完結を要件とする企業（金融・政府系）では選択肢になります。
+</div>
+</section>
+
+<!-- ===== HR連携パターン ===== -->
+<section id="hr-connect">
+<h2>🔗 HR連携パターン（国内HRISごとの実装方法）</h2>
+
+<p>JML自動化の成否はHRISとIGAの連携品質に大きく依存します。
+海外製HRISはSCIM 2.0をサポートするものが増えていますが、国内製HRISは独自API・CSVエクスポートが主流です。</p>
+
+<table class="wbs-table">
+<tr><th>HRISシステム</th><th>シェア・特徴</th><th>連携方式</th><th>注意点・実装ヒント</th></tr>
+<tr>
+  <td class="wbs-l1">SAP SuccessFactors</td>
+  <td>外資系・大手日本企業に普及</td>
+  <td>SCIM 2.0 + SAP IAS連携、またはEntra直接コネクタ</td>
+  <td>SuccessFactors Employee Central要。Entra ID Governanceとの標準コネクタあり</td>
+</tr>
+<tr>
+  <td class="wbs-l1">Workday</td>
+  <td>外資系・HR改革企業に普及</td>
+  <td>Workday→Entra ID プロビジョニング（標準対応）</td>
+  <td>Workday Studio設定が必要。退職日フィールドのマッピングを慎重に設定すること</td>
+</tr>
+<tr>
+  <td class="wbs-l1">COMPANY（Works Human Intelligence）</td>
+  <td>国内大手・製造業に多い</td>
+  <td>COMPANY API（REST）または CSV定期エクスポート → IGA</td>
+  <td>SCIMネイティブ非対応。API認証はBasic認証が多く、中間連携サーバーが必要な場合あり</td>
+</tr>
+<tr>
+  <td class="wbs-l1">奉行シリーズ（OBC）</td>
+  <td>中小・中堅企業に普及</td>
+  <td>CSV定期エクスポート → SFTP → IGA取り込み</td>
+  <td>リアルタイム連携困難。日次バッチが現実的。エクスポート列名のマッピング設計が必要</td>
+</tr>
+<tr>
+  <td class="wbs-l1">POSITIVE（日本システム技術）</td>
+  <td>官公庁・教育機関に多い</td>
+  <td>CSV定期エクスポートまたは独自API</td>
+  <td>官公庁版と企業版でAPIが異なる。ID体系（職員番号）の名寄せが必要</td>
+</tr>
+<tr>
+  <td class="wbs-l1">SmartHR</td>
+  <td>国内スタートアップ・中小に急増</td>
+  <td>SmartHR REST API（OAuth 2.0）→ Webhook対応</td>
+  <td>SCIMは一部対応。Webhookで入退社イベント通知が可能。API制限（レートリミット）に注意</td>
+</tr>
+</table>
+
+<h3>連携アーキテクチャの選択基準</h3>
+<div class="three-col">
+<div class="card">
+  <h4>🔵 SCIM 2.0直接連携</h4>
+  <p style="font-size:.8rem;color:#475569">SAP SF / Workdayなど対応HRISと、Entra ID / Okta間の最もシンプルな構成。
+  設定はGUI上で完結し、リアルタイム同期が可能。大規模障害時のエラーハンドリング設計が重要。</p>
+</div>
+<div class="card">
+  <h4>🟡 中間IGA統合レイヤー</h4>
+  <p style="font-size:.8rem;color:#475569">複数のHRISや複数のIDターゲットが混在する場合。SailPoint / One Identityが中間に入り、変換・ルーティングを担う。
+  コストと複雑度が上がるが、柔軟性は最も高い。</p>
+</div>
+<div class="card">
+  <h4>🟠 CSVバッチ連携</h4>
+  <p style="font-size:.8rem;color:#475569">国内製HRISや古いシステムとの現実的な選択肢。日次バッチで差分を検出しプロビジョニング。
+  退職処理の遅延（最大1日）が発生するため、緊急退職手順を別途定めること。</p>
+</div>
+</div>
+</section>
+
+<!-- ===== ロードマップ ===== -->
+<section id="roadmap">
+<h2>📅 段階的導入ロードマップ</h2>
+
+<div class="roadmap-row">
+  <div class="roadmap-phase">
+    <h4>🔵 Phase 1（1〜3ヶ月）<br>退職者即時無効化</h4>
+    <ul>
+      <li>HRISの退職日フィールドをIDMと連携</li>
+      <li>ADアカウント当日無効化の自動化</li>
+      <li>全トークン・セッション失効</li>
+      <li>緊急退職手順の整備（即日対応）</li>
+      <li>KPI: 退職後ID残存数 → 0</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>🟢 Phase 2（3〜9ヶ月）<br>入社自動化</h4>
+    <ul>
+      <li>HRIS→IGA SCIM連携（またはCSV）</li>
+      <li>ロールモデル設計（部署×職種×雇用区分）</li>
+      <li>Day0プロビジョニング（AD・M365・主要SaaS）</li>
+      <li>ウェルカムワークフロー整備</li>
+      <li>KPI: Day0準備完了率 100%</li>
+    </ul>
+  </div>
+  <div class="roadmap-phase">
+    <h4>🟡 Phase 3（9〜18ヶ月）<br>異動権限レビュー自動化</h4>
+    <ul>
+      <li>Moverイベント検知とロール変更自動化</li>
+      <li>SOD検知ルール設計・実装</li>
+      <li>四半期Certification（棚卸し）自動スケジュール</li>
+      <li>ゾンビ権限の定期クリーンアップ</li>
+      <li>KPI: Certification完了率・SOD違反件数</li>
+    </ul>
+  </div>
+</div>
+
+<h3>フェーズ間の依存関係と注意点</h3>
+<p>Phase 1のLeaver自動化は最も影響範囲が小さく（既存ユーザーのアカウントを消すだけ）、ビジネスリスクが低いため最初に着手すべきです。
+Phase 2（入社自動化）はロールモデル設計が先行タスクとなり、設計の質が後々の運用コストに直結します。
+Phase 3（Mover）は既存ユーザーの権限を変更するため最もリスクが高く、テスト期間を十分に確保してください。</p>
+</section>
+
+<!-- ===== KPI ===== -->
+<section id="kpi">
+<h2>📊 KPIと効果測定</h2>
+
+<table class="wbs-table">
+<tr><th>KPI</th><th>導入前（目安）</th><th>Phase1完了後</th><th>Phase2完了後</th><th>Phase3完了後</th></tr>
+<tr><td class="wbs-l1">退職者ID残存数</td><td>平均12〜30件/月</td><td class="good" style="color:#16a34a">0件/月（自動化）</td><td>0件</td><td>0件</td></tr>
+<tr><td class="wbs-l2">ID発行までの時間</td><td>1〜3営業日（手動）</td><td>変化なし</td><td class="good" style="color:#16a34a">当日自動（Day0）</td><td>当日自動</td></tr>
+<tr><td class="wbs-l2">権限付与ミス件数</td><td>月2〜5件</td><td>Leaver改善</td><td>月0〜1件</td><td class="good" style="color:#16a34a">ほぼ0件</td></tr>
+<tr><td class="wbs-l3">SaaSライセンス無駄</td><td>退職者分5〜10%</td><td class="good" style="color:#16a34a">解消</td><td>ほぼ0%</td><td>0%</td></tr>
+<tr><td class="wbs-l3">Certification完了率</td><td>50〜70%（手動通知）</td><td>変化なし</td><td>変化なし</td><td class="good" style="color:#16a34a">90%以上（自動通知）</td></tr>
+<tr><td class="wbs-l3">IT担当者の対応工数</td><td>月40〜80時間</td><td>Leaver分削減</td><td>月5〜10時間</td><td class="good" style="color:#16a34a">月2〜5時間（監視のみ）</td></tr>
+</table>
+</section>
+
+<!-- ===== 費用感 ===== -->
+<section id="cost">
+<h2>💰 費用感と投資対効果（ROI）</h2>
+
+<div class="three-col">
+<div class="card">
+  <h4>💡 中小企業向け（〜300名）</h4>
+  <p style="font-size:.8rem;color:#475569">Entra ID P2（M365 E5ライセンスに含まれる場合が多い）のLifecycle Workflowsで基本的なJML自動化が可能。
+  追加費用なし〜¥1,000/月/ユーザー程度。導入工数：SE 30〜60人日。</p>
+</div>
+<div class="card">
+  <h4>💼 中堅企業向け（300〜2,000名）</h4>
+  <p style="font-size:.8rem;color:#475569">Entra ID Governance ＋ HRIS連携開発。初期費用：300〜800万円、運用：50〜150万円/年。
+  SailPoint IdentityNowは初期1,000〜2,000万円。SE 60〜120人日。</p>
+</div>
+<div class="card">
+  <h4>🏢 大企業向け（2,000名超）</h4>
+  <p style="font-size:.8rem;color:#475569">SailPoint / Saviynt / One Identity Manager。初期2,000〜8,000万円。運用300〜1,000万円/年。
+  ただしID管理の人件費削減・セキュリティインシデント予防効果を考慮すると3〜5年でROI達成。</p>
+</div>
+</div>
+
+<h3>ROI試算例（1,000名・SaaS20本利用）</h3>
+<table class="cost-table">
+<tr><th>コスト/効果項目</th><th>導入前（年間）</th><th>導入後（年間）</th><th>差分</th></tr>
+<tr><td>IT担当者工数（JML対応）</td><td>¥600万円（750h×8,000円）</td><td>¥60万円（75h）</td><td>▲¥540万円</td></tr>
+<tr><td>退職者SaaSライセンス無駄</td><td>¥240万円（20本×100席×1,000円×12ヶ月）</td><td>¥0</td><td>▲¥240万円</td></tr>
+<tr><td>インシデント対応（推定）</td><td>¥200万円（年1〜2件想定）</td><td>¥20万円</td><td>▲¥180万円</td></tr>
+<tr><td>監査対応工数</td><td>¥150万円</td><td>¥30万円（自動証跡）</td><td>▲¥120万円</td></tr>
+<tr style="font-weight:700;background:#f0f4ff"><td>年間効果合計</td><td>¥1,190万円（コスト）</td><td>¥110万円</td><td>▲¥1,080万円/年</td></tr>
+<tr style="font-weight:700;background:#f0fdf4"><td>初期投資（Entra P2 + 構築）</td><td colspan="2">約¥500万円</td><td>ROI達成: 約6ヶ月</td></tr>
+</table>
+
+<div class="good">
+<strong>✅ まとめ:</strong> JML自動化はセキュリティリスク低減とIT工数削減の両立ができる投資対効果の高い取り組みです。
+最初のステップとして「退職者の即日無効化」だけでも着手することで、最大のリスクを最小コストで排除できます。
+まずはPhase 1から始め、効果を測定しながら段階的に拡張する進め方を推奨します。
+</div>
+</section>
+
+</main>
 </body>
 </html>
