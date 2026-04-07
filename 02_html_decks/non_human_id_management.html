@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>非人間ID（NHI）管理ガイド</title>
+<style>
+:root{--p:#0d3349;--a:#00b4d8;--bg:#f0f8ff;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+.badge{display:inline-block;background:var(--a);color:var(--p);font-weight:bold;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.box{background:#e0f7fa;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+.box.warn{background:#fff8e1;border-color:#ffc107}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:var(--bg)}
+.cmd{background:#1e2a35;color:#a8e6cf;padding:.8rem 1rem;border-radius:6px;font-family:monospace;font-size:.85rem;margin:.5rem 0}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">技術・セキュリティ担当向け</div>
+  <h1>🤖 非人間ID（NHI）管理ガイド</h1>
+  <p>APIキー・サービスアカウント・マシンID・デバイス証明書の安全な管理</p>
+</header>
+<div class="container">
+
+<section>
+  <div class="sec-h">💡 NHIとは何か？なぜ問題になるのか</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>非人間ID（NHI）の種類</h3>
+      <table>
+        <tr><th>NHI種別</th><th>用途</th><th>典型的な管理の問題</th></tr>
+        <tr><td>APIキー</td><td>外部SaaS連携・クラウドAPIアクセス</td><td>GitにハードコードされExpose</td></tr>
+        <tr><td>サービスアカウント</td><td>Windows/Linuxサービスの実行アカウント</td><td>パスワード未変更・過剰権限</td></tr>
+        <tr><td>gMSA / DSA</td><td>AD管理のサービスアカウント</td><td>導入率が低く通常アカウントを使用</td></tr>
+        <tr><td>クライアント証明書</td><td>マシン・デバイスの認証</td><td>有効期限切れで突然の障害</td></tr>
+        <tr><td>クラウドIAMロール</td><td>AWS/Azure/GCPのサービス認証</td><td>過剰権限・未使用ロールの放置</td></tr>
+        <tr><td>デバイス証明書(IoT)</td><td>センサー・IoT機器の認証</td><td>大量デバイスの証明書管理が困難</td></tr>
+        <tr><td>JWTトークン / OAuth</td><td>マイクロサービス間の認証</td><td>有効期限なし・漏洩検知困難</td></tr>
+      </table>
+    </div>
+    <div class="box warn">
+      <h3>NHIの爆発的増加：人間IDの10〜50倍</h3>
+      <p>現代のエンタープライズでは、クラウド・マイクロサービス・IoTの普及でNHIは人間IDの10〜50倍に達します。しかし管理手順が確立されている企業は少数。<strong>未管理のNHIは重大なセキュリティホール</strong>となります。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🔑 APIキー管理のベストプラクティス</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>実施項目</th><th>具体的方法</th><th>優先度</th></tr>
+      <tr><td>コードへのハードコード禁止</td><td>環境変数・シークレットマネージャーを使用</td><td>最高</td></tr>
+      <tr><td>GitHubシークレットスキャン</td><td>GitHub Advanced Security / truffleHog / git-secrets</td><td>高</td></tr>
+      <tr><td>有効期限設定</td><td>最大90日。定期ローテーション自動化</td><td>高</td></tr>
+      <tr><td>最小権限</td><td>Read-onlyキーとWrite可能キーを分ける</td><td>高</td></tr>
+      <tr><td>Vault管理</td><td>HashiCorp Vault / AWS Secrets Manager / Azure Key Vault</td><td>中</td></tr>
+      <tr><td>インベントリ管理</td><td>全APIキーの発行者・用途・有効期限を台帳化</td><td>中</td></tr>
+    </table>
+    <div class="cmd"># GitHubシークレットスキャン有効化（リポジトリ設定）
+# Settings → Security → Secret scanning → Enable
+# または git-secretsでローカルフック設定
+git secrets --install
+git secrets --register-aws  # AWSキーパターンを登録</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🏗️ サービスアカウント管理アーキテクチャ</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>ケース</th><th>推奨方式</th><th>設定例</th></tr>
+      <tr><td>Windowsサービス</td><td>gMSA（Group Managed Service Account）</td><td>New-ADServiceAccount -Name "svc_iis" -DNSHostName "webapp.corp.local"</td></tr>
+      <tr><td>Linux/UNIXサービス</td><td>専用システムユーザー + sudoers最小権限</td><td>useradd -r -s /sbin/nologin svc_app</td></tr>
+      <tr><td>DB接続アカウント</td><td>HashiCorp Vault動的シークレット</td><td>Vaultが都度一時パスワードを生成</td></tr>
+      <tr><td>クラウドサービス認証</td><td>IMDSv2 / Workload Identity / Managed Identity</td><td>キーなしでIAMロールを利用</td></tr>
+      <tr><td>CI/CDパイプライン</td><td>GitHub Actions OIDC / Azure Workload Identity</td><td>シークレット不要の一時トークン</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🛠️ 推奨ツール比較</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>ツール</th><th>用途</th><th>特徴</th><th>価格帯</th></tr>
+      <tr><td>HashiCorp Vault</td><td>シークレット管理全般</td><td>OSS・動的シークレット・多様なバックエンド</td><td>OSS無料/Enterprise有料</td></tr>
+      <tr><td>AWS Secrets Manager</td><td>AWS環境のシークレット</td><td>RDS自動ローテーション対応</td><td>シークレット$0.40/月</td></tr>
+      <tr><td>Azure Key Vault</td><td>Azure環境のキー・証明書</td><td>M365統合・HSM対応</td><td>操作数課金</td></tr>
+      <tr><td>CyberArk Conjur</td><td>エンプラシークレット管理</td><td>DevOps統合・CyberArk PAMとの統合</td><td>高（エンプラ）</td></tr>
+      <tr><td>Akeyless</td><td>クラウドネイティブシークレット</td><td>マルチクラウド対応・SaaS型</td><td>中</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 非人間ID（NHI）管理ガイド</p>
+</footer>
+</body>
+</html>

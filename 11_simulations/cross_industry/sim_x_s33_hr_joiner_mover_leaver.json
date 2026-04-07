@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "id": "sim_x_s33_hr_joiner_mover_leaver",
+    "title": "S33: 保険会社の入社・異動・退職ID管理自動化",
+    "industry": "金融（保険）",
+    "company": "大手損害保険会社（東証プライム・従業員1.5万人・代理店含む50万ID）",
+    "scenario_type": "ライフサイクル自動化・IGA",
+    "version": "1.0",
+    "created": "2026-04-07"
+  },
+  "personas": [
+    {
+      "role": "人事システム担当",
+      "concern": "HRシステム（SAP SuccessFactors）とADの連携が手作業。月100件の入退社で毎回ミスが発生"
+    },
+    {
+      "role": "情報セキュリティ部長",
+      "concern": "退職者アカウントの削除漏れが内部監査で毎年指摘される"
+    },
+    {
+      "role": "コンサル営業（NSSol）",
+      "concern": "SailPoint IdentityNow とSAP HCM連携を提案したい"
+    }
+  ],
+  "discussion_summary": [
+    "現行: HRから退職情報をメール受信→IT部門が手動でAD無効化。平均2.5営業日かかる",
+    "問題: 退職者アカウントが平均2.5日残存。内部監査で毎年「即日削除未達」と指摘",
+    "代理店ID（50万）: 代理店委託先が個別に申請。棚卸し未実施",
+    "提案: IGA（SailPoint）+SAP HCM連携で退職翌日自動無効化。代理店はセルフサービスポータル",
+    "懸念: SAP連携の技術的複雑さ・代理店向けオンボーディングコスト",
+    "合意: フェーズ1は社員のみ自動化（3ヶ月）、フェーズ2で代理店IDを段階移行"
+  ],
+  "html_needs_identified": [
+    "hr_id_automation.html（HR連携自動化ガイド）"
+  ],
+  "knowledge_references": [
+    "10_lifecycle/identity_lifecycle.json",
+    "09_iga/iga_framework.json"
+  ],
+  "reflection": "HR×IT連携の自動化は即効ROIが出る。ただしSAP等基幹HRとの連携は技術的に重く過小評価しやすい"
+}

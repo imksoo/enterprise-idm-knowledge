@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADインシデント対応訓練プレイブック</title>
+<style>
+:root{--p:#1a1a2e;--a:#e94560;--bg:#f4f4f8;--card:#fff;--g:#27ae60;--w:#f39c12}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+.badge{display:inline-block;background:var(--a);color:#fff;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.phase{border:2px solid var(--p);border-radius:8px;padding:1rem;margin-bottom:1rem}
+.phase-title{background:var(--p);color:#fff;padding:.4rem .8rem;border-radius:4px;font-weight:bold;margin-bottom:.8rem;display:inline-block}
+.phase.p2{border-color:var(--a)}
+.phase.p2 .phase-title{background:var(--a)}
+.phase.p3{border-color:var(--w)}
+.phase.p3 .phase-title{background:var(--w)}
+.phase.p4{border-color:var(--g)}
+.phase.p4 .phase-title{background:var(--g)}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:#f8f8f8}
+.cmd{background:#1e1e1e;color:#c8e6c9;padding:1rem;border-radius:6px;font-family:monospace;font-size:.85rem;margin:.5rem 0;overflow-x:auto}
+.warning{background:#fff3cd;border:2px solid var(--w);border-radius:8px;padding:1rem;margin-bottom:1rem}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">インシデント対応訓練用</div>
+  <h1>🚨 ADアカウント侵害インシデント対応プレイブック</h1>
+  <p>特権アカウント乗っ取り・AD侵害シナリオの初動対応手順と訓練ガイド</p>
+</header>
+<div class="container">
+
+<div class="warning">
+  ⚠️ <strong>このドキュメントは訓練・準備用です。</strong>実際のインシデント発生時は所定の緊急連絡先（CSIRT）に即時連絡してから本手順を実施してください。
+</div>
+
+<section>
+  <div class="sec-h">🎯 侵害シナリオ概要（訓練シナリオ）</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>シナリオ</th><th>侵害内容</th><th>影響範囲</th></tr>
+      <tr><td>シナリオA（軽度）</td><td>一般ユーザーのパスワード漏洩・不審ログイン</td><td>当該ユーザーのみ</td></tr>
+      <tr><td>シナリオB（中度）</td><td>サーバー管理者アカウントの侵害</td><td>管理対象サーバー群</td></tr>
+      <tr><td>シナリオC（重度）</td><td>ドメイン管理者（Domain Admin）の侵害</td><td>AD全体・全サーバー</td></tr>
+      <tr><td>シナリオD（最重度）</td><td>DCSync攻撃・Kerberoasting・Golden Ticket発行</td><td>ドメイン全体（完全制圧）</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">⏱️ シナリオC：ドメイン管理者侵害 対応タイムライン</div>
+  <div class="sec-b">
+
+    <div class="phase">
+      <div class="phase-title">Phase 1: 検知・初動（0〜30分）</div>
+      <ol style="padding-left:1.5rem;line-height:2.2">
+        <li>SIEM/SentinelのアラートでDomain Admin権限の異常ログインを検知</li>
+        <li>SOC担当者がCSIRTリーダーに即時エスカレーション</li>
+        <li>被疑アカウントの<strong>即時無効化</strong>（ADコンソール or PowerShell）</li>
+        <li>被疑端末のネットワーク隔離（VLAN切り替え or スイッチポート停止）</li>
+        <li>侵害発生の証拠保全開始（ログのバックアップ）</li>
+      </ol>
+    </div>
+
+    <div class="phase p2">
+      <div class="phase-title">Phase 2: 封じ込め（30分〜2時間）</div>
+      <ol style="padding-left:1.5rem;line-height:2.2">
+        <li>全Domain Adminアカウントのパスワード強制リセット（KRBTGT含む2回リセット）</li>
+        <li>侵害期間中に作成された新規アカウントの洗い出し・無効化</li>
+        <li>異常な権限昇格がないかAD全体を確認</li>
+        <li>バックアップシステムが感染していないか確認</li>
+        <li>外部通信ブロック（C2サーバーへの通信遮断）</li>
+      </ol>
+    </div>
+
+    <div class="phase p3">
+      <div class="phase-title">Phase 3: 根絶・復旧（2時間〜48時間）</div>
+      <ol style="padding-left:1.5rem;line-height:2.2">
+        <li>侵害された端末のフォレンジック調査（マルウェア有無確認）</li>
+        <li>マルウェア感染端末のクリーンインストール</li>
+        <li>Golden Ticketが発行された可能性 → KRBTGTアカウントのパスワードを再度リセット</li>
+        <li>全ユーザーへの強制パスワードリセット通知</li>
+        <li>Tiered AD管理モデルの緊急適用（Tier 0/1/2分離）</li>
+      </ol>
+    </div>
+
+    <div class="phase p4">
+      <div class="phase-title">Phase 4: 事後対応・再発防止（48時間〜）</div>
+      <ol style="padding-left:1.5rem;line-height:2.2">
+        <li>インシデントレポート作成（経営層・規制当局向け）</li>
+        <li>侵害の根本原因分析（RCA）</li>
+        <li>PAM導入・特権アカウント管理強化の計画策定</li>
+        <li>従業員向けフィッシング訓練の再実施</li>
+        <li>今後の監視強化（SIEM検知ルールの更新）</li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">💻 初動対応コマンドリファレンス（PowerShell）</div>
+  <div class="sec-b">
+    <p style="margin-bottom:.8rem"><strong>被疑アカウントの即時無効化</strong></p>
+    <div class="cmd">Disable-ADAccount -Identity "suspect_user"
+# または全Domain Adminを一覧表示して確認
+Get-ADGroupMember -Identity "Domain Admins" | Select-Object Name, SamAccountName</div>
+
+    <p style="margin-bottom:.8rem;margin-top:1rem"><strong>KRBTGTパスワードリセット（2回実施）</strong></p>
+    <div class="cmd">Set-ADAccountPassword -Identity "krbtgt" -Reset -NewPassword (ConvertTo-SecureString "NewP@ss!2026" -AsPlainText -Force)
+# 最低10時間後に再度実施（チケット有効期限を超えるため）</div>
+
+    <p style="margin-bottom:.8rem;margin-top:1rem"><strong>最近作成されたアカウントの確認</strong></p>
+    <div class="cmd">$since = (Get-Date).AddDays(-7)
+Get-ADUser -Filter {WhenCreated -ge $since} | Select-Object Name, WhenCreated, Enabled</div>
+
+    <p style="margin-bottom:.8rem;margin-top:1rem"><strong>異常なグループメンバーシップの確認</strong></p>
+    <div class="cmd">$privileged = @("Domain Admins","Enterprise Admins","Schema Admins","Administrators")
+foreach ($grp in $privileged) {
+  Write-Host "=== $grp ===" -ForegroundColor Cyan
+  Get-ADGroupMember -Identity $grp | Select-Object Name, SamAccountName
+}</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📋 訓練実施ガイド（年次訓練）</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>訓練ステップ</th><th>所要時間</th><th>参加者</th><th>チェックポイント</th></tr>
+      <tr><td>事前ブリーフィング</td><td>30分</td><td>CSIRT全員</td><td>役割分担・連絡ツールの確認</td></tr>
+      <tr><td>インジェクション（シナリオ開始）</td><td>15分</td><td>SOC担当</td><td>アラート検知から報告までの時間測定</td></tr>
+      <tr><td>初動対応演練</td><td>60分</td><td>CSIRT+IT部門</td><td>アカウント無効化の実施速度</td></tr>
+      <tr><td>経営報告演練</td><td>30分</td><td>CSIRT+CISO</td><td>経営層への簡潔な状況報告</td></tr>
+      <tr><td>ホットウォッシュ</td><td>60分</td><td>全参加者</td><td>うまくいった点・改善点の洗い出し</td></tr>
+      <tr><td>報告書作成</td><td>翌日</td><td>CSIRT</td><td>訓練記録・改善アクション一覧</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📊 KPIと成熟度指標</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>KPI</th><th>目標値</th><th>現状把握方法</th></tr>
+      <tr><td>検知から初動まで（MTTD）</td><td>15分以内</td><td>訓練タイムログ</td></tr>
+      <tr><td>初動から封じ込め（MTTC）</td><td>2時間以内</td><td>訓練タイムログ</td></tr>
+      <tr><td>インシデント報告書作成</td><td>72時間以内</td><td>文書管理システム</td></tr>
+      <tr><td>訓練実施頻度</td><td>年2回</td><td>訓練記録</td></tr>
+      <tr><td>特権アカウント数（Domain Admin）</td><td>5名以下</td><td>AD定期レポート</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — ADインシデント対応訓練プレイブック</p>
+  <p>本資料は訓練・検討用途です。実際のインシデント時は最新の手順書を確認してください。</p>
+</footer>
+</body>
+</html>

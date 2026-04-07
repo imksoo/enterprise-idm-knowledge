@@ -1,0 +1,268 @@
+{
+  "metadata": {
+    "id": "server_inventory_idm",
+    "title": "サーバーインベントリとID管理台帳設計",
+    "version": "1.0",
+    "created": "2026-04-07",
+    "updated": "2026-04-07",
+    "tags": [
+      "server",
+      "inventory",
+      "cmdb",
+      "account-management",
+      "audit"
+    ],
+    "related_files": [
+      "04_server_auth/os_auth_methods.json",
+      "06_security_hardening/privileged_access_management.json",
+      "09_iga/iga_framework.json"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "node_001",
+      "label": "サーバーインベントリ台帳",
+      "object_type": "concept",
+      "description": "全サーバーの識別情報・OS・用途・管理アカウントを一元管理する台帳。CMDB（Configuration Management Database）とも呼ばれる",
+      "properties": {
+        "standard": "ITIL v4",
+        "tool_examples": [
+          "ServiceNow CMDB",
+          "SolarWinds IPAM",
+          "Ansible Inventory",
+          "spreadsheet"
+        ]
+      }
+    },
+    {
+      "id": "node_002",
+      "label": "アカウント棚卸し",
+      "object_type": "process",
+      "description": "サーバー上の全ユーザーアカウント・サービスアカウントを定期的に洗い出し、不要アカウントを削除・権限を見直すプロセス",
+      "properties": {
+        "frequency": "quarterly",
+        "regulation": [
+          "PCI DSS Req 7",
+          "ISO27001 A.8.2",
+          "FISC"
+        ]
+      }
+    },
+    {
+      "id": "node_003",
+      "label": "CMDB連携",
+      "object_type": "pattern",
+      "description": "CMDBとAD/LDAPを連携し、サーバー追加時にIDプロビジョニングを自動化するパターン",
+      "properties": {}
+    },
+    {
+      "id": "node_004",
+      "label": "サービスアカウント管理",
+      "object_type": "concept",
+      "description": "アプリケーション・サービスが使用するアカウント（人間が直接使用しない）の管理。パスワードの定期ローテーションと最小権限が重要",
+      "properties": {
+        "types": [
+          "Windows Service Account",
+          "gMSA",
+          "Linux system user",
+          "DB接続アカウント",
+          "API Key"
+        ]
+      }
+    },
+    {
+      "id": "node_005",
+      "label": "gMSA（Group Managed Service Account）",
+      "object_type": "product",
+      "description": "Windowsのサービスアカウント。パスワードをADが自動生成・ローテーション。複数サーバーで同一アカウントを使用可能",
+      "properties": {
+        "os": "Windows Server 2012+",
+        "cost": "free (AD機能)",
+        "limitation": "Windowsのみ"
+      }
+    },
+    {
+      "id": "node_006",
+      "label": "eMSA（Enhanced MSA）",
+      "object_type": "product",
+      "description": "単一サーバー専用のマネージドサービスアカウント（スタンドアロン版）",
+      "properties": {}
+    },
+    {
+      "id": "node_007",
+      "label": "Ansible Inventory",
+      "object_type": "product",
+      "description": "Ansibleが管理するサーバーリスト。YAML/INI形式で定義。動的インベントリでAD/AWS等から自動生成可能",
+      "properties": {}
+    },
+    {
+      "id": "node_008",
+      "label": "アカウント使用状況ログ分析",
+      "object_type": "process",
+      "description": "SIEMやログ分析ツールで、全サーバーアカウントのログイン成功・失敗・アクセス先を分析し、異常を検出する",
+      "properties": {
+        "tools": [
+          "Microsoft Sentinel",
+          "Splunk",
+          "IBM QRadar",
+          "LogStash+Kibana"
+        ]
+      }
+    },
+    {
+      "id": "node_009",
+      "label": "廃止サーバー・孤立アカウント",
+      "object_type": "risk",
+      "description": "廃止済みサーバーのADアカウントが残存するリスク。攻撃者に悪用される可能性。CMDB棚卸しと連動した削除フローが必要",
+      "properties": {
+        "risk_level": "high",
+        "common_cause": "CMDB未更新・退職対応漏れ"
+      }
+    },
+    {
+      "id": "node_010",
+      "label": "Windows LAPS",
+      "object_type": "product",
+      "description": "Windows LocalAdminパスワードを自動ローテーションするMicrosoft無償機能（Windows LAPS 2023以降）",
+      "properties": {
+        "cost": "free",
+        "os": "Windows Server 2019+, Windows 10+"
+      }
+    },
+    {
+      "id": "node_011",
+      "label": "sudoers一元管理",
+      "object_type": "pattern",
+      "description": "Linux/UNIXのsudoers設定をAnsible/Puppet/Chefで一元管理するパターン。変更をGitでバージョン管理",
+      "properties": {}
+    },
+    {
+      "id": "node_012",
+      "label": "HashiCorp Vault",
+      "object_type": "product",
+      "description": "シークレット（パスワード・APIキー・証明書）を安全に管理するOSSツール。動的シークレット生成が特徴",
+      "properties": {
+        "license": "OSS/Enterprise",
+        "use_case": [
+          "DB接続パスワード",
+          "APIキー",
+          "SSH証明書"
+        ]
+      }
+    },
+    {
+      "id": "node_013",
+      "label": "AD棚卸しレポート",
+      "object_type": "concept",
+      "description": "ADの全アカウント・グループ・権限の現状をレポート化するプロセス。PowerShellで自動化可能",
+      "properties": {
+        "frequency": "monthly",
+        "output": [
+          "enabled/disabled accounts",
+          "last logon",
+          "group membership",
+          "admin accounts"
+        ]
+      }
+    },
+    {
+      "id": "node_014",
+      "label": "Oracle DB サービスアカウント管理",
+      "object_type": "pattern",
+      "description": "Oracle Database接続に使用するDBユーザーアカウントの管理。SYSDBAパスワードの定期変更とVaultへの格納が重要",
+      "properties": {}
+    },
+    {
+      "id": "node_015",
+      "label": "非人間ID（Non-Human Identity）",
+      "object_type": "concept",
+      "description": "人間ではなくアプリケーション・CI/CDパイプライン・マイクロサービスが使用するID。APIキー・サービスアカウント・証明書が含まれる",
+      "properties": {
+        "growth": "人間IDの10〜50倍に増加中",
+        "risk": "管理されていないNHIが増加"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "node_001",
+      "to": "node_003",
+      "relationship": "implements",
+      "description": "CMDBはCMDB連携パターンの基盤"
+    },
+    {
+      "from": "node_001",
+      "to": "node_009",
+      "relationship": "mitigates",
+      "description": "CMDB棚卸しで孤立アカウントリスクを軽減"
+    },
+    {
+      "from": "node_002",
+      "to": "node_008",
+      "relationship": "requires",
+      "description": "棚卸しにはログ分析が必要"
+    },
+    {
+      "from": "node_004",
+      "to": "node_005",
+      "relationship": "example_of",
+      "description": "gMSAはサービスアカウント管理の具体例"
+    },
+    {
+      "from": "node_004",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "HashiCorp VaultでサービスアカウントのシークレットをVault管理"
+    },
+    {
+      "from": "node_007",
+      "to": "node_001",
+      "relationship": "complements",
+      "description": "AnsibleインベントリとCMDBを統合管理"
+    },
+    {
+      "from": "node_010",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "LAPSでWindowsローカル管理者パスワードを自動管理"
+    },
+    {
+      "from": "node_011",
+      "to": "node_004",
+      "relationship": "implements",
+      "description": "sudoers一元管理でLinuxサービスアカウント権限を管理"
+    },
+    {
+      "from": "node_014",
+      "to": "node_012",
+      "relationship": "complements",
+      "description": "Oracle DBアカウントパスワードをHashiCorp Vaultで管理"
+    },
+    {
+      "from": "node_015",
+      "to": "node_004",
+      "relationship": "example_of",
+      "description": "非人間IDはサービスアカウントを含む広概念"
+    },
+    {
+      "from": "node_013",
+      "to": "node_002",
+      "relationship": "implements",
+      "description": "AD棚卸しレポートはアカウント棚卸しプロセスの成果物"
+    }
+  ],
+  "knowledge": [
+    {
+      "topic": "サーバーインベントリ台帳の最低限の項目",
+      "content": "1)サーバー名・IP・FQDN, 2)OS種別・バージョン, 3)用途・業務システム名, 4)管理担当者・部署, 5)管理アカウント一覧（ローカル・AD）, 6)サービスアカウント一覧, 7)最終パスワード変更日, 8)廃止予定日"
+    },
+    {
+      "topic": "定期棚卸し自動化PowerShellの例",
+      "content": "Get-ADUser -Filter * -Properties LastLogonDate,PasswordLastSet | Select Name,SamAccountName,Enabled,LastLogonDate,PasswordLastSet | Export-Csv -Path C:/audit/ad_accounts.csv -Encoding UTF8"
+    },
+    {
+      "topic": "サービスアカウントの命名規則推奨",
+      "content": "プレフィックスをsvc_（WindowsサービスAccount）、appsvc_（アプリケーション用）、batch_（バッチ処理用）など用途別に分け、どのシステム・用途かを名称から特定できるようにする"
+    }
+  ]
+}

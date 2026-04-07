@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "id": "sim_x_s34_cloud_iam_chaos",
+    "title": "S34: エネルギー会社のマルチクラウドIAM混乱",
+    "industry": "エネルギー（電力・ガス）",
+    "company": "大手電力会社（東証プライム・AWS/Azure/GCP全使用・100システム以上がクラウド移行済み）",
+    "scenario_type": "クラウドIAM統合",
+    "version": "1.0",
+    "created": "2026-04-07"
+  },
+  "personas": [
+    {
+      "role": "クラウドアーキテクト",
+      "concern": "AWS/Azure/GCPそれぞれにIAMがあり、誰がどこに何の権限を持っているか全く把握できない"
+    },
+    {
+      "role": "CISO",
+      "concern": "クラウドのIAM設定ミスによるデータ露出インシデントが他社で多発。自社も同じリスクがある"
+    },
+    {
+      "role": "コンサル営業（NSSol）",
+      "concern": "CIEM（Cloud Infrastructure Entitlement Management）の提案をしたい"
+    }
+  ],
+  "discussion_summary": [
+    "現状: AWS IAMユーザー2000人超・Azure ADゲスト400人・GCP Workload Identity混乱",
+    "リスク: 開発者がS3バケットをPublicにして退職。パブリックアクセスが1ヶ月気付かれず",
+    "CIEM: Ermetic/Wiz/Prisma Cloud等でクラウドIAM権限を可視化・最小権限を推奨",
+    "提案: CIEM導入 + Azure ADをグループIdPとして統一（AWS SSOとGCP Workload Federation）",
+    "予算感: CIEM年間2000〜5000万円。ただし1件のデータ露出インシデント対応費用を考えるとROI正"
+  ],
+  "html_needs_identified": [
+    "cloud_iam_management.html（クラウドIAM管理ガイド）"
+  ],
+  "knowledge_references": [
+    "03_identity_architecture/identity_landscape.json"
+  ],
+  "reflection": "マルチクラウドIAMはCIEM専用ツールなしには管理不可。CISM/CIEM市場は急成長中"
+}

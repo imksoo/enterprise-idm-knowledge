@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>業務委託・フリーランスIDアクセス管理ガイド</title>
+<style>
+:root{--p:#1a3a5c;--a:#e67e22;--bg:#f7f9fc;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+header p{opacity:.85}
+.badge{display:inline-block;background:var(--a);color:#fff;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.box{background:#fff8f0;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box.red{background:#fff0f0;border-color:#e74c3c}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+.box.red h3{color:#c0392b}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:#f8f8f8}
+.risk-h{background:#e74c3c;color:#fff;padding:.3rem .7rem;border-radius:4px;font-size:.8rem;font-weight:bold}
+.risk-m{background:#f39c12;color:#fff;padding:.3rem .7rem;border-radius:4px;font-size:.8rem;font-weight:bold}
+.risk-l{background:#27ae60;color:#fff;padding:.3rem .7rem;border-radius:4px;font-size:.8rem;font-weight:bold}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">外部ID管理 実務ガイド</div>
+  <h1>🤝 業務委託・フリーランスIDアクセス管理ガイド</h1>
+  <p>増加するギグワーカー・SIer常駐・派遣社員の安全なID管理実務</p>
+</header>
+<div class="container">
+
+<section>
+  <div class="sec-h">🚨 なぜ外部委託IDがリスクになるのか</div>
+  <div class="sec-b">
+    <div class="box red">
+      <h3>実際のインシデント事例（匿名化）</h3>
+      <ul style="padding-left:1.5rem;line-height:2.2">
+        <li>3年前に終了した保守委託会社のVPNアカウントが削除されておらず、その企業の退職者が不正アクセス</li>
+        <li>フリーランスエンジニアが複数の顧客企業から同一のSSH鍵を使い回し、1社の漏洩で全社に影響</li>
+        <li>大手SIerの常駐SE（二次請け）が本来アクセス不要なDB管理者権限を持ち続け、退職後に悪用</li>
+        <li>業務委託会社側でのランサムウェア感染が、VPN経由で発注元企業内に伝播</li>
+      </ul>
+    </div>
+    <table>
+      <tr><th>外部委託ID リスクカテゴリ</th><th>リスクレベル</th><th>頻度</th></tr>
+      <tr><td>契約終了後のアカウント残存</td><td><span class="risk-h">高</span></td><td>非常に多い</td></tr>
+      <tr><td>過剰な権限付与（最小権限未適用）</td><td><span class="risk-h">高</span></td><td>多い</td></tr>
+      <tr><td>委託先での情報漏洩→自社波及</td><td><span class="risk-h">高</span></td><td>増加中</td></tr>
+      <tr><td>個人デバイスでの業務アクセス</td><td><span class="risk-m">中</span></td><td>多い</td></tr>
+      <tr><td>MFA未適用</td><td><span class="risk-m">中</span></td><td>多い</td></tr>
+      <tr><td>活動ログの未取得</td><td><span class="risk-l">中〜低</span></td><td>まあまあ多い</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🏗️ 外部委託ID管理の4層設計</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>層</th><th>対策</th><th>実装例</th></tr>
+      <tr><td>① 身元確認・契約紐付け</td><td>委託先企業・個人と契約書連動でID発行</td><td>IGA（SailPoint等）で申請→承認→発行</td></tr>
+      <tr><td>② アクセス最小化</td><td>業務スコープ外へのアクセスを技術的に遮断</td><td>PAM JIT + ネットワークセグメント分離</td></tr>
+      <tr><td>③ アクティビティ監視</td><td>全操作のログ記録・セッション録画</td><td>PAM セッション録画 + SIEM</td></tr>
+      <tr><td>④ ライフサイクル管理</td><td>契約終了日と連動した自動無効化</td><td>IGA ガバナンス + HR連携</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📋 外部委託ID発行から削除のフロー</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>推奨フロー（12ステップ）</h3>
+      <ol style="padding-left:1.5rem;line-height:2.4">
+        <li><strong>契約締結</strong> — NDA・情報セキュリティ誓約書への署名</li>
+        <li><strong>申請</strong> — 社内担当者がIGAシステムでID申請（業務内容・期間・必要権限を明記）</li>
+        <li><strong>承認</strong> — 部門長承認 + 情報セキュリティ部門承認（2段階）</li>
+        <li><strong>発行</strong> — IGAが自動でIDプロビジョニング（最小権限で）</li>
+        <li><strong>MFA登録</strong> — 初回ログイン時に必須（スマホアプリ or FIDO2）</li>
+        <li><strong>PAMアクセス設定</strong> — サーバーへのアクセスはPAM経由のみに制限</li>
+        <li><strong>デバイス確認</strong> — 会社支給 or BYOD確認（BYOD時はMAM/MDM適用）</li>
+        <li><strong>セキュリティオリエンテーション</strong> — eラーニング完了確認</li>
+        <li><strong>定期レビュー</strong> — 3ヶ月ごとに業務継続確認・権限見直し</li>
+        <li><strong>契約更新 or 終了通知</strong> — HR連携でIGAに自動通知</li>
+        <li><strong>アカウント無効化</strong> — 契約終了日の翌日0:00に自動無効化</li>
+        <li><strong>アカウント削除</strong> — 90日後に完全削除（ログは保持）</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🔧 委託先企業との連携パターン（B2B連携）</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>委託パターン</th><th>推奨認証方式</th><th>メリット</th><th>注意点</th></tr>
+      <tr><td>大手SIer常駐SE</td><td>Entra B2B（ゲスト招待）</td><td>委託先のMFAをそのまま使用可</td><td>委託先のセキュリティレベルを確認</td></tr>
+      <tr><td>中小SIer・個人</td><td>自社IDを発行（IGAで管理）</td><td>自社ポリシーを完全適用</td><td>ID棚卸しを定期実施</td></tr>
+      <tr><td>海外委託（オフショア）</td><td>PAM経由限定 + IP制限</td><td>アクセス範囲を技術的に制限</td><td>タイムゾーン考慮・休日対応</td></tr>
+      <tr><td>保守委託（リモート）</td><td>PAM JIT + 承認制</td><td>都度承認で不要なアクセスを防止</td><td>緊急時の即応性を確保</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📊 外部委託ID棚卸し実施手順</div>
+  <div class="sec-b">
+    <p style="margin-bottom:1rem">年1回〜四半期ごとの棚卸しが推奨されます。PCI DSSやISO27001では定期レビューが必須要件です。</p>
+    <table>
+      <tr><th>棚卸しステップ</th><th>確認内容</th><th>ツール</th></tr>
+      <tr><td>1. リスト抽出</td><td>ADおよびIGAから外部委託IDを全件抽出</td><td>PowerShell / IGA管理コンソール</td></tr>
+      <tr><td>2. 契約照合</td><td>調達部門の契約リストとIDリストを突合</td><td>スプレッドシート / ServiceNow</td></tr>
+      <tr><td>3. 担当者確認</td><td>各IDの業務担当者にメールで確認（継続or削除）</td><td>IGA ワークフロー</td></tr>
+      <tr><td>4. アクセスログ確認</td><td>過去90日間のアクセス実績確認（未使用＝削除候補）</td><td>SIEM / AD監査ログ</td></tr>
+      <tr><td>5. 是正処置</td><td>不要IDの無効化・過剰権限の削減</td><td>IGA 自動プロビジョニング</td></tr>
+      <tr><td>6. 報告書作成</td><td>CISO・内部監査への報告</td><td>レポートテンプレート</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 業務委託・フリーランスIDアクセス管理ガイド</p>
+</footer>
+</body>
+</html>

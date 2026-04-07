@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "id": "sim_x_s32_api_key_lifecycle",
+    "title": "S32: 製造業IoTプラットフォームのAPIキー管理混乱",
+    "industry": "製造業",
+    "company": "大手自動車部品メーカー（東証プライム・IoTセンサー50万台）",
+    "scenario_type": "非人間ID・APIキーライフサイクル",
+    "version": "1.0",
+    "created": "2026-04-07"
+  },
+  "personas": [
+    {
+      "role": "IoT推進室長",
+      "concern": "工場センサー50万台のAPIキーがスプレッドシートで管理されている。どこに何のキーがあるか分からない"
+    },
+    {
+      "role": "セキュリティ担当",
+      "concern": "GitHubにAPIキーがハードコードされているコードを発見した。影響範囲が不明"
+    },
+    {
+      "role": "コンサル営業（NSSol）",
+      "concern": "HashiCorp Vault + シークレット管理の提案をしたい"
+    }
+  ],
+  "discussion_summary": [
+    "現状: APIキーはExcel管理。有効期限なし。複数のエンジニアが同一キーを使用",
+    "インシデント: GitHub Publicリポジトリへの誤コミットでAPIキー漏洩。取り消し対応に3日かかった",
+    "NHI（非人間ID）の種類: センサーデバイス証明書・アプリAPIキー・CI/CDサービスアカウント・クラウドIAMロール",
+    "提案: HashiCorp Vault で動的シークレット生成（使い捨て）。GitHubシークレットスキャン有効化",
+    "ROI: キー漏洩インシデント対応コスト削減・コンプライアンス要件対応"
+  ],
+  "html_needs_identified": [
+    "non_human_id_management.html（非人間ID管理ガイド）"
+  ],
+  "knowledge_references": [
+    "04_server_auth/server_account_inventory.json"
+  ],
+  "reflection": "IoT時代はデバイスIDとAPIキーが爆発的増加。NHI管理ツール（HashiCorp Vault, Akeyless等）の提案機会"
+}

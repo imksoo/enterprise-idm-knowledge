@@ -303,6 +303,7 @@ body {
       <div class="nav-item" onclick="showSection('frameworks')"><span class="nav-icon">📋</span> フレームワーク</div>
       <div class="nav-item" onclick="showSection('scenarios')"><span class="nav-icon">🎬</span> シナリオ</div>
       <div class="nav-item" onclick="showSection('knowledge-graph')"><span class="nav-icon">🕸️</span> 知識グラフ</div>
+      <div class="nav-item" onclick="showSection('resources')"><span class="nav-icon">📂</span> 資料ライブラリ</div>
     </nav>
 
     <!-- ── Main Content ── -->
@@ -772,6 +773,115 @@ body {
           <span class="filter-count" id="kgCount"></span>
         </div>
         <div class="knowledge-grid" id="allKnowledgeGrid"></div>
+      </section>
+
+      <!-- 資料ライブラリ -->
+      <section id="resources" class="section">
+        <div class="section-title">📂 資料ライブラリ <span style="font-size:0.6em;font-weight:400;color:#888">Document Library</span></div>
+        <div class="section-desc">営業・SE・コンサルが顧客提案・設計検討で使えるHTMLデッキ一覧。同じトピックを複数のビュー（役員向け/技術者向け/コンプライアンス向け/営業向け）で提供しています。</div>
+
+        <h3 style="margin:1.5rem 0 1rem;color:#1a3a5c;font-size:1.1rem">🔹 単体テーマ別資料（25本）</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+          <a href="02_html_decks/idm_products_japan.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🏷️ ID管理製品マップ2026</strong><br><small style="color:#666">日本市場・カテゴリ別製品選定マトリクス</small></a>
+          <a href="02_html_decks/comparison_pam_products.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🔑 PAM製品比較</strong><br><small style="color:#666">CyberArk/BeyondTrust/Delinea等の詳細比較</small></a>
+          <a href="02_html_decks/iga_selection_guide.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>📋 IGA選定ガイド</strong><br><small style="color:#666">SailPoint/Saviynt/Entra Governance比較</small></a>
+          <a href="02_html_decks/roadmap_ad_modernization.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🗺️ ADモダナイゼーション計画</strong><br><small style="color:#666">AD→Entra ID移行ロードマップ</small></a>
+          <a href="02_html_decks/year2029_eol_alert.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>⚠️ 2029年問題アラート</strong><br><small style="color:#666">MIM/FIM EOLとAD移行の緊急性</small></a>
+          <a href="02_html_decks/mim_replacement_guide.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🔄 MIM代替製品ガイド</strong><br><small style="color:#666">FIM/MIM後継の選定・移行</small></a>
+          <a href="02_html_decks/zerotrust_migration_guide.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🛡️ ゼロトラスト移行ガイド</strong><br><small style="color:#666">段階的ゼロトラスト実装</small></a>
+          <a href="02_html_decks/sase_comparison_guide.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🌐 SASE比較ガイド</strong><br><small style="color:#666">Zscaler/Netskope/Prisma等の比較</small></a>
+          <a href="02_html_decks/vendor_access_pam.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🤝 外部委託アクセス管理</strong><br><small style="color:#666">ベンダー・SIer常駐者のPAM設計</small></a>
+          <a href="02_html_decks/external_id_management.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🌍 外部ID管理総論</strong><br><small style="color:#666">B2B/B2C/外部ユーザーID設計</small></a>
+          <a href="02_html_decks/mfa_practical_guide.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>📱 MFA実践ガイド</strong><br><small style="color:#666">スマホなし・高齢者対応の全社MFA</small></a>
+          <a href="02_html_decks/shadow_it_governance.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>👻 シャドーIT対策</strong><br><small style="color:#666">SaaS統制・CASB・SSPM</small></a>
+          <a href="02_html_decks/budget_security_guide.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>💰 予算別セキュリティ施策</strong><br><small style="color:#666">100万〜1億円別の優先施策</small></a>
+          <a href="02_html_decks/one_pager_ma_id_decision.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>📄 M&A ID統合意思決定</strong><br><small style="color:#666">役員向け1枚紙・合併時の判断ガイド</small></a>
+          <a href="02_html_decks/proposal_ma_id_integration.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🤝 M&A ID統合提案書</strong><br><small style="color:#666">合併・買収後のID統合提案テンプレート</small></a>
+          <a href="02_html_decks/non_expert_id_primer.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>📖 非専門家向けID管理入門</strong><br><small style="color:#666">IT兼務担当者・文系役員向け</small></a>
+          <a href="02_html_decks/executive_summary_template.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>📊 役員向けサマリーテンプレート</strong><br><small style="color:#666">意思決定者向け説明資料テンプレート</small></a>
+          <a href="02_html_decks/saas_sso_quickstart.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>⚡ SaaS SSO設定クイックスタート</strong><br><small style="color:#666">M365/Salesforce/Slack等のSSO設定</small></a>
+          <a href="02_html_decks/incident_response_id.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🚨 インシデント対応ガイド</strong><br><small style="color:#666">IDセキュリティインシデント対応手順</small></a>
+          <a href="02_html_decks/incident_drill_playbook.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🎯 ADインシデント訓練プレイブック</strong><br><small style="color:#666">ドメイン侵害対応訓練シナリオと手順</small></a>
+          <a href="02_html_decks/healthcare_id_design.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🏥 医療機関ID管理設計</strong><br><small style="color:#666">ICカード認証・BTG・厚労省ガイドライン対応</small></a>
+          <a href="02_html_decks/contractor_id_management.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🤝 業務委託ID管理</strong><br><small style="color:#666">SIer常駐・フリーランス・派遣のID管理</small></a>
+          <a href="02_html_decks/group_id_integration_roadmap.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🏢 グループID統合ロードマップ</strong><br><small style="color:#666">持株会社・子会社群の統合計画</small></a>
+          <a href="02_html_decks/non_human_id_management.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🤖 非人間ID管理</strong><br><small style="color:#666">APIキー・サービスアカウント・IoTデバイス</small></a>
+          <a href="02_html_decks/hr_id_automation.html" target="_blank" style="display:block;background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem;text-decoration:none;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,.07)"><strong>🔄 HR連携ID自動化</strong><br><small style="color:#666">入社・異動・退職の自動プロビジョニング</small></a>
+        </div>
+
+        <h3 style="margin:2rem 0 1rem;color:#1a3a5c;font-size:1.1rem">🔹 マルチビュー資料（同じトピックを複数の視点で）</h3>
+        <p style="color:#666;font-size:.9rem;margin-bottom:1rem">役員・技術者・コンプライアンス・営業、それぞれの視点に最適化された資料セット。</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem">
+
+          <div style="background:#fff;border:2px solid #7c2d00;border-radius:10px;padding:1.2rem">
+            <div style="font-weight:bold;color:#7c2d00;font-size:1rem;margin-bottom:.8rem">🦠 ランサムウェア×ID防御</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <a href="02_html_decks/multiview/ransomware_id_defense_exec.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fff3eb;border-radius:6px;text-decoration:none;color:#7c2d00;font-size:.85rem"><span>👔</span> 役員・経営層向け</a>
+              <a href="02_html_decks/multiview/ransomware_id_defense_technical.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#e8f8f0;border-radius:6px;text-decoration:none;color:#1b4332;font-size:.85rem"><span>⚙️</span> 技術者・SE向け</a>
+              <a href="02_html_decks/multiview/ransomware_id_defense_sales.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fef3c7;border-radius:6px;text-decoration:none;color:#451a03;font-size:.85rem"><span>💼</span> 営業・提案向け</a>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #1b4332;border-radius:10px;padding:1.2rem">
+            <div style="font-weight:bold;color:#1b4332;font-size:1rem;margin-bottom:.8rem">📋 IGA完全ガイド</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <a href="02_html_decks/multiview/iga_complete_exec.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fff3eb;border-radius:6px;text-decoration:none;color:#7c2d00;font-size:.85rem"><span>👔</span> 役員・経営層向け</a>
+              <a href="02_html_decks/multiview/iga_complete_technical.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#e8f8f0;border-radius:6px;text-decoration:none;color:#1b4332;font-size:.85rem"><span>⚙️</span> 技術者・SE向け</a>
+              <a href="02_html_decks/multiview/iga_complete_compliance.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#f3e8ff;border-radius:6px;text-decoration:none;color:#3d0066;font-size:.85rem"><span>📜</span> コンプライアンス向け</a>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #0f3460;border-radius:10px;padding:1.2rem">
+            <div style="font-weight:bold;color:#0f3460;font-size:1rem;margin-bottom:.8rem">🏛️ ADモダナイゼーション2029</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <a href="02_html_decks/multiview/ad_modernization_2029_exec.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fff3eb;border-radius:6px;text-decoration:none;color:#7c2d00;font-size:.85rem"><span>👔</span> 役員・経営層向け</a>
+              <a href="02_html_decks/multiview/ad_modernization_2029_technical.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#e8f8f0;border-radius:6px;text-decoration:none;color:#1b4332;font-size:.85rem"><span>⚙️</span> 技術者・SE向け</a>
+              <a href="02_html_decks/multiview/ad_modernization_2029_sales.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fef3c7;border-radius:6px;text-decoration:none;color:#451a03;font-size:.85rem"><span>💼</span> 営業・提案向け</a>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #3d0066;border-radius:10px;padding:1.2rem">
+            <div style="font-weight:bold;color:#3d0066;font-size:1rem;margin-bottom:.8rem">🌍 外部ID管理</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <a href="02_html_decks/multiview/external_id_total_technical.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#e8f8f0;border-radius:6px;text-decoration:none;color:#1b4332;font-size:.85rem"><span>⚙️</span> 技術者・SE向け</a>
+              <a href="02_html_decks/multiview/external_id_total_compliance.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#f3e8ff;border-radius:6px;text-decoration:none;color:#3d0066;font-size:.85rem"><span>📜</span> コンプライアンス向け</a>
+              <a href="02_html_decks/multiview/external_id_total_sales.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fef3c7;border-radius:6px;text-decoration:none;color:#451a03;font-size:.85rem"><span>💼</span> 営業・提案向け</a>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #7c2d00;border-radius:10px;padding:1.2rem">
+            <div style="font-weight:bold;color:#7c2d00;font-size:1rem;margin-bottom:.8rem">🤝 M&A IDプレイブック</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <a href="02_html_decks/multiview/ma_id_playbook_exec.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fff3eb;border-radius:6px;text-decoration:none;color:#7c2d00;font-size:.85rem"><span>👔</span> 役員・経営層向け</a>
+              <a href="02_html_decks/multiview/ma_id_playbook_technical.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#e8f8f0;border-radius:6px;text-decoration:none;color:#1b4332;font-size:.85rem"><span>⚙️</span> 技術者・SE向け</a>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #1b4332;border-radius:10px;padding:1.2rem">
+            <div style="font-weight:bold;color:#1b4332;font-size:1rem;margin-bottom:.8rem">🔑 PAM完全ガイド</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <a href="02_html_decks/multiview/pam_deep_dive_exec.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fff3eb;border-radius:6px;text-decoration:none;color:#7c2d00;font-size:.85rem"><span>👔</span> 役員・経営層向け</a>
+              <a href="02_html_decks/multiview/pam_deep_dive_technical.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#e8f8f0;border-radius:6px;text-decoration:none;color:#1b4332;font-size:.85rem"><span>⚙️</span> 技術者・SE向け</a>
+              <a href="02_html_decks/multiview/pam_deep_dive_compliance.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#f3e8ff;border-radius:6px;text-decoration:none;color:#3d0066;font-size:.85rem"><span>📜</span> コンプライアンス向け</a>
+              <a href="02_html_decks/multiview/pam_deep_dive_sales.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fef3c7;border-radius:6px;text-decoration:none;color:#451a03;font-size:.85rem"><span>💼</span> 営業・提案向け</a>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:2px solid #0d3349;border-radius:10px;padding:1.2rem">
+            <div style="font-weight:bold;color:#0d3349;font-size:1rem;margin-bottom:.8rem">🛡️ ゼロトラストアーキテクチャ</div>
+            <div style="display:flex;flex-direction:column;gap:.4rem">
+              <a href="02_html_decks/multiview/zerotrust_architecture_exec.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fff3eb;border-radius:6px;text-decoration:none;color:#7c2d00;font-size:.85rem"><span>👔</span> 役員・経営層向け</a>
+              <a href="02_html_decks/multiview/zerotrust_architecture_technical.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#e8f8f0;border-radius:6px;text-decoration:none;color:#1b4332;font-size:.85rem"><span>⚙️</span> 技術者・SE向け</a>
+              <a href="02_html_decks/multiview/zerotrust_architecture_sales.html" target="_blank" style="display:flex;align-items:center;gap:.5rem;padding:.4rem .6rem;background:#fef3c7;border-radius:6px;text-decoration:none;color:#451a03;font-size:.85rem"><span>💼</span> 営業・提案向け</a>
+            </div>
+          </div>
+
+        </div>
+
+        <h3 style="margin:2rem 0 1rem;color:#1a3a5c;font-size:1.1rem">🔹 detail.htmlで詳細を確認</h3>
+        <p><a href="detail.html" target="_blank" style="color:#0057a8;font-weight:bold">📗 IDM詳細ビューア (detail.html)</a> — 全JSONナレッジを業種別・テーマ別に閲覧できるレポート形式ビューア（約800KB）</p>
+
       </section>
 
     </main>

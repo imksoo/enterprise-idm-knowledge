@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>グループ企業ID統合ロードマップテンプレート</title>
+<style>
+:root{--p:#1c3f5e;--a:#2ecc71;--b:#3498db;--bg:#f5f8fc;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+.badge{display:inline-block;background:var(--a);color:var(--p);font-weight:bold;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.timeline{display:flex;gap:0;margin:1rem 0;flex-wrap:wrap}
+.tl-item{flex:1;min-width:200px;border-radius:8px;margin:.3rem;padding:1rem;border:2px solid var(--p)}
+.tl-item.p1{background:#e8f4f8;border-color:var(--b)}
+.tl-item.p2{background:#e8f9f0;border-color:var(--a)}
+.tl-item.p3{background:#fff3e0;border-color:#f39c12}
+.tl-item.p4{background:#fde8e8;border-color:#e74c3c}
+.tl-label{font-weight:bold;font-size:.85rem;margin-bottom:.5rem}
+.tl-item.p1 .tl-label{color:var(--b)}
+.tl-item.p2 .tl-label{color:#27ae60}
+.tl-item.p3 .tl-label{color:#f39c12}
+.tl-item.p4 .tl-label{color:#e74c3c}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:#f8f8f8}
+.box{background:#f0f8ff;border-left:5px solid var(--b);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem}
+.pattern-card{border:2px solid #ddd;border-radius:8px;padding:1rem}
+.pattern-card h4{color:var(--p);margin-bottom:.5rem;font-size:.95rem}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+@media(max-width:640px){.pattern-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">グループ企業向け</div>
+  <h1>🏢 グループ企業ID統合ロードマップテンプレート</h1>
+  <p>持株会社・子会社群のID統合を段階的に実現するための計画策定ガイド</p>
+</header>
+<div class="container">
+
+<section>
+  <div class="sec-h">📊 グループID統合 よくある現状課題</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>典型的な「現場あるある」</h3>
+      <ul style="padding-left:1.5rem;line-height:2.2">
+        <li>子会社ごとに別々のADドメインがあり、グループ横断のIDが存在しない</li>
+        <li>持株会社の社員が子会社システムを使うたびに別IDでログインが必要</li>
+        <li>グループ統合メールに移行したがファイルサーバーは各社独自のまま</li>
+        <li>M&Aで参加した会社のIDが3年経っても統合されていない</li>
+        <li>子会社ごとにセキュリティポリシーが異なりグループ全体のリスクが把握できない</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🗺️ 統合パターン別アーキテクチャ選択</div>
+  <div class="sec-b">
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <h4>パターンA: グループ共通IdP（集中型）</h4>
+        <p>全グループ会社が共通のEntra IDテナントを使用。親会社が管理。</p>
+        <p style="margin-top:.5rem"><strong>向き：</strong>グループ一体経営・規模が大きい・セキュリティを厳格に管理したい</p>
+        <p><strong>難点：</strong>子会社の自律性が低下・移行コスト大</p>
+      </div>
+      <div class="pattern-card">
+        <h4>パターンB: フェデレーション（連合型）</h4>
+        <p>各社が独自テナントを維持し、必要なシステムのみSSO連携。</p>
+        <p style="margin-top:.5rem"><strong>向き：</strong>子会社の独立性を保ちたい・段階的に進めたい</p>
+        <p><strong>難点：</strong>ID棚卸しが複雑・セキュリティポリシーの統一が難しい</p>
+      </div>
+      <div class="pattern-card">
+        <h4>パターンC: ハイブリッド（現実的な妥協点）</h4>
+        <p>グループ共通システム（M365, SaaS）は共通IdP、基幹系は各社維持。</p>
+        <p style="margin-top:.5rem"><strong>向き：</strong>ほとんどの日本企業グループ</p>
+        <p><strong>難点：</strong>設計が複雑・メタディレクトリが必要なケースも</p>
+      </div>
+      <div class="pattern-card">
+        <h4>パターンD: IGA Hub（ガバナンス強化型）</h4>
+        <p>IGAをグループ全体のIDガバナンス中枢に置き、各社のIDを統制。</p>
+        <p style="margin-top:.5rem"><strong>向き：</strong>コンプライアンス最優先・金融グループ・上場グループ</p>
+        <p><strong>難点：</strong>IGA製品コストと導入複雑性</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📅 統合ロードマップ（3フェーズ・2〜3年計画）</div>
+  <div class="sec-b">
+    <div class="timeline">
+      <div class="tl-item p1">
+        <div class="tl-label">Phase 1: 現状把握（3〜6ヶ月）</div>
+        <ul style="padding-left:1rem;font-size:.9rem;line-height:2">
+          <li>グループ全社のID棚卸し</li>
+          <li>ADドメイン構成マッピング</li>
+          <li>リスクアセスメント</li>
+          <li>統合パターン選定</li>
+          <li>予算・優先度決定</li>
+        </ul>
+      </div>
+      <div class="tl-item p2">
+        <div class="tl-label">Phase 2: 基盤整備（6〜18ヶ月）</div>
+        <ul style="padding-left:1rem;font-size:.9rem;line-height:2">
+          <li>グループ共通IdP構築</li>
+          <li>M365統合（メール・Teams）</li>
+          <li>MFA全グループ展開</li>
+          <li>IGAの導入・設計</li>
+          <li>主要SaaSのSSO統合</li>
+        </ul>
+      </div>
+      <div class="tl-item p3">
+        <div class="tl-label">Phase 3: 拡張・最適化（12〜24ヶ月）</div>
+        <ul style="padding-left:1rem;font-size:.9rem;line-height:2">
+          <li>基幹系システムのSSO対応</li>
+          <li>PAMのグループ展開</li>
+          <li>IGA権限レビュー自動化</li>
+          <li>ゼロトラスト移行計画</li>
+          <li>グループ統一セキュリティポリシー</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">⚖️ 統合推進における合意形成のポイント</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>ステークホルダー</th><th>主な懸念点</th><th>対応方針</th></tr>
+      <tr><td>子会社IT部門</td><td>「親会社に管理権を取られる」「移行作業の負担」</td><td>段階的移行・権限移譲の明確化・移行支援の提供</td></tr>
+      <tr><td>子会社経営層</td><td>「コストは誰が負担するか」「業務が止まらないか」</td><td>費用分担モデルの提示・段階移行計画</td></tr>
+      <tr><td>持株会社CISO</td><td>「グループ全体のリスク可視化」「インシデント対応</td><td>共通SIEMとIGAによるグループ統合監視</td></tr>
+      <tr><td>グループ法務</td><td>「個人情報の越境・グループ間共有の適法性」</td><td>個人情報保護法の委託・共同利用規定の整備</td></tr>
+      <tr><td>グループ人事</td><td>「グループ転籍時のID移管」「組織変更への追随</td><td>IGA × HRシステム連携でプロビジョニング自動化</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📊 成功指標（KPI）テンプレート</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>指標</th><th>フェーズ1目標</th><th>フェーズ2目標</th><th>最終目標</th></tr>
+      <tr><td>グループID棚卸し完了率</td><td>100%</td><td>-</td><td>毎年100%</td></tr>
+      <tr><td>MFA適用率（全グループ）</td><td>-</td><td>90%</td><td>100%</td></tr>
+      <tr><td>SSO統合システム数</td><td>0</td><td>主要50%</td><td>全システム</td></tr>
+      <tr><td>孤立アカウント（退職後残存）</td><td>現状把握</td><td>50%削減</td><td>0件</td></tr>
+      <tr><td>インシデント対応時間（MTTC）</td><td>現状把握</td><td>30%短縮</td><td>2時間以内</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — グループ企業ID統合ロードマップテンプレート</p>
+</footer>
+</body>
+</html>

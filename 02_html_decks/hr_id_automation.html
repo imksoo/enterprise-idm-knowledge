@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR連携ID自動化ガイド（入社・異動・退職）</title>
+<style>
+:root{--p:#1e4d2b;--a:#52c41a;--bg:#f6fff6;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+.badge{display:inline-block;background:var(--a);color:var(--p);font-weight:bold;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.flow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
+.flow-box{background:var(--p);color:#fff;padding:.6rem 1rem;border-radius:6px;font-size:.9rem;font-weight:bold;min-width:100px;text-align:center}
+.flow-arrow{color:var(--a);font-size:1.4rem;font-weight:bold}
+.box{background:#f6fff6;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box.warn{background:#fffbf0;border-color:#faad14}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:var(--bg)}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">IT部門・HR担当向け</div>
+  <h1>🔄 HR連携ID自動化ガイド</h1>
+  <p>入社（Joiner）・異動（Mover）・退職（Leaver）のID管理を自動化する</p>
+</header>
+<div class="container">
+
+<section>
+  <div class="sec-h">📊 なぜ手作業が問題なのか</div>
+  <div class="sec-b">
+    <div class="box warn">
+      <h3>手作業管理の典型的な失敗</h3>
+      <table>
+        <tr><th>イベント</th><th>手作業の問題</th><th>リスク</th></tr>
+        <tr><td>入社</td><td>入社日当日にアカウント未作成で業務開始できない</td><td>業務損失・印象悪化</td></tr>
+        <tr><td>異動</td><td>異動後も旧部門の権限が残存（過剰権限）</td><td>情報漏洩・内部不正</td></tr>
+        <tr><td>退職</td><td>退職後数日〜数週間アカウントが有効のまま</td><td>不正アクセス・内部者脅威</td></tr>
+        <tr><td>兼務変更</td><td>兼務先の権限付与・剥奪が不確実</td><td>過剰権限</td></tr>
+        <tr><td>グループ転籍</td><td>旧会社のIDが残ったまま新会社IDが発行される</td><td>IDの二重保持</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🏗️ HR連携自動化アーキテクチャ</div>
+  <div class="sec-b">
+    <p style="margin-bottom:1rem"><strong>データフロー：HRシステム → IGA → IDプロビジョニング先</strong></p>
+    <div class="flow">
+      <div class="flow-box">HR<br>システム<br>(SAP/Oracle)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">IGA<br>(SailPoint/<br>Saviynt)</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">Active<br>Directory<br>/Entra ID</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">各業務<br>システム<br>(SCIM/SAML)</div>
+    </div>
+    <table>
+      <tr><th>連携項目</th><th>HRシステム提供</th><th>IGA処理</th><th>結果</th></tr>
+      <tr><td>入社</td><td>入社日・社員番号・部門・役職</td><td>ロールマッピング→権限決定</td><td>D-3営業日前にID自動作成</td></tr>
+      <tr><td>異動</td><td>異動日・新旧部門・役職変更</td><td>権限差分計算→追加/剥奪</td><td>異動日に自動切り替え</td></tr>
+      <tr><td>退職</td><td>退職日・退職区分</td><td>全権限の棚卸し→無効化スケジュール</td><td>最終出社日翌日0:00に自動無効化</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🛠️ 主要IGA製品のHR連携機能比較</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>製品</th><th>SAP HCM/SF連携</th><th>Oracle HCM連携</th><th>日本語対応</th><th>価格帯</th></tr>
+      <tr><td>SailPoint IdentityNow</td><td>◎（標準コネクタ）</td><td>◎</td><td>○</td><td>高</td></tr>
+      <tr><td>Saviynt</td><td>◎</td><td>◎</td><td>△</td><td>中〜高</td></tr>
+      <tr><td>One Identity Manager</td><td>○</td><td>○</td><td>○</td><td>中〜高</td></tr>
+      <tr><td>Microsoft Entra ID Governance</td><td>△（カスタム要）</td><td>△</td><td>○</td><td>中（M365付帯）</td></tr>
+      <tr><td>OIM（Oracle IDM）</td><td>○</td><td>◎（同社製）</td><td>○</td><td>高</td></tr>
+      <tr><td>NRI セキュアサービス</td><td>○</td><td>○</td><td>◎（国産）</td><td>中</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📋 導入時のチェックリスト</div>
+  <div class="sec-b">
+    <ol style="padding-left:1.5rem;line-height:2.4">
+      <li><strong>HR側の確認</strong>：入退社情報の更新タイミング・データ品質・APIまたはファイル連携可否</li>
+      <li><strong>権限設計</strong>：部門×役職×システムのロールマトリクス作成（これが最難関）</li>
+      <li><strong>例外処理設計</strong>：派遣・業務委託・パート・兼務の扱い</li>
+      <li><strong>緊急停止フロー</strong>：懲戒解雇・不正疑いの場合の即時停止手順</li>
+      <li><strong>移行計画</strong>：既存の手作業フローとの切り替え方法</li>
+      <li><strong>テスト・UAT</strong>：HRとITが共同でシナリオテスト（入社・異動・退職各100件）</li>
+    </ol>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — HR連携ID自動化ガイド</p>
+</footer>
+</body>
+</html>

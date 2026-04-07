@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>医療機関向けID管理・認証設計ガイド</title>
+<style>
+:root{--p:#0f3460;--a:#e94560;--bg:#f5f7fb;--card:#fff;--g:#1a8754}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+header p{opacity:.85;font-size:.95rem}
+.badge{display:inline-block;background:var(--a);color:#fff;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.box{background:#f0f8ff;border-left:5px solid var(--p);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box.red{background:#fff0f0;border-color:var(--a)}
+.box.green{background:#f0fff4;border-color:var(--g)}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+.box.red h3{color:#c0392b}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:#f8f8f8}
+.alert{background:#fff3cd;border:2px solid #ffc107;border-radius:8px;padding:1rem;margin-bottom:1rem}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">医療・ヘルスケア特化</div>
+  <h1>🏥 医療機関向けID管理・認証設計ガイド</h1>
+  <p>急性期病院・診療所・医療グループにおける特殊要件と実装パターン</p>
+</header>
+<div class="container">
+
+<div class="alert">
+  ⚠️ <strong>医療現場の認証設計は通常の企業IT設計と大きく異なります。</strong>患者の生命に関わる機器との連携・緊急時の迅速アクセス・プライバシー規制の三者を同時に満たす必要があります。
+</div>
+
+<section>
+  <div class="sec-h">🏥 医療機関特有の認証要件</div>
+  <div class="sec-b">
+    <div class="box red">
+      <h3>最大の矛盾：「速さ」vs「安全」</h3>
+      <p>ERや手術室では、<strong>3秒以内</strong>に電子カルテへのアクセスが求められます。しかし通常のMFA（スマホでコード入力）では「患者が意識を失っている間にログインできない」という問題が生じます。医療現場では「高速認証」と「セキュリティ」の両立設計が必要です。</p>
+    </div>
+    <table>
+      <tr><th>要件カテゴリ</th><th>要件内容</th><th>一般企業との違い</th></tr>
+      <tr><td>認証速度</td><td>ERログイン3秒以内</td><td>一般は10〜30秒でも可</td></tr>
+      <tr><td>共有端末対応</td><td>ナースステーション・処置室の共有PC</td><td>一般は個人PC前提</td></tr>
+      <tr><td>緊急時override</td><td>Break the Glass（緊急患者アクセス）</td><td>緊急権限昇格は稀</td></tr>
+      <tr><td>医療機器連携</td><td>DICOM/HL7/FHIR対応機器との認証</td><td>医療規格固有</td></tr>
+      <tr><td>法規制</td><td>医療情報システム安全管理ガイドライン（厚労省）</td><td>業種別規制が少ない</td></tr>
+      <tr><td>職種権限設計</td><td>医師・看護師・薬剤師・事務で全く異なる権限</td><td>部門ベースが多い</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🔑 推奨認証方式：ICカード×生体認証</div>
+  <div class="sec-b">
+    <div class="box green">
+      <h3>推奨構成：ICカード（職員証）＋PINコード</h3>
+      <p>医師・看護師の職員証にICチップを組み込み、カードリーダーにタッチ＋4桁PINで瞬時ログイン。スマホ不要で手が濡れている場面や手袋着用時も対応。<strong>ログインは1.5〜2秒</strong>で完了。</p>
+    </div>
+    <table>
+      <tr><th>認証方式</th><th>ログイン速度</th><th>共有端末対応</th><th>医療向き</th><th>コスト</th></tr>
+      <tr><td>ICカード+PIN（推奨）</td><td>1〜2秒</td><td>◎</td><td>◎</td><td>中</td></tr>
+      <tr><td>指紋認証</td><td>1〜3秒</td><td>○</td><td>○（手袋問題あり）</td><td>中</td></tr>
+      <tr><td>顔認証</td><td>1〜2秒</td><td>◎</td><td>○（マスク問題）</td><td>高</td></tr>
+      <tr><td>TOTP（スマホ）</td><td>10〜30秒</td><td>△</td><td>×（ER不可）</td><td>低</td></tr>
+      <tr><td>パスワードのみ</td><td>5〜15秒</td><td>○</td><td>×（現状多いが非推奨）</td><td>低</td></tr>
+      <tr><td>シングルサインオン（SSO）</td><td>最初の1回のみ</td><td>△</td><td>○（セッション管理要）</td><td>中</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🚨 Break the Glass（緊急アクセス）設計</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>BTGとは：緊急時に本来の権限を超えてアクセスする仕組み</h3>
+      <p>例：担当外の患者が意識不明で搬送された。担当医が不在。このとき当直医が患者カルテにアクセスできないと治療できない。BTGでは特定条件下で<strong>「後で説明責任を取る」前提</strong>でアクセスを許可し、全操作を記録します。</p>
+    </div>
+    <table>
+      <tr><th>設計項目</th><th>推奨実装</th></tr>
+      <tr><td>発動条件</td><td>緊急外来受付・当直医確認・患者同意不可状態</td></tr>
+      <tr><td>認証方法</td><td>通常認証＋緊急理由入力（テキスト必須）</td></tr>
+      <tr><td>通知</td><td>リアルタイムで管理者・セキュリティ担当にアラート</td></tr>
+      <tr><td>ログ保存</td><td>全操作を不変ログとして保存（改ざん不可）</td></tr>
+      <tr><td>事後確認</td><td>翌営業日に医事課・情報管理部門がレビュー</td></tr>
+      <tr><td>乱用防止</td><td>BTG使用率の定期レポート・閾値超過でアラート</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📋 厚労省ガイドライン対応チェックリスト</div>
+  <div class="sec-b">
+    <p style="margin-bottom:1rem">「医療情報システムの安全管理に関するガイドライン 第6.0版」（2023年）への対応</p>
+    <table>
+      <tr><th>要件</th><th>具体的対応</th><th>対応難易度</th></tr>
+      <tr><td>真正性確保</td><td>電子署名・タイムスタンプ・操作ログ保存</td><td>中</td></tr>
+      <tr><td>見読性確保</td><td>電子カルテのPDF/HL7形式での保存・表示</td><td>低</td></tr>
+      <tr><td>保存性確保</td><td>バックアップ・WORM対応・10年以上保存</td><td>中</td></tr>
+      <tr><td>アクセスコントロール</td><td>職種別ロールベースアクセス制御（RBAC）</td><td>高</td></tr>
+      <tr><td>ログ管理</td><td>参照・更新・削除の全操作ログ5年保存</td><td>中</td></tr>
+      <tr><td>クラウド利用</td><td>医療情報の3省2ガイドライン準拠クラウド選定</td><td>高</td></tr>
+      <tr><td>BCP対応</td><td>システム停止時の紙運用手順・復旧手順書</td><td>中</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🏗️ 医療グループのID統合設計</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>医療法人グループでよくある課題</h3>
+      <ul style="padding-left:1.5rem;line-height:2.2">
+        <li>病院ごとに電子カルテベンダーが違う（FUJITSU HIS / NEC MegaOak / HOPE EGMAIN等）</li>
+        <li>非常勤医師が複数病院に在籍しIDが乱立</li>
+        <li>グループ法人間でのID連携がなく、転籍のたびに全ID再作成</li>
+        <li>看護師派遣会社のIDと職員IDが混在</li>
+      </ul>
+    </div>
+    <table>
+      <tr><th>統合課題</th><th>推奨アーキテクチャ</th></tr>
+      <tr><td>電子カルテのIdP統合</td><td>SAML/OIDC対応カルテを中央IdP（Entra ID等）に統合</td></tr>
+      <tr><td>非常勤医師の複数院ID</td><td>グループ共通IDに統合 + 各院で職種権限を付与</td></tr>
+      <tr><td>派遣・業務委託ID</td><td>外部ゲストID（一時的）+ 業務委託IdP連携（B2B）</td></tr>
+      <tr><td>医療機器（IoMT）ID</td><td>X.509証明書 + デバイス登録管理（MDM拡張）</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">💡 NSSolが提供できる医療特化支援</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>支援メニュー</th><th>内容</th><th>典型的な費用感</th></tr>
+      <tr><td>医療ID現状診断</td><td>HL7/DICOM連携・職種権限・ログ状況の調査</td><td>200〜500万円</td></tr>
+      <tr><td>ICカード認証設計・導入</td><td>職員証ICカード発行＋カルテ統合</td><td>500〜2000万円</td></tr>
+      <tr><td>厚労省ガイドライン対応</td><td>第6.0版要件へのギャップ分析と対応計画</td><td>200〜800万円</td></tr>
+      <tr><td>医療グループID統合</td><td>複数病院横断のIdP構築・電子カルテ連携</td><td>1000〜5000万円</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 医療機関向けID管理・認証設計ガイド</p>
+  <p>本資料は医療機関向け提案・設計検討用途です。最新の厚労省ガイドラインを必ず確認してください。</p>
+</footer>
+</body>
+</html>

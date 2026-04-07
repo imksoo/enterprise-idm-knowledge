@@ -1,0 +1,39 @@
+{
+  "metadata": {
+    "id": "sim_x_s31_b2b_edi_auth",
+    "title": "S31: 大手小売チェーン×取引先EDI認証刷新",
+    "industry": "小売・流通",
+    "company": "大手スーパーマーケットチェーン（東証プライム・年商1.5兆円・取引先2000社）",
+    "scenario_type": "B2B認証・EDI刷新",
+    "version": "1.0",
+    "created": "2026-04-07"
+  },
+  "personas": [
+    {
+      "role": "SCM部門長",
+      "concern": "EDI刷新でベンダーポータルを導入したい。2000社の取引先にIDを発行する方法が分からない"
+    },
+    {
+      "role": "IT部門SE",
+      "concern": "現行のFTP+CSV方式からWeb APIへの移行で認証方式をどうするか"
+    },
+    {
+      "role": "コンサル営業（NSSol）",
+      "concern": "B2B IdPとしてEntra External ID Customerを提案したい"
+    }
+  ],
+  "discussion_summary": [
+    "現行システム: 取引先2000社がFTPとID/パスワードでCSVアップロード。IDは取引先コード+固定パスワード（変更なし）",
+    "課題: パスワード使い回し横行・不正アクセス検知ゼロ・MFA未対応・退場した取引先のIDが残存",
+    "提案方向: Entra External ID（旧Azure AD B2B/B2C）でB2B認証基盤を構築。MFA必須・招待フロー",
+    "障壁: 2000社への移行連絡コスト・中小取引先のITリテラシー問題",
+    "NSSol提案: 移行ガイドを作成・大手取引先50社から先行移行・小規模取引先向けに管理者代行オプション"
+  ],
+  "html_needs_identified": [
+    "b2b_external_id_guide.html（B2B取引先ID管理ガイド）"
+  ],
+  "knowledge_references": [
+    "09_external_connections/b2b_federation_patterns.json"
+  ],
+  "reflection": "取引先IDは社内IDと全く異なる問題。招待フロー・MFA代行・使い捨てコードなど B2B特化の設計が必要"
+}
