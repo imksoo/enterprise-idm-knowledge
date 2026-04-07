@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Oracle DB 認証・監査近代化 — 実装WBSガイド</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.wbs-l1{font-weight:700;color:#1e3a5f;background:#f0f4ff !important}
+.wbs-l2{padding-left:24px !important;color:#334155}
+.wbs-l3{padding-left:42px !important;color:#475569;font-size:.8rem}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+.tag-day{background:#e0e7ff;color:#3730a3}
+.tag-wk{background:#fce7f3;color:#9d174d}
+.effort-chip{display:inline-block;background:#e2e8f0;color:#475569;border-radius:4px;padding:1px 7px;font-size:.72rem}
+code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:.82rem;font-family:'Courier New',monospace;color:#dc2626}
+pre{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:16px;overflow-x:auto;margin:12px 0;font-size:.8rem;line-height:1.6}
+pre .cm{color:#64748b}
+pre .kw{color:#7dd3fc}
+pre .str{color:#86efac}
+pre .fn{color:#fde68a}
+.checklist{list-style:none;padding:0;margin:10px 0}
+.checklist li{padding:5px 0 5px 24px;position:relative;border-bottom:1px solid #f1f5f9;font-size:.85rem}
+.checklist li::before{content:'☐';position:absolute;left:2px;color:#3b82f6;font-size:1rem}
+.checklist li.done::before{content:'☑';color:#16a34a}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.risk-matrix{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.risk-item{background:#fff;border-radius:6px;border-left:4px solid #dc2626;padding:10px 12px;font-size:.83rem}
+.risk-item.med{border-left-color:#eab308}
+.risk-item.low{border-left-color:#16a34a}
+.risk-item .risk-title{font-weight:700;color:#1e293b;margin-bottom:4px}
+.risk-item .risk-counter{color:#64748b;font-size:.78rem}
+.step-flow{display:flex;gap:0;margin:14px 0;overflow-x:auto}
+.step{background:#3b82f6;color:#fff;padding:10px 14px;flex:1;min-width:110px;text-align:center;font-size:.75rem;position:relative}
+.step:not(:last-child)::after{content:'▶';position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:1;color:#1e3a5f;font-size:1rem}
+.step:nth-child(2){background:#2563eb}
+.step:nth-child(3){background:#1d4ed8}
+.step:nth-child(4){background:#1e40af}
+.step:nth-child(5){background:#1e3a8a}
+.step:nth-child(6){background:#172554}
+.step-num{font-size:.65rem;opacity:.8;display:block;margin-bottom:3px}
+.sql-block{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:16px;margin:12px 0;font-size:.8rem;font-family:'Courier New',monospace;line-height:1.7;overflow-x:auto}
+.sql-cm{color:#64748b}
+.sql-kw{color:#7dd3fc}
+.sql-str{color:#86efac}
+.sql-fn{color:#fde68a}
+.sql-num{color:#fb923c}
+.compliance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.comp-card{background:#fff;border-radius:8px;padding:12px;border-top:3px solid #3b82f6}
+.comp-card.jsox{border-top-color:#dc2626}
+.comp-card.fisc{border-top-color:#7c3aed}
+.comp-card.pci{border-top-color:#0891b2}
+.comp-card h4{font-size:.82rem;margin-bottom:8px}
+.comp-card ul{padding-left:16px;font-size:.78rem;color:#475569}
+.comp-card li{margin-bottom:4px}
+@media(max-width:900px){#toc{display:none}main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#overview">📋 プロジェクト概要</a>
+  <a href="#scope">🔭 スコープ定義</a>
+  <a href="#phase0">🔍 Phase 0: 棚卸し・現状把握</a>
+  <a class="toc-sub" href="#p0-wbs">WBSタスク一覧</a>
+  <a href="#phase1">🔐 Phase 1: 認証方式整備</a>
+  <a class="toc-sub" href="#p1-kerberos">Kerberos統合</a>
+  <a class="toc-sub" href="#p1-pam">PAM接続</a>
+  <a href="#phase2">📊 Phase 2: 監査基盤整備</a>
+  <a class="toc-sub" href="#p2-unified">Unified Auditing</a>
+  <a class="toc-sub" href="#p2-fga">FGA設計</a>
+  <a class="toc-sub" href="#p2-avdf">AVDF/SIEM連携</a>
+  <a href="#phase3">🏰 Phase 3: 特権管理強化</a>
+  <a class="toc-sub" href="#p3-vault">Database Vault</a>
+  <a class="toc-sub" href="#p3-pam">PAM本格化</a>
+  <a href="#phase4">🔄 Phase 4: 移行・定常化</a>
+  <a href="#compliance">📜 コンプライアンス対応</a>
+  <a href="#risks">⚠️ リスク管理</a>
+  <a href="#checklist">✅ フェーズ完了チェックリスト</a>
+</nav>
+
+<main>
+<h1>Oracle Database 認証・監査近代化</h1>
+<p class="subtitle">実装プロジェクト WBSガイド — NSSol SE・プロジェクトマネージャー向け</p>
+
+<!-- ===== 概要 ===== -->
+<section id="overview">
+<h2>📋 プロジェクト概要・全体像</h2>
+
+<div class="lead">
+このドキュメントはOracle Database環境における<strong>認証方式の近代化・監査基盤の整備・特権アクセス管理の強化</strong>を実際に推進するための実装ガイドです。
+J-SOX・FISCの証跡要件を満たしながら、段階的に「共有SYSDBA撲滅→個人単位追跡確立→機微データ監査」を実現するWBS粒度の手順を記載します。
+</div>
+
+<div class="step-flow">
+  <div class="step"><span class="step-num">Phase 0</span>棚卸し<br>現状把握</div>
+  <div class="step"><span class="step-num">Phase 1</span>認証方式<br>整備</div>
+  <div class="step"><span class="step-num">Phase 2</span>監査基盤<br>整備</div>
+  <div class="step"><span class="step-num">Phase 3</span>特権管理<br>強化</div>
+  <div class="step"><span class="step-num">Phase 4</span>移行・<br>定常化</div>
+</div>
+
+<div class="three-col">
+  <div class="card">
+    <h4>🎯 プロジェクト目標</h4>
+    <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+      <li>共有SYSDBA/SYSTEM運用の撲滅</li>
+      <li>個人単位の操作追跡確立</li>
+      <li>機微データへのFGA適用</li>
+      <li>J-SOX・FISC証跡要件の充足</li>
+      <li>外部委託先アクセスの統制</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>👥 プロジェクト体制（最小構成）</h4>
+    <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+      <li>PM（情報システム部門）</li>
+      <li>Oracle DBA（設計・実装）</li>
+      <li>AD管理者（Kerberos連携）</li>
+      <li>セキュリティ担当（監査設計）</li>
+      <li>PAM製品エンジニア</li>
+      <li>内部監査・コンプライアンス（受入）</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>📅 標準スケジュール感</h4>
+    <ul style="padding-left:16px;font-size:.83rem;color:#475569">
+      <li>Phase 0: <strong>4〜8週間</strong></li>
+      <li>Phase 1: <strong>8〜16週間</strong></li>
+      <li>Phase 2: <strong>6〜12週間</strong></li>
+      <li>Phase 3: <strong>12〜24週間</strong></li>
+      <li>Phase 4: <strong>4〜8週間</strong></li>
+      <li>合計目安: <strong>9〜18ヶ月</strong></li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ===== スコープ ===== -->
+<section id="scope">
+<h2>🔭 スコープ定義と前提整理</h2>
+
+<div class="two-col">
+<div>
+<h3>スコープIN（本プロジェクトで扱う）</h3>
+<ul class="checklist">
+  <li>Oracle Database 12c〜23ai/26ai（オンプレミス・Azure VM・OCI）</li>
+  <li>管理者アカウント（SYSDBA/DBAロール保有者）</li>
+  <li>アプリケーション接続ユーザー（APスキーマ）</li>
+  <li>バッチ・ETL連携ユーザー</li>
+  <li>Active Directory Kerberos連携</li>
+  <li>Unified Auditing・FGA設計</li>
+  <li>PAM製品連携（CyberArk / Delinea）</li>
+  <li>外部委託先（SIer・運用ベンダー）アクセス統制</li>
+</ul>
+</div>
+<div>
+<h3>スコープOUT（別プロジェクトで扱う）</h3>
+<ul class="checklist">
+  <li class="done">アプリケーションロジックの改修</li>
+  <li class="done">Oracle以外のDB（SQL Server・PostgreSQL）</li>
+  <li class="done">TDE（透過的データ暗号化）の詳細設計</li>
+  <li class="done">Oracle GoldenGate・Data Guard構成変更</li>
+  <li class="done">OSレベルのID管理（RHEL SSSD等）</li>
+  <li class="done">ネットワーク設計（DMZ・ファイアウォール）</li>
+</ul>
+</div>
+</div>
+
+<div class="danger">
+<strong>⚠️ 日本企業でよくある前提認識の齟齬：</strong>
+「監査要件を満たす = ログを取得する」という理解で進めると失敗しやすい。
+J-SOX・FISCが求めるのは「<strong>誰が・何を・いつ・なぜ操作したか</strong>」の個人単位追跡であり、
+共有SYSDBA運用のまま監査ログを増やしても「誰がやったか不明」なログが積まれるだけで要件を満たさない。
+<strong>認証整備（個人ID化）と監査整備は必ずセットで進める。</strong>
+</div>
+</section>
+
+<!-- ===== PHASE 0 ===== -->
+<section id="phase0">
+<div class="phase-header">
+  <h2>🔍 Phase 0: 棚卸し・現状把握</h2>
+  <div class="phase-meta">目標: 対象DBと現行アカウント構成・認証方式・依存関係の完全把握 ／ 期間目安: 4〜8週間</div>
+</div>
+
+<div class="lead">
+Phase 0を省略・短縮すると後続フェーズで手戻りが多発する。特に「アプリが密かに使っているDB接続ユーザー」や「パスワードファイルに登録されたSYSDBA権限者」の棚卸しは、Phase 1以降の実装前提となる。
+</div>
+
+<section id="p0-wbs">
+<h3>Phase 0 WBSタスク一覧</h3>
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:35%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数目安</th><th style="width:38%">成果物・確認事項</th></tr>
+<tr><td class="wbs-l1" colspan="5">0.1 DB・アカウントインベントリ作成</td></tr>
+<tr><td class="wbs-l2">0.1.1</td><td class="wbs-l2">対象DBインスタンス一覧化（バージョン・OS・ホスト・用途）</td><td>DBA</td><td><span class="effort-chip">3〜5日</span></td><td>DBインベントリ台帳（Excel or CMDB）</td></tr>
+<tr><td class="wbs-l2">0.1.2</td><td class="wbs-l2">全DBユーザー一覧取得（DBA_USERS・DBA_SYS_PRIVS・DBA_ROLE_PRIVS）</td><td>DBA</td><td><span class="effort-chip">2〜3日</span></td><td>ユーザー×権限マトリクス</td></tr>
+<tr><td class="wbs-l2">0.1.3</td><td class="wbs-l2">パスワードファイル登録ユーザー確認（V$PWFILE_USERS）</td><td>DBA</td><td><span class="effort-chip">0.5日</span></td><td>SYSDBAホルダー一覧</td></tr>
+<tr><td class="wbs-l2">0.1.4</td><td class="wbs-l2">OS認証ユーザー確認（/etc/groupのdba/oinstall所属確認）</td><td>OS管理者</td><td><span class="effort-chip">1〜2日</span></td><td>OS認証可能ユーザー一覧</td></tr>
+<tr><td class="wbs-l2">0.1.5</td><td class="wbs-l2">アプリ・バッチの接続ユーザー棚卸し（接続元IPと接続ユーザーの突合）</td><td>DBA+AP担当</td><td><span class="effort-chip">5〜10日</span></td><td>接続元×ユーザーマッピング表</td></tr>
+<tr><td class="wbs-l2">0.1.6</td><td class="wbs-l2">外部委託先・SIerが使用する接続IDの特定</td><td>PM+DBA</td><td><span class="effort-chip">3〜5日</span></td><td>ベンダー別接続ID一覧</td></tr>
+<tr><td class="wbs-l1" colspan="5">0.2 認証方式・sqlnet.ora現状確認</td></tr>
+<tr><td class="wbs-l2">0.2.1</td><td class="wbs-l2">sqlnet.oraの認証設定確認（SQLNET.AUTHENTICATION_SERVICES等）</td><td>DBA</td><td><span class="effort-chip">1日</span></td><td>現行sqlnet.ora設定書</td></tr>
+<tr><td class="wbs-l2">0.2.2</td><td class="wbs-l2">password verifier確認（10G/11G/12Cの混在状況）</td><td>DBA</td><td><span class="effort-chip">1日</span></td><td>verifier混在リスト</td></tr>
+<tr><td class="wbs-l2">0.2.3</td><td class="wbs-l2">現行監査設定確認（従来監査 / Unified Auditing / 両方）</td><td>DBA</td><td><span class="effort-chip">2〜3日</span></td><td>監査ポリシー現状一覧</td></tr>
+<tr><td class="wbs-l2">0.2.4</td><td class="wbs-l2">プロファイル設定確認（FAILED_LOGIN_ATTEMPTS・PASSWORD_LIFE_TIME等）</td><td>DBA</td><td><span class="effort-chip">1日</span></td><td>プロファイル設定比較表</td></tr>
+<tr><td class="wbs-l1" colspan="5">0.3 依存関係・リスク分析</td></tr>
+<tr><td class="wbs-l2">0.3.1</td><td class="wbs-l2">Kerberosで置換可能なユーザーの分類（対話型/AP接続/バッチ）</td><td>DBA+AD管理者</td><td><span class="effort-chip">3〜5日</span></td><td>認証方式移行対象分類表</td></tr>
+<tr><td class="wbs-l2">0.3.2</td><td class="wbs-l2">FGA適用候補テーブル・列の特定（個人情報・財務・口座番号等）</td><td>DBA+データオーナー</td><td><span class="effort-chip">3〜5日</span></td><td>機微データマッピング表</td></tr>
+<tr><td class="wbs-l2">0.3.3</td><td class="wbs-l2">Database Vault有効化時の既存処理影響調査</td><td>DBA+AP担当</td><td><span class="effort-chip">5〜10日</span></td><td>DV影響度アセスメント</td></tr>
+<tr><td class="wbs-l2">0.3.4</td><td class="wbs-l2">自動化ジョブ・DBLinkの認証依存確認</td><td>DBA</td><td><span class="effort-chip">3〜5日</span></td><td>ジョブ×認証依存マトリクス</td></tr>
+<tr><td class="wbs-l1" colspan="5">0.4 移行計画策定</td></tr>
+<tr><td class="wbs-l2">0.4.1</td><td class="wbs-l2">Phase 1〜4の対象スコープ確定（DB・ユーザー・スケジュール）</td><td>PM+DBA</td><td><span class="effort-chip">3〜5日</span></td><td>移行計画書 v1.0</td></tr>
+<tr><td class="wbs-l2">0.4.2</td><td class="wbs-l2">ステークホルダー合意取得（情報システム部門・内部監査・委託先）</td><td>PM</td><td><span class="effort-chip">1〜2週間</span></td><td>合意議事録</td></tr>
+</table>
+
+<h4>Phase 0 で使用するSQL例</h4>
+<div class="sql-block">
+<span class="sql-cm">-- 1. 全ユーザーとデフォルトプロファイル確認</span><br>
+<span class="sql-kw">SELECT</span> username, account_status, profile, authentication_type,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;   last_login, created<br>
+<span class="sql-kw">FROM</span> dba_users<br>
+<span class="sql-kw">ORDER BY</span> account_status, username;<br><br>
+
+<span class="sql-cm">-- 2. SYSDBAホルダー全確認</span><br>
+<span class="sql-kw">SELECT</span> * <span class="sql-kw">FROM</span> v$pwfile_users;<br><br>
+
+<span class="sql-cm">-- 3. 直近90日間ログインなし（休眠）ユーザー</span><br>
+<span class="sql-kw">SELECT</span> username, last_login, account_status<br>
+<span class="sql-kw">FROM</span> dba_users<br>
+<span class="sql-kw">WHERE</span> last_login &lt; <span class="sql-fn">SYSDATE</span> - <span class="sql-num">90</span><br>
+&nbsp;&nbsp;  <span class="sql-kw">AND</span> account_status = <span class="sql-str">'OPEN'</span>;<br><br>
+
+<span class="sql-cm">-- 4. システム権限を直接付与されているユーザー（ロール経由でない）</span><br>
+<span class="sql-kw">SELECT</span> grantee, privilege, admin_option<br>
+<span class="sql-kw">FROM</span> dba_sys_privs<br>
+<span class="sql-kw">WHERE</span> grantee <span class="sql-kw">NOT IN</span> (<span class="sql-kw">SELECT</span> role <span class="sql-kw">FROM</span> dba_roles)<br>
+<span class="sql-kw">ORDER BY</span> grantee;<br><br>
+
+<span class="sql-cm">-- 5. 現行password verifier確認（10g verifierが残っていないか）</span><br>
+<span class="sql-kw">SELECT</span> username, password_versions<br>
+<span class="sql-kw">FROM</span> dba_users<br>
+<span class="sql-kw">WHERE</span> password_versions <span class="sql-kw">LIKE</span> <span class="sql-str">'%10G%'</span>;<br><br>
+
+<span class="sql-cm">-- 6. 現行監査ポリシー確認</span><br>
+<span class="sql-kw">SELECT</span> policy_name, enabled_opt, entity_name<br>
+<span class="sql-kw">FROM</span> audit_unified_enabled_policies;<br>
+</div>
+</section>
+</section>
+
+<!-- ===== PHASE 1 ===== -->
+<section id="phase1">
+<div class="phase-header">
+  <h2>🔐 Phase 1: 認証方式整備</h2>
+  <div class="phase-meta">目標: 個人単位認証の確立・共有パスワード依存の解消 ／ 期間目安: 8〜16週間</div>
+</div>
+
+<section id="p1-kerberos">
+<h3>1-A. Kerberos認証統合（対話型管理者ユーザー対象）</h3>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数目安</th><th style="width:35%">確認事項・成果物</th></tr>
+<tr><td class="wbs-l1" colspan="5">1-A-1 AD・Kerberos事前準備</td></tr>
+<tr><td class="wbs-l2">1-A-1.1</td><td class="wbs-l2">Oracle DBサービスアカウント（oracleサービスのSPN）をADに登録</td><td>AD管理者</td><td><span class="effort-chip">1〜2日</span></td><td><code>setspn -A oracle/dbhost.example.local SVC_ORACLE</code></td></tr>
+<tr><td class="wbs-l2">1-A-1.2</td><td class="wbs-l2">keytabファイル生成とDBサーバーへの配置</td><td>AD管理者+DBA</td><td><span class="effort-chip">1〜2日</span></td><td><code>ktpass</code>実行・ファイル権限確認（oracle:dba 600）</td></tr>
+<tr><td class="wbs-l2">1-A-1.3</td><td class="wbs-l2">時刻同期確認（AD KDCとDBサーバーの時刻差 ±5分以内）</td><td>インフラ</td><td><span class="effort-chip">0.5日</span></td><td>NTPサーバー設定・chronyc tracking確認</td></tr>
+<tr><td class="wbs-l2">1-A-1.4</td><td class="wbs-l2">DNS正引き・逆引きの確認（Kerberos障害の主因）</td><td>インフラ+AD管理者</td><td><span class="effort-chip">1日</span></td><td><code>nslookup</code>・<code>kinit</code>疎通テスト</td></tr>
+<tr><td class="wbs-l1" colspan="5">1-A-2 Oracle側Kerberos設定</td></tr>
+<tr><td class="wbs-l2">1-A-2.1</td><td class="wbs-l2">sqlnet.oraにKerberos認証サービス設定追加</td><td>DBA</td><td><span class="effort-chip">1日</span></td><td>設定変更・バックアップ・変更管理申請</td></tr>
+<tr><td class="wbs-l2">1-A-2.2</td><td class="wbs-l2">krb5.confの設定（realm・KDC・default_realm）</td><td>DBA+AD管理者</td><td><span class="effort-chip">1〜2日</span></td><td>kinit成功確認</td></tr>
+<tr><td class="wbs-l2">1-A-2.3</td><td class="wbs-l2">Kerberosユーザー用DBユーザー作成（IDENTIFIED EXTERNALLY AS）</td><td>DBA</td><td><span class="effort-chip">1日</span></td><td>接続テスト・監査ログでの個人特定確認</td></tr>
+<tr><td class="wbs-l2">1-A-2.4</td><td class="wbs-l2">Enterprise User Security（EUS）設定（任意：AD Group → DBロールマッピング）</td><td>DBA+AD管理者</td><td><span class="effort-chip">3〜5日</span></td><td>グループ変更→権限反映テスト</td></tr>
+<tr><td class="wbs-l1" colspan="5">1-A-3 切り替えと検証</td></tr>
+<tr><td class="wbs-l2">1-A-3.1</td><td class="wbs-l2">開発環境での全管理者ユーザー Kerberos切り替えテスト</td><td>DBA</td><td><span class="effort-chip">3〜5日</span></td><td>各種ツール（SQL*Plus・SQLcl・DBeaver）からの接続確認</td></tr>
+<tr><td class="wbs-l2">1-A-3.2</td><td class="wbs-l2">本番環境の管理者ユーザーをKerberos認証へ段階移行</td><td>DBA</td><td><span class="effort-chip">3〜5日</span></td><td>旧パスワードIDを一時残存→接続ゼロ確認後削除</td></tr>
+<tr><td class="wbs-l2">1-A-3.3</td><td class="wbs-l2">AD側のパスワード変更・期限切れがDB接続に影響しないことを確認</td><td>DBA+AD管理者</td><td><span class="effort-chip">2〜3日</span></td><td>テスト手順書作成・障害対応手順書作成</td></tr>
+</table>
+
+<h4>sqlnet.ora 設定例（Kerberos有効化）</h4>
+<div class="sql-block">
+<span class="sql-cm"># $ORACLE_HOME/network/admin/sqlnet.ora</span><br><br>
+<span class="sql-cm"># Kerberos認証を有効化（NONE は完全無効化）</span><br>
+SQLNET.AUTHENTICATION_SERVICES = (BEQ, KERBEROS5)<br><br>
+<span class="sql-cm"># Kerberos設定ファイルの場所</span><br>
+SQLNET.KERBEROS5_CONF = /etc/krb5.conf<br><br>
+<span class="sql-cm"># サービスのkeytab</span><br>
+SQLNET.KERBEROS5_KEYTAB = /etc/oracle/oracle.keytab<br><br>
+<span class="sql-cm"># 許容するKDCとのスキュー（秒）</span><br>
+SQLNET.KERBEROS5_CLOCKSKEW = 300<br><br>
+<span class="sql-cm"># ベーシック認証のフォールバック禁止（重要：強制Kerberos化）</span><br>
+SQLNET.FALLBACK_AUTHENTICATION = FALSE
+</div>
+
+<h4>DBユーザー作成例（Kerberos外部認証）</h4>
+<div class="sql-block">
+<span class="sql-cm">-- ADユーザー tanaka@EXAMPLE.LOCAL に対応するDBユーザー作成</span><br>
+<span class="sql-kw">CREATE</span> <span class="sql-kw">USER</span> <span class="sql-str">"TANAKA@EXAMPLE.LOCAL"</span><br>
+  IDENTIFIED EXTERNALLY <span class="sql-kw">AS</span> <span class="sql-str">'KERBEROS5:tanaka@EXAMPLE.LOCAL'</span>;<br><br>
+
+<span class="sql-cm">-- 最小限の権限のみ付与（CREATE SESSION + 業務ロール）</span><br>
+<span class="sql-kw">GRANT</span> CREATE SESSION <span class="sql-kw">TO</span> <span class="sql-str">"TANAKA@EXAMPLE.LOCAL"</span>;<br>
+<span class="sql-kw">GRANT</span> DBA_OPERATIONS_ROLE <span class="sql-kw">TO</span> <span class="sql-str">"TANAKA@EXAMPLE.LOCAL"</span>;<br><br>
+
+<span class="sql-cm">-- 接続テスト（Kerberosチケット取得後）</span><br>
+<span class="sql-cm">-- $ kinit tanaka@EXAMPLE.LOCAL</span><br>
+<span class="sql-cm">-- $ sqlplus /@db_service_name</span>
+</div>
+</section>
+
+<section id="p1-pam">
+<h3>1-B. PAM連携による管理者接続統制</h3>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数</th><th style="width:35%">成果物</th></tr>
+<tr><td class="wbs-l1" colspan="5">1-B-1 PAM製品設定（CyberArk PSM / Delinea）</td></tr>
+<tr><td class="wbs-l2">1-B-1.1</td><td class="wbs-l2">Safe（金庫）設計：DB別・環境別・ベンダー別の金庫構成定義</td><td>PAMエンジニア</td><td><span class="effort-chip">3〜5日</span></td><td>Safe設計書</td></tr>
+<tr><td class="wbs-l2">1-B-1.2</td><td class="wbs-l2">Oracle SYS/SYSTEM・DBA資格情報の登録とパスワードロテーション設定</td><td>PAMエンジニア+DBA</td><td><span class="effort-chip">2〜3日</span></td><td>ローテーション成功ログ</td></tr>
+<tr><td class="wbs-l2">1-B-1.3</td><td class="wbs-l2">SQL*Plus / SQLcl / Oracle Enterprise Manager 接続Launcher設定</td><td>PAMエンジニア</td><td><span class="effort-chip">3〜5日</span></td><td>接続テスト手順書</td></tr>
+<tr><td class="wbs-l2">1-B-1.4</td><td class="wbs-l2">セッション記録（Session Recording）有効化と保管先確認</td><td>PAMエンジニア</td><td><span class="effort-chip">2〜3日</span></td><td>録画ファイル確認・保管ポリシー設定</td></tr>
+<tr><td class="wbs-l2">1-B-1.5</td><td class="wbs-l2">申請・承認ワークフロー設定（通常承認・緊急アクセス含む）</td><td>PAMエンジニア+PM</td><td><span class="effort-chip">3〜5日</span></td><td>承認フロー定義書・テスト完了報告</td></tr>
+<tr><td class="wbs-l1" colspan="5">1-B-2 外部委託先アクセス統制</td></tr>
+<tr><td class="wbs-l2">1-B-2.1</td><td class="wbs-l2">委託先別の接続権限・時間帯制限の設計</td><td>PM+セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>委託先アクセスマトリクス</td></tr>
+<tr><td class="wbs-l2">1-B-2.2</td><td class="wbs-l2">PAMゲストアカウント作成と委託先への操作説明</td><td>PAMエンジニア+PM</td><td><span class="effort-chip">2〜3日</span></td><td>委託先向け利用手順書</td></tr>
+<tr><td class="wbs-l2">1-B-2.3</td><td class="wbs-l2">セッション記録の確認・レビュー手順策定</td><td>セキュリティ担当</td><td><span class="effort-chip">2日</span></td><td>定期レビュー手順書</td></tr>
+</table>
+</section>
+</section>
+
+<!-- ===== PHASE 2 ===== -->
+<section id="phase2">
+<div class="phase-header">
+  <h2>📊 Phase 2: 監査基盤整備</h2>
+  <div class="phase-meta">目標: Unified Auditing確立・FGAによる機微データ監査・証跡の改ざん耐性確保 ／ 期間目安: 6〜12週間</div>
+</div>
+
+<section id="p2-unified">
+<h3>2-A. Unified Auditing 移行・設計</h3>
+
+<div class="warn">
+<strong>注意：</strong> Oracle 12c以降、従来監査（DBA_AUDIT_TRAIL）とUnified Auditing（UNIFIED_AUDIT_TRAIL）が<strong>共存可能だが設定が競合する場合がある</strong>。
+移行前に既存の従来監査設定をすべて棚卸しし、Unified Auditingへの移行計画を立ててから切り替える。
+</div>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数</th><th style="width:35%">成果物</th></tr>
+<tr><td class="wbs-l1" colspan="5">2-A-1 Unified Auditing有効化</td></tr>
+<tr><td class="wbs-l2">2-A-1.1</td><td class="wbs-l2">Pure Unified Auditing有効化（再リンク or 設定変更）</td><td>DBA</td><td><span class="effort-chip">1〜2日</span></td><td>UNIFIED_AUDIT_TRAIL確認・DB再起動記録</td></tr>
+<tr><td class="wbs-l2">2-A-1.2</td><td class="wbs-l2">既存従来監査設定の棚卸しとUnified Auditingポリシーへの変換</td><td>DBA+セキュリティ担当</td><td><span class="effort-chip">3〜5日</span></td><td>監査ポリシー移行対応表</td></tr>
+<tr><td class="wbs-l1" colspan="5">2-A-2 基本監査ポリシー設計</td></tr>
+<tr><td class="wbs-l2">2-A-2.1</td><td class="wbs-l2">ログオン・ログオフ監査ポリシー設計・実装</td><td>DBA+セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>ポリシー定義書・テスト結果</td></tr>
+<tr><td class="wbs-l2">2-A-2.2</td><td class="wbs-l2">DDL操作（CREATE/DROP/ALTER）監査ポリシー</td><td>DBA</td><td><span class="effort-chip">1〜2日</span></td><td>DDL変更の監査確認</td></tr>
+<tr><td class="wbs-l2">2-A-2.3</td><td class="wbs-l2">特権操作（SYSDBA/SYSOPER/SYSBACKUP等）監査ポリシー</td><td>DBA</td><td><span class="effort-chip">1〜2日</span></td><td>特権操作ログ確認</td></tr>
+<tr><td class="wbs-l2">2-A-2.4</td><td class="wbs-l2">ユーザー管理操作（CREATE USER/GRANT/REVOKE）監査ポリシー</td><td>DBA</td><td><span class="effort-chip">1〜2日</span></td><td>権限変更ログ確認</td></tr>
+<tr><td class="wbs-l2">2-A-2.5</td><td class="wbs-l2">監査ログの保管先設計（DB内 vs OS syslog vs AVDF）</td><td>DBA+インフラ</td><td><span class="effort-chip">2〜3日</span></td><td>保管先設計書</td></tr>
+<tr><td class="wbs-l2">2-A-2.6</td><td class="wbs-l2">監査ログのパーティション・パージポリシー設定</td><td>DBA</td><td><span class="effort-chip">1〜2日</span></td><td>保管量試算・パージスケジュール</td></tr>
+</table>
+
+<h4>Unified Auditing ポリシー実装例</h4>
+<div class="sql-block">
+<span class="sql-cm">-- 1. ログオン監査ポリシー</span><br>
+<span class="sql-kw">CREATE</span> AUDIT POLICY pol_logon<br>
+  ACTIONS LOGON, LOGOFF;<br>
+AUDIT POLICY pol_logon;<br><br>
+
+<span class="sql-cm">-- 2. DDL変更監査（全ユーザー対象）</span><br>
+<span class="sql-kw">CREATE</span> AUDIT POLICY pol_ddl<br>
+  ACTIONS <span class="sql-kw">CREATE</span> TABLE, <span class="sql-kw">DROP</span> TABLE, <span class="sql-kw">ALTER</span> TABLE,<br>
+          <span class="sql-kw">CREATE</span> <span class="sql-kw">USER</span>, <span class="sql-kw">DROP</span> <span class="sql-kw">USER</span>, <span class="sql-kw">ALTER</span> <span class="sql-kw">USER</span>,<br>
+          <span class="sql-kw">GRANT</span>, REVOKE;<br>
+AUDIT POLICY pol_ddl;<br><br>
+
+<span class="sql-cm">-- 3. 特権ユーザー（SYS・DBA）の全操作監査</span><br>
+<span class="sql-kw">CREATE</span> AUDIT POLICY pol_privileged<br>
+  PRIVILEGES <span class="sql-kw">ALL</span> PRIVILEGES<br>
+  <span class="sql-kw">WHEN</span> <span class="sql-str">'SYS_CONTEXT(USERENV,ISDBA  ) = TRUE'</span><br>
+  EVALUATE PER SESSION;<br>
+AUDIT POLICY pol_privileged;<br><br>
+
+<span class="sql-cm">-- 4. 監査ログ確認</span><br>
+<span class="sql-kw">SELECT</span> event_timestamp, dbusername, action_name,<br>
+       object_schema, object_name, unified_audit_policies<br>
+<span class="sql-kw">FROM</span> unified_audit_trail<br>
+<span class="sql-kw">WHERE</span> event_timestamp > <span class="sql-fn">SYSDATE</span> - <span class="sql-num">1</span><br>
+<span class="sql-kw">ORDER BY</span> event_timestamp <span class="sql-kw">DESC</span>;
+</div>
+</section>
+
+<section id="p2-fga">
+<h3>2-B. Fine-Grained Auditing (FGA) 設計・実装</h3>
+
+<div class="lead">
+FGAはJ-SOX・FISCにおける<strong>「機微データアクセスの個人単位追跡」</strong>に直結する機能。
+「監査ログが大量になりすぎて運用できない」を避けるため、<strong>何を監査するか</strong>を業務・コンプライアンス担当と合意してから実装する。
+</div>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数</th><th style="width:35%">成果物</th></tr>
+<tr><td class="wbs-l1" colspan="5">2-B-1 FGA対象テーブル・列の定義</td></tr>
+<tr><td class="wbs-l2">2-B-1.1</td><td class="wbs-l2">個人情報テーブル一覧（氏名・住所・電話・マイナンバー等）をデータオーナーと確定</td><td>DBA+データオーナー+コンプラ</td><td><span class="effort-chip">3〜5日</span></td><td>FGA対象テーブル・列定義書</td></tr>
+<tr><td class="wbs-l2">2-B-1.2</td><td class="wbs-l2">財務・口座・給与テーブルの対象範囲確定</td><td>DBA+財務部門</td><td><span class="effort-chip">2〜3日</span></td><td>財務系FGA対象定義書</td></tr>
+<tr><td class="wbs-l2">2-B-1.3</td><td class="wbs-l2">監査の条件設計（全件 vs 特定ユーザー vs 業務外時間帯 vs 大量取得）</td><td>セキュリティ担当+DBA</td><td><span class="effort-chip">2〜3日</span></td><td>FGA条件設計書</td></tr>
+<tr><td class="wbs-l1" colspan="5">2-B-2 FGAポリシー実装</td></tr>
+<tr><td class="wbs-l2">2-B-2.1</td><td class="wbs-l2">DBMS_FGA.ADD_POLICYによる個人情報テーブルへのFGA適用</td><td>DBA</td><td><span class="effort-chip">2〜3日</span></td><td>FGAポリシー実装確認</td></tr>
+<tr><td class="wbs-l2">2-B-2.2</td><td class="wbs-l2">ハンドラープロシージャの設計（アラート通知・追加ログ記録）</td><td>DBA</td><td><span class="effort-chip">2〜3日</span></td><td>ハンドラー動作テスト</td></tr>
+<tr><td class="wbs-l2">2-B-2.3</td><td class="wbs-l2">FGAログ（DBA_FGA_AUDIT_TRAIL / UNIFIED_AUDIT_TRAIL）の確認手順整備</td><td>DBA+セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>FGAレポーティング手順書</td></tr>
+<tr><td class="wbs-l2">2-B-2.4</td><td class="wbs-l2">誤検知・過検知の調整（業務上の大量取得をホワイトリスト化）</td><td>DBA+業務担当</td><td><span class="effort-chip">3〜5日</span></td><td>チューニング記録</td></tr>
+</table>
+
+<h4>FGA実装例（個人情報テーブルの列単位監査）</h4>
+<div class="sql-block">
+<span class="sql-cm">-- 顧客テーブルの機微列（氏名・電話・マイナンバー）アクセス監査</span><br>
+<span class="sql-kw">BEGIN</span><br>
+  DBMS_FGA.ADD_POLICY(<br>
+    object_schema  => <span class="sql-str">'APP_SCHEMA'</span>,<br>
+    object_name    => <span class="sql-str">'CUSTOMER_MASTER'</span>,<br>
+    policy_name    => <span class="sql-str">'FGA_CUSTOMER_PII'</span>,<br>
+    audit_column   => <span class="sql-str">'CUSTOMER_NAME,PHONE_NUMBER,MY_NUMBER'</span>,<br>
+    enable         => TRUE,<br>
+    statement_types => <span class="sql-str">'SELECT,UPDATE'</span>,<br>
+    <span class="sql-cm">-- 監査条件：業務時間外（20時〜7時）のアクセスを監査</span><br>
+    audit_condition => <span class="sql-str">'TO_NUMBER(TO_CHAR(SYSDATE,''HH24'')) NOT BETWEEN 7 AND 20'</span>,<br>
+    handler_schema  => <span class="sql-str">'AUDIT_SCHEMA'</span>,<br>
+    handler_module  => <span class="sql-str">'AUDIT_ALERT.NOTIFY_SECURITY_TEAM'</span><br>
+  );<br>
+<span class="sql-kw">END</span>;<br>
+/<br><br>
+
+<span class="sql-cm">-- FGA監査ログ確認（Unified Audit Trailとの統合）</span><br>
+<span class="sql-kw">SELECT</span> event_timestamp, dbusername, object_schema,<br>
+       object_name, sql_text<br>
+<span class="sql-kw">FROM</span> unified_audit_trail<br>
+<span class="sql-kw">WHERE</span> fga_policy_name = <span class="sql-str">'FGA_CUSTOMER_PII'</span><br>
+<span class="sql-kw">ORDER BY</span> event_timestamp <span class="sql-kw">DESC</span>;
+</div>
+</section>
+
+<section id="p2-avdf">
+<h3>2-C. AVDF / SIEM連携（証跡の改ざん耐性確保）</h3>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数</th><th style="width:35%">成果物</th></tr>
+<tr><td class="wbs-l1" colspan="5">2-C-1 監査ログ転送設計</td></tr>
+<tr><td class="wbs-l2">2-C-1.1</td><td class="wbs-l2">AVDFまたはSIEM（Splunk/QRadar/Securonix）への転送方式決定</td><td>セキュリティ担当+インフラ</td><td><span class="effort-chip">2〜3日</span></td><td>転送方式設計書</td></tr>
+<tr><td class="wbs-l2">2-C-1.2</td><td class="wbs-l2">Oracle監査ログのsyslog転送設定（AUDSYS転送またはOS側syslog）</td><td>DBA+インフラ</td><td><span class="effort-chip">2〜3日</span></td><td>転送確認・SIEM受信確認</td></tr>
+<tr><td class="wbs-l2">2-C-1.3</td><td class="wbs-l2">保管期間設計（J-SOX対応：7年、FISC：5〜7年、個情法：利用終了後合理的期間）</td><td>コンプラ+セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>保管ポリシー定義書</td></tr>
+<tr><td class="wbs-l1" colspan="5">2-C-2 SIEM相関ルール設計</td></tr>
+<tr><td class="wbs-l2">2-C-2.1</td><td class="wbs-l2">異常検知ルール設計（大量SELECT・深夜SYSDBA接続・連続ログイン失敗）</td><td>セキュリティ担当</td><td><span class="effort-chip">3〜5日</span></td><td>検知ルール仕様書</td></tr>
+<tr><td class="wbs-l2">2-C-2.2</td><td class="wbs-l2">アラート閾値チューニング（誤検知抑制）</td><td>セキュリティ担当</td><td><span class="effort-chip">5〜10日</span></td><td>チューニング記録</td></tr>
+<tr><td class="wbs-l2">2-C-2.3</td><td class="wbs-l2">インシデント対応手順の整備（SIEM検知→エスカレーションフロー）</td><td>セキュリティ担当+PM</td><td><span class="effort-chip">3〜5日</span></td><td>インシデント対応手順書</td></tr>
+</table>
+</section>
+</section>
+
+<!-- ===== PHASE 3 ===== -->
+<section id="phase3">
+<div class="phase-header">
+  <h2>🏰 Phase 3: 特権管理強化（Database Vault / PAM本格化）</h2>
+  <div class="phase-meta">目標: 特権ユーザーによる業務データ不正アクセスの技術的禁止・JIT化 ／ 期間目安: 12〜24週間</div>
+</div>
+
+<div class="warn">
+<strong>Phase 3は最も影響範囲が広く、設計ミスが本番障害につながる。</strong>
+必ず開発環境→本番相当の検証環境→本番の順で実施し、DBチームとアプリチームの密な連携が必要。
+Database VaultはOracleの全バージョン・エディションで利用可能ではないため、エディション確認が前提。
+</div>
+
+<section id="p3-vault">
+<h3>3-A. Oracle Database Vault 設計・実装</h3>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数</th><th style="width:35%">成果物</th></tr>
+<tr><td class="wbs-l1" colspan="5">3-A-1 Database Vault有効化前調査</td></tr>
+<tr><td class="wbs-l2">3-A-1.1</td><td class="wbs-l2">エディション確認（EE/SE2でのDatabase Vault対応可否）</td><td>DBA</td><td><span class="effort-chip">0.5日</span></td><td>エディション確認書</td></tr>
+<tr><td class="wbs-l2">3-A-1.2</td><td class="wbs-l2">DV有効化による既存DBAスクリプト・運用ジョブへの影響調査</td><td>DBA+AP担当</td><td><span class="effort-chip">5〜10日</span></td><td>影響調査報告書</td></tr>
+<tr><td class="wbs-l2">3-A-1.3</td><td class="wbs-l2">DV Account Manager・DV Ownerロールの担当者決定（DVOとDBAの分離）</td><td>PM+セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>役割分担表</td></tr>
+<tr><td class="wbs-l1" colspan="5">3-A-2 Realm設計・実装</td></tr>
+<tr><td class="wbs-l2">3-A-2.1</td><td class="wbs-l2">業務スキーマ別Realm設計（Finance Realm / HR Realm / Customer Realm等）</td><td>DBA+セキュリティ担当</td><td><span class="effort-chip">3〜5日</span></td><td>Realm設計書</td></tr>
+<tr><td class="wbs-l2">3-A-2.2</td><td class="wbs-l2">Realm AuthorizedユーザーとRealmオブジェクトの定義</td><td>DBA</td><td><span class="effort-chip">3〜5日</span></td><td>Realm設定スクリプト</td></tr>
+<tr><td class="wbs-l2">3-A-2.3</td><td class="wbs-l2">Simulation Mode（試験モード）での影響確認</td><td>DBA</td><td><span class="effort-chip">5〜10日</span></td><td>Simulation違反レポート・チューニング記録</td></tr>
+<tr><td class="wbs-l2">3-A-2.4</td><td class="wbs-l2">本番Enforcement Modeへの切り替えと動作確認</td><td>DBA</td><td><span class="effort-chip">3〜5日</span></td><td>移行完了報告</td></tr>
+<tr><td class="wbs-l1" colspan="5">3-A-3 Command Rule設計（危険DDLの制限）</td></tr>
+<tr><td class="wbs-l2">3-A-3.1</td><td class="wbs-l2">制限すべきコマンド一覧整理（DROP TABLE・TRUNCATE・GRANT DBA等）</td><td>DBA+セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>Command Rule対象一覧</td></tr>
+<tr><td class="wbs-l2">3-A-3.2</td><td class="wbs-l2">Command Ruleにルール適用・Factor/Rule Setと連動設定</td><td>DBA</td><td><span class="effort-chip">3〜5日</span></td><td>Command Rule設定書</td></tr>
+<tr><td class="wbs-l2">3-A-3.3</td><td class="wbs-l2">Break Glass手順の整備（DV無効化手順・使用後レビュー）</td><td>DBA+PM</td><td><span class="effort-chip">2〜3日</span></td><td>Break Glass手順書</td></tr>
+</table>
+
+<h4>Database Vault Realm設定例</h4>
+<div class="sql-block">
+<span class="sql-cm">-- Realmの作成（財務スキーマの保護）</span><br>
+<span class="sql-kw">BEGIN</span><br>
+  DBMS_MACADM.CREATE_REALM(<br>
+    realm_name    => <span class="sql-str">'Finance Realm'</span>,<br>
+    description   => <span class="sql-str">'財務・経理スキーマへのDBAアクセスを制限'</span>,<br>
+    enabled       => DBMS_MACUTL.G_YES,<br>
+    audit_options => DBMS_MACUTL.G_REALM_AUDIT_FAIL<br>
+  );<br>
+<span class="sql-kw">END</span>;<br>
+/<br><br>
+
+<span class="sql-cm">-- Realmにオブジェクト追加（財務スキーマ全体）</span><br>
+<span class="sql-kw">BEGIN</span><br>
+  DBMS_MACADM.ADD_OBJECT_TO_REALM(<br>
+    realm_name   => <span class="sql-str">'Finance Realm'</span>,<br>
+    object_owner => <span class="sql-str">'FINANCE_SCHEMA'</span>,<br>
+    object_name  => <span class="sql-str">'%'</span>,<br>
+    object_type  => <span class="sql-str">'%'</span><br>
+  );<br>
+<span class="sql-kw">END</span>;<br>
+/<br><br>
+
+<span class="sql-cm">-- Realm認可ユーザー追加（財務担当のみDBA権限でも参照可）</span><br>
+<span class="sql-kw">BEGIN</span><br>
+  DBMS_MACADM.ADD_AUTH_TO_REALM(<br>
+    realm_name   => <span class="sql-str">'Finance Realm'</span>,<br>
+    grantee      => <span class="sql-str">'FINANCE_APP_USER'</span>,<br>
+    rule_set_name => NULL,<br>
+    auth_options  => DBMS_MACUTL.G_REALM_AUTH_PARTICIPANT<br>
+  );<br>
+<span class="sql-kw">END</span>;<br>
+/
+</div>
+</section>
+
+<section id="p3-pam">
+<h3>3-B. JIT（Just-In-Time）特権アクセス・PAM本格化</h3>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数</th><th style="width:35%">成果物</th></tr>
+<tr><td class="wbs-l2">3-B-1</td><td class="wbs-l2">JIT特権付与の設計（申請→承認→一時権限付与→自動剥奪）</td><td>PAMエンジニア+DBA</td><td><span class="effort-chip">5〜8日</span></td><td>JITフロー設計書</td></tr>
+<tr><td class="wbs-l2">3-B-2</td><td class="wbs-l2">SYSDBA利用の申請必須化（PAM承認なしでは接続不可）</td><td>PAMエンジニア+DBA</td><td><span class="effort-chip">3〜5日</span></td><td>SYSDBA申請フロー実装確認</td></tr>
+<tr><td class="wbs-l2">3-B-3</td><td class="wbs-l2">Break Glass（緊急時）手順の整備と通知フロー設計</td><td>PM+セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>Break Glass手順書・通知先一覧</td></tr>
+<tr><td class="wbs-l2">3-B-4</td><td class="wbs-l2">定期アクセスレビュー（四半期）の設計とIGAとの連携</td><td>セキュリティ担当+PM</td><td><span class="effort-chip">3〜5日</span></td><td>アクセスレビュー手順書・レポート形式</td></tr>
+<tr><td class="wbs-l2">3-B-5</td><td class="wbs-l2">自動化ジョブ・バッチのgMSA / Oracle Wallet / PAM Secret Engineへの移行</td><td>DBA+AP担当</td><td><span class="effort-chip">10〜20日</span></td><td>ジョブ別移行完了記録</td></tr>
+</table>
+</section>
+</section>
+
+<!-- ===== PHASE 4 ===== -->
+<section id="phase4">
+<div class="phase-header">
+  <h2>🔄 Phase 4: 移行完了・定常化・継続改善</h2>
+  <div class="phase-meta">目標: 旧認証方式の完全廃止・運用標準化・継続監視体制の確立 ／ 期間目安: 4〜8週間</div>
+</div>
+
+<table class="wbs-table">
+<tr><th style="width:5%">ID</th><th style="width:38%">タスク</th><th style="width:12%">担当</th><th style="width:10%">工数</th><th style="width:35%">成果物</th></tr>
+<tr><td class="wbs-l1" colspan="5">4-1 旧設定の廃止</td></tr>
+<tr><td class="wbs-l2">4-1.1</td><td class="wbs-l2">残存する10G password verifierの廃止（ALLOWED_LOGON_VERSION設定）</td><td>DBA</td><td><span class="effort-chip">2〜3日</span></td><td>password_versions確認・全11G/12C以上確認</td></tr>
+<tr><td class="wbs-l2">4-1.2</td><td class="wbs-l2">OS認証の無効化（SQLNET.AUTHENTICATION_SERVICESからOSを除外）</td><td>DBA</td><td><span class="effort-chip">1〜2日</span></td><td>/ as sysdba接続不可確認</td></tr>
+<tr><td class="wbs-l2">4-1.3</td><td class="wbs-l2">不要DBユーザーのロック・削除（LOCK/DROP）</td><td>DBA</td><td><span class="effort-chip">2〜3日</span></td><td>削除記録・変更管理申請</td></tr>
+<tr><td class="wbs-l1" colspan="5">4-2 運用標準化</td></tr>
+<tr><td class="wbs-l2">4-2.1</td><td class="wbs-l2">DBアカウント管理手順書の更新（申請→承認→作成→定期レビュー→削除）</td><td>DBA+PM</td><td><span class="effort-chip">3〜5日</span></td><td>アカウント管理手順書 v2.0</td></tr>
+<tr><td class="wbs-l2">4-2.2</td><td class="wbs-l2">監査ログ定期レビュー手順書の整備（月次・四半期・J-SOX対応）</td><td>セキュリティ担当</td><td><span class="effort-chip">2〜3日</span></td><td>レビュー手順書・チェックリスト</td></tr>
+<tr><td class="wbs-l2">4-2.3</td><td class="wbs-l2">委託先・SIerへの新運用ルール周知と契約・NDA更新</td><td>PM+調達</td><td><span class="effort-chip">1〜2週間</span></td><td>委託先向け通知文書・確認書</td></tr>
+<tr><td class="wbs-l1" colspan="5">4-3 J-SOX・FISC受入検査</td></tr>
+<tr><td class="wbs-l2">4-3.1</td><td class="wbs-l2">内部監査部門向け統制エビデンス資料作成</td><td>DBA+セキュリティ担当</td><td><span class="effort-chip">3〜5日</span></td><td>J-SOX証跡パッケージ</td></tr>
+<tr><td class="wbs-l2">4-3.2</td><td class="wbs-l2">FISC安全対策基準チェックリストの充足確認</td><td>コンプラ+セキュリティ担当</td><td><span class="effort-chip">3〜5日</span></td><td>FISCチェックリスト完了報告</td></tr>
+</table>
+</section>
+
+<!-- ===== コンプライアンス ===== -->
+<section id="compliance">
+<h2>📜 コンプライアンス対応マトリクス</h2>
+
+<div class="compliance-grid">
+<div class="comp-card jsox">
+  <h4>🏛️ J-SOX（金融商品取引法）</h4>
+  <ul>
+    <li>特権ID：個人単位・共有禁止</li>
+    <li>本番DB変更の承認証跡</li>
+    <li>権限変更ログ7年保管</li>
+    <li>定期アクセスレビュー記録</li>
+    <li>監査ログの改ざん防止措置</li>
+  </ul>
+  <p style="font-size:.75rem;margin-top:8px;color:#991b1b">対応機能: Unified Auditing + AVDF + Database Vault + PAM</p>
+</div>
+<div class="comp-card fisc">
+  <h4>💳 FISC（金融情報システム安全対策基準）</h4>
+  <ul>
+    <li>重要システムの特権操作全記録</li>
+    <li>外部委託先の申請・承認・記録</li>
+    <li>ログの改ざん防止と長期保管</li>
+    <li>不正兆候の定期検知・レビュー</li>
+    <li>システム変更の変更管理手順</li>
+  </ul>
+  <p style="font-size:.75rem;margin-top:8px;color:#7c3aed">対応機能: PAM + FGA + SIEM + セッション記録</p>
+</div>
+<div class="comp-card pci">
+  <h4>💳 PCI DSS（カード情報保護）</h4>
+  <ul>
+    <li>カードデータへのアクセスを最小限に</li>
+    <li>強力な認証（MFA必須）</li>
+    <li>ユニークIDの使用（共有禁止）</li>
+    <li>アクセスログ1年以上保管</li>
+    <li>四半期ごとのアクセスレビュー</li>
+  </ul>
+  <p style="font-size:.75rem;margin-top:8px;color:#0891b2">対応機能: Kerberos/MFA + FGA + Unified Auditing</p>
+</div>
+</div>
+</section>
+
+<!-- ===== リスク ===== -->
+<section id="risks">
+<h2>⚠️ 主要リスクと対策</h2>
+
+<div class="risk-matrix">
+<div class="risk-item">
+  <div class="risk-title">🔴 移行後に自動化ジョブが停止する</div>
+  <div>原因: バッチ・ETLが旧認証方式（固定パスワードや10G verifier）に依存している</div>
+  <div class="risk-counter">対策: Phase 0でジョブ×認証依存を完全棚卸し。移行前に非本番環境で全ジョブ検証を実施。</div>
+</div>
+<div class="risk-item">
+  <div class="risk-title">🔴 Kerberos障害がDB接続全断になる</div>
+  <div>原因: DNS・時刻同期・keytab有効期限のいずれかが崩れると接続不可</div>
+  <div class="risk-counter">対策: フォールバック手順（Break Glass ID）を事前整備。KDC冗長化・keytab更新アラート設定。</div>
+</div>
+<div class="risk-item med">
+  <div class="risk-title">🟡 Database Vault有効化後に運用スクリプトが失敗する</div>
+  <div>原因: DBAが全テーブルにアクセスできることを前提にした運用スクリプトが多い</div>
+  <div class="risk-counter">対策: Simulation Mode（最低2〜4週間）で違反を洗い出してから本番適用。</div>
+</div>
+<div class="risk-item med">
+  <div class="risk-title">🟡 FGAログが大量発生して運用できない</div>
+  <div>原因: 監査条件を絞り込まず全件監査にした場合</div>
+  <div class="risk-counter">対策: 業務担当・コンプライアンスと「何を監査するか」を合意してから実装。業務上の大量取得はホワイトリスト化。</div>
+</div>
+<div class="risk-item med">
+  <div class="risk-title">🟡 委託先SIerがPAM経由を嫌がり旧接続を要求する</div>
+  <div>原因: 運用手順変更・接続速度・不便さへの抵抗</div>
+  <div class="risk-counter">対策: 契約・SLAレベルでPAM経由を義務付け。移行前に委託先への十分な説明と訓練を実施。</div>
+</div>
+<div class="risk-item low">
+  <div class="risk-title">🟢 監査ポリシー過剰でDBパフォーマンスが低下する</div>
+  <div>原因: 全SQL・全ユーザーへの広範な監査適用</div>
+  <div class="risk-counter">対策: 監査はログオン・DDL・特権操作・FGA対象列に絞る。負荷テストをDEV/STGで実施。</div>
+</div>
+</div>
+</section>
+
+<!-- ===== チェックリスト ===== -->
+<section id="checklist">
+<h2>✅ フェーズ完了チェックリスト</h2>
+
+<div class="two-col">
+<div>
+<h4>Phase 0 完了条件</h4>
+<ul class="checklist">
+  <li>全DBインスタンスのインベントリ作成完了</li>
+  <li>全DBユーザー×権限マトリクス作成完了</li>
+  <li>V$PWFILE_USERSでのSYSDBAホルダー一覧確認済</li>
+  <li>OS認証（dbaグループ）ユーザー一覧確認済</li>
+  <li>アプリ・バッチの接続ユーザー棚卸し完了</li>
+  <li>FGA対象テーブル・列をデータオーナーと合意</li>
+  <li>移行計画書v1.0 ステークホルダー承認済</li>
+</ul>
+
+<h4>Phase 1 完了条件</h4>
+<ul class="checklist">
+  <li>管理者ユーザーのKerberos認証切り替え完了</li>
+  <li>旧パスワード認証管理者IDのLOCK/削除完了</li>
+  <li>PAM（CyberArk/Delinea）にSYS/SYSTEM登録完了</li>
+  <li>PAM経由のセッション記録動作確認済</li>
+  <li>委託先アクセスのPAM経由切り替え完了</li>
+</ul>
+</div>
+<div>
+<h4>Phase 2 完了条件</h4>
+<ul class="checklist">
+  <li>Pure Unified Auditing有効化確認済</li>
+  <li>ログオン・DDL・特権操作ポリシー有効化済</li>
+  <li>FGAポリシー全対象テーブルに適用完了</li>
+  <li>AVDF or SIEMへの監査ログ転送確認済</li>
+  <li>保管ポリシー（7年等）設定完了</li>
+  <li>SIEM検知ルール・アラート動作確認済</li>
+</ul>
+
+<h4>Phase 3 / Phase 4 完了条件</h4>
+<ul class="checklist">
+  <li>Database Vault Realmが全業務スキーマに適用済</li>
+  <li>SYSDBAのJIT申請フロー稼働確認済</li>
+  <li>Break Glass手順書整備・訓練完了</li>
+  <li>10G password verifier完全廃止確認済</li>
+  <li>OS認証（/ as sysdba）無効化確認済</li>
+  <li>J-SOX証跡パッケージ内部監査部門提出済</li>
+  <li>FISC安全対策基準チェックリスト充足確認済</li>
+  <li>アカウント管理手順書 v2.0 承認済</li>
+</ul>
+</div>
+</div>
+
+<div class="good">
+<strong>✅ プロジェクト完了の目安：</strong>
+「共有SYSDBAで誰がやったか不明」→「全操作が個人単位でUnified Audit Trailに記録され、FGAで機微データへのアクセスが個別追跡され、PAMセッション記録が証拠として提示できる状態」への移行が完了していること。
+内部監査・監査法人・FISCチェックが通れるエビデンスが揃っていることを最終確認とする。
+</div>
+</section>
+
+</main>
+</body>
+</html>

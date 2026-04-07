@@ -3,269 +3,1349 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>日本市場 ID管理製品マップ 2026</title>
+<title>日本市場 IDM製品カタログ — IdP・PAM・IGA・国産製品 完全比較</title>
 <style>
-
-  body{font-family:'Noto Sans JP','Helvetica Neue',Arial,sans-serif;margin:0;background:#f8f9fa;color:#1a1a2e}
-  .hero{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);color:#fff;padding:60px 40px;text-align:center}
-  .hero h1{font-size:2.2em;margin:0 0 10px;font-weight:700}
-  .hero p{font-size:1.1em;opacity:.85;margin:0}
-  .container{max-width:1100px;margin:40px auto;padding:0 30px}
-  .card{background:#fff;border-radius:12px;padding:28px;margin-bottom:24px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
-  .card h2{color:#0f3460;margin-top:0;font-size:1.4em;border-bottom:3px solid #e63946;padding-bottom:8px}
-  .highlight{background:#fff3cd;border-left:4px solid #ffc107;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .danger{background:#fff0f0;border-left:4px solid #e63946;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  .success{background:#f0fff4;border-left:4px solid #2d6a4f;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0}
-  table{width:100%;border-collapse:collapse;margin:16px 0}
-  th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:.9em}
-  td{padding:10px 14px;border-bottom:1px solid #e9ecef;font-size:.9em}
-  tr:nth-child(even) td{background:#f8f9fa}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
-  footer{text-align:center;padding:30px;color:#888;font-size:.85em}
-  @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
-  .tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.8em;font-weight:600;margin:2px}
-
-.category-nav{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
-.cat-btn{padding:8px 18px;border-radius:20px;border:none;cursor:pointer;font-size:.9em;font-weight:600}
-.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin:20px 0}
-.product-card{background:#fff;border:1px solid #e9ecef;border-radius:12px;padding:20px;transition:box-shadow .2s}
-.product-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
-.product-card h3{margin:0 0 6px;font-size:1em;color:#1a1a2e}
-.product-vendor{font-size:.8em;color:#666;margin-bottom:8px}
-.product-tags{margin:8px 0}
-.tag-jp{background:#ffe0e0;color:#c0392b}
-.tag-global{background:#e0f0ff;color:#2980b9}
-.tag-cloud{background:#e0ffe0;color:#27ae60}
-.tag-onprem{background:#f0e0ff;color:#8e44ad}
-.tag-oss{background:#fff9e0;color:#b8860b}
-.strengths{font-size:.85em;color:#444;margin-top:8px}
-.price{font-size:.8em;background:#f0f4ff;border-radius:6px;padding:4px 8px;margin-top:8px;display:inline-block}
-.section-title{font-size:1.3em;font-weight:700;color:#0f3460;padding:16px 0 8px;border-bottom:2px solid #0f3460;margin:30px 0 16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:1px 2px}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+.tag-red{background:#fee2e2;color:#991b1b}
+.tag-blue{background:#dbeafe;color:#1e40af}
+.tag-green{background:#dcfce7;color:#166534}
+.tag-purple{background:#ede9fe;color:#5b21b6}
+.tag-gray{background:#f1f5f9;color:#475569}
+.tag-orange{background:#ffedd5;color:#9a3412}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.card-blue{border-top:3px solid #3b82f6}
+.card-green{border-top:3px solid #16a34a}
+.card-purple{border-top:3px solid #7c3aed}
+.card-orange{border-top:3px solid #ea580c}
+.card-red{border-top:3px solid #dc2626}
+.card-teal{border-top:3px solid #0891b2}
+.card-gold{border-top:3px solid #d97706}
+.card-navy{border-top:3px solid #1e3a5f}
+.category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.cat-box{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:12px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.cat-box .cat-icon{font-size:1.6rem;display:block;margin-bottom:6px}
+.cat-box .cat-name{font-size:.82rem;font-weight:700;color:#1e3a5f;display:block;margin-bottom:4px}
+.cat-box .cat-desc{font-size:.72rem;color:#64748b}
+.cat-box .cat-adoption{font-size:.7rem;margin-top:6px;padding:2px 6px;border-radius:8px;display:inline-block}
+.adopt-high{background:#dcfce7;color:#166534}
+.adopt-med{background:#fef9c3;color:#92400e}
+.adopt-low{background:#fee2e2;color:#991b1b}
+.score-bar{height:6px;background:#e2e8f0;border-radius:3px;margin:4px 0}
+.score-fill{height:6px;border-radius:3px;background:#3b82f6}
+.score-fill.red{background:#dc2626}
+.score-fill.green{background:#16a34a}
+.score-fill.amber{background:#d97706}
+.stack-card{background:#fff;border-radius:10px;border:1px solid #e2e8f0;padding:18px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.stack-card h3{margin-top:0;color:#fff;padding:8px 14px;border-radius:6px;font-size:.92rem;margin-bottom:14px}
+.stack-card.enterprise h3{background:#1e3a5f}
+.stack-card.midmarket h3{background:#0891b2}
+.stack-card.smb h3{background:#16a34a}
+.stack-layer{border-left:3px solid #3b82f6;padding:6px 10px;margin:6px 0;background:#f8fafc;border-radius:0 4px 4px 0;font-size:.82rem}
+.stack-layer strong{color:#1e3a5f}
+.stack-layer .price-hint{float:right;font-size:.72rem;color:#64748b;background:#e2e8f0;padding:1px 6px;border-radius:8px}
+.price-chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.price-free{background:#dcfce7;color:#166534;display:inline-block;padding:1px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.price-low{background:#dbeafe;color:#1e40af;display:inline-block;padding:1px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.price-med{background:#fef9c3;color:#92400e;display:inline-block;padding:1px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.price-high{background:#ffedd5;color:#9a3412;display:inline-block;padding:1px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.price-vhigh{background:#fee2e2;color:#991b1b;display:inline-block;padding:1px 8px;border-radius:10px;font-size:.72rem;font-weight:700}
+.tbl-note{font-size:.75rem;color:#64748b;font-style:italic;margin-bottom:8px}
+ul.feature-list{padding-left:16px;font-size:.83rem;color:#475569;margin:6px 0}
+ul.feature-list li{margin-bottom:3px}
+.vendor-badge{display:inline-block;background:#1e3a5f;color:#fff;padding:1px 8px;border-radius:4px;font-size:.7rem;font-weight:700;margin-right:4px}
+.vendor-badge.domestic{background:#16a34a}
+.vendor-badge.oss{background:#7c3aed}
+.dtree{margin:16px 0}
+.dtree-question{background:#1e3a5f;color:#fff;border-radius:8px;padding:10px 14px;font-weight:700;font-size:.85rem;margin-bottom:8px;display:inline-block}
+.dtree-branches{display:flex;gap:16px;margin-bottom:16px;padding-left:20px}
+.dtree-branch{flex:1;border-left:3px solid #3b82f6;padding-left:12px}
+.dtree-branch.no-branch{border-left-color:#94a3b8}
+.dtree-label{font-size:.75rem;font-weight:700;color:#3b82f6;margin-bottom:4px}
+.dtree-label.no-label{color:#94a3b8}
+.dtree-result{background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:8px 12px;font-size:.8rem;color:#166534;font-weight:600}
+.dtree-result.warn-result{background:#fef9c3;border-color:#fde68a;color:#92400e}
+.dtree-result.neutral-result{background:#f8fafc;border-color:#cbd5e1;color:#475569}
+@media(max-width:900px){#toc{display:none}main{margin-left:0}}
 </style>
 </head>
 <body>
-<div class="hero">
-  <h1>🗾 日本市場 ID管理製品マップ 2026</h1>
-  <p>カテゴリ別・用途別の製品一覧 ― 選定の第一歩はここから</p>
-</div>
-<div class="container">
 
-<div class="card">
-  <h2>カテゴリ別製品マップの見方</h2>
-  <div class="grid2">
-    <div>
-      <p>ID管理製品は大きく5つのカテゴリに分かれます。一つの製品ですべてを賄うことは難しく、<strong>複数製品の組み合わせ</strong>が現実解です。</p>
-      <ul>
-        <li><strong>IdP（認証基盤）</strong>：ログイン認証・SSO・MFAを担う中核</li>
-        <li><strong>IGA（IDガバナンス）</strong>：アクセス権管理・承認・棚卸し</li>
-        <li><strong>PAM（特権アクセス管理）</strong>：管理者・特権IDの踏み台・録画</li>
-        <li><strong>ディレクトリ</strong>：社員情報・ID情報の格納場所</li>
-        <li><strong>補完ツール</strong>：監査ログ・SIEM・CASB等</li>
-      </ul>
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#overview">&#128506; カテゴリマップ概要</a>
+  <a href="#category-detail">&#128230; 8カテゴリ詳細</a>
+  <a href="#idp">&#128273; IdP製品比較</a>
+  <a class="toc-sub" href="#idp-table">比較テーブル</a>
+  <a class="toc-sub" href="#idp-detail">製品別スコア</a>
+  <a href="#pam">&#128274; PAM製品比較</a>
+  <a class="toc-sub" href="#pam-table">比較テーブル</a>
+  <a class="toc-sub" href="#pam-detail">機能カバレッジ</a>
+  <a href="#iga">&#127963; IGA製品比較</a>
+  <a class="toc-sub" href="#iga-table">比較テーブル</a>
+  <a href="#domestic">&#127471;&#127477; 国産・日本語特化製品</a>
+  <a class="toc-sub" href="#hennge">HENNGE One</a>
+  <a class="toc-sub" href="#cloudgate">CloudGate UNO</a>
+  <a class="toc-sub" href="#securecube">SecureCube</a>
+  <a class="toc-sub" href="#netattest">NetAttest EPS</a>
+  <a class="toc-sub" href="#trustlogin">TrustLogin</a>
+  <a href="#stacks">&#128176; 規模・予算別スタック</a>
+  <a class="toc-sub" href="#stack-enterprise">大手金融・製造</a>
+  <a class="toc-sub" href="#stack-midmarket">中堅企業</a>
+  <a class="toc-sub" href="#stack-smb">中小・スタートアップ</a>
+  <a href="#decision">&#129517; 製品選定フロー</a>
+</nav>
+
+<main>
+<h1>日本市場 IDM製品カタログ</h1>
+<p class="subtitle">IdP・PAM・IGA・国産製品 完全比較 &#8212; 情報システム部門・CISO・SIer SE 向けリファレンス（2026年版）</p>
+
+<!-- ===== カテゴリマップ ===== -->
+<section id="overview">
+<div class="phase-header">
+  <h2>&#128506; 日本市場 IDM製品カテゴリマップ</h2>
+  <div class="phase-meta">8カテゴリの概要・市場特性・日本での採用実態を俯瞰する</div>
+</div>
+
+<div class="lead">
+日本企業のIDM（Identity Management）製品は大きく8カテゴリに分類される。オンプレミスのActive Directory依存が根強い一方、
+Microsoft 365普及に伴いEntra IDが急速にクラウドIdPとして浸透している。PAMは金融・製造の規制業種から導入が進み、
+IGA（Identity Governance）は欧米比で普及が遅れているが、J-SOX・内部統制対応を機に導入機運が高まっている。
+</div>
+
+<div class="category-grid">
+  <div class="cat-box" style="border-top:3px solid #3b82f6">
+    <span class="cat-icon">&#127959;</span>
+    <span class="cat-name">ディレクトリサービス</span>
+    <span class="cat-desc">AD DS / Entra ID / RHDS</span>
+    <span class="cat-adoption adopt-high">採用率：非常に高い</span>
+  </div>
+  <div class="cat-box" style="border-top:3px solid #2563eb">
+    <span class="cat-icon">&#128273;</span>
+    <span class="cat-name">IdP / SSO</span>
+    <span class="cat-desc">Entra ID / Okta / HENNGE</span>
+    <span class="cat-adoption adopt-high">採用率：高い</span>
+  </div>
+  <div class="cat-box" style="border-top:3px solid #dc2626">
+    <span class="cat-icon">&#128274;</span>
+    <span class="cat-name">PAM 特権管理</span>
+    <span class="cat-desc">CyberArk / Delinea / SecureCube</span>
+    <span class="cat-adoption adopt-med">採用率：中（規制業種中心）</span>
+  </div>
+  <div class="cat-box" style="border-top:3px solid #7c3aed">
+    <span class="cat-icon">&#127963;</span>
+    <span class="cat-name">IGA ガバナンス</span>
+    <span class="cat-desc">SailPoint / Saviynt / Entra Gov</span>
+    <span class="cat-adoption adopt-low">採用率：低〜中（増加中）</span>
+  </div>
+  <div class="cat-box" style="border-top:3px solid #0891b2">
+    <span class="cat-icon">&#128241;</span>
+    <span class="cat-name">MFA / 認証デバイス</span>
+    <span class="cat-desc">Authenticator / YubiKey / NetAttest</span>
+    <span class="cat-adoption adopt-high">採用率：高い</span>
+  </div>
+  <div class="cat-box" style="border-top:3px solid #ea580c">
+    <span class="cat-icon">&#128225;</span>
+    <span class="cat-name">MDM / UEM</span>
+    <span class="cat-desc">Intune / Jamf / SKYSEA</span>
+    <span class="cat-adoption adopt-high">採用率：高い</span>
+  </div>
+  <div class="cat-box" style="border-top:3px solid #d97706">
+    <span class="cat-icon">&#9729;</span>
+    <span class="cat-name">CASB / SASE</span>
+    <span class="cat-desc">Defender for Cloud Apps / Netskope</span>
+    <span class="cat-adoption adopt-med">採用率：中（急成長）</span>
+  </div>
+  <div class="cat-box" style="border-top:3px solid #16a34a">
+    <span class="cat-icon">&#128301;</span>
+    <span class="cat-name">SIEM + IDM連携</span>
+    <span class="cat-desc">Sentinel / Splunk / QRadar</span>
+    <span class="cat-adoption adopt-med">採用率：中</span>
+  </div>
+</div>
+</section>
+
+<!-- ===== 8カテゴリ詳細 ===== -->
+<section id="category-detail">
+<h2>&#128230; 8カテゴリ 日本市場特性詳細</h2>
+
+<div class="two-col">
+  <div class="card card-blue">
+    <h4>&#127959; ディレクトリサービス</h4>
+    <p style="font-size:.83rem;color:#475569">
+      オンプレミスのIDマスターは<strong>Active Directory DS</strong>が推定70%以上を占める。Windows Serverと
+      グループポリシーの既存資産が厚く、即時廃止が難しい。クラウド側の実運用ディレクトリは
+      <strong>Microsoft Entra ID</strong>がM365同梱で最大シェアを持つ。
+      Linux系環境では<strong>Red Hat IdM（FreeIPA）</strong>または<strong>RHDS</strong>が選択肢。
+      OpenLDAPはRHEL 8以降でサーバーパッケージが廃止されたため、新規標準には採りにくい。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-red">AD 70%以上</span>
+      <span class="tag tag-blue">Entra ID 急成長</span>
+      <span class="tag tag-gray">OpenLDAP 注意</span>
     </div>
-    <div>
-      <table>
-        <tr><th>凡例</th><th>意味</th></tr>
-        <tr><td><span class="tag tag-jp">日本語対応</span></td><td>日本語UIと日本語サポートあり</td></tr>
-        <tr><td><span class="tag tag-global">グローバル製品</span></td><td>英語中心・英語サポートメイン</td></tr>
-        <tr><td><span class="tag tag-cloud">クラウド</span></td><td>SaaS型・クラウドネイティブ</td></tr>
-        <tr><td><span class="tag tag-onprem">オンプレ</span></td><td>自社サーバーへのインストール型</td></tr>
-        <tr><td><span class="tag tag-oss">OSS</span></td><td>オープンソース（ライセンス費用なし）</td></tr>
-      </table>
+  </div>
+  <div class="card" style="border-top:3px solid #2563eb">
+    <h4>&#128273; IdP / SSO</h4>
+    <p style="font-size:.83rem;color:#475569">
+      M365標準のEntra IDがデファクト基盤。マルチクラウドや非Microsoft中心環境では<strong>Okta</strong>、
+      日本語サポート特化では<strong>HENNGE One</strong>（国内IDaaS市場シェア4年連続1位）、中小規模では
+      <strong>GMO TrustLogin</strong>（無料プランあり）や<strong>CloudGate UNO</strong>が実績を持つ。
+      オンプレミス連携が複雑な場合は<strong>Ping Identity（PingFederate）</strong>が選択肢になる。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-blue">Entra ID デファクト</span>
+      <span class="tag tag-green">HENNGE 国内No.1</span>
+      <span class="tag tag-purple">Okta マルチクラウド</span>
+    </div>
+  </div>
+  <div class="card card-red">
+    <h4>&#128274; PAM 特権アクセス管理</h4>
+    <p style="font-size:.83rem;color:#475569">
+      金融・証券・上場製造での導入が先行。<strong>CyberArk</strong>が国内金融での実績最多で大手SIer対応も厚い。
+      <strong>Delinea（旧Thycotic/Centrify）</strong>はCyberArkより導入しやすい選択肢として中堅企業で採用が増加。
+      国産では<strong>SecureCube Access Check</strong>がFISC・J-SOX対応の実績を持つ。
+      Microsoft Entra PIM + LAPS を組み合わせることでコスト抑制しながら段階的PAMを構成できる。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-red">CyberArk 金融標準</span>
+      <span class="tag tag-orange">Delinea 中堅向き</span>
+      <span class="tag tag-green">SecureCube 国産</span>
+    </div>
+  </div>
+  <div class="card card-purple">
+    <h4>&#127963; IGA Identity Governance</h4>
+    <p style="font-size:.83rem;color:#475569">
+      J-SOX強化・内部統制・棚卸要件を機に関心が高まっている。<strong>SailPoint IdentityNow/IQ</strong>が
+      証券・金融の大規模案件で最もよく名前が挙がる。<strong>Saviynt</strong>はSAP/ERP文脈のSoD説明に強い。
+      <strong>Entra ID Governance</strong>はMicrosoft中心環境での短期立ち上げに向く。
+      日本企業の複雑な例外承認ワークフローは<strong>One Identity Manager</strong>が吸収しやすい。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-blue">SailPoint 定番</span>
+      <span class="tag tag-purple">Saviynt ERP統制</span>
+      <span class="tag tag-green">Entra Gov 短期導入</span>
+    </div>
+  </div>
+  <div class="card" style="border-top:3px solid #0891b2">
+    <h4>&#128241; MFA / 認証デバイス</h4>
+    <p style="font-size:.83rem;color:#475569">
+      IdP組み込みMFAが普及の主流。独立型では<strong>Cisco Duo</strong>が既存VPN/ADを変えずに認証強化でき、
+      製造・流通での採用が多い。ハードウェアトークンは<strong>Yubico YubiKey</strong>（FIDO2）が標準的。
+      ネットワーク認証では<strong>Soliton NetAttest EPS</strong>が国内RADIUS証明書認証シェアNo.1（富士キメラ総研2025）。
+      生体認証では<strong>Fujitsu PalmSecure</strong>（手のひら静脈）、<strong>NEC NeoFace</strong>（顔認証）が国産実績。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-blue">Duo VPN強化</span>
+      <span class="tag tag-gray">YubiKey FIDO2</span>
+      <span class="tag tag-green">NetAttest 国内No.1</span>
+    </div>
+  </div>
+  <div class="card" style="border-top:3px solid #ea580c">
+    <h4>&#128225; MDM / UEM</h4>
+    <p style="font-size:.83rem;color:#475569">
+      Windows端末は<strong>Microsoft Intune</strong>がEntra IDとの条件付きアクセスポリシーと連動し、
+      Entra Hybrid JoinまたはEntra Joinで統合管理するケースが急増。macOS・iOS中心は<strong>Jamf</strong>。
+      国産では<strong>SKYSEA Client View</strong>が資産管理・操作ログ用途で広く使われる。
+      ただし資産管理ツールはUEMとは設計思想が異なるため混同に注意。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-blue">Intune Windows標準</span>
+      <span class="tag tag-gray">Jamf macOS</span>
+      <span class="tag tag-green">SKYSEA 国産</span>
+    </div>
+  </div>
+  <div class="card" style="border-top:3px solid #d97706">
+    <h4>&#9729; CASB / SASE</h4>
+    <p style="font-size:.83rem;color:#475569">
+      リモートワーク・SaaS多用化でCASB/SASEの需要が急成長。<strong>Microsoft Defender for Cloud Apps</strong>が
+      M365利用企業に組み込まれる形で普及。専業では<strong>Netskope</strong>・<strong>Zscaler</strong>が採用される。
+      IDMとの統合ポイントは「誰が・何に・いつアクセスしたか」の可視化で、SIEMとの連携設計が重要。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-blue">Defender M365同梱</span>
+      <span class="tag tag-orange">Netskope 急成長</span>
+    </div>
+  </div>
+  <div class="card" style="border-top:3px solid #16a34a">
+    <h4>&#128301; SIEM + IDM連携</h4>
+    <p style="font-size:.83rem;color:#475569">
+      IDログのSIEM連携は証跡保全とインシデント対応に不可欠。<strong>Microsoft Sentinel</strong>はEntra IDとの
+      ネイティブ連携が最も深く、条件付きアクセス違反・不審なサインインを自動検出できる。
+      <strong>Splunk</strong>はマルチベンダー環境での採用が多い。
+      SIEMへの送出は「診断設定 &#8594; Log Analytics &#8594; Sentinel」のパターンが一般的。
+    </p>
+    <div style="margin-top:8px">
+      <span class="tag tag-blue">Sentinel Entra連携</span>
+      <span class="tag tag-purple">Splunk マルチベンダー</span>
     </div>
   </div>
 </div>
+</section>
 
-<div class="section-title">🏛️ カテゴリ1：IdP（認証基盤・SSO）</div>
-<div class="product-grid">
-  <div class="product-card">
-    <h3>Microsoft Entra ID（旧Azure AD）</h3>
-    <div class="product-vendor">Microsoft</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">M365/Azure環境と完全統合。日本企業の8割以上がM365利用のため事実上のデファクトスタンダード。Hybrid JoinでオンプレADと共存可能。</div>
-    <div class="price">P1：約650円/ユーザー/月、P2：約1,200円/ユーザー/月</div>
+<!-- ===== IdP製品比較 ===== -->
+<section id="idp">
+<div class="phase-header">
+  <h2>&#128273; IdP製品比較マトリクス</h2>
+  <div class="phase-meta">主要6製品の機能・価格・日本語サポート・推奨規模を比較</div>
+</div>
+
+<p class="tbl-note">※価格は公開情報ベースの概算。実際の調達価格はCSP・代理店・ボリュームで変動。USD換算は1USD&#8776;160円目安。</p>
+
+<div id="idp-table">
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th style="min-width:130px">製品名</th>
+      <th style="min-width:140px">価格帯</th>
+      <th style="min-width:100px">AD連携</th>
+      <th style="min-width:90px">SAML/OIDC</th>
+      <th style="min-width:90px">MFA内蔵</th>
+      <th style="min-width:90px">日本語サポート</th>
+      <th style="min-width:110px">推奨規模</th>
+      <th>特徴・注意点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="vendor-badge">Microsoft</span><br><strong>Entra ID</strong></td>
+      <td>
+        <span class="price-free">Free同梱</span><br>
+        P1: &#165;960/月<br>P2: &#165;1,440/月<br>
+        <span style="font-size:.72rem;color:#64748b">M365 E3/E5バンドル</span>
+      </td>
+      <td><span class="tag tag-green">◎ 最強</span><br><span style="font-size:.72rem">Entra Connect Sync</span></td>
+      <td><span class="tag tag-green">◎ 完全対応</span><br><span style="font-size:.72rem">WS-Fed/Kerb含む</span></td>
+      <td><span class="tag tag-green">◎ 多種</span><br><span style="font-size:.72rem">FIDO2/Passkey/CBA</span></td>
+      <td><span class="tag tag-green">◎ 日本DC</span><br><span style="font-size:.72rem">国内大手SIer対応</span></td>
+      <td>全規模<br><span class="tag tag-blue">大手◎</span><span class="tag tag-blue">中堅◎</span></td>
+      <td>M365・Azure・Intune・Windows Serverと一体運用が最も深い。Conditional Access + PIMでゼロトラスト設計しやすい。ライセンス体系が多層でCIO向け説明に工夫が必要。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">Okta</span><br><strong>Okta Workforce Identity Cloud</strong></td>
+      <td>
+        <span class="price-high">年契約・個別見積</span><br>
+        <span style="font-size:.72rem;color:#64748b">最低契約規模あり</span>
+      </td>
+      <td><span class="tag tag-green">○ 強い</span><br><span style="font-size:.72rem">AD Agent / LDAP Agent</span></td>
+      <td><span class="tag tag-green">◎ 完全対応</span></td>
+      <td><span class="tag tag-green">○ 多種</span><br><span style="font-size:.72rem">FastPass/FIDO2</span></td>
+      <td><span class="tag tag-med">○ Okta Japan</span><br><span style="font-size:.72rem">日本DC選択可</span></td>
+      <td>中〜大規模<br><span class="tag tag-blue">大手○</span><span class="tag tag-blue">中堅◎</span></td>
+      <td>マルチクラウド・非Microsoft中心で強み。SaaS 6,500+コネクタ。Access GatewayでKerberos/ヘッダー認証レガシーシステムをモダン化できる。PAM・IGA追加で価格が上がりやすい。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">Ping</span><br><strong>Ping Identity</strong><br><span style="font-size:.72rem">（PingOne / PingFederate / ForgeRock統合）</span></td>
+      <td>
+        <span class="price-high">個別見積</span><br>
+        <span style="font-size:.72rem;color:#64748b">PingOne/PingFederateなど構成次第</span>
+      </td>
+      <td><span class="tag tag-green">○ 強い</span><br><span style="font-size:.72rem">LDAP Gateway / Dir同期</span></td>
+      <td><span class="tag tag-green">◎ 完全対応</span><br><span style="font-size:.72rem">WS-Fed/SCIM含む</span></td>
+      <td><span class="tag tag-green">○ 多種</span><br><span style="font-size:.72rem">PingID Push/FIDO2</span></td>
+      <td><span class="tag tag-med">△ パートナー主導</span><br><span style="font-size:.72rem">専門SIer前提</span></td>
+      <td>中〜大規模<br><span class="tag tag-gray">複雑要件専門</span></td>
+      <td>PingFederate + PingAccess + PingDirectoryでレガシーとモダンの橋渡しが強い。KerberosやLDAPを深く扱う大規模・複雑なフェデレーション案件に向く。ForgeRockは統合済み。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge domestic">国産</span><br><strong>HENNGE One</strong></td>
+      <td>
+        <span class="price-med">個別見積</span><br>
+        <span style="font-size:.72rem">IdP: &#165;300/ID/月〜</span><br>
+        <span style="font-size:.72rem">Basic: &#165;800/ID/月〜</span><br>
+        <span style="font-size:.72rem;color:#64748b">円建て提案</span>
+      </td>
+      <td><span class="tag tag-green">○ AD連携</span><br><span style="font-size:.72rem">SSO/プロビジョニング</span></td>
+      <td><span class="tag tag-green">○ 対応</span><br><span style="font-size:.72rem">SAML/OIDC</span></td>
+      <td><span class="tag tag-green">○ 日本仕様</span><br><span style="font-size:.72rem">OTP/証明書/FIDO2</span></td>
+      <td><span class="tag tag-green">◎ 日本語専業</span><br><span style="font-size:.72rem">国内導入支援強</span></td>
+      <td>中堅〜大企業<br><span class="tag tag-green">日本語要件◎</span></td>
+      <td>国内IDaaS市場シェア4年連続1位（ITR 2025）。3,000社以上導入。M365・Google・Salesforceなど国内利用SaaSに最適化。日本語サポート・証拠提出・運用説明が最もしやすい。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">JumpCloud</span><br><strong>JumpCloud Directory Platform</strong></td>
+      <td>
+        <span class="price-low">公開価格あり</span><br>
+        <span style="font-size:.72rem">各機能&#165;480/月〜</span><br>
+        <span style="font-size:.72rem">SSOパッケージ&#165;1,760〜</span>
+      </td>
+      <td><span class="tag tag-med">△ AD連携対象</span><br><span style="font-size:.72rem">ADは主軸ではない</span></td>
+      <td><span class="tag tag-green">○ 対応</span></td>
+      <td><span class="tag tag-green">○ Push/FIDO2</span></td>
+      <td><span class="tag tag-med">△ APAC窓口</span><br><span style="font-size:.72rem">日本特化は薄め</span></td>
+      <td>中小〜中堅<br><span class="tag tag-blue">AD不要構成◎</span></td>
+      <td>Cloud LDAP・Cloud RADIUS・Linux・Mac・Windowsを1基盤で管理。「ADを増やしたくない」中堅企業に刺さる。RADIUS認証でWi-Fi・VPN統制も可能。日本語サポートは限定的。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge oss">OSS</span><br><strong>Keycloak</strong></td>
+      <td>
+        <span class="price-free">OSS無償</span><br>
+        <span style="font-size:.72rem">Red Hat SSO=商用版</span><br>
+        <span style="font-size:.72rem;color:#64748b">運用費・開発費で変動</span>
+      </td>
+      <td><span class="tag tag-green">○ LDAP/AD連携</span></td>
+      <td><span class="tag tag-green">◎ 完全対応</span><br><span style="font-size:.72rem">SAML/OIDC/OAuth2</span></td>
+      <td><span class="tag tag-green">○ TOTP/FIDO2</span></td>
+      <td><span class="tag tag-med">△ コミュニティ</span><br><span style="font-size:.72rem">Red Hat版は商用サポート</span></td>
+      <td>小〜中規模<br><span class="tag tag-purple">内製開発◎</span></td>
+      <td>OSSのIdP/IAMプラットフォーム。カスタム認証フロー・B2C・内製SSOに向く。Kubernetesとの親和性が高い。運用・カスタマイズは自組織責任。大規模エンタープライズには保守リスクが残る。</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div id="idp-detail">
+<h3>IdP製品 評価スコアサマリー</h3>
+<div class="three-col">
+  <div class="card card-blue">
+    <h4>Microsoft Entra ID</h4>
+    <div style="font-size:.78rem;color:#475569;margin-bottom:8px">総合評価：<strong style="color:#1e3a5f">&#9733;&#9733;&#9733;&#9733;&#9733;</strong></div>
+    <div style="font-size:.78rem">AD連携深さ</div>
+    <div class="score-bar"><div class="score-fill green" style="width:98%"></div></div>
+    <div style="font-size:.78rem">マルチクラウド</div>
+    <div class="score-bar"><div class="score-fill amber" style="width:65%"></div></div>
+    <div style="font-size:.78rem">日本語サポート</div>
+    <div class="score-bar"><div class="score-fill green" style="width:95%"></div></div>
+    <div style="font-size:.78rem">価格対効果</div>
+    <div class="score-bar"><div class="score-fill green" style="width:90%"></div></div>
+    <p style="font-size:.78rem;color:#475569;margin-top:8px">M365同梱効果で実効コストが最も低くなりやすい。Entra P2でフルスタックのゼロトラスト設計が可能。</p>
   </div>
-  <div class="product-card">
-    <h3>Okta Workforce Identity</h3>
-    <div class="product-vendor">Okta</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">7,000以上のSaaS連携。IdP非依存でMicrosoft・Google・SAP等と中立的に統合。大手外資・IT企業に強い。日本法人あり。</div>
-    <div class="price">約2,000〜3,500円/ユーザー/月</div>
+  <div class="card" style="border-top:3px solid #007dc5">
+    <h4>Okta Workforce Identity Cloud</h4>
+    <div style="font-size:.78rem;color:#475569;margin-bottom:8px">総合評価：<strong style="color:#1e3a5f">&#9733;&#9733;&#9733;&#9733;&#9734;</strong></div>
+    <div style="font-size:.78rem">AD連携深さ</div>
+    <div class="score-bar"><div class="score-fill amber" style="width:78%"></div></div>
+    <div style="font-size:.78rem">マルチクラウド</div>
+    <div class="score-bar"><div class="score-fill green" style="width:95%"></div></div>
+    <div style="font-size:.78rem">日本語サポート</div>
+    <div class="score-bar"><div class="score-fill amber" style="width:72%"></div></div>
+    <div style="font-size:.78rem">価格対効果</div>
+    <div class="score-bar"><div class="score-fill amber" style="width:65%"></div></div>
+    <p style="font-size:.78rem;color:#475569;margin-top:8px">非Microsoft中心のマルチクラウド案件のベストチョイス。SaaS統合コネクタ数6,500+が最多水準。</p>
   </div>
-  <div class="product-card">
-    <h3>Google Workspace（Cloud Identity）</h3>
-    <div class="product-vendor">Google</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">スタートアップ・IT企業に広く普及。ChromeOS・Android環境と親和性高い。SaaS連携はEntraに次ぐ豊富さ。</div>
-    <div class="price">Business Starter：約680円/ユーザー/月〜</div>
+  <div class="card card-green">
+    <h4>HENNGE One（国産）</h4>
+    <div style="font-size:.78rem;color:#475569;margin-bottom:8px">総合評価：<strong style="color:#1e3a5f">&#9733;&#9733;&#9733;&#9733;&#9734;</strong></div>
+    <div style="font-size:.78rem">AD連携深さ</div>
+    <div class="score-bar"><div class="score-fill amber" style="width:75%"></div></div>
+    <div style="font-size:.78rem">日本SaaS連携</div>
+    <div class="score-bar"><div class="score-fill green" style="width:92%"></div></div>
+    <div style="font-size:.78rem">日本語サポート</div>
+    <div class="score-bar"><div class="score-fill green" style="width:99%"></div></div>
+    <div style="font-size:.78rem">導入ハードル低さ</div>
+    <div class="score-bar"><div class="score-fill green" style="width:90%"></div></div>
+    <p style="font-size:.78rem;color:#475569;margin-top:8px">国内IDaaS市場売上シェアNo.1。3,000社以上・円建て・日本語専業サポートの安心感が最大の価値。</p>
   </div>
-  <div class="product-card">
-    <h3>Active Directory（AD DS）</h3>
-    <div class="product-vendor">Microsoft（オンプレ）</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-onprem">オンプレ</span></div>
-    <div class="strengths">Windows Server付属。既存日本企業の大多数が利用。Kerberosによるオンプレシステム認証に不可欠。2029年WS2019 EOL注意。</div>
-    <div class="price">Windows Server SAL（既存ライセンスに含む）</div>
+</div>
+</div>
+</section>
+
+<!-- ===== PAM製品比較 ===== -->
+<section id="pam">
+<div class="phase-header">
+  <h2>&#128274; PAM製品比較マトリクス</h2>
+  <div class="phase-meta">特権アクセス管理製品の詳細比較 &#8212; 金融・製造・中堅企業向け選定ガイド</div>
+</div>
+
+<div class="lead">
+PAM（Privileged Access Management）は特権アカウントの管理・セッション監査・JIT（Just-in-Time）アクセス・パスワード保管庫を中核機能とする。
+日本では金融・証券・上場製造でFISC・J-SOX準拠を目的とした導入が先行している。CyberArkが最多実績を持つが、
+導入・運用コストが高いため、中堅企業ではDelinea・SecureCubeが代替候補に挙がる。
+</div>
+
+<div id="pam-table">
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th style="min-width:140px">製品名</th>
+      <th>特徴・主要機能</th>
+      <th style="min-width:80px">価格帯</th>
+      <th style="min-width:80px">導入難易度</th>
+      <th style="min-width:80px">日本語サポート</th>
+      <th style="min-width:130px">推奨シーン</th>
+      <th style="min-width:100px">SIer対応状況</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="vendor-badge">CyberArk</span><br><strong>CyberArk PAM</strong><br><span style="font-size:.72rem">PAM Self-Hosted /<br>Privilege Cloud /<br>EPM / Secrets Mgr</span></td>
+      <td>
+        人の特権統制・セッション録画・JIT/ZSP・エンドポイント最小権限・マシンシークレットを統合。
+        業界最広のコネクタ数。金融・証券での実績が最多。
+        <br><span class="tag tag-green">金融導入実績最多</span>
+        <span class="tag tag-blue">セッション録画</span>
+        <span class="tag tag-purple">JIT/ZSP</span>
+        <span class="tag tag-gray">広範コネクタ</span>
+      </td>
+      <td><span class="price-vhigh">非常に高い</span><br><span style="font-size:.7rem">個別見積</span></td>
+      <td><span class="tag tag-red">高い</span><br><span style="font-size:.72rem">専門SIer必須</span></td>
+      <td><span class="tag tag-green">○ 日本支社</span><br><span style="font-size:.72rem">直販+パートナー</span></td>
+      <td>大規模金融・証券<br>多拠点製造<br>厳格監査要件</td>
+      <td><span class="tag tag-green">高い</span><br>NSSOL・NTT DATA・日立等の大手SIer対応可</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">Delinea</span><br><strong>Delinea Secret Server</strong><br><strong>/ Privilege Manager</strong><br><span style="font-size:.72rem">旧Thycotic/Centrify統合</span></td>
+      <td>
+        旧Thycotic系のSecret Serverの使いやすさと旧Centrify系Linux/Unix・クラウド統制を統合。
+        CyberArkより軽く短期導入したい組織に向く。SaaS版（Delinea Platform）あり。
+        <br><span class="tag tag-green">導入しやすさ</span>
+        <span class="tag tag-blue">Secret Server</span>
+        <span class="tag tag-purple">Linux/Unix統制</span>
+        <span class="tag tag-gray">SaaS選択肢</span>
+      </td>
+      <td><span class="price-high">中〜高</span><br><span style="font-size:.7rem">個別見積</span></td>
+      <td><span class="tag tag-med">中程度</span><br><span style="font-size:.72rem">CyberArkより<br>設計が軽め</span></td>
+      <td><span class="tag tag-med">△ パートナー主導</span></td>
+      <td>中堅〜大企業<br>短期導入重視<br>ハイブリッドAD<br>運用負荷抑制</td>
+      <td><span class="tag tag-med">中程度</span><br>特定パートナー経由</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">BeyondTrust</span><br><strong>Password Safe</strong><br><strong>/ PRA</strong></td>
+      <td>
+        Password SafeとPrivileged Remote Access（PRA）の組み合わせが強み。
+        外部委託先・保守ベンダーの接続統制で評価されやすい。Unix/Linux統制も比較的強い。
+        <br><span class="tag tag-green">外部委託先統制</span>
+        <span class="tag tag-blue">Password Safe</span>
+        <span class="tag tag-purple">Unix/Linux</span>
+        <span class="tag tag-gray">セッション管理</span>
+      </td>
+      <td><span class="price-high">高い</span><br><span style="font-size:.7rem">個別見積</span></td>
+      <td><span class="tag tag-med">中程度</span></td>
+      <td><span class="tag tag-med">△ パートナー主導</span></td>
+      <td>委託先接続統制<br>ベンダーリモートアクセス<br>ハイブリッドインフラ</td>
+      <td><span class="tag tag-med">中程度</span></td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge domestic">国産</span><br><strong>SecureCube</strong><br><strong>Access Check</strong></td>
+      <td>
+        ゲートウェイ型踏み台サーバー・申請承認・パスワード管理・操作ログ・監査補助を日本語で提供。
+        FISC・PCI DSS・J-SOX対応の実績。TIS掲載で国内外累計576ライセンス（公開時点）。
+        <br><span class="tag tag-green">FISC・J-SOX実績</span>
+        <span class="tag tag-blue">日本語完全対応</span>
+        <span class="tag tag-purple">踏み台サーバー</span>
+        <span class="tag tag-gray">申請承認フロー</span>
+      </td>
+      <td><span class="price-high">中〜高</span><br><span style="font-size:.7rem">円建て個別見積</span></td>
+      <td><span class="tag tag-low">低〜中</span><br><span style="font-size:.72rem">日本語設計</span></td>
+      <td><span class="tag tag-green">◎ 日本語専業</span></td>
+      <td>国内金融・製造<br>FISC/J-SOX対応<br>外部委託先管理</td>
+      <td><span class="tag tag-green">高い</span><br>国内SIer連携多数</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">Microsoft</span><br><strong>Entra PIM</strong><br><strong>+ Windows LAPS</strong></td>
+      <td>
+        Entra ID Privileged Identity Management (PIM)でロールJIT管理。
+        Windows LAPSでローカル管理者パスワード自動管理。JEAでPowerShell操作制限。
+        統合セッション録画・外部委託先統制は別製品が必要。
+        <br><span class="tag tag-green">Microsoft親和性</span>
+        <span class="tag tag-blue">低追加コスト</span>
+        <span class="tag tag-purple">JIT Entraロール</span>
+        <span class="tag tag-gray">Azureネイティブ</span>
+      </td>
+      <td><span class="price-low">低〜中</span><br><span style="font-size:.7rem">Entra P2に含む</span></td>
+      <td><span class="tag tag-low">低</span><br><span style="font-size:.72rem">Microsoft環境なら<br>追加設計最小</span></td>
+      <td><span class="tag tag-green">◎ Microsoft Japan</span></td>
+      <td>Microsoft集中環境<br>段階的PAM導入<br>コスト抑制案件</td>
+      <td><span class="tag tag-green">非常に高い</span><br>ほぼ全大手SIer</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">One Identity</span><br><strong>One Identity Safeguard</strong></td>
+      <td>
+        Safeguard for Privileged Passwords（SPP）とSafeguard for Privileged Sessions（SPS）を軸にした監査志向PAM。
+        SaaS版もありOne Identity Managerとの統合でIGA+PAMを組みやすい。
+        <br><span class="tag tag-green">セッション記録</span>
+        <span class="tag tag-blue">監査証跡</span>
+        <span class="tag tag-gray">IGA統合</span>
+      </td>
+      <td><span class="price-high">中〜高</span><br><span style="font-size:.7rem">個別見積</span></td>
+      <td><span class="tag tag-med">中程度</span></td>
+      <td><span class="tag tag-med">△ パートナー主導</span></td>
+      <td>監査重視案件<br>既存One Identity顧客<br>IGA+PAM統合</td>
+      <td><span class="tag tag-med">中程度</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div id="pam-detail">
+<h3>PAM製品 機能カバレッジマトリクス</h3>
+<table class="wbs-table" style="font-size:.78rem">
+  <thead>
+    <tr>
+      <th>機能</th>
+      <th>CyberArk</th>
+      <th>Delinea</th>
+      <th>BeyondTrust</th>
+      <th>SecureCube</th>
+      <th>Entra PIM+LAPS</th>
+      <th>One Identity</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>パスワード保管庫</strong></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">△ LAPS</span></td><td><span class="tag tag-green">◎</span></td></tr>
+    <tr><td><strong>セッション録画・監査</strong></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-red">✗</span></td><td><span class="tag tag-green">◎</span></td></tr>
+    <tr><td><strong>JIT/一時権限付与</strong></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">△</span></td><td><span class="tag tag-green">◎ PIM</span></td><td><span class="tag tag-med">○</span></td></tr>
+    <tr><td><strong>Unix/Linux統制</strong></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">△</span></td><td><span class="tag tag-med">△ JEA</span></td><td><span class="tag tag-med">○</span></td></tr>
+    <tr><td><strong>外部委託先接続統制</strong></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-green">◎</span></td><td><span class="tag tag-med">○</span></td><td><span class="tag tag-med">△</span></td><td><span class="tag tag-med">○</span></td></tr>
+    <tr><td><strong>マシンシークレット管理</strong></td><td><span class="tag tag-green">◎ Conjur</span></td><td><span class="tag tag-med">△</span></td><td><span class="tag tag-med">△</span></td><td><span class="tag tag-red">✗</span></td><td><span class="tag tag-med">△ Key Vault</span></td><td><span class="tag tag-med">△</span></td></tr>
+    <tr><td><strong>日本語UI・サポート</strong></td><td><span class="tag tag-med">△ 部分対応</span></td><td><span class="tag tag-med">△ 部分対応</span></td><td><span class="tag tag-med">△ 部分対応</span></td><td><span class="tag tag-green">◎ 完全対応</span></td><td><span class="tag tag-green">◎ 完全対応</span></td><td><span class="tag tag-med">△ 部分対応</span></td></tr>
+    <tr><td><strong>日本金融実績</strong></td><td><span class="tag tag-green">◎ 最多</span></td><td><span class="tag tag-med">△</span></td><td><span class="tag tag-med">△</span></td><td><span class="tag tag-green">○ FISC実績</span></td><td><span class="tag tag-green">○ Microsoft体制</span></td><td><span class="tag tag-med">△</span></td></tr>
+  </tbody>
+</table>
+</div>
+</section>
+
+<!-- ===== IGA製品比較 ===== -->
+<section id="iga">
+<div class="phase-header">
+  <h2>&#127963; IGA製品比較マトリクス</h2>
+  <div class="phase-meta">Identity Governance &amp; Administration &#8212; 棚卸・申請承認・ロール管理・SoDの製品比較</div>
+</div>
+
+<div class="lead">
+IGA（Identity Governance and Administration）はID付与のライフサイクル管理・権限棚卸（アクセスレビュー）・
+職務分離（SoD）・ロール管理を統合する製品群。日本では欧米に比べ普及が遅れているが、
+J-SOX改正対応・サプライチェーンリスク管理強化を機に中〜大規模企業での導入が加速している。
+</div>
+
+<div id="iga-table">
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th style="min-width:160px">製品名</th>
+      <th style="min-width:100px">価格帯</th>
+      <th style="min-width:90px">オンプレAD連携</th>
+      <th>ワークフロー機能と特徴</th>
+      <th style="min-width:100px">推奨規模</th>
+      <th>日本採用実績・注意点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><span class="vendor-badge">SailPoint</span><br><strong>SailPoint IdentityNow</strong><br><strong>/ IdentityIQ</strong></td>
+      <td><span class="price-vhigh">高い</span><br><span style="font-size:.7rem">個別見積<br>IdentityNow=SaaS<br>IdentityIQ=オンプレ</span></td>
+      <td><span class="tag tag-green">◎ 強い</span><br><span style="font-size:.72rem">AD/Entra/SCIM</span></td>
+      <td>
+        申請カタログ・多段承認・例外経路の成熟度が業界最高水準。Certification Campaign（棚卸）の完成度が高い。
+        Role Miningでロール候補を自動抽出。IdentityIQは複雑な例外承認・日本型人事を吸収しやすい。
+        SAP HCM・Workday連携の実績が豊富。
+        <br><span class="tag tag-green">棚卸キャンペーン◎</span><span class="tag tag-blue">Role Mining◎</span><span class="tag tag-purple">SoD統制◎</span>
+      </td>
+      <td>大規模〜超大規模<br>1,000名以上推奨</td>
+      <td>国内証券・大手金融での公開事例あり。パートナー網が比較的厚い。IdentityIQは日本型例外承認に合わせやすい。初期設計・データクレンジングコストが大きい点に注意。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">Saviynt</span><br><strong>Saviynt Enterprise</strong><br><strong>Identity Cloud</strong></td>
+      <td><span class="price-high">高い</span><br><span style="font-size:.7rem">SaaS・個別見積</span></td>
+      <td><span class="tag tag-green">○ 対応</span><br><span style="font-size:.72rem">AD/Entra/SCIM</span></td>
+      <td>
+        SaaS前提でIGAとアプリケーションガバナンスを統合。ERP文脈（SAP/Oracle）のSoD説明で強みを出しやすい。
+        SAP S/4HANAやWorkdayとの連携実績が多い。Application Access Governanceで複雑な権限を可視化。
+        <br><span class="tag tag-green">ERP SoD◎</span><span class="tag tag-blue">SAP連携◎</span><span class="tag tag-purple">クラウド標準化</span>
+      </td>
+      <td>中堅〜大規模<br>ERP環境推奨</td>
+      <td>ERP統制を重視する案件で候補に残りやすい。国内体制はパートナー中心のため事前確認が必要。SaaSのため初期導入速度はIdentityIQより速い。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">One Identity</span><br><strong>One Identity Manager</strong><br><span style="font-size:.72rem">Quest Software</span></td>
+      <td><span class="price-high">中〜高い</span><br><span style="font-size:.7rem">個別見積<br>SaaS版あり</span></td>
+      <td><span class="tag tag-green">◎ 強い</span><br><span style="font-size:.72rem">Active Roles連携</span></td>
+      <td>
+        IT Shop・承認ワークフロー・ハイブリッド接続の柔軟性が高く、日本企業の複雑な例外運用を吸収しやすい。
+        Active Rolesと組み合わせることでAD権限管理とIGAを統合。One Identity Safeguardとの PAM+IGA統合が可能。
+        <br><span class="tag tag-green">柔軟なワークフロー◎</span><span class="tag tag-blue">Active Roles統合</span><span class="tag tag-purple">例外承認吸収</span>
+      </td>
+      <td>中堅〜大規模<br>オンプレ残存環境</td>
+      <td>日本企業の例外運用に合わせやすい点が評価されやすい。国内パートナーエコシステムは比較的厚い。IGA+PAMの統合構成で評価に上がることが多い。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">Microsoft</span><br><strong>Microsoft Entra</strong><br><strong>ID Governance</strong></td>
+      <td><span class="price-med">中程度</span><br><span style="font-size:.7rem">Entra P2に含む<br>Governance追加ライセンス</span></td>
+      <td><span class="tag tag-green">◎ ネイティブ</span><br><span style="font-size:.72rem">Entra ID統合</span></td>
+      <td>
+        Entitlement Management・Access Reviews（アクセスレビュー）・PIM・Lifecycle Workflowsを組み合わせ。
+        Microsoft中心環境での短期立ち上げに最適。SoD設定は個別実装が前提。
+        <br><span class="tag tag-green">短期立ち上げ◎</span><span class="tag tag-blue">Entra PIM連携◎</span><span class="tag tag-purple">Entitlement管理</span>
+      </td>
+      <td>中堅〜大規模<br>Microsoft 365中心</td>
+      <td>Microsoft中心の環境では調達・実装・運用の障壁が最も低い。日本語UI・国内SIer対応が厚い。非Microsoft連携リソースのカバレッジは専業IGA製品に劣る点に注意。</td>
+    </tr>
+    <tr>
+      <td><span class="vendor-badge">IBM</span><br><strong>IBM Security Verify Governance</strong></td>
+      <td><span class="price-high">高い</span><br><span style="font-size:.7rem">個別見積<br>IBM契約体系</span></td>
+      <td><span class="tag tag-green">○ 対応</span><br><span style="font-size:.72rem">Bridge/Gateway経由</span></td>
+      <td>
+        旧IGI系譜の統制重視IGA。IBM QRadarとの連携で監査証跡の一元管理が可能。
+        日本IBMや既存IBM系SI体制がある企業では説明責任を組み立てやすい。
+        <br><span class="tag tag-green">IBM基盤統合</span><span class="tag tag-blue">監査レポート◎</span><span class="tag tag-gray">SIEM連携</span>
+      </td>
+      <td>中大規模<br>IBM基盤重視</td>
+      <td>IBM基盤が多い金融機関で候補に挙がりやすい。国内SI体制を重視する案件では調達・運用の整合を取りやすい。</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3>IGA 機能成熟度マトリクス</h3>
+<table class="wbs-table" style="font-size:.78rem">
+  <thead>
+    <tr>
+      <th>機能軸</th>
+      <th>SailPoint</th>
+      <th>Saviynt</th>
+      <th>One Identity Mgr</th>
+      <th>Entra Governance</th>
+      <th>IBM Verify Gov</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>申請・承認ワークフロー</strong></td><td><span class="tag tag-green">◎ 最強</span></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-green">○ 柔軟</span></td><td><span class="tag tag-med">△ 基本的</span></td><td><span class="tag tag-med">○ 標準的</span></td></tr>
+    <tr><td><strong>アクセスレビュー（棚卸）</strong></td><td><span class="tag tag-green">◎ 業界最高</span></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-green">○ Entra内</span></td><td><span class="tag tag-green">○ 強い</span></td></tr>
+    <tr><td><strong>SoD 職務分離</strong></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-green">◎ ERP特化</span></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-med">△ 基本的</span></td><td><span class="tag tag-green">○ 強い</span></td></tr>
+    <tr><td><strong>ロール管理・Role Mining</strong></td><td><span class="tag tag-green">◎ 最強</span></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-med">△ 基本的</span></td><td><span class="tag tag-med">○ 標準的</span></td></tr>
+    <tr><td><strong>オンプレAD連携深さ</strong></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-med">△ 対応</span></td><td><span class="tag tag-green">◎ Active Roles</span></td><td><span class="tag tag-green">◎ ネイティブ</span></td><td><span class="tag tag-med">○ Bridge</span></td></tr>
+    <tr><td><strong>SAP/ERP統制</strong></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-green">◎ 最強</span></td><td><span class="tag tag-green">○ 強い</span></td><td><span class="tag tag-med">△ 対応</span></td><td><span class="tag tag-med">○ 標準的</span></td></tr>
+    <tr><td><strong>日本語UI・国内SIer体制</strong></td><td><span class="tag tag-med">△ 部分</span></td><td><span class="tag tag-med">△ パートナー主導</span></td><td><span class="tag tag-med">△ 部分</span></td><td><span class="tag tag-green">◎ Microsoft Japan</span></td><td><span class="tag tag-green">○ IBM Japan</span></td></tr>
+    <tr><td><strong>初期導入コスト・期間</strong></td><td><span class="tag tag-red">高い・長い</span></td><td><span class="tag tag-med">中程度（SaaS）</span></td><td><span class="tag tag-med">中程度</span></td><td><span class="tag tag-green">低い・短い</span></td><td><span class="tag tag-med">中程度</span></td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ===== 国産・日本語特化製品 ===== -->
+<section id="domestic">
+<div class="phase-header">
+  <h2>&#127471;&#127477; 国産・日本語特化製品カタログ</h2>
+  <div class="phase-meta">日本市場に特化した製品群 &#8212; 円建て・日本語サポート・国内導入実績</div>
+</div>
+
+<div class="lead">
+日本市場では、海外製品の機能性と国産製品の「円建て」「日本語サポート」「国内規制対応」「SIer連携のしやすさ」を
+天秤にかけて製品選定が行われることが多い。規制業種では海外製品が多いが、中堅企業・SMBでは国産製品の存在感が際立つ。
+</div>
+
+<!-- HENNGE One -->
+<div id="hennge">
+<h3>&#128154; HENNGE One</h3>
+<div class="two-col">
+  <div class="card card-green">
+    <h4>製品概要と強み</h4>
+    <p style="font-size:.83rem;color:#475569">
+      <strong>HENNGE株式会社</strong>が提供する日本企業向けクラウドセキュリティプラットフォーム。
+      IDaaS（SSO・MFA・アクセス制御）を中心に、メールセキュリティ・デバイス管理・DLPを統合的に提供する。
+    </p>
+    <ul class="feature-list">
+      <li>国内IDaaS市場売上シェア<strong>4年連続1位</strong>（ITR Market View 2025）</li>
+      <li>2025年時点で国内<strong>3,000社以上</strong>導入</li>
+      <li>M365・Google Workspace・Salesforce・kintoneなど国内利用SaaSに最適化</li>
+      <li>デバイス証明書認証・OTP・FIDO2を日本語UIで設定可能</li>
+      <li>Active Directory / Entra Connect との連携機能あり</li>
+      <li><strong>HENNGE IdP</strong>: 月額&#165;300/ID〜、<strong>Basic</strong>: 月額&#165;800/ID〜（円建て）</li>
+      <li>メールDLP・クラウドストレージセキュリティも同一ライセンスで拡張可能</li>
+    </ul>
   </div>
-  <div class="product-card">
-    <h3>Ping Identity（PingOne）</h3>
-    <div class="product-vendor">Ping Identity</div>
-    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">金融・大手製造でのSAML/OAuth高度連携実績。B2C・B2B外部ID管理にも対応。</div>
-    <div class="price">要問合せ（年間1000万円〜）</div>
+  <div class="card">
+    <h4>対象企業・推奨シーン</h4>
+    <table class="wbs-table" style="font-size:.8rem">
+      <tr><td style="width:40%"><strong>推奨規模</strong></td><td>100名〜数千名</td></tr>
+      <tr><td><strong>得意業種</strong></td><td>金融・保険・製造・IT・サービス業</td></tr>
+      <tr><td><strong>価格帯</strong></td><td><span class="price-med">中程度（円建て）</span></td></tr>
+      <tr><td><strong>導入難易度</strong></td><td><span class="tag tag-low">低〜中</span></td></tr>
+      <tr><td><strong>日本語サポート</strong></td><td><span class="tag tag-green">◎ 専業日本語</span></td></tr>
+      <tr><td><strong>SIer連携</strong></td><td>国内SIer・代理店経由が中心</td></tr>
+      <tr><td><strong>FISC対応説明</strong></td><td><span class="tag tag-green">○ 説明しやすい</span></td></tr>
+    </table>
+    <div class="good" style="margin-top:10px;font-size:.8rem">
+      JPX総研・トヨタファイナンシャルサービス等の公開導入事例あり。円建て・日本語・FISC/J-SOX対応説明のしやすさが競合優位点。
+      グローバル展開が少ない企業には最もリスクの低いIdP選択肢。
+    </div>
   </div>
-  <div class="product-card">
-    <h3>Keycloak</h3>
-    <div class="product-vendor">Red Hat（OSS）</div>
-    <div class="product-tags"><span class="tag tag-oss">OSS</span><span class="tag tag-onprem">オンプレ/クラウド</span></div>
-    <div class="strengths">ライセンス費用なし。SAML/OIDC対応。社内開発チームがある企業・SIerが自社環境に構築する場合に有効。</div>
-    <div class="price">OSS（構築・保守コストのみ）</div>
+</div>
+</div>
+
+<!-- CloudGate UNO -->
+<div id="cloudgate">
+<h3>&#128309; CloudGate UNO</h3>
+<div class="two-col">
+  <div class="card card-blue">
+    <h4>製品概要と強み</h4>
+    <p style="font-size:.83rem;color:#475569">
+      <strong>BBSec（インターネットイニシアティブグループ）</strong>が提供する国産IDaaSプラットフォーム。
+      SSO・MFA・パスキー・AD連携を提供し、FIDO2/Passkey の国内先行対応で知られる。
+    </p>
+    <ul class="feature-list">
+      <li>2025年時点で<strong>1,400社・70万ユーザー以上</strong>導入</li>
+      <li>FIDO2・Passkey（パスキー）の国内先行実装・訴求が強い</li>
+      <li>CloudGate Authenticator（スマートフォンアプリ）でPush認証・OTP対応</li>
+      <li>Active Directory / LDAP 連携オプションあり</li>
+      <li>300ID環境で年額&#165;600,000目安（公開資料ベース）</li>
+      <li>ITreviewでの継続的な高評価、国内専業サポート体制</li>
+      <li>IIJグループのネットワーク知見を活かしたゼロトラスト訴求</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>対象企業・推奨シーン</h4>
+    <table class="wbs-table" style="font-size:.8rem">
+      <tr><td style="width:40%"><strong>推奨規模</strong></td><td>100名〜数千名</td></tr>
+      <tr><td><strong>得意業種</strong></td><td>製造業・中堅大企業・IT系</td></tr>
+      <tr><td><strong>価格帯</strong></td><td><span class="price-med">中程度（円建て）</span></td></tr>
+      <tr><td><strong>FIDO2/Passkey</strong></td><td><span class="tag tag-green">◎ 先行対応</span></td></tr>
+      <tr><td><strong>日本語サポート</strong></td><td><span class="tag tag-green">◎ 国内専業</span></td></tr>
+      <tr><td><strong>SIer連携</strong></td><td>IIJグループ・国内代理店経由</td></tr>
+    </table>
+    <div class="good" style="margin-top:10px;font-size:.8rem">
+      パスキー対応を早期に実装し「脱パスワード」訴求で中堅企業に強い。
+      ITreview継続評価が高く、比較検討時の信頼感がある。HENNGEと機能・価格帯が競合するため、
+      パスキー重視度とメールセキュリティ需要で使い分けるとよい。
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- SecureCube Access Master -->
+<div id="securecube">
+<h3>&#128308; SecureCube Access Check</h3>
+<div class="two-col">
+  <div class="card card-red">
+    <h4>製品概要と強み</h4>
+    <p style="font-size:.83rem;color:#475569">
+      <strong>SecureCube株式会社</strong>が提供する日本生まれのPAM（特権アクセス管理）製品。
+      金融・製造・官公庁での実績を持つゲートウェイ型踏み台システム。
+      国産でFISC・J-SOX証跡要件を最も直接的に充足できるPAM製品として位置づけられる。
+    </p>
+    <ul class="feature-list">
+      <li>ゲートウェイ型踏み台サーバーで特権操作を完全仲介・動画録画</li>
+      <li>事前申請・承認ワークフローで操作を事前統制（紙の申請書を代替）</li>
+      <li>パスワード管理機能で定期変更・開示制御・チェックアウト管理</li>
+      <li>操作ログ・検索・監査補助でFISC・PCI DSS・J-SOX対応</li>
+      <li>TIS掲載：国内外累計576ライセンス以上（公開時点）</li>
+      <li>日本語完全対応・円建て見積・国内SIer連携実績多数</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>日本市場での強みと対象企業</h4>
+    <table class="wbs-table" style="font-size:.8rem">
+      <tr><td style="width:40%"><strong>推奨規模</strong></td><td>50名〜大企業</td></tr>
+      <tr><td><strong>得意業種</strong></td><td>金融・製造・官公庁・医療</td></tr>
+      <tr><td><strong>FISC対応</strong></td><td><span class="tag tag-green">◎ 実績多数</span></td></tr>
+      <tr><td><strong>J-SOX対応</strong></td><td><span class="tag tag-green">◎ 実績多数</span></td></tr>
+      <tr><td><strong>日本語サポート</strong></td><td><span class="tag tag-green">◎ 完全日本語</span></td></tr>
+      <tr><td><strong>価格帯</strong></td><td><span class="price-high">中〜高（円建て）</span></td></tr>
+    </table>
+    <div class="warn" style="margin-top:10px;font-size:.8rem">
+      グローバルPAMと比較すると機能の網羅性（DevOpsシークレット管理・マシンIDなど）は限定的。
+      日本語・FISC・J-SOX対応の確実さと国内SIer連携のしやすさが主な選択理由となる。
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- NetAttest EPS -->
+<div id="netattest">
+<h3>&#128225; Soliton NetAttest EPS</h3>
+<div class="two-col">
+  <div class="card card-teal">
+    <h4>製品概要と強み</h4>
+    <p style="font-size:.83rem;color:#475569">
+      <strong>ソリトンシステムズ株式会社</strong>が提供するネットワーク認証アプライアンス。
+      RADIUS認証・証明書管理・端末認証を統合し、Wi-Fi・VPN・有線LAN認証を標準化する。
+      富士キメラ総研2025調査で認証アプライアンス国内シェアNo.1。
+    </p>
+    <ul class="feature-list">
+      <li><strong>国内RADIUS認証アプライアンスシェアNo.1</strong>（富士キメラ総研2025）</li>
+      <li>RADIUS認証によるWi-Fi（802.1X）・VPN・有線LAN統合認証</li>
+      <li>クライアント証明書の発行・管理・失効（OCSP）</li>
+      <li>NetAttest OneGate連携でクラウドID管理（Entra ID等）にも拡張</li>
+      <li>アプライアンス型で導入・運用がシンプル。管理コンソールは日本語</li>
+      <li>Active Directory・Entra ID連携でシングルサインオンに組み込める</li>
+      <li>BYOD制御・スマートデバイス証明書管理にも対応</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>対象企業・推奨シーン</h4>
+    <table class="wbs-table" style="font-size:.8rem">
+      <tr><td style="width:40%"><strong>推奨規模</strong></td><td>中堅〜大企業（50名〜）</td></tr>
+      <tr><td><strong>得意業種</strong></td><td>製造・流通・医療・金融</td></tr>
+      <tr><td><strong>価格帯</strong></td><td><span class="price-med">中程度（アプライアンス）</span></td></tr>
+      <tr><td><strong>Wi-Fi認証</strong></td><td><span class="tag tag-green">◎ RADIUS No.1</span></td></tr>
+      <tr><td><strong>証明書管理</strong></td><td><span class="tag tag-green">○ OCSP/失効管理</span></td></tr>
+      <tr><td><strong>日本語サポート</strong></td><td><span class="tag tag-green">◎ 国内専業</span></td></tr>
+    </table>
+    <div class="good" style="margin-top:10px;font-size:.8rem">
+      「端末認証で不正接続を防ぎたい」「Wi-Fi認証を標準化したい」「BYODを制限したい」ニーズに
+      最もシンプルに応える国産製品。Entra IDとの共存設計（証明書&#8594;Entra連携）でゼロトラスト強化も可能。
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TrustLogin -->
+<div id="trustlogin">
+<h3>&#128154; GMO TrustLogin</h3>
+<div class="two-col">
+  <div class="card card-gold">
+    <h4>製品概要と強み</h4>
+    <p style="font-size:.83rem;color:#475569">
+      <strong>GMOグローバルサイン・ホールディングス株式会社</strong>が提供する中小企業・スタートアップ向けIDaaS。
+      無料プランを持ち、価格競争力で中小規模企業の最初の一歩として選ばれやすい。
+    </p>
+    <ul class="feature-list">
+      <li><strong>基本プラン無料</strong>（一部機能制限あり）</li>
+      <li>Proプラン: 月額&#165;300/ID（公開価格）</li>
+      <li>SaaS管理プラン: 月額&#165;290/ID〜（2025年追加）</li>
+      <li>国内最多クラスのSaaSアプリ連携数</li>
+      <li>日本語UI・GMOブランドによる安心感</li>
+      <li>OTP・IP制限・クライアント証明書・外部IdP連携（SAML）対応</li>
+      <li>無料プランから始めて、Pro/SaaS管理プランへの移行が容易</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>対象企業・推奨シーン</h4>
+    <table class="wbs-table" style="font-size:.8rem">
+      <tr><td style="width:40%"><strong>推奨規模</strong></td><td>〜300名（SMB中心）</td></tr>
+      <tr><td><strong>得意業種</strong></td><td>スタートアップ・IT・サービス業</td></tr>
+      <tr><td><strong>価格帯</strong></td><td><span class="price-free">無料〜低価格</span></td></tr>
+      <tr><td><strong>始めやすさ</strong></td><td><span class="tag tag-green">◎ 無料プランあり</span></td></tr>
+      <tr><td><strong>日本語サポート</strong></td><td><span class="tag tag-green">○ GMO国内サポート</span></td></tr>
+      <tr><td><strong>拡張性</strong></td><td><span class="tag tag-med">△ 大規模は要検討</span></td></tr>
+    </table>
+    <div class="good" style="margin-top:10px;font-size:.8rem">
+      「まずSSOを始めたい」「予算が少ない」中小企業・スタートアップの最初の選択肢として最適。
+      成長後にHENNGE・CloudGate・Entra IDへのステップアップ設計も考慮しておくこと。
+      SAMLを正しく設定しておけば移行コストを最小化できる。
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- ===== 規模・予算別推奨スタック ===== -->
+<section id="stacks">
+<div class="phase-header">
+  <h2>&#128176; 規模・予算別 推奨 IDM スタック</h2>
+  <div class="phase-meta">3パターンの推奨構成 &#8212; 大手金融/上場製造・中堅企業・中小企業/スタートアップ</div>
+</div>
+
+<div class="three-col" style="align-items:start">
+
+<div class="stack-card enterprise" id="stack-enterprise">
+  <h3>&#127974; 大手金融・上場製造<br><span style="font-size:.8rem;opacity:.9">1,000名以上 / フルスタック</span></h3>
+  <p style="font-size:.8rem;color:#64748b;margin-bottom:12px">
+    FISC・J-SOX・PCI DSS 等の厳格な規制対応が前提。IdP + PAM + IGA のフルスタック構成を推奨。
+    SIerの設計・保守体制が確保できることが条件。
+  </p>
+  <div class="stack-layer">
+    <strong>ディレクトリ基盤</strong>
+    <span class="price-hint">既存AD継続</span>
+    <br>Active Directory DS（既存）+ Entra Connect Sync
+  </div>
+  <div class="stack-layer" style="border-color:#2563eb">
+    <strong>クラウドIdP</strong>
+    <span class="price-hint">Entra P2 or Okta</span>
+    <br>Microsoft Entra ID P2（Conditional Access + PIM）<br>
+    <span style="font-size:.75rem;color:#64748b">または Okta（マルチクラウド重視の場合）</span>
+  </div>
+  <div class="stack-layer" style="border-color:#dc2626">
+    <strong>PAM 特権管理</strong>
+    <span class="price-hint">高コスト・必須</span>
+    <br>CyberArk PAM Self-Hosted / Privilege Cloud<br>
+    <span style="font-size:.75rem;color:#64748b">国産重視: SecureCube Access Check も候補</span>
+  </div>
+  <div class="stack-layer" style="border-color:#7c3aed">
+    <strong>IGA ガバナンス</strong>
+    <span class="price-hint">高コスト</span>
+    <br>SailPoint IdentityNow / IdentityIQ<br>
+    <span style="font-size:.75rem;color:#64748b">または Entra ID Governance（Microsoft中心の場合）</span>
+  </div>
+  <div class="stack-layer" style="border-color:#0891b2">
+    <strong>MDM / エンドポイント</strong>
+    <span class="price-hint">M365含む</span>
+    <br>Microsoft Intune + Entra Hybrid Join
+  </div>
+  <div class="stack-layer" style="border-color:#16a34a">
+    <strong>SIEM / 監査連携</strong>
+    <span class="price-hint">Sentinel or Splunk</span>
+    <br>Microsoft Sentinel（Entra中心）or Splunk（マルチベンダー）
+  </div>
+  <div class="warn" style="margin-top:12px;font-size:.78rem">
+    <strong>概算コスト目安：</strong>初期構築費 数千万〜数億円、年間ライセンス 数千万円〜。
+    SIer選定・段階導入計画・運用体制設計が成功の鍵。
   </div>
 </div>
 
-<div class="section-title">🔐 カテゴリ2：PAM（特権アクセス管理・踏み台）</div>
-<div class="product-grid">
-  <div class="product-card">
-    <h3>SecureCube Access Check</h3>
-    <div class="product-vendor">NTTデータ先端技術</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-onprem">オンプレ</span></div>
-    <div class="strengths">国産PAMの代名詞。日本の金融・公共機関での導入実績多数。FISC・ISMS対応。UNIX/Windows/DB操作の録画・ログ取得。日本語での詳細なサポート。</div>
-    <div class="price">初期300〜800万円程度</div>
+<div class="stack-card midmarket" id="stack-midmarket">
+  <h3>&#127962; 中堅企業 コスト重視<br><span style="font-size:.8rem;opacity:.9">300〜1,000名 / バランス型</span></h3>
+  <p style="font-size:.8rem;color:#64748b;margin-bottom:12px">
+    J-SOX・内部統制対応は必要だが、フルスタックPAM/IGA導入が困難なケースが多い。
+    Entra ID P2を軸に、必要性の高い機能から段階的に導入する。
+  </p>
+  <div class="stack-layer">
+    <strong>ディレクトリ基盤</strong>
+    <span class="price-hint">既存継続 or 整理</span>
+    <br>Active Directory DS + Entra Connect Sync
   </div>
-  <div class="product-card">
-    <h3>CyberArk Privilege Cloud</h3>
-    <div class="product-vendor">CyberArk</div>
-    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">グローバルPAMのトップ製品。Gartnerリーダー。大規模環境・グローバル展開に強い。API・クラウドサービスの特権管理も対応。</div>
-    <div class="price">年間500〜2000万円（規模による）</div>
+  <div class="stack-layer" style="border-color:#0891b2">
+    <strong>クラウドIdP + 基本ガバナンス</strong>
+    <span class="price-hint">Entra P2 = &#165;1,440/月</span>
+    <br>Microsoft Entra ID P2（Conditional Access + PIM + Access Reviews）<br>
+    <span style="font-size:.75rem;color:#64748b">または HENNGE One（日本語・円建て重視の場合）</span>
   </div>
-  <div class="product-card">
-    <h3>BeyondTrust Remote Support</h3>
-    <div class="product-vendor">BeyondTrust</div>
-    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
-    <div class="strengths">外部ベンダーリモートサポートの管理に特化。エージェントレス接続が可能。SMB向けPRTG+BeyondTrustの組み合わせで中堅企業にも対応。</div>
-    <div class="price">年間300〜800万円</div>
+  <div class="stack-layer" style="border-color:#dc2626">
+    <strong>PAM 段階的構成</strong>
+    <span class="price-hint">段階的導入</span>
+    <br>Phase 1: Entra PIM + Windows LAPS（コスト最小）<br>
+    Phase 2: Delinea Secret Server または SecureCube（本格PAM）
   </div>
-  <div class="product-card">
-    <h3>Delinea Secret Server</h3>
-    <div class="product-vendor">Delinea（旧Thycotic）</div>
-    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
-    <div class="strengths">パスワード保管庫としての機能が強力。サービスアカウント・共有ID管理に特化した機能あり。CyberArkより導入が容易。</div>
-    <div class="price">年間300〜1000万円</div>
+  <div class="stack-layer" style="border-color:#0891b2">
+    <strong>MDM / エンドポイント</strong>
+    <span class="price-hint">M365含む</span>
+    <br>Microsoft Intune（M365 E3/E5に含まれる）
   </div>
-  <div class="product-card">
-    <h3>Azure Bastion + Entra PIM</h3>
-    <div class="product-vendor">Microsoft</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">Azure VM環境のPAMとして完結。Entra P2ライセンスで利用可能。JIT（Just-in-Time）アクセスで管理者権限を必要時だけ付与。</div>
-    <div class="price">Entra P2：約1200円/ユーザー/月（BastionはVM代別途）</div>
+  <div class="stack-layer" style="border-color:#16a34a">
+    <strong>ネットワーク認証</strong>
+    <span class="price-hint">アプライアンス</span>
+    <br>Soliton NetAttest EPS（Wi-Fi・VPN証明書認証強化）
   </div>
-  <div class="product-card">
-    <h3>Teleport</h3>
-    <div class="product-vendor">Gravitational（OSS）</div>
-    <div class="product-tags"><span class="tag tag-oss">OSS</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
-    <div class="strengths">SSH/Kubernetes/DBへのゼロトラストアクセス。DevOps・SRE向け。OSSコミュニティ版は無料。エンジニアリング文化の強い企業に適。</div>
-    <div class="price">Community版：OSS無料、Enterprise版：要問合せ</div>
+  <div class="good" style="margin-top:12px;font-size:.78rem">
+    <strong>概算コスト目安：</strong>初期構築費 数百万〜数千万円、年間ライセンス 数百万〜数千万円。
+    M365 E3/E5への集約でライセンスコストを最適化できる。
   </div>
 </div>
 
-<div class="section-title">📋 カテゴリ3：IGA（IDガバナンス・ライフサイクル管理）</div>
-<div class="product-grid">
-  <div class="product-card">
-    <h3>SailPoint Identity Security Cloud</h3>
-    <div class="product-vendor">SailPoint</div>
-    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">Gartner IGAリーダー。大規模・金融・製造での導入実績最多。MIMの後継として評価高い。AI搭載のアクセス推奨機能。</div>
-    <div class="price">年間2000〜8000万円</div>
+<div class="stack-card smb" id="stack-smb">
+  <h3>&#128640; 中小・スタートアップ<br><span style="font-size:.8rem;opacity:.9">〜300名 / シンプル型</span></h3>
+  <p style="font-size:.8rem;color:#64748b;margin-bottom:12px">
+    コスト制約が強く、セキュリティ専任がいないケースが多い。まずSSOとMFAを確立し、
+    成長に合わせて段階的に強化する戦略が現実的。
+  </p>
+  <div class="stack-layer">
+    <strong>IdP / SSO / MFA</strong>
+    <span class="price-hint">&#165;300〜/ID/月</span>
+    <br><strong>A:</strong> HENNGE One（国内SaaS中心・日本語重視）<br>
+    <strong>B:</strong> GMO TrustLogin（無料〜&#165;300/ID、まず始めたい）<br>
+    <strong>C:</strong> Microsoft 365 E1 + Entra P1（Officeも必要な場合）
   </div>
-  <div class="product-card">
-    <h3>Saviynt Enterprise Identity Cloud</h3>
-    <div class="product-vendor">Saviynt</div>
-    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">クラウドネイティブ設計でSaaS連携に強い。IGA+PAM統合機能あり。製薬・金融でのGxP・SOX対応実績。</div>
-    <div class="price">年間1500〜5000万円</div>
+  <div class="stack-layer" style="border-color:#0891b2">
+    <strong>MFA 追加強化</strong>
+    <span class="price-hint">低コスト</span>
+    <br>Cisco Duo Essentials（USD 3/月）&#8212; VPN・RDP保護に<br>
+    <span style="font-size:.75rem;color:#64748b">またはIdP内蔵MFAで十分な場合は不要</span>
   </div>
-  <div class="product-card">
-    <h3>Entra ID Governance</h3>
-    <div class="product-vendor">Microsoft</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド</span></div>
-    <div class="strengths">M365環境と完全統合。アクセスレビュー・エンタイトルメント管理・JMLワークフロー機能。Entra P2またはガバナンスライセンスで利用可能。MIM後継候補筆頭。</div>
-    <div class="price">Entra ID Governance：約750円/ユーザー/月</div>
+  <div class="stack-layer" style="border-color:#16a34a">
+    <strong>エンドポイント管理</strong>
+    <span class="price-hint">M365含む or Jamf</span>
+    <br>Microsoft Intune（M365バンドル）or Jamf（Mac中心）
   </div>
-  <div class="product-card">
-    <h3>Omada Identity</h3>
-    <div class="product-vendor">Omada（デンマーク）</div>
-    <div class="product-tags"><span class="tag tag-global">グローバル製品</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
-    <div class="strengths">欧州金融・公共機関での豊富な実績。GDPRコンプライアンス対応に強い。日本市場では比較的新参だが機能は成熟。</div>
-    <div class="price">年間1000〜3000万円</div>
+  <div class="stack-layer" style="border-color:#d97706">
+    <strong>特権管理（最小限）</strong>
+    <span class="price-hint">低コスト</span>
+    <br>Windows LAPS（無償）+ Entra PIM（P2に含む）
   </div>
-  <div class="product-card">
-    <h3>IDHub（日立システムズ）</h3>
-    <div class="product-vendor">日立システムズ</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-cloud">クラウド/オンプレ</span></div>
-    <div class="strengths">国産IGA。日本語サポート・日本企業向け業務フロー対応。日立グループの運用実績。中堅〜大手日本企業に適。</div>
-    <div class="price">要問合せ（年間500〜2000万円程度）</div>
-  </div>
-  <div class="product-card">
-    <h3>ALog（エーログ）</h3>
-    <div class="product-vendor">AMIYA（旧Sky株式会社）</div>
-    <div class="product-tags"><span class="tag tag-jp">日本語対応</span><span class="tag tag-onprem">オンプレ</span></div>
-    <div class="strengths">ファイルサーバー・AD操作ログの可視化に特化。内部不正・情報漏洩の検出に強い。日本語の管理画面・レポートで担当者が使いやすい。</div>
-    <div class="price">初期100〜500万円（規模による）</div>
+  <div class="good" style="margin-top:12px;font-size:.78rem">
+    <strong>概算コスト目安：</strong>初期構築費 50〜300万円、年間ライセンス 100〜500万円。
+    成長後の移行コストを最小化するため、SAML/OIDC標準準拠のIdPを選ぶことが重要。
   </div>
 </div>
 
-<div class="section-title">📊 製品選定マトリクス（企業規模×課題別）</div>
-<div class="card">
-  <h2>どの製品の組み合わせが自社に合うか</h2>
-  <table>
-    <tr><th>企業規模・環境</th><th>IdP</th><th>PAM</th><th>IGA</th><th>特記事項</th></tr>
-    <tr>
-      <td><strong>中小（〜300名）・M365利用</strong></td>
-      <td>Entra ID（P1）</td>
-      <td>Azure Bastion（Azure利用時）</td>
-      <td>Entra Governance（簡易）</td>
-      <td>M365一本化が最安。追加費用を最小化</td>
-    </tr>
-    <tr>
-      <td><strong>中堅（300〜3000名）・製造業・オンプレ多数</strong></td>
-      <td>Entra Hybrid Join + AD存続</td>
-      <td>SecureCube（国産）またはDelinea</td>
-      <td>Entra ID Governance</td>
-      <td>2029年問題対応として現実的な選択肢</td>
-    </tr>
-    <tr>
-      <td><strong>大企業（3000名〜）・金融・製造</strong></td>
-      <td>Entra ID または Okta</td>
-      <td>CyberArk または SecureCube</td>
-      <td>SailPoint または Saviynt</td>
-      <td>SOX・FISC・金融庁対応を要求される場合の標準構成</td>
-    </tr>
-    <tr>
-      <td><strong>グループ企業・多テナント</strong></td>
-      <td>Entra External ID（フェデレーション）</td>
-      <td>BeyondTrust（外部ベンダー対応）</td>
-      <td>SailPoint または Omada</td>
-      <td>グループ共通ポリシーと各社自律のバランス</td>
-    </tr>
-    <tr>
-      <td><strong>クラウドネイティブ・IT企業</strong></td>
-      <td>Okta または Google Workspace</td>
-      <td>Teleport（Kubernetes/SSH）</td>
-      <td>Okta Lifecycle Management</td>
-      <td>SaaS・API・DevOps環境に最適化</td>
-    </tr>
-    <tr>
-      <td><strong>医療機関</strong></td>
-      <td>Entra ID + ICカード認証</td>
-      <td>SecureCube または Azure Bastion</td>
-      <td>Entra ID Governance</td>
-      <td>医師証・看護師資格との連動。HIS（医事システム）連携が鍵</td>
-    </tr>
-  </table>
 </div>
 
+<h3>スタック選定 早見表</h3>
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th>観点</th>
+      <th>大手金融・上場製造（1,000名+）</th>
+      <th>中堅企業（300〜1,000名）</th>
+      <th>中小・スタートアップ（〜300名）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>推奨IdP</strong></td>
+      <td>Entra ID P2 または Okta</td>
+      <td>Entra ID P2 または HENNGE One</td>
+      <td>HENNGE One / TrustLogin / M365+Entra P1</td>
+    </tr>
+    <tr>
+      <td><strong>推奨PAM</strong></td>
+      <td>CyberArk（第一候補）</td>
+      <td>Entra PIM + LAPS &#8594; Delinea/SecureCube</td>
+      <td>Windows LAPS + Entra PIM（無償範囲）</td>
+    </tr>
+    <tr>
+      <td><strong>推奨IGA</strong></td>
+      <td>SailPoint または Entra Governance</td>
+      <td>Entra ID Governance（まず導入）</td>
+      <td>不要（Entra Access Reviewsで代替）</td>
+    </tr>
+    <tr>
+      <td><strong>推奨MDM</strong></td>
+      <td>Intune + Hybrid Join</td>
+      <td>Intune（M365含む）</td>
+      <td>Intune または Jamf</td>
+    </tr>
+    <tr>
+      <td><strong>年間ライセンス目安</strong></td>
+      <td><span class="price-vhigh">数千万円〜</span></td>
+      <td><span class="price-high">数百万〜数千万円</span></td>
+      <td><span class="price-med">100〜500万円</span></td>
+    </tr>
+    <tr>
+      <td><strong>専門SIer必要性</strong></td>
+      <td><span class="tag tag-red">必須</span></td>
+      <td><span class="tag tag-med">推奨</span></td>
+      <td><span class="tag tag-low">任意（SaaS中心なら不要）</span></td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ===== 製品選定フロー ===== -->
+<section id="decision">
+<div class="phase-header">
+  <h2>&#129517; 製品選定フロー（質問形式デシジョンツリー）</h2>
+  <div class="phase-meta">主要な判断軸に答えることで最適製品カテゴリを絞り込む</div>
 </div>
-<footer>日本市場 ID管理製品マップ 2026 | 製品選定の第一歩として</footer>
+
+<div class="lead">
+以下の質問フローに従って回答することで、あなたの組織に最適なIDM製品・スタックの方向性を絞り込める。
+各分岐の結果は推奨カテゴリであり、最終的な製品選定はPoCと要件定義が必要。
+</div>
+
+<div class="dtree">
+
+  <div class="dtree-question">Q1: オンプレミスの Active Directory が存在し、今後も継続利用予定か？</div>
+  <div class="dtree-branches">
+    <div class="dtree-branch">
+      <div class="dtree-label">&#9989; YES（ADを継続利用）</div>
+      <div class="dtree-question">Q2: Microsoft 365（Exchange Online / Teams）を利用しているか？</div>
+      <div class="dtree-branches">
+        <div class="dtree-branch">
+          <div class="dtree-label">&#9989; YES（M365利用中）</div>
+          <div class="dtree-result">
+            &#127919; 推奨IdP: <strong>Microsoft Entra ID</strong>（P1またはP2）<br>
+            Entra Connect Sync でAD&#8594;Entra同期。M365コストの中に実質含まれる。
+          </div>
+          <div class="dtree-question" style="margin-top:10px">Q3: 特権アカウント管理（PAM）が未整備か？</div>
+          <div class="dtree-branches">
+            <div class="dtree-branch">
+              <div class="dtree-label">&#9989; YES（PAM未整備）</div>
+              <div class="dtree-question">Q4: 予算規模・規制要件は？</div>
+              <div class="dtree-branches">
+                <div class="dtree-branch">
+                  <div class="dtree-label">&#128176; 大規模・規制業種（金融・証券）</div>
+                  <div class="dtree-result">
+                    &#127919; 推奨PAM: <strong>CyberArk PAM Self-Hosted</strong><br>
+                    大手SIerと連携しFISC/J-SOX対応設計。SecureCube Access Checkも国産候補として検討。
+                  </div>
+                </div>
+                <div class="dtree-branch no-branch">
+                  <div class="dtree-label no-label">&#128184; 中堅・コスト重視</div>
+                  <div class="dtree-result warn-result">
+                    &#127919; 推奨PAM: <strong>Entra PIM + Windows LAPS</strong>（フェーズ1）<br>
+                    予算確保後に Delinea Secret Server または SecureCube Access Check へ拡張。
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="dtree-branch no-branch">
+              <div class="dtree-label no-label">&#10060; NO（PAM整備済み）</div>
+              <div class="dtree-question">Q5: 権限棚卸（IGA）が未整備か？</div>
+              <div class="dtree-branches">
+                <div class="dtree-branch">
+                  <div class="dtree-label">&#9989; YES（IGA未整備）</div>
+                  <div class="dtree-result">
+                    &#127919; 推奨IGA: <strong>Microsoft Entra ID Governance</strong>（Microsoft中心）<br>
+                    または <strong>SailPoint IdentityNow</strong>（大規模・複雑要件）
+                  </div>
+                </div>
+                <div class="dtree-branch no-branch">
+                  <div class="dtree-label no-label">&#10060; NO（整備済み）</div>
+                  <div class="dtree-result neutral-result">
+                    &#9989; IdP・PAM・IGAの基盤が整った状態。<br>
+                    次のステップ: SIEM連携（Sentinel/Splunk）とゼロトラスト強化を検討。
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="dtree-branch no-branch">
+          <div class="dtree-label no-label">&#10060; NO（M365未利用・Google Workspace / 国内SaaS中心）</div>
+          <div class="dtree-question">Q2b: 国内SaaS中心かつ日本語サポートを最重視するか？</div>
+          <div class="dtree-branches">
+            <div class="dtree-branch">
+              <div class="dtree-label">&#9989; YES（日本語・国内SaaS重視）</div>
+              <div class="dtree-result">
+                &#127919; 推奨IdP: <strong>HENNGE One</strong>（国内SaaS特化・日本語専業・国内IDaaS No.1）<br>
+                または <strong>CloudGate UNO</strong>（パスキー・FIDO2重視の場合）
+              </div>
+            </div>
+            <div class="dtree-branch no-branch">
+              <div class="dtree-label no-label">&#10060; NO（マルチクラウド・グローバル展開）</div>
+              <div class="dtree-result warn-result">
+                &#127919; 推奨IdP: <strong>Okta Workforce Identity Cloud</strong><br>
+                SaaS 6,500+コネクタ・マルチクラウド・グローバル展開に最適。<br>
+                複雑なオンプレレガシー連携が必要な場合は Ping Identity も検討。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dtree-branch no-branch">
+      <div class="dtree-label no-label">&#10060; NO（ADなし・クラウドネイティブ構成）</div>
+      <div class="dtree-question">Q1b: 組織規模は？</div>
+      <div class="dtree-branches">
+        <div class="dtree-branch">
+          <div class="dtree-label">&#127962; 中堅〜大規模（300名以上）</div>
+          <div class="dtree-result">
+            &#127919; 推奨: <strong>Microsoft Entra ID</strong> または <strong>Okta</strong><br>
+            JumpCloudは「ADレス」構成（Cloud LDAP + RADIUS + MDM統合）での有力候補。<br>
+            Mac/Linux混在環境ではJumpCloudが特に刺さる。
+          </div>
+        </div>
+        <div class="dtree-branch no-branch">
+          <div class="dtree-label no-label">&#128640; 小規模・スタートアップ（〜300名）</div>
+          <div class="dtree-result warn-result">
+            &#127919; 推奨: <strong>GMO TrustLogin</strong>（無料〜&#165;300/ID/月でまず開始）<br>
+            または <strong>JumpCloud</strong>（Mac/Linux混在でADレス構成を作りたい場合）<br>
+            &#9888; 成長後のEntra ID / HENNGE One への移行パスを設計しておくこと。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<h3>製品選定 補足マトリクス</h3>
+<table class="wbs-table">
+  <thead>
+    <tr>
+      <th>シナリオ</th>
+      <th>最優先検討製品</th>
+      <th>代替候補</th>
+      <th>注意点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>大手金融 FISC完全対応</td>
+      <td>Entra ID P2 + CyberArk + SailPoint</td>
+      <td>Okta + CyberArk + IdentityIQ</td>
+      <td>大手SIerの保守体制確保が前提</td>
+    </tr>
+    <tr>
+      <td>製造業 J-SOX対応</td>
+      <td>Entra ID P2 + SecureCube + Entra Governance</td>
+      <td>HENNGE One + Delinea + One Identity Mgr</td>
+      <td>ERP（SAP）連携要件を先に整理</td>
+    </tr>
+    <tr>
+      <td>中堅企業 コスト最適化</td>
+      <td>M365 E3 + Entra P2 + LAPS/PIM</td>
+      <td>HENNGE One + Entra P1</td>
+      <td>M365バンドル効果で実質コスト低減</td>
+    </tr>
+    <tr>
+      <td>マルチクラウド・非Microsoft中心</td>
+      <td>Okta Workforce Identity</td>
+      <td>Ping Identity（複雑なフェデレーション）</td>
+      <td>Access Gatewayでレガシー統合コスト要確認</td>
+    </tr>
+    <tr>
+      <td>国内SaaS中心・SMB〜中堅</td>
+      <td>HENNGE One</td>
+      <td>CloudGate UNO</td>
+      <td>円建て・日本語サポートが最大の差別化</td>
+    </tr>
+    <tr>
+      <td>スタートアップ・初めてのSSO</td>
+      <td>GMO TrustLogin（無料から）</td>
+      <td>JumpCloud（ADレス構成）</td>
+      <td>成長後の移行コストを考慮した設計を</td>
+    </tr>
+    <tr>
+      <td>Wi-Fi・VPN 端末認証強化</td>
+      <td>Soliton NetAttest EPS</td>
+      <td>Cisco ISE（大規模ネットワーク）</td>
+      <td>証明書管理運用コストを事前に試算</td>
+    </tr>
+    <tr>
+      <td>外部委託先アクセス統制</td>
+      <td>BeyondTrust PRA または CyberArk PAM</td>
+      <td>SecureCube Access Check</td>
+      <td>セッション録画・接続申請の証跡要件を定義</td>
+    </tr>
+    <tr>
+      <td>DevOps・Kubernetes シークレット管理</td>
+      <td>HashiCorp Vault（OSS/Enterprise）</td>
+      <td>CyberArk Conjur / Azure Key Vault</td>
+      <td>人のPAMとは別に設計すること</td>
+    </tr>
+    <tr>
+      <td>SAP/ERP 権限統制・SoD</td>
+      <td>Saviynt Enterprise Identity Cloud</td>
+      <td>SailPoint IdentityIQ</td>
+      <td>SAPシステム管理者と要件定義を早期に行うこと</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="warn">
+  <strong>&#9888; 製品選定の最終注意事項：</strong>
+  このページの情報は2026年版の公開情報・推定情報を基にしており、実際の製品機能・価格・サポート体制は各ベンダーへの問い合わせで最新情報を取得すること。
+  PoCと要件定義なしで製品を確定することは推奨しない。特にPAM・IGA製品は実装・運用工数が大きく、SIer体制込みで評価することが重要。
+  価格のUSD建て換算は2026年4月時点（1USD&#8776;160円）の概算であり、実際の調達価格は為替・契約期間・ボリュームで大きく変動する。
+</div>
+
+</section>
+
+</main>
+<script>
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('#toc a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  links.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
 </body>
 </html>

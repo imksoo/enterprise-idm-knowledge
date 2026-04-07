@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ID基盤アーキテクチャ 4パターン詳解 — オンプレミスから始める移行設計</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Helvetica Neue','Hiragino Kaku Gothic ProN','Meiryo',sans-serif;background:#f1f5f9;color:#1e293b;font-size:14px;line-height:1.7}
+#toc{position:fixed;left:0;top:0;bottom:0;width:230px;background:#0f172a;overflow-y:auto;z-index:100;padding:0 0 24px}
+#toc h2{color:#94a3b8;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;padding:16px 16px 6px;margin:0;border-top:1px solid #1e293b}
+#toc a{display:block;color:#cbd5e1;text-decoration:none;padding:6px 16px;font-size:.8rem;transition:background .15s}
+#toc a:hover,#toc a.active{background:#1e3a5f;color:#fff}
+#toc .toc-sub{padding-left:28px;font-size:.75rem;color:#94a3b8}
+main{margin-left:230px;padding:32px 40px;max-width:1100px}
+h1{font-size:1.5rem;font-weight:700;color:#0f172a;margin-bottom:6px}
+.subtitle{color:#64748b;font-size:.9rem;margin-bottom:28px}
+h2{font-size:1.15rem;font-weight:700;color:#1e3a5f;margin:36px 0 14px;padding-bottom:6px;border-bottom:2px solid #3b82f6}
+h3{font-size:1rem;font-weight:700;color:#334155;margin:22px 0 10px}
+h4{font-size:.9rem;font-weight:700;color:#475569;margin:16px 0 8px}
+p{margin-bottom:12px}
+.lead{background:#eff6ff;border-left:4px solid #3b82f6;padding:12px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:.92rem}
+.warn{background:#fef9c3;border-left:4px solid #eab308;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.danger{background:#fef2f2;border-left:4px solid #dc2626;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.good{background:#f0fdf4;border-left:4px solid #16a34a;padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0;font-size:.85rem}
+.phase-header{background:linear-gradient(135deg,#1e3a5f,#2563eb);color:#fff;border-radius:10px;padding:16px 20px;margin:24px 0 16px}
+.phase-header h2{color:#fff;border:none;margin:0 0 4px;font-size:1.1rem}
+.phase-header .phase-meta{font-size:.82rem;opacity:.85;margin-top:4px}
+.wbs-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:.83rem}
+.wbs-table th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.wbs-table td{padding:8px 10px;border-bottom:1px solid #e2e8f0;vertical-align:top}
+.wbs-table tr:nth-child(even) td{background:#f8fafc}
+.wbs-table tr:hover td{background:#eff6ff}
+.wbs-l1{font-weight:700;color:#1e3a5f;background:#f0f4ff !important}
+.wbs-l2{padding-left:24px !important;color:#334155}
+.wbs-l3{padding-left:42px !important;color:#475569;font-size:.8rem}
+.tag{display:inline-block;padding:2px 8px;border-radius:12px;font-size:.72rem;font-weight:600;margin:0 2px}
+.tag-must{background:#fee2e2;color:#991b1b}
+.tag-high{background:#fef3c7;color:#92400e}
+.tag-med{background:#dbeafe;color:#1e40af}
+.tag-low{background:#dcfce7;color:#166534}
+.tag-day{background:#e0e7ff;color:#3730a3}
+.tag-wk{background:#fce7f3;color:#9d174d}
+.effort-chip{display:inline-block;background:#e2e8f0;color:#475569;border-radius:4px;padding:1px 7px;font-size:.72rem}
+code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:.82rem;font-family:'Courier New',monospace;color:#dc2626}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:14px 0}
+.four-col{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin:14px 0}
+.card{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card h4{margin-top:0;color:#1e3a5f;font-size:.88rem}
+.risk-item{background:#fff;border-radius:6px;border-left:4px solid #dc2626;padding:10px 12px;font-size:.83rem;margin-bottom:8px}
+.risk-item.med{border-left-color:#eab308}
+.risk-item.low{border-left-color:#16a34a}
+.risk-item .risk-title{font-weight:700;color:#1e293b;margin-bottom:4px}
+.risk-item .risk-counter{color:#64748b;font-size:.78rem}
+.step-flow{display:flex;gap:0;margin:14px 0;overflow-x:auto}
+.step{background:#3b82f6;color:#fff;padding:10px 14px;flex:1;min-width:110px;text-align:center;font-size:.75rem;position:relative}
+.step:not(:last-child)::after{content:'▶';position:absolute;right:-10px;top:50%;transform:translateY(-50%);z-index:1;color:#1e3a5f;font-size:1rem}
+.step:nth-child(2){background:#2563eb}
+.step:nth-child(3){background:#1d4ed8}
+.step:nth-child(4){background:#1e40af}
+.step:nth-child(5){background:#1e3a8a}
+.step-num{font-size:.65rem;opacity:.8;display:block;margin-bottom:3px}
+/* Architecture diagram CSS boxes */
+.arch-diagram{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:20px;margin:16px 0}
+.arch-row{display:flex;align-items:center;gap:12px;margin:8px 0;flex-wrap:wrap}
+.arch-box{border-radius:8px;padding:10px 14px;text-align:center;font-size:.8rem;font-weight:600;min-width:120px;position:relative}
+.arch-box.onprem{background:#fef3c7;border:2px solid #f59e0b;color:#92400e}
+.arch-box.cloud{background:#dbeafe;border:2px solid #3b82f6;color:#1e40af}
+.arch-box.infra{background:#f3e8ff;border:2px solid #9333ea;color:#6b21a8}
+.arch-box.sec{background:#dcfce7;border:2px solid #16a34a;color:#166534}
+.arch-box.device{background:#fce7f3;border:2px solid #db2777;color:#9d174d}
+.arch-box.legacy{background:#fee2e2;border:2px solid #dc2626;color:#991b1b}
+.arch-arrow{font-size:1.2rem;color:#64748b;padding:0 4px}
+.arch-sync{font-size:.72rem;color:#64748b;padding:2px 8px;background:#e2e8f0;border-radius:4px}
+.arch-label{font-size:.72rem;color:#64748b;display:block;margin-top:2px;font-weight:400}
+.pattern-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:700;margin-bottom:8px}
+.badge-ls{background:#fef3c7;color:#92400e;border:1px solid #f59e0b}
+.badge-hc{background:#dbeafe;color:#1e3a8a;border:1px solid #3b82f6}
+.badge-cn{background:#dcfce7;color:#166534;border:1px solid #16a34a}
+.badge-mi{background:#f3e8ff;color:#6b21a8;border:1px solid #9333ea}
+.flow-q{background:#fff;border:2px solid #3b82f6;border-radius:8px;padding:12px 16px;text-align:center;font-weight:700;font-size:.85rem;color:#1e3a5f}
+.flow-yes{background:#dcfce7;border:1px solid #16a34a;border-radius:6px;padding:8px 12px;font-size:.78rem;text-align:center;color:#166534;font-weight:600}
+.flow-no{background:#f1f5f9;border:1px solid #cbd5e1;border-radius:6px;padding:8px 12px;font-size:.78rem;text-align:center;color:#475569}
+.flow-result{border-radius:8px;padding:10px 14px;font-size:.82rem;font-weight:700;text-align:center}
+.flow-r1{background:#fef3c7;color:#92400e;border:2px solid #f59e0b}
+.flow-r2{background:#dbeafe;color:#1e3a8a;border:2px solid #3b82f6}
+.flow-r3{background:#dcfce7;color:#166534;border:2px solid #16a34a}
+.flow-r4{background:#f3e8ff;color:#6b21a8;border:2px solid #9333ea}
+.flow-grid{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center;margin:14px 0}
+.flow-arrow-v{text-align:center;font-size:1.4rem;color:#64748b;line-height:1}
+.checklist{list-style:none;padding:0;margin:10px 0}
+.checklist li{padding:5px 0 5px 24px;position:relative;border-bottom:1px solid #f1f5f9;font-size:.85rem}
+.checklist li::before{content:'☐';position:absolute;left:2px;color:#3b82f6;font-size:1rem}
+.phase-step{background:#fff;border-radius:8px;border:1px solid #e2e8f0;padding:12px 14px;margin-bottom:8px}
+.phase-step .ps-num{display:inline-block;background:#1e3a5f;color:#fff;border-radius:4px;padding:1px 8px;font-size:.72rem;font-weight:700;margin-right:8px}
+.phase-step .ps-title{font-weight:700;color:#1e293b;font-size:.88rem}
+.phase-step .ps-body{color:#475569;font-size:.82rem;margin-top:6px}
+.cost-bar{height:18px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:.72rem;color:#fff;font-weight:600;margin:4px 0}
+.cost-low{background:#16a34a;width:30%}
+.cost-med{background:#d97706;width:60%}
+.cost-high{background:#dc2626;width:90%}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.stat-box{background:#fff;border-radius:8px;padding:12px;text-align:center;border:1px solid #e2e8f0}
+.stat-box .stat-val{font-size:1.4rem;font-weight:800;color:#1e3a5f}
+.stat-box .stat-label{font-size:.72rem;color:#64748b;margin-top:2px}
+@media(max-width:900px){#toc{display:none}main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<nav id="toc">
+  <h2>目次</h2>
+  <a href="#premise">🏢 前提: 日本企業のID環境</a>
+  <a href="#pattern1">📦 パターン1: Lift and Shift</a>
+  <a class="toc-sub" href="#p1-arch">構成図</a>
+  <a class="toc-sub" href="#p1-steps">移行ステップ</a>
+  <a class="toc-sub" href="#p1-eval">評価</a>
+  <a href="#pattern2">🔄 パターン2: Hybrid Coexistence</a>
+  <a class="toc-sub" href="#p2-arch">構成図</a>
+  <a class="toc-sub" href="#p2-steps">移行ステップ</a>
+  <a class="toc-sub" href="#p2-eval">評価</a>
+  <a href="#pattern3">☁️ パターン3: Cloud Native</a>
+  <a class="toc-sub" href="#p3-arch">構成図</a>
+  <a class="toc-sub" href="#p3-legacy">レガシー対応課題</a>
+  <a href="#pattern4">🌐 パターン4: Multi-IdP Federation</a>
+  <a class="toc-sub" href="#p4-arch">構成図</a>
+  <a class="toc-sub" href="#p4-compare">統合パターン比較</a>
+  <a href="#comparison">📊 4パターン比較表</a>
+  <a href="#flowchart">🔀 選択フローチャート</a>
+  <a href="#pitfalls">⚠️ よくある失敗パターン</a>
+</nav>
+
+<main>
+<h1>ID基盤アーキテクチャ 4パターン詳解</h1>
+<p class="subtitle">オンプレミスから始める移行設計 — ITアーキテクト / SE / 情報システム部長向け</p>
+
+<!-- ========== 前提 ========== -->
+<section id="premise">
+<h2>🏢 前提: 典型的な日本企業のID環境</h2>
+
+<div class="lead">
+日本企業の多くは、<strong>Active Directory を中心としたオンプレミス基盤</strong>に業務システム・ファイルサーバー・Windows PC が依存する構成からスタートする。
+この現状を正確に把握した上で移行パターンを選択することが、プロジェクト成功の第一条件である。
+</div>
+
+<div class="stat-grid">
+  <div class="stat-box"><div class="stat-val">87%</div><div class="stat-label">日本企業のAD利用率（従業員1000名以上）</div></div>
+  <div class="stat-box"><div class="stat-val">60%</div><div class="stat-label">Kerberos依存アプリを保有する割合</div></div>
+  <div class="stat-box"><div class="stat-val">3〜5年</div><div class="stat-label">完全移行に要する一般的な期間</div></div>
+  <div class="stat-box"><div class="stat-val">40%</div><div class="stat-label">SIer委託で設計責任が曖昧な割合</div></div>
+</div>
+
+<h3>典型的な日本企業のID環境（移行前）</h3>
+<div class="arch-diagram">
+  <div class="arch-row" style="justify-content:center;gap:20px">
+    <div class="arch-box onprem" style="min-width:160px">
+      Active Directory<br>
+      <span class="arch-label">Windows Server DC (2019/2022)</span>
+    </div>
+    <div style="text-align:center">
+      <div class="arch-arrow">↕</div>
+      <div class="arch-sync">Kerberos / LDAP</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="arch-box legacy">
+        ファイルサーバー<br>
+        <span class="arch-label">CIFS / SMB</span>
+      </div>
+      <div class="arch-box legacy">
+        業務システム<br>
+        <span class="arch-label">SQL Server / IIS</span>
+      </div>
+      <div class="arch-box device">
+        Windows PC<br>
+        <span class="arch-label">ドメイン参加 端末</span>
+      </div>
+      <div class="arch-box legacy">
+        グループポリシー<br>
+        <span class="arch-label">GPO / スクリプト</span>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div class="arch-box onprem">
+      AD連携 SaaS<br>
+      <span class="arch-label">ADFS / Proxy経由</span>
+    </div>
+    <div class="arch-box legacy">
+      基幹システム<br>
+      <span class="arch-label">ERP / 帳票 / 旧形式</span>
+    </div>
+    <div class="arch-box onprem">
+      ベンダー保守アカウント<br>
+      <span class="arch-label">共有ID / 固定PW</span>
+    </div>
+  </div>
+</div>
+
+<div class="danger">
+<strong>⚠️ 移行前に必ず把握すること（Day 0 アセスメント）:</strong>
+孤立OU・未使用アカウント・過剰権限グループ・Kerberos依存アプリ一覧・サービスアカウント一覧・グループポリシー依存分析。
+これらを放置すると後続フェーズで例外運用が急増し、移行計画が止まる。
+</div>
+
+<div class="three-col">
+  <div class="card">
+    <h4>🔍 棚卸しチェックリスト</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li>ADフォレスト/ドメイン構成図</li>
+      <li>OU構造と委任管理範囲</li>
+      <li>全ユーザーアカウント(無効含む)</li>
+      <li>サービスアカウント/gmSA一覧</li>
+      <li>Kerberos SPN登録一覧</li>
+      <li>ADFS依存アプリ一覧</li>
+      <li>GPO一覧と適用範囲</li>
+      <li>グループネスト構造</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>🚧 日本固有の障壁</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li>元号・旧字体対応が残る業務システム</li>
+      <li>SIer保守契約に紐づく共有ID</li>
+      <li>ベンダー依存で設計情報が不在</li>
+      <li>帳票・印刷サーバーのKerberos依存</li>
+      <li>年2回の大規模リリース慣行</li>
+      <li>NTLMを使い続けるレガシーアプリ</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>📌 4パターン選択の軸</h4>
+    <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+      <li>DCクローズ期限の有無</li>
+      <li>Kerberos依存アプリ数</li>
+      <li>既存AD構成の健全性</li>
+      <li>社内SE能力とベンダー依存度</li>
+      <li>予算規模(単年 vs 複数年)</li>
+      <li>M&amp;A/グループ統合の有無</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<!-- ========== パターン1 ========== -->
+<section id="pattern1">
+<div class="phase-header">
+  <div class="pattern-badge badge-ls">パターン1: Lift and Shift</div>
+  <h2>📦 DCクローズ急ぎ・AD構成変更不可・短期実現向け</h2>
+  <div class="phase-meta">所要期間: 6〜12ヶ月 ／ コスト感: 中〜高 ／ ADオンプレ継続: ◎</div>
+</div>
+
+<div class="lead">
+既存の Active Directory 構成を大きく変えずに Azure VM 上へ移送、または Entra Domain Services を補完利用する<strong>延命策</strong>。
+データセンター更改期限対応に有効だが、Active Directory 設計の問題をそのまま持ち込むため<strong>将来の整理計画が必要</strong>。
+</div>
+
+<h3 id="p1-arch">構成図 — Lift and Shift</h3>
+<div class="arch-diagram">
+  <p style="font-size:.78rem;color:#64748b;margin-bottom:12px">※ オンプレミスADを Azure VM 上に再配置 + Entra Domain Services を補完利用</p>
+  <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center">
+    <div>
+      <div class="arch-box onprem" style="margin-bottom:8px">
+        オンプレ Active Directory<br>
+        <span class="arch-label">既存DC（読み取りレプリカ化）</span>
+      </div>
+      <div class="arch-box device" style="margin-bottom:8px">
+        Windows PC<br>
+        <span class="arch-label">既存ドメイン参加継続</span>
+      </div>
+      <div class="arch-box legacy">
+        ファイルサーバー<br>
+        <span class="arch-label">オンプレまたはAzure Files</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-sync">AD Site-to-Site<br>VPN / ExpressRoute</div>
+    </div>
+    <div>
+      <div class="arch-box cloud" style="margin-bottom:8px">
+        Azure VM<br>
+        <span class="arch-label">ADドメインコントローラー</span>
+      </div>
+      <div class="arch-box cloud">
+        Entra Domain Services<br>
+        <span class="arch-label">LDAP/Kerberos補完(一部)</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div class="arch-arrow">→</div>
+      <div class="arch-sync">Entra Connect<br>PHS同期</div>
+    </div>
+    <div>
+      <div class="arch-box cloud">
+        Entra ID<br>
+        <span class="arch-label">SaaS/クラウド認証(限定的)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="warn">
+<strong>⚠️ Entra Domain Services の制限に注意:</strong>
+既存 Active Directory の完全代替ではない。スキーマ拡張・カスタム GPO・信頼関係・管理ツール（ADUC等）の制限が多い。
+「Entra DS があれば AD 不要」という誤解が現場で多発する。
+</div>
+
+<h3 id="p1-steps">移行ステップ — Phase 1〜3</h3>
+<div class="step-flow">
+  <div class="step"><span class="step-num">Phase 1</span>DCクローン評価<br>AD健全性確認</div>
+  <div class="step"><span class="step-num">Phase 2</span>Azure VM DC<br>サイト構成設計</div>
+  <div class="step"><span class="step-num">Phase 3</span>Entra Connect<br>PHS有効化</div>
+</div>
+
+<div style="margin-top:8px">
+<div class="phase-step">
+  <span class="ps-num">Phase 1</span>
+  <span class="ps-title">DCクローン評価・AD健全性確認 (1〜2ヶ月)</span>
+  <div class="ps-body">
+    孤立OU・未使用アカウント・過剰権限グループを棚卸し。Kerberos SPN・サービスアカウント一覧を作成。
+    Azure VM スペック設計（DS3v2以上推奨）。ExpressRoute / VPN 帯域要件確認。
+  </div>
+</div>
+<div class="phase-step">
+  <span class="ps-num">Phase 2</span>
+  <span class="ps-title">Azure VM DC 構築・サイト構成設計 (2〜4ヶ月)</span>
+  <div class="ps-body">
+    Azure VM 上にセカンダリ DC を展開。ADサイトリンク設定（認証トラフィック制御）。
+    フェイルオーバーテスト実施。既存ファイルサーバーのAzure Files移行判断。
+  </div>
+</div>
+<div class="phase-step">
+  <span class="ps-num">Phase 3</span>
+  <span class="ps-title">Entra Connect 導入・PHS有効化 (1〜3ヶ月)</span>
+  <div class="ps-body">
+    Entra Connect によるディレクトリ同期開始。Password Hash Synchronization 有効化でクラウド認証の足場を整備。
+    パイロット部門でのMFA展開。SaaS認証のEntra ID経由化（優先度の高いアプリから）。
+  </div>
+</div>
+</div>
+
+<h3 id="p1-eval">評価</h3>
+<div class="two-col">
+<div>
+<h4>✅ 向いている企業</h4>
+<ul class="checklist">
+  <li>DCを置く物理サーバーがなくなる（DCクローズ期限あり）</li>
+  <li>AD構成変更の承認が取れない</li>
+  <li>Kerberos依存アプリが多く、短期での改修が不可能</li>
+  <li>とにかく早く「動く状態」を維持したい</li>
+  <li>予算は確保できているが人員が少ない</li>
+</ul>
+</div>
+<div>
+<h4>❌ 向いていない企業</h4>
+<ul class="checklist">
+  <li>AD設計が老朽化しており、抜本改修が必要</li>
+  <li>長期的にゼロトラスト・ADフリーを目指している</li>
+  <li>コスト最小化が最優先（Azure VM AD の維持費は高い）</li>
+  <li>M&amp;AやグループID統合が近い将来に控えている</li>
+</ul>
+</div>
+</div>
+<div class="two-col">
+<div class="card">
+  <h4>💰 コスト感</h4>
+  <p style="font-size:.8rem;color:#475569;margin-bottom:8px">Azure VM DC (DS3v2 × 2台 冗長構成)</p>
+  <div class="cost-bar cost-med">月額 ¥80,000〜¥150,000（VMコスト）</div>
+  <p style="font-size:.78rem;color:#64748b;margin-top:4px">+ ExpressRoute/VPN費用 + 運用費。Entra Domain Services は別途 ¥30,000〜/月。</p>
+</div>
+<div class="card">
+  <h4>⚡ リスク</h4>
+  <div class="risk-item med"><div class="risk-title">設計負債の持ち越し</div><div class="risk-counter">AD設計問題が Azure 上でも再現する</div></div>
+  <div class="risk-item"><div class="risk-title">Azure VM 依存の固着化</div><div class="risk-counter">一度動かすと次の移行が困難に</div></div>
+</div>
+</div>
+</section>
+
+<!-- ========== パターン2 ========== -->
+<section id="pattern2">
+<div class="phase-header">
+  <div class="pattern-badge badge-hc">パターン2: Hybrid Coexistence</div>
+  <h2>🔄 日本企業主流 — 段階移行・既存資産活用・リスク分散</h2>
+  <div class="phase-meta">所要期間: 12〜24ヶ月 ／ コスト感: 中 ／ ADオンプレ継続: ◎ → △</div>
+</div>
+
+<div class="lead">
+Active Directory と Entra ID を<strong>長期間並行運用</strong>しながら、ユーザー・端末・アプリを段階的に移行する。
+日本企業で最も現実的な主流パターン。Entra Connect によるディレクトリ同期が基盤となる。
+</div>
+
+<h3 id="p2-arch">構成図 — Hybrid Coexistence</h3>
+<div class="arch-diagram">
+  <p style="font-size:.78rem;color:#64748b;margin-bottom:12px">※ オンプレAD と Entra ID が双方向に連携する中間状態</p>
+  <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center">
+    <div>
+      <div class="arch-box onprem" style="margin-bottom:8px">
+        オンプレ Active Directory<br>
+        <span class="arch-label">信頼の源泉（SoR）</span>
+      </div>
+      <div class="arch-box legacy" style="margin-bottom:8px">
+        ファイルサーバー / CIFS<br>
+        <span class="arch-label">Kerberos認証継続</span>
+      </div>
+      <div class="arch-box device">
+        Windows PC<br>
+        <span class="arch-label">Entra Hybrid Join端末</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-sync" style="text-align:center">Entra Connect<br>（PHS / PTA）<br>↕ 同期</div>
+    </div>
+    <div>
+      <div class="arch-box cloud" style="margin-bottom:8px">
+        Entra ID<br>
+        <span class="arch-label">クラウド認証・条件付きアクセス</span>
+      </div>
+      <div class="arch-box sec" style="margin-bottom:8px">
+        Conditional Access<br>
+        <span class="arch-label">MFA / デバイスコンプライアンス</span>
+      </div>
+      <div class="arch-box sec">
+        Microsoft Intune<br>
+        <span class="arch-label">モダン端末管理</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div class="arch-arrow">→</div>
+      <div class="arch-sync">SAML / OIDC</div>
+    </div>
+    <div>
+      <div class="arch-box cloud" style="margin-bottom:8px">
+        Microsoft 365<br>
+        <span class="arch-label">Exchange / Teams / SharePoint</span>
+      </div>
+      <div class="arch-box cloud">
+        SaaS アプリ群<br>
+        <span class="arch-label">Salesforce / SAP BTP 等</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 id="p2-steps">移行ステップ — Phase 1〜4</h3>
+<div class="step-flow">
+  <div class="step"><span class="step-num">Phase 1</span>同期基盤<br>構築</div>
+  <div class="step"><span class="step-num">Phase 2</span>クラウド認証<br>強化</div>
+  <div class="step"><span class="step-num">Phase 3</span>特権管理<br>近代化</div>
+  <div class="step"><span class="step-num">Phase 4</span>ADフリー化<br>推進</div>
+</div>
+
+<div style="margin-top:8px">
+<div class="phase-step">
+  <span class="ps-num">Phase 1</span>
+  <span class="ps-title">同期基盤構築 — Entra Connect + PHS (2〜4ヶ月)</span>
+  <div class="ps-body">
+    Entra Connect インストール・UPN サフィックス統一（<code>@domain.com</code>形式）。Password Hash Synchronization 有効化。
+    Entra Hybrid Join パイロット展開（IT部門端末50台）。Entra Connect Health 監視設定。
+  </div>
+</div>
+<div class="phase-step">
+  <span class="ps-num">Phase 2</span>
+  <span class="ps-title">クラウド認証強化 — Conditional Access + MFA全社展開 (3〜6ヶ月)</span>
+  <div class="ps-body">
+    Microsoft Authenticator 全社展開（段階ロールアウト）。Conditional Access ポリシー設計（レガシー認証ブロック）。
+    SaaS アプリの SAML/OIDC 移行（ADFS依存からEntra ID経由へ）。Named Location 設定（海外ブロック等）。
+  </div>
+</div>
+<div class="phase-step">
+  <span class="ps-num">Phase 3</span>
+  <span class="ps-title">特権管理近代化 — LAPS + JIT権限 (3〜5ヶ月)</span>
+  <div class="ps-body">
+    Windows LAPS 展開（端末ローカル管理者パスワード個別管理）。Entra ID PIM（Privileged Identity Management）でAD管理者のJIT昇格。
+    サービスアカウントの gMSA 化推進。特権アカウント棚卸しと不要権限削除。
+  </div>
+</div>
+<div class="phase-step">
+  <span class="ps-num">Phase 4</span>
+  <span class="ps-title">ADフリー化推進 — Entra Join + GPO代替 (4〜9ヶ月)</span>
+  <div class="ps-body">
+    新規端末を Entra Join で展開（ドメイン参加不要）。Intune でポリシー・証明書・アプリ配布を代替。
+    残存 Kerberos 依存アプリの改修またはアプリプロキシ経由化。AD依存範囲の継続的縮小。
+  </div>
+</div>
+</div>
+
+<h3 id="p2-eval">評価と注意点</h3>
+<div class="three-col">
+<div class="card">
+  <h4>✅ 向いている企業</h4>
+  <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+    <li>既存AD資産が比較的健全</li>
+    <li>段階的リスク分散を優先</li>
+    <li>Microsoft 365 展開済み</li>
+    <li>Kerberos依存が一部ある</li>
+    <li>3〜5年での完全移行を計画</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>⚠️ 日本固有の注意点</h4>
+  <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+    <li>UPN不一致問題（社内IDと異なる）</li>
+    <li>Entra Connect 設定ミスで同期エラー多発</li>
+    <li>SIer担当者がEntra Connect未経験</li>
+    <li>GPO移行漏れで端末設定が抜ける</li>
+    <li>MFA登録率が低い部署への対応</li>
+  </ul>
+</div>
+<div class="card">
+  <h4>💰 コスト感</h4>
+  <ul style="padding-left:16px;font-size:.82rem;color:#475569">
+    <li>Entra ID P2ライセンス必要（CA・PIM）</li>
+    <li>Intune: Microsoft 365 E3以上に含む</li>
+    <li>初期構築コスト: ¥300〜¥800万</li>
+    <li>運用費: 月額 ¥30〜¥80万</li>
+    <li>ユーザー教育コスト別途</li>
+  </ul>
+</div>
+</div>
+</section>
+
+<!-- ========== パターン3 ========== -->
+<section id="pattern3">
+<div class="phase-header">
+  <div class="pattern-badge badge-cn">パターン3: Cloud Native</div>
+  <h2>☁️ 新規事業 / スタートアップ / 全社クラウド移行済み</h2>
+  <div class="phase-meta">所要期間: 3〜6ヶ月（新規） ／ コスト感: 低〜中 ／ ADオンプレ継続: ✕</div>
+</div>
+
+<div class="lead">
+Active Directory を持ち込まず、<strong>Entra ID を中心</strong>に端末・認証・運用を設計するパターン。
+新設組織・スタートアップ・既存AD廃止済み企業が対象。レガシー業務アプリへの対応が最大の課題となる。
+</div>
+
+<h3 id="p3-arch">構成図 — Cloud Native</h3>
+<div class="arch-diagram">
+  <p style="font-size:.78rem;color:#64748b;margin-bottom:12px">※ Active Directory 不要。Entra ID + Intune が中心</p>
+  <div style="display:flex;gap:20px;justify-content:center;align-items:flex-start;flex-wrap:wrap">
+    <div style="text-align:center">
+      <div class="arch-box cloud" style="margin-bottom:8px;min-width:160px">
+        Entra ID<br>
+        <span class="arch-label">認証・認可・条件付きアクセス</span>
+      </div>
+      <div class="arch-arrow">↕</div>
+      <div class="arch-box sec" style="margin-top:8px;min-width:160px">
+        Microsoft Intune<br>
+        <span class="arch-label">MDM / MAM / ポリシー</span>
+      </div>
+    </div>
+    <div style="text-align:center;padding-top:20px">
+      <div class="arch-arrow" style="font-size:1.5rem">⟶</div>
+      <div class="arch-sync">OIDC / SAML</div>
+    </div>
+    <div>
+      <div class="arch-box cloud" style="margin-bottom:8px">Microsoft 365<br><span class="arch-label">Teams / Exchange / SharePoint</span></div>
+      <div class="arch-box cloud" style="margin-bottom:8px">SaaS業務アプリ<br><span class="arch-label">Salesforce / Workday / etc.</span></div>
+      <div class="arch-box sec">Azure リソース<br><span class="arch-label">IaaS / PaaS / DevOps</span></div>
+    </div>
+    <div style="text-align:center;padding-top:20px">
+      <div class="arch-arrow" style="font-size:1.5rem">⟶</div>
+      <div class="arch-sync">Entra<br>App Proxy</div>
+    </div>
+    <div>
+      <div class="arch-box legacy" style="margin-bottom:8px">レガシー社内アプリ<br><span class="arch-label">ヘッダー認証 / NTLM</span></div>
+      <div class="arch-box device">Entra Join PC<br><span class="arch-label">AD不要・クラウド管理</span></div>
+    </div>
+  </div>
+</div>
+
+<h3 id="p3-legacy">レガシーアプリ対応課題</h3>
+<div class="danger">
+<strong>🚨 Cloud Native の最大の落とし穴:</strong>
+Kerberos・NTLM・LDAP直接参照・Windows認証に依存したアプリが1つでもあると、AD不要の前提が崩れる。
+事前の完全な依存アプリ棚卸しが必須。
+</div>
+
+<table class="wbs-table">
+<thead>
+<tr><th>レガシー依存の種類</th><th>対応策</th><th>難易度</th><th>コスト感</th></tr>
+</thead>
+<tbody>
+<tr><td class="wbs-l1">Kerberos/NTLM依存Webアプリ</td><td>Entra Application Proxy + Kerberos Constrained Delegation</td><td><span class="tag tag-med">中</span></td><td><span class="effort-chip">中</span></td></tr>
+<tr><td class="wbs-l2">→ IIS/Windows認証</td><td>IIS設定変更 + Application Proxy KCD設定</td><td><span class="tag tag-high">高</span></td><td><span class="effort-chip">高</span></td></tr>
+<tr><td class="wbs-l1">LDAPクライアント</td><td>Entra Domain Services（LDAP補完）またはアプリ改修</td><td><span class="tag tag-high">高</span></td><td><span class="effort-chip">高</span></td></tr>
+<tr><td class="wbs-l1">RADIUS認証（VPN/WiFi）</td><td>NPS + Entra MFA拡張 または Azure VPN/Entra Private Access</td><td><span class="tag tag-med">中</span></td><td><span class="effort-chip">中</span></td></tr>
+<tr><td class="wbs-l1">サービスアカウント/ジョブ</td><td>Managed Identity / ワークロード ID フェデレーション</td><td><span class="tag tag-low">低〜中</span></td><td><span class="effort-chip">低</span></td></tr>
+<tr><td class="wbs-l1">GPO依存設定</td><td>Intune Configuration Profile / Endpoint Analytics</td><td><span class="tag tag-med">中</span></td><td><span class="effort-chip">中</span></td></tr>
+</tbody>
+</table>
+
+<div class="good">
+<strong>✅ Cloud Native が向く条件:</strong>
+新規事業会社・スタートアップ・既存AD廃止済み・M365 E3以上展開済みで Kerberos 依存アプリなし、
+もしくはすべてSaaS化済みという環境。この条件を満たさない場合はパターン2（Hybrid）が現実的。
+</div>
+</section>
+
+<!-- ========== パターン4 ========== -->
+<section id="pattern4">
+<div class="phase-header">
+  <div class="pattern-badge badge-mi">パターン4: Multi-IdP Federation</div>
+  <h2>🌐 グローバル展開 / M&A後統合 / 複数IdP共存</h2>
+  <div class="phase-meta">所要期間: 18〜36ヶ月 ／ コスト感: 高 ／ ADオンプレ継続: △（一部）</div>
+</div>
+
+<div class="lead">
+M&AやグローバルIT統合で複数の IdP が混在する環境を管理するパターン。
+Entra ID を<strong>ハブ IdP</strong>として、Okta・Ping Identity・社内 ADFS などとフェデレーション連携する設計が主流となる。
+</div>
+
+<h3 id="p4-arch">構成図 — Multi-IdP Federation</h3>
+<div class="arch-diagram">
+  <p style="font-size:.78rem;color:#64748b;margin-bottom:12px">※ Entra ID をハブとし、複数IdPをフェデレーション連携</p>
+  <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:12px;align-items:center">
+    <div>
+      <div class="arch-box onprem" style="margin-bottom:8px">
+        子会社A AD<br>
+        <span class="arch-label">M&A取得先</span>
+      </div>
+      <div class="arch-box cloud" style="margin-bottom:8px">
+        Okta (子会社B)<br>
+        <span class="arch-label">グローバル拠点</span>
+      </div>
+      <div class="arch-box infra">
+        社内ADFS<br>
+        <span class="arch-label">既存フェデレーション</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div class="arch-arrow">⟶</div>
+      <div class="arch-sync" style="writing-mode:horizontal-tb">WS-Federation<br>SAML 2.0<br>OIDC</div>
+    </div>
+    <div>
+      <div class="arch-box cloud" style="min-width:160px;padding:16px">
+        <strong>Entra ID</strong><br>
+        <span class="arch-label">ハブIdP・外部IdP信頼</span><br>
+        <span class="arch-label">B2B / クロステナント同期</span>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div class="arch-arrow">⟶</div>
+      <div class="arch-sync">SAML / OIDC<br>Conditional<br>Access</div>
+    </div>
+    <div>
+      <div class="arch-box cloud" style="margin-bottom:8px">
+        Microsoft 365<br>
+        <span class="arch-label">全グループ共通SaaS</span>
+      </div>
+      <div class="arch-box sec" style="margin-bottom:8px">
+        Azure リソース<br>
+        <span class="arch-label">クロステナント管理</span>
+      </div>
+      <div class="arch-box sec">
+        グループ横断SaaS<br>
+        <span class="arch-label">Salesforce / SAP等</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h3 id="p4-compare">統合パターン比較</h3>
+<table class="wbs-table">
+<thead>
+<tr><th>統合方式</th><th>説明</th><th>向く場面</th><th>主なリスク</th></tr>
+</thead>
+<tbody>
+<tr>
+  <td class="wbs-l1">Entra B2B Collaboration</td>
+  <td>外部テナントユーザーをゲストとして招待。最小構成で始められる</td>
+  <td>M&A直後の暫定連携・パートナー連携</td>
+  <td><span class="tag tag-high">管理対象外テナント増加</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">Cross-Tenant Sync</td>
+  <td>Entra テナント間でユーザーを自動プロビジョニング</td>
+  <td>グループ内テナント統合</td>
+  <td><span class="tag tag-med">属性マッピング設計必要</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">External IdP Federation</td>
+  <td>Okta/Ping等をEntra IDの外部IDプロバイダーとして信頼</td>
+  <td>買収先が別製品を使い続ける</td>
+  <td><span class="tag tag-high">ポリシー適用の一貫性確保が困難</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">ADFS → Entra ID 統合</td>
+  <td>既存ADFSを廃止しEntra IDに一本化</td>
+  <td>ADFS運用コスト削減・証明書管理廃止</td>
+  <td><span class="tag tag-must">アプリ改修漏れで認証断</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">テナント統合（マージ）</td>
+  <td>複数Entraテナントを1つに統合する最終形</td>
+  <td>M&A後の完全IT統合</td>
+  <td><span class="tag tag-must">最高難度・ダウンタイムリスク</span></td>
+</tr>
+</tbody>
+</table>
+
+<div class="warn">
+<strong>⚠️ M&A後のID統合で最も多い失敗:</strong>
+買収直後に「とりあえずB2Bゲスト」で対処し、数年後に数百〜数千のゲストアカウントが整理されないまま放置されるパターン。
+最初の3ヶ月以内にアカウントライフサイクル設計（入社・異動・退職・契約終了）を定義すること。
+</div>
+</section>
+
+<!-- ========== 比較表 ========== -->
+<section id="comparison">
+<h2>📊 4パターン比較表</h2>
+
+<table class="wbs-table">
+<thead>
+<tr>
+  <th>比較軸</th>
+  <th><span class="pattern-badge badge-ls" style="font-size:.7rem">Lift and Shift</span></th>
+  <th><span class="pattern-badge badge-hc" style="font-size:.7rem">Hybrid Coexistence</span></th>
+  <th><span class="pattern-badge badge-cn" style="font-size:.7rem">Cloud Native</span></th>
+  <th><span class="pattern-badge badge-mi" style="font-size:.7rem">Multi-IdP Federation</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td class="wbs-l1">対象企業</td>
+  <td>DCクローズ期限あり<br>構成変更困難</td>
+  <td>既存AD健全<br>段階移行志向</td>
+  <td>新規事業<br>スタートアップ</td>
+  <td>グローバル展開<br>M&amp;A後統合</td>
+</tr>
+<tr>
+  <td class="wbs-l1">移行期間</td>
+  <td><span class="tag tag-day">6〜12ヶ月</span></td>
+  <td><span class="tag tag-wk">12〜24ヶ月</span></td>
+  <td><span class="tag tag-day">3〜6ヶ月（新規）</span></td>
+  <td><span class="tag tag-must">18〜36ヶ月</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">初期コスト</td>
+  <td>中〜高<br>(Azure VM DC費用)</td>
+  <td>中<br>(Entra P2ライセンス)</td>
+  <td>低<br>(M365E3以上前提)</td>
+  <td>高<br>(複数製品費用)</td>
+</tr>
+<tr>
+  <td class="wbs-l1">技術リスク</td>
+  <td><span class="tag tag-med">中（Azure VM管理）</span></td>
+  <td><span class="tag tag-low">低〜中（段階的）</span></td>
+  <td><span class="tag tag-high">高（レガシー対応）</span></td>
+  <td><span class="tag tag-must">最高（複数IdP整合）</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">ADオンプレ継続</td>
+  <td>◎ ほぼそのまま</td>
+  <td>◎→△ 徐々に縮小</td>
+  <td>✕ AD不要</td>
+  <td>△ 一部継続</td>
+</tr>
+<tr>
+  <td class="wbs-l1">Kerberos対応</td>
+  <td>◎ そのまま利用可</td>
+  <td>◎ 並行期間中は利用可</td>
+  <td>△ 要代替策</td>
+  <td>◎ AD部分で継続</td>
+</tr>
+<tr>
+  <td class="wbs-l1">GPO継続利用</td>
+  <td>◎ そのまま</td>
+  <td>◎→△ Intune移行</td>
+  <td>✕ Intune代替必須</td>
+  <td>△ 統合状況による</td>
+</tr>
+<tr>
+  <td class="wbs-l1">将来拡張性</td>
+  <td><span class="tag tag-high">低（延命策）</span></td>
+  <td><span class="tag tag-med">中（段階的改善）</span></td>
+  <td><span class="tag tag-low">高（クラウドネイティブ）</span></td>
+  <td><span class="tag tag-med">中（統合完了後高）</span></td>
+</tr>
+<tr>
+  <td class="wbs-l1">日本企業での推奨度</td>
+  <td>★★☆☆☆<br>(DCクローズ時のみ)</td>
+  <td>★★★★★<br>(最も現実的)</td>
+  <td>★★★☆☆<br>(新規・条件あり)</td>
+  <td>★★★☆☆<br>(M&amp;A・グローバル)</td>
+</tr>
+</tbody>
+</table>
+
+<div class="good">
+<strong>📌 日本企業には Hybrid Coexistence（パターン2）が主流:</strong>
+オンプレミス基幹システム・ベンダー保守・サーバー管理者運用が長く残るため、Full Cloud より Hybrid Coexistence が現実的な選択になる。
+パターン1は期限対応の延命策として、パターン3・4は条件が揃った場合の選択肢。
+</div>
+</section>
+
+<!-- ========== フローチャート ========== -->
+<section id="flowchart">
+<h2>🔀 パターン選択フローチャート</h2>
+
+<div class="lead">
+以下の質問に答えることで、自社に適した移行パターンを絞り込むことができる。
+</div>
+
+<div style="max-width:700px;margin:0 auto">
+
+  <div class="flow-q">Q1. データセンター更改・閉鎖の期限が1年以内に迫っていますか？</div>
+  <div class="two-col" style="margin-top:8px">
+    <div>
+      <div class="flow-yes">YES → パターン1（Lift and Shift）を優先検討</div>
+      <p style="font-size:.78rem;color:#64748b;margin-top:4px">ただし将来の整理計画を同時に立案すること</p>
+    </div>
+    <div>
+      <div class="flow-no">NO → Q2へ進む</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:12px 0;color:#64748b">↓ NO の場合</div>
+
+  <div class="flow-q">Q2. 現在Active Directory（オンプレミス）を運用中ですか？</div>
+  <div class="two-col" style="margin-top:8px">
+    <div>
+      <div class="flow-yes">YES → Q3へ進む</div>
+    </div>
+    <div>
+      <div class="flow-no">NO（新規 or AD廃止済み）→ パターン3（Cloud Native）</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:12px 0;color:#64748b">↓ YES の場合</div>
+
+  <div class="flow-q">Q3. Kerberos認証に依存した業務アプリが5本以上ありますか？</div>
+  <div class="two-col" style="margin-top:8px">
+    <div>
+      <div class="flow-yes">YES → パターン2（Hybrid Coexistence）が現実的</div>
+      <p style="font-size:.78rem;color:#64748b;margin-top:4px">Kerberos依存が残る間はAD並行運用が必要</p>
+    </div>
+    <div>
+      <div class="flow-no">NO（少ない or 改修可能）→ Q4へ進む</div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin:12px 0;color:#64748b">↓ NO の場合</div>
+
+  <div class="flow-q">Q4. M&A後のID統合、またはグローバル複数拠点の IdP 統合が課題ですか？</div>
+  <div class="two-col" style="margin-top:8px">
+    <div>
+      <div class="flow-yes">YES → パターン4（Multi-IdP Federation）</div>
+    </div>
+    <div>
+      <div class="flow-no">NO → パターン2（Hybrid）またはパターン3（Cloud Native）</div>
+      <p style="font-size:.78rem;color:#64748b;margin-top:4px">AD移行速度・コスト・リスク許容度で最終判断</p>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px">
+    <div class="flow-result flow-r1">パターン1<br>Lift and Shift<br><small>DCクローズ急ぎ</small></div>
+    <div class="flow-result flow-r2">パターン2<br>Hybrid<br><small>日本企業主流</small></div>
+    <div class="flow-result flow-r3">パターン3<br>Cloud Native<br><small>新規・AD廃止済み</small></div>
+    <div class="flow-result flow-r4">パターン4<br>Multi-IdP<br><small>M&A・グローバル</small></div>
+  </div>
+</div>
+</section>
+
+<!-- ========== 失敗パターン ========== -->
+<section id="pitfalls">
+<h2>⚠️ よくある失敗パターンと対策</h2>
+<p class="subtitle" style="margin-bottom:16px">日本企業で繰り返される典型的な移行失敗と、その対策。</p>
+
+<div class="two-col">
+
+<div>
+<h3>🔧 技術的な失敗パターン</h3>
+
+<div class="risk-item">
+  <div class="risk-title">Entra Connect 設定ミス（UPN不一致）</div>
+  <div class="risk-counter">最多発 — 同期開始後にユーザーがログインできない</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>原因:</strong> オンプレADの UPN サフィックスが <code>@company.local</code> のまま。Entra ID のカスタムドメインと一致しない。<br>
+    <strong>対策:</strong> Entra Connect 設定前に全ユーザーの UPN を <code>@company.com</code>（検証済みドメイン）に変更。パイロット100件で確認後に全展開。
+  </p>
+</div>
+
+<div class="risk-item med">
+  <div class="risk-title">GPO移行漏れによる設定抜け</div>
+  <div class="risk-counter">Intune移行時に多発</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>原因:</strong> GPO一覧を把握せずにIntune展開。セキュリティ設定・証明書配布・スクリプト実行が抜け落ちる。<br>
+    <strong>対策:</strong> Microsoft MMAT（Migration Tool for GPO）で移行可否を事前チェック。GPO→Intune マッピング表を作成。
+  </p>
+</div>
+
+<div class="risk-item med">
+  <div class="risk-title">Conditional Access のレガシー認証ブロック漏れ</div>
+  <div class="risk-counter">セキュリティ強化の抜け穴</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>原因:</strong> IMAP/POP3/Basic認証がブロックされず、MFAをバイパスする経路が残存。<br>
+    <strong>対策:</strong> Azure AD Sign-In logs でレガシー認証の利用状況を確認後、段階的にブロック（まずReport-onlyモードで影響確認）。
+  </p>
+</div>
+
+<div class="risk-item">
+  <div class="risk-title">Entra Hybrid Join 端末の登録失敗</div>
+  <div class="risk-counter">大規模展開時に20〜30%が登録失敗することも</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>原因:</strong> SCP（Service Connection Point）設定不備、DNS名前解決失敗、GPO遅延適用。<br>
+    <strong>対策:</strong> dsregcmd /status で登録状態確認。SCP確認 (<code>Get-ADObject -Identity "CN=62a0ff2e-..."</code>)。フォレスト内全DCで SCP 複製確認。
+  </p>
+</div>
+</div>
+
+<div>
+<h3>🏢 組織・プロセスの失敗パターン</h3>
+
+<div class="risk-item">
+  <div class="risk-title">SIer責任分界の曖昧化による意思決定遅延</div>
+  <div class="risk-counter">日本企業で最も多い停滞原因</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>症状:</strong> 設計判断が発生するたびにベンダーへのエスカレーションが必要で、月単位で遅延。<br>
+    <strong>対策:</strong> RACI表を移行開始前に確定。情報システム部門が「設計オーナー」として意思決定権を明示的に持つ。SIerは「実装パートナー」に留める。
+  </p>
+</div>
+
+<div class="risk-item med">
+  <div class="risk-title">利用者教育の後回し → MFA登録率低迷</div>
+  <div class="risk-counter">展開3ヶ月後もMFA登録率50%以下が続く</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>症状:</strong> IT部門が技術整備を優先し、エンドユーザー向け説明を後回しにした結果、展開が止まる。<br>
+    <strong>対策:</strong> 展開6週間前から段階的なコミュニケーション開始。ヘルプデスクスクリプト・QRコード付き手順書・部門別チャンピオン制度の活用。
+  </p>
+</div>
+
+<div class="risk-item med">
+  <div class="risk-title">フォールバック（退避経路）未設計</div>
+  <div class="risk-counter">同期停止・誤ポリシーで業務停止</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>症状:</strong> Entra Connect 同期停止 / 誤った Conditional Access ポリシーが全社適用 / MFA障害でログイン不能。<br>
+    <strong>対策:</strong> Emergency Access アカウント（ガラスケース管理）を必ず2アカウント作成。Conditional Access は必ずReport-onlyモードで先行テスト。
+  </p>
+</div>
+
+<div class="risk-item low">
+  <div class="risk-title">ベンダー管理アカウントの整理忘れ</div>
+  <div class="risk-counter">移行後も旧来の共有IDが残存</div>
+  <p style="font-size:.8rem;margin-top:6px">
+    <strong>症状:</strong> 移行完了後も SIer の共有 ID が無効化されず、認証ログに異常なアクセスが混入。<br>
+    <strong>対策:</strong> 外部委託アカウントを一覧化し、Privileged Identity Management + 期限付き権限で管理。保守契約終了時の自動無効化フローを設計。
+  </p>
+</div>
+</div>
+</div>
+
+<div class="good" style="margin-top:16px">
+<strong>✅ 成功パターンの共通点:</strong>
+(1) Day 0 アセスメントに4〜8週間を確保し、棚卸しを徹底する。
+(2) 情報システム部門が設計オーナーとして意思決定権を持つ。
+(3) パイロット部門（IT部門・有志50名）で3ヶ月間の先行検証を行う。
+(4) Emergency Access アカウントとフォールバック手順を最初に設計する。
+(5) MFA登録・エンドユーザー教育を技術展開の4〜6週間前に開始する。
+</div>
+</section>
+
+</main>
+</body>
+</html>
