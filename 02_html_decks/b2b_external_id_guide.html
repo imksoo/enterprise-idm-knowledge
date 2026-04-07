@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2B取引先ID管理ガイド</title>
+<style>
+:root{--p:#1a3a5c;--a:#2196f3;--bg:#f5f9ff;--card:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+.badge{display:inline-block;background:var(--a);color:#fff;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.box{background:#e3f2fd;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box.warn{background:#fff8e1;border-color:#ffc107}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:var(--bg)}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">B2B取引先・パートナー向け</div>
+  <h1>🏭 B2B取引先ID管理ガイド</h1>
+  <p>仕入先・販売店・EDI取引先・業務パートナーのID管理設計</p>
+</header>
+<div class="container">
+
+<section>
+  <div class="sec-h">💡 B2Bとは何が違うのか（社内IDとの比較）</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>項目</th><th>社内ユーザーID</th><th>B2B取引先ID</th></tr>
+      <tr><td>管理主体</td><td>自社HR + IT</td><td>自社IT + 相手企業の担当者</td></tr>
+      <tr><td>ライフサイクル</td><td>入社〜退職で明確</td><td>取引開始〜終了（曖昧になりがち）</td></tr>
+      <tr><td>ID数規模</td><td>数百〜数千</td><td>数千〜数十万（取引先多数）</td></tr>
+      <tr><td>MFA対応</td><td>会社支給デバイスで管理</td><td>相手企業のデバイス依存</td></tr>
+      <tr><td>認証方式</td><td>SSO + MFA</td><td>招待フロー / フェデレーション / セルフサービス</td></tr>
+      <tr><td>連絡チャネル</td><td>社内</td><td>メール依存（返信遅延・誤配信リスク）</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🏗️ B2B認証パターン3選</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>パターンA: 相手企業のIdPとフェデレーション（推奨: 大手取引先）</h3>
+      <p>相手企業がEntra ID / Okta / 独自SAML IdPを持っている場合、自社システムとフェデレーション（信頼関係）を設定します。相手企業の認証（MFA含む）をそのまま利用できます。メンテナンスは最小。</p>
+      <p><strong>適用例</strong>：大手スーパー→食品メーカー（大手の場合）、製造業→大手部品メーカー</p>
+    </div>
+    <div class="box">
+      <h3>パターンB: 自社がIdPを提供（推奨: 中小取引先）</h3>
+      <p>自社がEntra External ID（旧Azure AD B2B）などでゲストIDを発行。招待メールで取引先担当者が登録し、自社IdPのMFAを使用します。取引先はIDを持つだけで構いません。</p>
+      <p><strong>適用例</strong>：小売業→中小取引先（数百社）、建設業→協力会社</p>
+    </div>
+    <div class="box">
+      <h3>パターンC: 取引先専用ポータル（大量低頻度アクセス向け）</h3>
+      <p>EDIポータル・受発注システムに専用の軽量認証を提供。取引先コード+ワンタイムコードや、取引先代表者メールで認証します。ITリテラシーが低い中小取引先向け。</p>
+      <p><strong>適用例</strong>：大手スーパーの食品取引先（数千社・中小零細含む）</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📦 推奨製品比較（B2B IdP）</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>製品</th><th>特徴</th><th>向いている規模</th><th>価格感</th></tr>
+      <tr><td>Entra External ID (Microsoft)</td><td>M365環境と統合・招待フロー標準</td><td>中〜大規模</td><td>MAU課金（安価）</td></tr>
+      <tr><td>Okta Customer Identity</td><td>B2B/B2C両対応・API充実</td><td>大規模</td><td>中〜高</td></tr>
+      <tr><td>Auth0 (by Okta)</td><td>開発者フレンドリー・カスタマイズ性高</td><td>中規模〜大規模</td><td>MAU課金</td></tr>
+      <tr><td>AWS Cognito</td><td>AWS環境に統合・低コスト</td><td>中規模</td><td>低（MAU課金）</td></tr>
+      <tr><td>独自開発（レガシー）</td><td>既存EDIシステム内蔵認証</td><td>既存維持のみ</td><td>維持コスト大</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">📋 B2B ID移行の進め方（段階的）</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>フェーズ</th><th>対象</th><th>方法</th><th>期間</th></tr>
+      <tr><td>Phase 1: 大手50社</td><td>売上上位取引先</td><td>個別対応・フェデレーション設定</td><td>3〜6ヶ月</td></tr>
+      <tr><td>Phase 2: 中堅500社</td><td>定期取引先</td><td>招待メール一括送信・セルフ登録</td><td>6〜12ヶ月</td></tr>
+      <tr><td>Phase 3: 長尾1500社</td><td>不定期・零細取引先</td><td>ワンタイムコード認証・管理代行</td><td>12〜18ヶ月</td></tr>
+    </table>
+    <div class="box warn" style="margin-top:1rem">
+      <h3>移行連絡で失敗しないために</h3>
+      <ul style="padding-left:1.5rem;line-height:2">
+        <li>移行連絡は3ヶ月前から：「○月○日に切り替わります」と明確な期日を示す</li>
+        <li>ヘルプデスクを用意：取引先の中小企業は「ID登録方法が分からない」電話が殺到する可能性</li>
+        <li>新旧並行期間：2〜3ヶ月の並行運用で取引先の対応を待つ</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — B2B取引先ID管理ガイド</p>
+</footer>
+</body>
+</html>

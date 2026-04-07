@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>クラウドIAM管理ガイド（マルチクラウド対応）</title>
+<style>
+:root{--p:#0c2340;--a:#ff9800;--bg:#f5f7fc;--card:#fff;--aws:#ff9900;--azure:#0078d4;--gcp:#4285f4}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+.badge{display:inline-block;background:var(--a);color:var(--p);font-weight:bold;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-b{padding:1.5rem}
+.cloud-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0}
+.ccard{border-radius:8px;padding:1.2rem;border:2px solid}
+.ccard.aws{border-color:var(--aws);background:#fff8f0}
+.ccard.azure{border-color:var(--azure);background:#f0f7ff}
+.ccard.gcp{border-color:var(--gcp);background:#f0f4ff}
+.ccard h3{font-size:1rem;margin-bottom:.6rem}
+.ccard.aws h3{color:var(--aws)}
+.ccard.azure h3{color:var(--azure)}
+.ccard.gcp h3{color:var(--gcp)}
+.box{background:#fff3e0;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box.danger{background:#fff0f0;border-color:#f44336}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin-top:.5rem}
+th{background:var(--p);color:#fff;padding:.6rem .8rem;text-align:left}
+td{padding:.6rem .8rem;border-bottom:1px solid #e0e0e0;vertical-align:top}
+tr:nth-child(even) td{background:var(--bg)}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+@media(max-width:640px){.cloud-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">クラウド・セキュリティ担当向け</div>
+  <h1>☁️ クラウドIAM管理ガイド（マルチクラウド対応）</h1>
+  <p>AWS/Azure/GCPのIAM統合管理・最小権限・CIEM導入のガイド</p>
+</header>
+<div class="container">
+
+<section>
+  <div class="sec-h">🚨 マルチクラウドIAMの典型的問題</div>
+  <div class="sec-b">
+    <div class="box danger">
+      <h3>「誰が何にアクセスできるか分からない」症候群</h3>
+      <p>AWS・Azure・GCPそれぞれにIAMが存在し、開発・本番・ステージング環境が混在。気づいたら<strong>2000人超のIAMユーザー</strong>が存在し、誰が何の権限を持っているか把握不能になる。「Administrator権限を持ったまま退職者」のアカウントが残存するケースも多発。</p>
+    </div>
+    <table>
+      <tr><th>問題パターン</th><th>発生頻度</th><th>リスク</th></tr>
+      <tr><td>過剰権限付与（Administrator多用）</td><td>非常に多い</td><td>侵害時の被害最大化</td></tr>
+      <tr><td>未使用・孤立IAMアカウント</td><td>多い</td><td>休眠アカウント悪用</td></tr>
+      <tr><td>アクセスキー長期使用（ローテーションなし）</td><td>多い</td><td>キー漏洩→不正アクセス</td></tr>
+      <tr><td>S3/BlobのPublicアクセス設定ミス</td><td>中程度</td><td>データ漏洩</td></tr>
+      <tr><td>マルチクラウド間で権限の不統一</td><td>多い</td><td>ガバナンス不全</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">☁️ クラウド別IAM設計の基本</div>
+  <div class="sec-b">
+    <div class="cloud-grid">
+      <div class="ccard aws">
+        <h3>AWS IAM</h3>
+        <ul style="padding-left:1rem;font-size:.85rem;line-height:2">
+          <li>IAMユーザー最小化<br>→ SSOでフェデレーション</li>
+          <li>IAMロールを活用<br>（EC2/Lambda等に割当）</li>
+          <li>権限境界<br>（Permission Boundary）</li>
+          <li>SCPでOrg単位制御</li>
+          <li>IAM Access Analyzerで最小権限推奨</li>
+        </ul>
+      </div>
+      <div class="ccard azure">
+        <h3>Azure RBAC / Entra ID</h3>
+        <ul style="padding-left:1rem;font-size:.85rem;line-height:2">
+          <li>Entra IDをグループIdPとして統一</li>
+          <li>PIM（JIT権限昇格）必須</li>
+          <li>Management Groupで<br>サブスク横断制御</li>
+          <li>Microsoft Defender for Cloud<br>でIAM推奨</li>
+          <li>Conditional Accessで<br>クラウドポータル制御</li>
+        </ul>
+      </div>
+      <div class="ccard gcp">
+        <h3>GCP IAM</h3>
+        <ul style="padding-left:1rem;font-size:.85rem;line-height:2">
+          <li>Workload Identity Federationで<br>キーなし認証</li>
+          <li>Organization Policyで<br>プロジェクト横断制御</li>
+          <li>IAM推奨事項（自動提示）</li>
+          <li>サービスアカウント<br>キー最小化</li>
+          <li>VPC Service Controlsで<br>境界設定</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🔍 CIEM（クラウドIAM権限管理）とは</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>CIEM = Cloud Infrastructure Entitlement Management</h3>
+      <p>マルチクラウド環境の全IAM権限を可視化し、<strong>実際に使われていない権限を自動検出・最小化を提案</strong>するツール。AWS/Azure/GCPすべてのIAM設定を1画面で把握できます。</p>
+    </div>
+    <table>
+      <tr><th>製品</th><th>特徴</th><th>価格帯</th></tr>
+      <tr><td>Wiz CIEM</td><td>CNAPP統合・リスクグラフ可視化</td><td>高</td></tr>
+      <tr><td>Ermetic (CyberArk)</td><td>NHI対応・JIT権限</td><td>中〜高</td></tr>
+      <tr><td>Prisma Cloud (Palo Alto)</td><td>マルチクラウド・コンプライアンス統合</td><td>高</td></tr>
+      <tr><td>Entitle</td><td>JIT・承認フロー特化</td><td>中</td></tr>
+      <tr><td>AWS IAM Access Analyzer</td><td>AWS限定・無償</td><td>無償</td></tr>
+      <tr><td>Entra Permissions Management</td><td>マルチクラウド・M365統合</td><td>中（アドオン）</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">🏗️ マルチクラウドIAM統一アーキテクチャ（推奨）</div>
+  <div class="sec-b">
+    <div class="box">
+      <h3>Entra IDをハブとして全クラウドを統合する構成</h3>
+      <p><strong>Entra ID</strong> → AWS SSO（IAM Identity Center）/ Azure RBAC / GCP Workload Identity Federation の3方向に連携。人間のログインは全てEntra IDのMFA+条件付きアクセスを通過。クラウドのIAMロールはEntra IDのグループとマッピング。</p>
+    </div>
+    <table>
+      <tr><th>統合ポイント</th><th>設定</th><th>メリット</th></tr>
+      <tr><td>Entra ID → AWS</td><td>AWS IAM Identity Center + SAML/OIDC</td><td>1か所でAWSアクセス管理</td></tr>
+      <tr><td>Entra ID → Azure</td><td>Entra ID自身（Azure AD = Entra ID）</td><td>PIM・条件付きアクセス統合</td></tr>
+      <tr><td>Entra ID → GCP</td><td>Workload Identity Federation</td><td>サービスアカウントキー不要</td></tr>
+      <tr><td>SIEM統合</td><td>CloudTrail/ActivityLog/Audit Logを全部Microsoft Sentinelに集約</td><td>マルチクラウドのログを一元分析</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — クラウドIAM管理ガイド（マルチクラウド対応）</p>
+</footer>
+</body>
+</html>

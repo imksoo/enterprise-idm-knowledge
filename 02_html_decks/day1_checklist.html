@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>合併・統合 Day1 ID対応チェックリスト</title>
+<style>
+:root{--p:#1b2a4a;--a:#e91e63;--bg:#f8f9fc;--card:#fff;--g:#2e7d32;--w:#f57c00}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Hiragino Kaku Gothic ProN","Meiryo",sans-serif;background:var(--bg);color:#1a1a1a;line-height:1.7}
+header{background:var(--p);color:#fff;padding:2rem;border-bottom:4px solid var(--a)}
+header h1{font-size:1.8rem;margin-bottom:.3rem}
+.badge{display:inline-block;background:var(--a);color:#fff;padding:.2rem .8rem;border-radius:999px;font-size:.8rem;margin-bottom:.8rem}
+.container{max-width:1100px;margin:0 auto;padding:2rem 1.5rem}
+section{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.07);margin-bottom:2rem;overflow:hidden}
+.sec-h{background:var(--p);color:#fff;padding:.8rem 1.5rem;font-size:1.1rem;font-weight:bold}
+.sec-h.warn{background:var(--w)}
+.sec-h.ok{background:var(--g)}
+.sec-b{padding:1.5rem}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;align-items:flex-start;gap:.8rem;padding:.5rem 0;border-bottom:1px solid #f0f0f0;font-size:.95rem}
+.checklist li:last-child{border:none}
+.cb{width:20px;height:20px;border:2px solid #ccc;border-radius:4px;flex-shrink:0;margin-top:.2rem;cursor:pointer}
+.checklist .tag-must{background:#e91e63;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.75rem;font-weight:bold;margin-right:.3rem;flex-shrink:0}
+.checklist .tag-should{background:var(--w);color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.75rem;font-weight:bold;margin-right:.3rem;flex-shrink:0}
+.checklist .tag-nice{background:var(--g);color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.75rem;font-weight:bold;margin-right:.3rem;flex-shrink:0}
+.phase-header{background:#f5f5f5;padding:.8rem 1rem;font-weight:bold;color:var(--p);margin:-1px 0 0;border-top:2px solid var(--p)}
+.box{background:#fce4ec;border-left:5px solid var(--a);border-radius:6px;padding:1.1rem;margin-bottom:1rem}
+.box h3{color:var(--p);font-size:1rem;margin-bottom:.4rem}
+footer{text-align:center;padding:2rem;color:#999;font-size:.8rem;border-top:1px solid #e0e0e0}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">M&A・合併統合 プロジェクト向け</div>
+  <h1>📋 合併・統合 Day1 ID対応チェックリスト</h1>
+  <p>合併・買収・持株会社化のID管理で「絶対に失敗できないDay1」の対応手順</p>
+</header>
+<div class="container">
+
+<div class="box">
+  <h3>⚠️ Day1とは</h3>
+  <p>合併・買収の法的効力発生日（登記完了日）。この日からIDとアクセス権限が「統合後の組織」として機能しなければなりません。Day1の失敗は業務停止、セキュリティ事故、または役員への信頼喪失につながります。</p>
+</div>
+
+<section>
+  <div class="sec-h warn">🔴 Day1前90日：必須準備事項</div>
+  <div class="sec-b">
+    <ul class="checklist">
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>両社のIDインベントリ（全アカウント一覧）取得</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>特権アカウント（Domain Admin・SA等）の棚卸し</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>ADドメイン構成図の作成（両社）</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>統合後の権限設計（どちらのADを残すか・フォレスト信頼か統合か）</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>メールシステムのルーティング計画（両社が同一テナントになるか分離か）</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>共有システムのアクセス権限設計（財務・人事システム等）</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>Day1当日の緊急連絡体制（IT部門責任者・CISO・ヘルプデスク）</li>
+      <li><div class="cb"></div><span class="tag-should">SHOULD</span>セキュリティポリシーの差異把握（パスワード要件・MFA状況等）</li>
+      <li><div class="cb"></div><span class="tag-should">SHOULD</span>従業員向けID変更案内文の作成・承認</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h warn">🔴 Day1当日：実施チェック</div>
+  <div class="sec-b">
+    <ul class="checklist">
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>ADフォレスト信頼（または統合）の有効化確認</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>メールルーティング切り替えの確認（双方向メール到達確認）</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>共有システムへの新会社社員のアクセス確認（テスト実施）</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>VPN/ゼロトラスト接続の相互確認</li>
+      <li><div class="cb" onclick="this.style.background=this.style.background?'':'#e91e63'"></div><span class="tag-must">MUST</span>ヘルプデスクの受付開始確認（混雑予測・増員）</li>
+      <li><div class="cb"></div><span class="tag-should">SHOULD</span>SIEM/ログ監視の統合ポイント確認</li>
+      <li><div class="cb"></div><span class="tag-should">SHOULD</span>旧社メールアドレスからの転送設定確認</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h ok">🟢 Day1後30〜90日：統合完成への移行</div>
+  <div class="sec-b">
+    <ul class="checklist">
+      <li><div class="cb"></div><span class="tag-must">MUST</span>旧社IDのSSO統合（Entra Hybrid Join / フェデレーション完成）</li>
+      <li><div class="cb"></div><span class="tag-must">MUST</span>セキュリティポリシーの統一（MFA・パスワード要件）</li>
+      <li><div class="cb"></div><span class="tag-must">MUST</span>退職者・不要アカウントの棚卸し・削除</li>
+      <li><div class="cb"></div><span class="tag-should">SHOULD</span>IGAによる統合後のプロビジョニング自動化</li>
+      <li><div class="cb"></div><span class="tag-should">SHOULD</span>グループ全体のID監査・レポート作成</li>
+      <li><div class="cb"></div><span class="tag-nice">NICE</span>統合後のゼロトラスト設計着手</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="sec-h">💡 よくある失敗パターンと防止策</div>
+  <div class="sec-b">
+    <table>
+      <tr><th>失敗パターン</th><th>影響</th><th>防止策</th></tr>
+      <tr><td>Day1にメールが届かない</td><td>業務停止・混乱</td><td>前日にルーティングテスト実施</td></tr>
+      <tr><td>財務システムにアクセスできない</td><td>締め日業務停止</td><td>経理部門を先行テストに参加させる</td></tr>
+      <tr><td>旧社の管理者権限が全社に適用</td><td>セキュリティポリシー違反</td><td>統合時に特権アカウント棚卸し必須</td></tr>
+      <tr><td>ヘルプデスクがパンク</td><td>社員の業務停止</td><td>FAQ事前準備・増員・自動化</td></tr>
+      <tr><td>統合後も旧社IDが残存</td><td>内部者リスク・コスト増</td><td>60日以内の強制統合スケジュール</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+<footer>
+  <p>NSSol IDMナレッジベース — 合併・統合 Day1 ID対応チェックリスト</p>
+  <p>凡例: <span style="background:#e91e63;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.75rem">MUST</span> 必須 &nbsp; <span style="background:#f57c00;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.75rem">SHOULD</span> 推奨 &nbsp; <span style="background:#2e7d32;color:#fff;padding:.1rem .5rem;border-radius:4px;font-size:.75rem">NICE</span> できれば</p>
+</footer>
+</body>
+</html>
